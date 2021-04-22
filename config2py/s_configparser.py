@@ -1,12 +1,12 @@
 """
 Data Object Layer for configparser standard lib.
 """
-from configparser import ConfigParser, NoSectionError
+from configparser import ConfigParser
 from configparser import BasicInterpolation, ExtendedInterpolation
 from functools import wraps
-from io import BytesIO, StringIO
+from io import StringIO
 
-from dol.trans import kv_wrap_persister_cls
+from dol import Store
 
 # from py2store.signatures import Sig
 
@@ -86,9 +86,8 @@ def super_and_persist(super_cls, method_name):
     return method_func
 
 
-ConfigParserStore = kv_wrap_persister_cls(
-    ConfigParser, name="ConfigParserStore"
-)
+ConfigParserStore = Store.wrap(ConfigParser)
+ConfigParserStore.__name__ = "ConfigParserStore"
 
 
 # TODO: ConfigParser is already a mapping, but pros/cons of subclassing?
@@ -107,7 +106,7 @@ class ConfigStore(ConfigParserStore):
     We'll mainly focus on write and delete operations here.
 
     >>> import os
-    >>> from py2store.slib.s_configparser import ConfigStore, ConfigReader
+    >>> from config2py.s_configparser import ConfigStore, ConfigReader
     >>> ini_filepath = 'config_store_test.ini'
     >>> if os.path.isfile(ini_filepath):
     ...     os.remove(ini_filepath)
@@ -308,7 +307,7 @@ class ConfigStore(ConfigParserStore):
 
 class ConfigReader(ConfigStore):
     r"""A KvReader to read config files
-    >>> from py2store.slib.s_configparser import ConfigReader
+    >>> from config2py.s_configparser import ConfigReader
     >>>
     >>> # from a (pretend) file
     >>> from io import BytesIO, StringIO
@@ -350,7 +349,7 @@ class ConfigReader(ConfigStore):
     >>> assert list(c['section3']) == ['foo', 'bar', 'baz']
     >>>
     >>> ######## Get configs from a string ########
-    >>> from py2store.slib.s_configparser import _test_config_str
+    >>> from config2py.s_configparser import _test_config_str
     >>> c = ConfigReader(_test_config_str, allow_no_value=True)
     >>> list(c)
     ['DEFAULT', 'Simple Values', 'All Values Are Strings', 'Multiline Values', 'No Values', 'You can use comments', 'Sections Can Be Indented']
