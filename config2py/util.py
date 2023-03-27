@@ -35,7 +35,11 @@
 
 
 import re
-from typing import Optional, Union
+from typing import Optional, Union, Any
+
+
+def always_true(x: Any) -> bool:
+    return True
 
 
 # Note: Could be made more efficient, but this is good enough (for now)

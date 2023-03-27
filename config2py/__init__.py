@@ -2,4 +2,4 @@
 
 from config2py.s_configparser import *
 from config2py.tools import *
-
+from config2py.base import get_config
