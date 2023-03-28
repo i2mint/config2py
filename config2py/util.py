@@ -1,44 +1,13 @@
 """Utility functions for config2py."""
 
-
-# def extract_variable_declarations(string):
-#     """
-#     Reads the contents of a config file, extracting Unix-style environment variable
-#     declarations of the form
-#     `export {NAME}={value}`, returning a dictionary of `{NAME: value, ...}` pairs.
-#
-#     # >>> config = (
-#     # ...   'export ENVIRONMENT="development"\\n'
-#     # ...   'export PORT=8080\\n'
-#     # ...   'alias = "just to make it harder"\\n'
-#     # ...   '\\n'
-#     # ...   'export DEBUG=true'
-#     # ...)
-#     # >>> extract_variable_declarations(config)
-#     # {'ENVIRONMENT': '"development"', 'PORT': '8080', 'DEBUG': 'true'}
-#
-#     >>> config = 'export PATH="$PATH:/usr/local/bin"\\nexport EDITOR="nano"'
-#     >>> extract_variable_declarations(config)
-#     {'PATH': '$PATH:/usr/local/bin', 'EDITOR': 'nano'}
-#
-#     """
-#     env_vars = {}
-#     lines = string.split("\n")
-#     for line in lines:
-#         line = line.strip()
-#         if line.startswith("export"):
-#             parts = line.split("=")
-#             name = parts[0].split(" ")[1]
-#             value = parts[1]
-#             env_vars[name] = value
-#     return env_vars
-
-
 import re
+import os
+from pathlib import Path
 from typing import Optional, Union, Any, Callable
+from dol import TextFiles
 import getpass
 
-
+pkg_name = 'config2py'
 DFLT_MASKING_INPUT = False
 
 
@@ -74,12 +43,13 @@ def ask_user_for_input(
         This can be used to validate the response, for example.
     :return: The user's response (or the default value if the user entered nothing)
     """
+    _original_prompt = prompt
     if prompt[-1] != " ":  # pragma: no cover
         prompt = prompt + " "
     if masking_toggle_str is not None:
         prompt = (
             f"{prompt}\n"
-            "    (Input masking is {'enabled' if mask_input else 'disabled'}. "
+            f"    (Input masking is {'ENABLED' if mask_input else 'DISABLED'}. "
             f"Enter '{masking_toggle_str}' (without quotes) to toggle input masking)\n"
         )
     if default:
@@ -90,7 +60,7 @@ def ask_user_for_input(
         response = input(prompt)
     if masking_toggle_str is not None and response == masking_toggle_str:
         return ask_user_for_input(
-            prompt,
+            _original_prompt,
             default,
             mask_input=not mask_input,
             masking_toggle_str=masking_toggle_str,
@@ -179,3 +149,94 @@ def extract_variable_declarations(
             else:
                 env_vars[name] = value
     return env_vars
+
+
+# Note: First possible i2 dependency -- vendoring for now
+def get_app_data_folder(ensure_existence=False):
+    """
+    Returns the full path of a directory suitable for storing application-specific data.
+
+    On Windows, this is typically %APPDATA%.
+    On macOS, this is typically ~/.config.
+    On Linux, this is typically ~/.config.
+
+    Returns:
+        str: The full path of the app data folder.
+
+    See https://github.com/i2mint/i2mint/issues/1.
+    """
+    if os.name == "nt":
+        # Windows
+        app_data_folder = os.getenv("APPDATA")
+    elif os.name == "darwin":
+        # macOS
+        app_data_folder = os.path.expanduser("~/.config")
+    else:
+        # Linux/Unix
+        app_data_folder = os.path.expanduser("~/.config")
+
+    if ensure_existence and not os.path.isdir(app_data_folder):
+        os.mkdir(app_data_folder)
+    return app_data_folder
+
+
+# TODO: Add a hidden file that annotates the directory as one managed by config2py,
+#  so that if
+def _get_app_data_dir(dirname=pkg_name):
+    """Get the app data directory."""
+    app_data_dir = os.path.join(get_app_data_folder(ensure_existence=True), dirname)
+    if not os.path.isdir(app_data_dir):
+        os.mkdir(app_data_dir)
+        # Add a hidden file that annotates the directory as one managed by config2py,
+        # so that we at least have a chance of distinguishing it from a directory of
+        # the same name that another program might create (we don't want to write in
+        # someone else's directory!).
+        (Path(app_data_dir) / ".config2py").write_text('I was created by config2py.')
+    return app_data_dir
+
+
+# TODO: Build Configs from dol.Files, returning dol.TextFiles except if .bin extension,
+#  and returning Configs(dirpath) if key is a directory
+# TODO: Make the Configs class with use outside config2py in mind.
+Configs = TextFiles
+
+
+def get_configs_local_store(dirname=pkg_name):
+    """Get the local store of configs."""
+    return Configs(_get_app_data_dir(dirname))
+
+
+configs = get_configs_local_store()
+
+
+# def extract_variable_declarations(string):
+#     """
+#     Reads the contents of a config file, extracting Unix-style environment variable
+#     declarations of the form
+#     `export {NAME}={value}`, returning a dictionary of `{NAME: value, ...}` pairs.
+#
+#     # >>> config = (
+#     # ...   'export ENVIRONMENT="development"\\n'
+#     # ...   'export PORT=8080\\n'
+#     # ...   'alias = "just to make it harder"\\n'
+#     # ...   '\\n'
+#     # ...   'export DEBUG=true'
+#     # ...)
+#     # >>> extract_variable_declarations(config)
+#     # {'ENVIRONMENT': '"development"', 'PORT': '8080', 'DEBUG': 'true'}
+#
+#     >>> config = 'export PATH="$PATH:/usr/local/bin"\\nexport EDITOR="nano"'
+#     >>> extract_variable_declarations(config)
+#     {'PATH': '$PATH:/usr/local/bin', 'EDITOR': 'nano'}
+#
+#     """
+#     env_vars = {}
+#     lines = string.split("\n")
+#     for line in lines:
+#         line = line.strip()
+#         if line.startswith("export"):
+#             parts = line.split("=")
+#             name = parts[0].split(" ")[1]
+#             value = parts[1]
+#             env_vars[name] = value
+#     return env_vars
