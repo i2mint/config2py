@@ -35,11 +35,68 @@
 
 
 import re
-from typing import Optional, Union, Any
+from typing import Optional, Union, Any, Callable
+import getpass
+
+
+DFLT_MASKING_INPUT = False
 
 
 def always_true(x: Any) -> bool:
+    """Function that just returns True."""
     return True
+
+
+def identity(x: Any) -> Any:
+    """Function that just returns its argument."""
+    return x
+
+
+# TODO: Make this into an open-closed mini-framework
+def ask_user_for_input(
+    prompt: str,
+    default: str = None,
+    *,
+    mask_input=DFLT_MASKING_INPUT,
+    masking_toggle_str: str = None,
+    egress: Callable = identity,
+) -> str:
+    """
+    Ask the user for input, optionally masking the input.
+
+    :param prompt: Prompt to display to the user
+    :param default: Default value to return if the user enters nothing
+    :param mask_input: Whether to mask the user's input
+    :param masking_toggle_str: String to toggle input masking. If ``None``, no toggle
+        is available. If not ``None`` (a common choice is the empty string)
+        the user can enter this string to toggle input masking.
+    :param egress: Function to apply to the user's response before returning it.
+        This can be used to validate the response, for example.
+    :return: The user's response (or the default value if the user entered nothing)
+    """
+    if prompt[-1] != " ":  # pragma: no cover
+        prompt = prompt + " "
+    if masking_toggle_str is not None:
+        prompt = (
+            f"{prompt}\n"
+            "    (Input masking is {'enabled' if mask_input else 'disabled'}. "
+            f"Enter '{masking_toggle_str}' (without quotes) to toggle input masking)\n"
+        )
+    if default:
+        prompt = prompt + f" [{default}]: "
+    if mask_input:
+        response = getpass.getpass(prompt)
+    else:
+        response = input(prompt)
+    if masking_toggle_str is not None and response == masking_toggle_str:
+        return ask_user_for_input(
+            prompt,
+            default,
+            mask_input=not mask_input,
+            masking_toggle_str=masking_toggle_str,
+        )
+
+    return egress(response or default)
 
 
 # Note: Could be made more efficient, but this is good enough (for now)

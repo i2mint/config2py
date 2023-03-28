@@ -139,6 +139,15 @@ def get_config(
     ...
     config2py.errors.ConfigNotFound: Could not find config for key: no_a_key
 
+    But if you provide a default value, it will return that instead:
+
+    >>> get_config('no_a_key', sources, default='default')
+    'default'
+
+    You can also provide a function that will be called on the value before it is
+    returned. This is useful if you want to do some post-processing on the value,
+    or if you want to make sure that the value is of a certain type:
+
     This "search the next source if the previous one fails" behavior may not be what
     you want in some situations, since you'd be hiding some errors that you might
     want to be aware of. This is why allow you to specify what exceptions should
@@ -152,17 +161,29 @@ def get_config(
     will continue. If it returns ``True``, the search will stop and the value will
     be returned.
 
-    Finally, we have ``egress``. This is a function that takes a key and a value, and
+    Finally, we have ``egress : Callable[[KT, TT], VT]``.
+    This is a function that takes a key and a value, and
     returns a value. It is called after the value has been found, and its return
     value is the one that is returned by ``get_config``. This is useful if you want
     to do some post-processing on the value, or before you return the value, or if you
     want to do some caching.
+
+    >>> config_store = dict()
+    >>> def store_before_returning(k, v):
+    ...    config_store[k] = v
+    ...    return v
+    >>> get_config('foo', sources, egress=store_before_returning)
+    'quux'
+    >>> config_store
+    {'foo': 'quux'}
 
     Note that a source can be a callable or a ``GettableContainer`` (most of the
     time, a ``Mapping`` (e.g. ``dict``)).
     Here, you should be compelled to use the resources of ``dol``
     (https://pypi.org/project/dol/) which will allow you to make ``Mapping``s for all
     sorts of data sources.
+
+    For more info, see: https://github.com/i2mint/config2py/issues/4
 
     """
 
@@ -177,20 +198,6 @@ def get_config(
         return egress(key, value)
     else:
         return value
-
-
-def find_key(sources):
-    for src in sources:
-        if isinstance(src, dict):
-            yield from src.keys()
-        elif isinstance(src, GettableContainer):
-            yield from src.keys()
-        else:
-            raise TypeError(f"Can't find keys in {src}")
-
-
-def _always_true(x):
-    return True
 
 
 # TODO: add/enable an __iter__ method if the function's first arg is annotated with

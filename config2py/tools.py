@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import re
+import getpass
 from dol import Pipe, resolve_path
 
 export_line_p = re.compile('export .+')
@@ -43,4 +44,3 @@ def extract_exports(exports: str) -> dict:
             ),
         )
     )
-
