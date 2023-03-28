@@ -8,6 +8,3 @@ except (ImportError, ModuleNotFoundError):
 
 module_path = files(sys.modules[__name__])
 ppath = module_path.joinpath
-
-
-

@@ -11,7 +11,7 @@ export_p = re.compile(r'(\w+)\s?\=\s?"(.+)"')
 _extract_name_and_value_from_export_line = Pipe(
     lambda x: x[len('export ') :],
     lambda x: export_p.match(x),
-    lambda x: x.groups() if x else ''
+    lambda x: x.groups() if x else '',
 )
 
 

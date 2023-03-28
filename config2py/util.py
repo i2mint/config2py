@@ -101,7 +101,7 @@ def ask_user_for_input(
 
 # Note: Could be made more efficient, but this is good enough (for now)
 def extract_variable_declarations(
-        string: str, expand: Optional[Union[dict, bool]] = None
+    string: str, expand: Optional[Union[dict, bool]] = None
 ) -> dict:
     """
     Reads the contents of a config file, extracting Unix-style environment variable
@@ -164,7 +164,7 @@ def extract_variable_declarations(
 
     env_vars = {}
     pattern = re.compile(r'^export\s+([A-Za-z0-9_]+)=(.*)$')
-    lines = string.split("\n")
+    lines = string.split('\n')
     for line in lines:
         line = line.strip()
         match = pattern.match(line)
