@@ -44,16 +44,16 @@ def ask_user_for_input(
     :return: The user's response (or the default value if the user entered nothing)
     """
     _original_prompt = prompt
-    if prompt[-1] != " ":  # pragma: no cover
-        prompt = prompt + " "
+    if prompt[-1] != ' ':  # pragma: no cover
+        prompt = prompt + ' '
     if masking_toggle_str is not None:
         prompt = (
-            f"{prompt}\n"
+            f'{prompt}\n'
             f"    (Input masking is {'ENABLED' if mask_input else 'DISABLED'}. "
             f"Enter '{masking_toggle_str}' (without quotes) to toggle input masking)\n"
         )
     if default:
-        prompt = prompt + f" [{default}]: "
+        prompt = prompt + f' [{default}]: '
     if mask_input:
         response = getpass.getpass(prompt)
     else:
@@ -165,15 +165,15 @@ def get_app_data_folder(ensure_existence=False):
 
     See https://github.com/i2mint/i2mint/issues/1.
     """
-    if os.name == "nt":
+    if os.name == 'nt':
         # Windows
-        app_data_folder = os.getenv("APPDATA")
-    elif os.name == "darwin":
+        app_data_folder = os.getenv('APPDATA')
+    elif os.name == 'darwin':
         # macOS
-        app_data_folder = os.path.expanduser("~/.config")
+        app_data_folder = os.path.expanduser('~/.config')
     else:
         # Linux/Unix
-        app_data_folder = os.path.expanduser("~/.config")
+        app_data_folder = os.path.expanduser('~/.config')
 
     if ensure_existence and not os.path.isdir(app_data_folder):
         os.mkdir(app_data_folder)
@@ -191,7 +191,7 @@ def _get_app_data_dir(dirname=pkg_name):
         # so that we at least have a chance of distinguishing it from a directory of
         # the same name that another program might create (we don't want to write in
         # someone else's directory!).
-        (Path(app_data_dir) / ".config2py").write_text('I was created by config2py.')
+        (Path(app_data_dir) / '.config2py').write_text('I was created by config2py.')
     return app_data_dir
 
 
