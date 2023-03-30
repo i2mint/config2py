@@ -96,7 +96,7 @@ def get_config(
     default: VT = no_default,
     egress: GetConfigEgress = None,
     val_is_valid: Callable[[VT], bool] = always_true,
-    config_not_found_exceptions: Iterable[Exception] = (Exception,)
+    config_not_found_exceptions: Iterable[Exception] = (Exception,),
 ):
     """Get a config value from a list of sources
 
@@ -292,9 +292,9 @@ class FuncBasedGettableContainer:
 
 
 def gettable_containers(
-        sources: Sources,
-        val_is_valid: Callable[[VT], bool] = always_true,
-        config_not_found_exceptions: Iterable[Exception] = (Exception,)
+    sources: Sources,
+    val_is_valid: Callable[[VT], bool] = always_true,
+    config_not_found_exceptions: Iterable[Exception] = (Exception,),
 ) -> Iterable[GettableContainer]:
     """Convert an iterable of sources into ``GettableContainers``"""
     for src in sources:
@@ -304,7 +304,7 @@ def gettable_containers(
             yield FuncBasedGettableContainer(
                 src,
                 val_is_valid=val_is_valid,
-                config_not_found_exceptions=config_not_found_exceptions
+                config_not_found_exceptions=config_not_found_exceptions,
             )
         else:
             raise AssertionError(
@@ -313,12 +313,10 @@ def gettable_containers(
 
 
 def sources_chainmap(
-        sources: Sources,
-        val_is_valid: Callable[[VT], bool] = always_true,
-        config_not_found_exceptions: Iterable[Exception] = (Exception,)
+    sources: Sources,
+    val_is_valid: Callable[[VT], bool] = always_true,
+    config_not_found_exceptions: Iterable[Exception] = (Exception,),
 ) -> ChainMap:
     """Create a ``ChainMap`` from a list of sources"""
-    sources = gettable_containers(
-        sources, val_is_valid, config_not_found_exceptions
-    )
+    sources = gettable_containers(sources, val_is_valid, config_not_found_exceptions)
     return ChainMap(*gettable_containers(sources))
