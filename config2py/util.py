@@ -3,11 +3,14 @@
 import re
 import os
 from pathlib import Path
+from functools import partial
 from typing import Optional, Union, Any, Callable
 from dol import TextFiles
 import getpass
 
-pkg_name = 'config2py'
+from lkj import filesys
+
+pkg_name = "config2py"
 DFLT_MASKING_INPUT = False
 
 
@@ -44,16 +47,16 @@ def ask_user_for_input(
     :return: The user's response (or the default value if the user entered nothing)
     """
     _original_prompt = prompt
-    if prompt[-1] != ' ':  # pragma: no cover
-        prompt = prompt + ' '
+    if prompt[-1] != " ":  # pragma: no cover
+        prompt = prompt + " "
     if masking_toggle_str is not None:
         prompt = (
-            f'{prompt}\n'
+            f"{prompt}\n"
             f"    (Input masking is {'ENABLED' if mask_input else 'DISABLED'}. "
             f"Enter '{masking_toggle_str}' (without quotes) to toggle input masking)\n"
         )
     if default:
-        prompt = prompt + f' [{default}]: '
+        prompt = prompt + f" [{default}]: "
     if mask_input:
         response = getpass.getpass(prompt)
     else:
@@ -133,8 +136,8 @@ def extract_variable_declarations(
         expand = None
 
     env_vars = {}
-    pattern = re.compile(r'^export\s+([A-Za-z0-9_]+)=(.*)$')
-    lines = string.split('\n')
+    pattern = re.compile(r"^export\s+([A-Za-z0-9_]+)=(.*)$")
+    lines = string.split("\n")
     for line in lines:
         line = line.strip()
         match = pattern.match(line)
@@ -143,7 +146,7 @@ def extract_variable_declarations(
             value = match.group(2).strip('"')
             if expand is not None:
                 for key, val in expand.items():
-                    value = value.replace(f'${key}', val)
+                    value = value.replace(f"${key}", val)
                 env_vars[name] = value
                 expand = dict(expand, **env_vars)
             else:
@@ -152,7 +155,7 @@ def extract_variable_declarations(
 
 
 # Note: First possible i2 dependency -- vendoring for now
-def get_app_data_folder(ensure_existence=False):
+def get_app_data_folder(ensure_exists=False):
     """
     Returns the full path of a directory suitable for storing application-specific data.
 
@@ -164,34 +167,31 @@ def get_app_data_folder(ensure_existence=False):
         str: The full path of the app data folder.
 
     See https://github.com/i2mint/i2mint/issues/1.
-    """
-    if os.name == 'nt':
-        # Windows
-        app_data_folder = os.getenv('APPDATA')
-    elif os.name == 'darwin':
-        # macOS
-        app_data_folder = os.path.expanduser('~/.config')
-    else:
-        # Linux/Unix
-        app_data_folder = os.path.expanduser('~/.config')
 
-    if ensure_existence and not os.path.isdir(app_data_folder):
+    For a more complete implementation, see:
+    """
+    if os.name == "nt":
+        # Windows
+        app_data_folder = os.getenv("APPDATA")
+    else:
+        # macOS and Linux/Unix
+        app_data_folder = os.path.expanduser("~/.config")
+
+    if ensure_exists and not os.path.isdir(app_data_folder):
         os.mkdir(app_data_folder)
     return app_data_folder
 
 
-# TODO: Add a hidden file that annotates the directory as one managed by config2py,
-#  so that if
 def _get_app_data_dir(dirname=pkg_name):
     """Get the app data directory."""
-    app_data_dir = os.path.join(get_app_data_folder(ensure_existence=True), dirname)
+    app_data_dir = os.path.join(get_app_data_folder(ensure_exists=True), dirname)
     if not os.path.isdir(app_data_dir):
         os.mkdir(app_data_dir)
         # Add a hidden file that annotates the directory as one managed by config2py,
         # so that we at least have a chance of distinguishing it from a directory of
         # the same name that another program might create (we don't want to write in
         # someone else's directory!).
-        (Path(app_data_dir) / '.config2py').write_text('I was created by config2py.')
+        (Path(app_data_dir) / ".config2py").write_text("I was created by config2py.")
     return app_data_dir
 
 
