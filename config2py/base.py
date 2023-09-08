@@ -89,8 +89,8 @@ GetConfigEgress = Callable[[KT, VT], VT]
 #     )
 # openai.api_key = _api_key
 
-config_not_found = mk_sentinel("config_not_found")
-no_default = mk_sentinel("no_default")
+config_not_found = mk_sentinel('config_not_found')
+no_default = mk_sentinel('no_default')
 
 
 def get_config(
@@ -203,7 +203,7 @@ def get_config(
     value = chain_map.get(key, config_not_found)
     if value is config_not_found:
         if default is no_default:
-            raise ConfigNotFound(f"Could not find config for key: {key}")
+            raise ConfigNotFound(f'Could not find config for key: {key}')
         else:
             value = default
     if egress is not None:
@@ -287,11 +287,11 @@ class FuncBasedGettableContainer:
             v = self.getter(k)
         except self.config_not_found_exceptions as e:
             raise KeyError(
-                f"There was an exception when computing key: {k} with the function "
-                f"{self.getter}. The exception was: {e}"
+                f'There was an exception when computing key: {k} with the function '
+                f'{self.getter}. The exception was: {e}'
             )
         if not self.val_is_valid(v):
-            raise KeyError(f"Value for key {k} is not valid: {v}")
+            raise KeyError(f'Value for key {k} is not valid: {v}')
         return v
 
     # TODO: Is this used to indicate that the getter couldn't find a key.
@@ -321,7 +321,7 @@ def gettable_containers(
             )
         else:
             raise AssertionError(
-                f"Source must be a Gettable or a Callable, not {type(src)}"
+                f'Source must be a Gettable or a Callable, not {type(src)}'
             )
 
 
@@ -338,7 +338,7 @@ def sources_chainmap(
 def ask_user_for_key(
     key=None,
     *,
-    prompt_template="Enter a value for {}: ",
+    prompt_template='Enter a value for {}: ',
     save_to: Optional[MutableMapping] = None,
     user_asker=ask_user_for_input,
     egress: Optional[Callable] = None,
@@ -362,7 +362,7 @@ def ask_user_for_key(
 def user_gettable(
     save_to: Optional[MutableMapping] = None,
     *,
-    prompt_template="Enter a value for {}: ",
+    prompt_template='Enter a value for {}: ',
     egress: Optional[Callable] = None,
     user_asker=ask_user_for_input,
     val_is_valid: Callable[[VT], bool] = always_true,
