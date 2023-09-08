@@ -56,7 +56,7 @@ It will return the value that the user entered last time, without prompting the
 user again.
 
 
-# A few notable tools you can import from `config2py`
+# A few notable tools you can import from config2py
 
 * `get_config`: Get a config value from a list of sources. See more below.
 * `user_gettable`: Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
