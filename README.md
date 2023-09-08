@@ -14,6 +14,7 @@ from dol import TextFiles
 import os
 
 my_configs = TextFiles('~/.my_configs/')  # Note, to run this, you'd need to have such a directory!
+# (But you can also use my_configs = dict() if you want.)
 config_getter = get_config(sources=[locals(), os.environ, some_store, user_gettable(some_store)])
 ```
 
