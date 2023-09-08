@@ -6,7 +6,7 @@ To install:	```pip install config2py```
 
 [Documentation](https://i2mint.github.io/config2py/)
 
-Illustrative example:
+## Illustrative example
 
 ```python
 from config2py import get_config, user_gettable
