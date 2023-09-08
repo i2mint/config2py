@@ -1,4 +1,4 @@
-# `config2py`
+# config2py
 
 Simplified reading and writing configurations from various sources and formats.
 
@@ -65,7 +65,7 @@ user again.
 * `get_configs_local_store`: Get a local store (mapping interface of local files) of configs for a given app or package name
 * `configs`: A default local store (mapping interface of local files) for configs.
 
-## `get_config`
+## get_config
 
 Get a config value from a list of sources.
 
