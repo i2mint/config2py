@@ -8,8 +8,6 @@ from typing import Optional, Union, Any, Callable
 from dol import TextFiles
 import getpass
 
-from lkj import filesys
-
 pkg_name = "config2py"
 DFLT_MASKING_INPUT = False
 
@@ -34,7 +32,7 @@ def ask_user_for_input(
     egress: Callable = identity,
 ) -> str:
     """
-    Ask the user for input, optionally masking the input.
+    Ask the user for input, optionally masking, validating and transforming the input.
 
     :param prompt: Prompt to display to the user
     :param default: Default value to return if the user enters nothing

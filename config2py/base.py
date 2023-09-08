@@ -10,14 +10,18 @@ from typing import (
     Protocol,
     Union,
     runtime_checkable,
-    Container,
+    Optional,
+    MutableMapping,
 )
 from dataclasses import dataclass
-from functools import lru_cache
-from i2 import mk_sentinel
+from functools import lru_cache, partial
+from i2 import mk_sentinel  # TODO: Only i2 dependency. Consider replacing.
 
-from config2py.util import always_true
+from config2py.util import always_true, ask_user_for_input
 from config2py.errors import ConfigNotFound
+
+# def mk_sentinel(name):  # TODO: Only i2 dependency. Here's replacement, but not picklable
+#     return type(name, (), {'__repr__': lambda self: name})()
 
 
 @runtime_checkable
@@ -85,13 +89,13 @@ GetConfigEgress = Callable[[KT, VT], VT]
 #     )
 # openai.api_key = _api_key
 
-config_not_found = mk_sentinel('config_not_found')
-no_default = mk_sentinel('no_default')
+config_not_found = mk_sentinel("config_not_found")
+no_default = mk_sentinel("no_default")
 
 
 def get_config(
-    key: KT,
-    sources: Sources,
+    key: KT = None,
+    sources: Sources = None,
     *,
     default: VT = no_default,
     egress: GetConfigEgress = None,
@@ -186,12 +190,20 @@ def get_config(
     For more info, see: https://github.com/i2mint/config2py/issues/4
 
     """
-
+    if key is None and sources is not None:
+        return partial(
+            get_config,
+            sources=sources,
+            default=default,
+            egress=egress,
+            val_is_valid=val_is_valid,
+            config_not_found_exceptions=config_not_found_exceptions,
+        )
     chain_map = sources_chainmap(sources, val_is_valid, config_not_found_exceptions)
     value = chain_map.get(key, config_not_found)
     if value is config_not_found:
         if default is no_default:
-            raise ConfigNotFound(f'Could not find config for key: {key}')
+            raise ConfigNotFound(f"Could not find config for key: {key}")
         else:
             value = default
     if egress is not None:
@@ -275,13 +287,14 @@ class FuncBasedGettableContainer:
             v = self.getter(k)
         except self.config_not_found_exceptions as e:
             raise KeyError(
-                f'There was an exception when computing key: {k} with the function '
-                f'{self.getter}. The exception was: {e}'
+                f"There was an exception when computing key: {k} with the function "
+                f"{self.getter}. The exception was: {e}"
             )
         if not self.val_is_valid(v):
-            raise KeyError(f'Value for key {k} is not valid: {v}')
+            raise KeyError(f"Value for key {k} is not valid: {v}")
         return v
 
+    # TODO: Is this used to indicate that the getter couldn't find a key.
     def __contains__(self, k):
         try:
             self[k]
@@ -308,7 +321,7 @@ def gettable_containers(
             )
         else:
             raise AssertionError(
-                f'Source must be a Gettable or a Callable, not {type(src)}'
+                f"Source must be a Gettable or a Callable, not {type(src)}"
             )
 
 
@@ -320,3 +333,88 @@ def sources_chainmap(
     """Create a ``ChainMap`` from a list of sources"""
     sources = gettable_containers(sources, val_is_valid, config_not_found_exceptions)
     return ChainMap(*gettable_containers(sources))
+
+
+def ask_user_for_key(
+    key=None,
+    *,
+    prompt_template="Enter a value for {}: ",
+    save_to: Optional[MutableMapping] = None,
+    user_asker=ask_user_for_input,
+    egress: Optional[Callable] = None,
+):
+    if key is None:
+        return partial(
+            ask_user_for_key,
+            prompt_template=prompt_template,
+            save_to=save_to,
+            user_asker=user_asker,
+            egress=egress,
+        )
+    val = user_asker(prompt_template.format(key))
+    if isinstance(egress, Callable):
+        val = egress(key, val)
+    if save_to is not None:
+        save_to[key] = val
+    return val
+
+
+def user_gettable(
+    save_to: Optional[MutableMapping] = None,
+    *,
+    prompt_template="Enter a value for {}: ",
+    egress: Optional[Callable] = None,
+    user_asker=ask_user_for_input,
+    val_is_valid: Callable[[VT], bool] = always_true,
+    config_not_found_exceptions: Iterable[Exception] = (Exception,),
+):
+    """
+    Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
+
+    :param save_to: A ``MutableMapping`` to save the user's response to. If ``None``,
+        the user's response is not saved.
+    :param prompt_template: A template string to prompt the user with. It should
+        contain a placeholder for the key, e.g. ``"Enter a value for {}: "``.
+    :param egress: A function to apply to the user's response before returning it.
+        This can be used to validate the response, for example.
+    :param user_asker: A function that asks the user for input. It should take a    
+        prompt string and return the user's response.
+    :param val_is_valid: A function that takes a value and returns a boolean. If it
+        returns ``False``, the user will be asked for a new value.
+    :param config_not_found_exceptions: An iterable of exceptions that should be
+        considered as "config not found" exceptions. If the user's response raises
+        one of these exceptions, the user will be asked for a new value.
+    :return: A ``GettableContainer`` that asks the user for a value, optionally saving
+        it.
+
+    Example:
+    
+    >>> s = user_gettable()
+    >>> v = s['SOME_KEY']  # doctest: +SKIP
+    'SOME_VAL'
+
+    This will trigger a prompt for the user to enter the value of ``SOME_KEY``.
+    When they do (say they entered 'SOME_VAL') it will return that value.
+
+    And if you specify a save_to store (usually a persistent MutableMapping made with 
+    the ``dol`` package) then it will save the value to that store for future use. 
+
+    >>> d = dict(some='store')
+    >>> s = user_gettable(save_to=d)
+    >>> s['SOME_KEY']  # doctest: +SKIP
+    'SOME_VAL'
+    >>> d  # doctest: +SKIP
+    {'some': 'store', 'SOME_KEY': 'SOME_VAL'}
+
+    """
+    getter = ask_user_for_key(
+        prompt_template=prompt_template,
+        save_to=save_to,
+        user_asker=user_asker,
+        egress=egress,
+    )
+    return FuncBasedGettableContainer(
+        getter,
+        val_is_valid=val_is_valid,
+        config_not_found_exceptions=config_not_found_exceptions,
+    )

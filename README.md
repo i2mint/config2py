@@ -1,20 +1,75 @@
 # `config2py`
 
-Simplified reading and writing configurations from various sources and formats
+Simplified reading and writing configurations from various sources and formats.
 
 To install:	```pip install config2py```
 
 [Documentation](https://i2mint.github.io/config2py/)
 
+Illustrative example:
 
-# Best of
+```python
+from config2py import get_config, user_gettable
+from dol import TextFiles
+import os
+
+my_configs = TextFiles('~/.my_configs/')  # Note, to run this, you'd need to have such a directory!
+config_getter = get_config(sources=[locals(), os.environ, some_store, user_gettable(some_store)])
+```
+
+Now let's see what happens when we do:
+
+```python
+config_getter('SOME_CONFIG_KEY')
+```
+
+Well, it will first look in `locals()`, which is a dictionary containing local variables
+(this could happen, for example, if we're in a function and want to first see if there was an argument where we could find that value).
+
+Assuming it doesn't find such a key in `locals()` it goes on to try to find it in 
+`os.environ`, which is a dict containing system environment variables. 
+
+Assuming it doesn't find it there either (that is, doesn't find a file with that name in 
+the directory `~/.my_configs/`), it will prompt the user to enter the value of that key.
+The function finally returns with the value that the user entered.
+
+But there's more!
+
+Now look at what's in my_configs! 
+If you've used `TextFiles`, look in the folder to see that there's a new file.
+Either way, if you do:
+
+```python
+my_configs['SOME_CONFIG_KEY']
+```
+
+You'll now see the value the user entered.
+
+This means what? This means that the next time you try to get the config:
+
+```python
+config_getter('SOME_CONFIG_KEY')
+```
+
+It will return the value that the user entered last time, without prompting the 
+user again.
+
+
+# A few notable tools you can import from `config2py`
+
+* `get_config`: Get a config value from a list of sources. See more below.
+* `user_gettable`: Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
+* `ask_user_for_input`: Ask the user for input, optionally masking, validating and transforming the input.
+* `get_app_data_folder`: Returns the full path of a directory suitable for storing application-specific data.
+* `get_configs_local_store`: Get a local store (mapping interface of local files) of configs for a given app or package name
+* `configs`: A default local store (mapping interface of local files) for configs.
 
 ## `get_config`
 
 Get a config value from a list of sources.
 
-This function acts as a mini-framework to construct config accessors including defining multiple sources of where to find these configs, 
-including asking the user for a config value (and optionally saving it for them).
+This function acts as a mini-framework to construct config accessors including defining 
+multiple sources of where to find these configs, 
 
 A source can be a function or a ``GettableContainer``.
 (A ``GettableContainer`` is anything that can be indexed with brackets: ``obj[k]``,
