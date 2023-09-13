@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>config2py.s_configparser &mdash; config2py 0.1.6 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            config2py
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py.html">config2py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/base.html">config2py.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/errors.html">config2py.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/util.html">config2py.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tools.html">config2py.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/util.html">config2py.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">config2py</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">config2py.s_configparser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for config2py.s_configparser</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Data Object Layer for configparser standard lib.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">configparser</span> <span class="kn">import</span> <span class="n">ConfigParser</span>
+<span class="kn">from</span> <span class="nn">configparser</span> <span class="kn">import</span> <span class="n">BasicInterpolation</span><span class="p">,</span> <span class="n">ExtendedInterpolation</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+
+<span class="kn">from</span> <span class="nn">dol</span> <span class="kn">import</span> <span class="n">Store</span>
+
+<span class="c1"># from py2store.signatures import Sig</span>
+
+<span class="n">_test_config_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;[Simple Values]</span>
+<span class="s1">key=value</span>
+<span class="s1">spaces in keys=allowed</span>
+<span class="s1">spaces in values=allowed as well</span>
+<span class="s1">spaces around the delimiter = obviously</span>
+<span class="s1">you can also use : to delimit keys from values</span>
+
+<span class="s1">[All Values Are Strings]</span>
+<span class="s1">values like this: 1000000</span>
+<span class="s1">or this: 3.14159265359</span>
+<span class="s1">are they treated as numbers? : no</span>
+<span class="s1">integers, floats and booleans are held as: strings</span>
+<span class="s1">can use the API to get converted values directly: true</span>
+
+<span class="s1">[Multiline Values]</span>
+<span class="s1">chorus: I&#39;m a lumberjack, and I&#39;m okay</span>
+<span class="s1">    I sleep all night and I work all day</span>
+
+<span class="s1">[No Values]</span>
+<span class="s1">key_without_value</span>
+<span class="s1">empty string value here =</span>
+
+<span class="s1">[You can use comments]</span>
+<span class="s1"># like this</span>
+<span class="s1">; or this</span>
+
+<span class="s1"># By default only in an empty line.</span>
+<span class="s1"># Inline comments can be harmful because they prevent users</span>
+<span class="s1"># from using the delimiting characters as parts of values.</span>
+<span class="s1"># That being said, this can be customized.</span>
+
+<span class="s1">    [Sections Can Be Indented]</span>
+<span class="s1">        can_values_be_as_well = True</span>
+<span class="s1">        does_that_mean_anything_special = False</span>
+<span class="s1">        purpose = formatting for readability</span>
+<span class="s1">        multiline_values = are</span>
+<span class="s1">            handled just fine as</span>
+<span class="s1">            long as they are indented</span>
+<span class="s1">            deeper than the first line</span>
+<span class="s1">            of a value</span>
+<span class="s1">        # Did I mention we can indent comments, too?</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">persist_after_operation</span><span class="p">(</span><span class="n">method_func</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">method_func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_method_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">method_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">persist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">return</span> <span class="n">_method_func</span>
+
+
+<div class="viewcode-block" id="super_and_persist"><a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.super_and_persist">[docs]</a><span class="k">def</span> <span class="nf">super_and_persist</span><span class="p">(</span><span class="n">super_cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    To be able to do this:</span>
+<span class="sd">    ```</span>
+<span class="sd">    __setitem__ = super_and_persist(ConfigParser, &#39;__setitem__&#39;)</span>
+<span class="sd">    __delitem__ = super_and_persist(ConfigParser, &#39;__delitem__&#39;)</span>
+<span class="sd">    ```</span>
+<span class="sd">    in your class definition block.</span>
+
+<span class="sd">    I thought I needed to wrap more method this way, but as it turns out, I might not,</span>
+<span class="sd">    so I prefer open code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@persist_after_operation</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">super_cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">method_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">method_obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">ConfigStore</span><span class="p">,</span> <span class="bp">self</span><span class="p">),</span> <span class="n">method_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">method_obj</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">method_func</span></div>
+
+
+<span class="n">ConfigParserStore</span> <span class="o">=</span> <span class="n">Store</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">ConfigParser</span><span class="p">)</span>
+<span class="n">ConfigParserStore</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s1">&#39;ConfigParserStore&#39;</span>
+
+
+<span class="c1"># TODO: ConfigParser is already a mapping, but pros/cons of subclassing?</span>
+<span class="c1">#   For instance, it has it&#39;s get method already, but it is not consistent with the get of collections.abc.Mapping</span>
+<span class="c1"># TODO: Extend to a KvPersister (include __setitem__ and __delitem__)</span>
+<span class="c1">#   Relevant methods: add_section, write, remove_section. Need to decide on auto-persistence.</span>
+<span class="c1">#   In fact, the reader is already a writer (from ConfigParser), but need to manage persistence.</span>
+<div class="viewcode-block" id="ConfigStore"><a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigStore">[docs]</a><span class="k">class</span> <span class="nc">ConfigStore</span><span class="p">(</span><span class="n">ConfigParserStore</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Persister (read, write, delete) for ini configs.</span>
+
+<span class="sd">    You can read ini formated configurations with ConfigStore (though if you want to</span>
+<span class="sd">    just read, you should use ConfigReader instead -- since ConfigReader disables</span>
+<span class="sd">    write and delete operations.</span>
+
+<span class="sd">    See ConfigReader for more examples of how to use ConfigStore.</span>
+<span class="sd">    We&#39;ll mainly focus on write and delete operations here.</span>
+
+<span class="sd">    &gt;&gt;&gt; import os</span>
+<span class="sd">    &gt;&gt;&gt; from config2py.s_configparser import ConfigStore, ConfigReader</span>
+<span class="sd">    &gt;&gt;&gt; ini_filepath = &#39;config_store_test.ini&#39;</span>
+<span class="sd">    &gt;&gt;&gt; if os.path.isfile(ini_filepath):</span>
+<span class="sd">    ...     os.remove(ini_filepath)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; os.path.isfile(ini_filepath)  # File doesn&#39;t exist</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; s = ConfigStore(ini_filepath)</span>
+<span class="sd">    &gt;&gt;&gt; list(s)  # There&#39;s always a default (by default empty)</span>
+<span class="sd">    [&#39;DEFAULT&#39;]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; os.path.isfile(ini_filepath)  # But the file still doesn&#39;t exist (the DEFAULT is virtual)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Now let&#39;s make a config</span>
+<span class="sd">    &gt;&gt;&gt; s[&#39;nothing&#39;] = {&#39;special&#39;: &#39;about&#39;, &#39;number&#39;: 42}</span>
+<span class="sd">    &gt;&gt;&gt; list(s)</span>
+<span class="sd">    [&#39;DEFAULT&#39;, &#39;nothing&#39;]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; os.path.isfile(ini_filepath)  # But NOW the file exists (ConfigStore will automatically write to file)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; s[&#39;add&#39;] = {&#39;more&#39;: &#39;sections&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; list(s)</span>
+<span class="sd">    [&#39;DEFAULT&#39;, &#39;nothing&#39;, &#39;add&#39;]</span>
+
+<span class="sd">    &gt;&gt;&gt; # and yes, that config can now be read</span>
+<span class="sd">    &gt;&gt;&gt; config_reader = ConfigReader(ini_filepath)</span>
+<span class="sd">    &gt;&gt;&gt; list(config_reader)</span>
+<span class="sd">    [&#39;DEFAULT&#39;, &#39;nothing&#39;, &#39;add&#39;]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; config_reader[&#39;nothing&#39;]</span>
+<span class="sd">    &lt;Section: nothing&gt;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; dict(config_reader[&#39;nothing&#39;])  # note that 42 is now a string (that&#39;s the ini format for you!)</span>
+<span class="sd">    {&#39;special&#39;: &#39;about&#39;, &#39;number&#39;: &#39;42&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; dict(config_reader[&#39;DEFAULT&#39;])  # and DEFAULT is empty</span>
+<span class="sd">    {}</span>
+
+<span class="sd">    You can delete sections</span>
+<span class="sd">    &gt;&gt;&gt; del s[&#39;add&#39;]</span>
+
+<span class="sd">    But you&#39;ll need to refresh your reader to see the effect.</span>
+<span class="sd">    &gt;&gt;&gt; list(config_reader)</span>
+<span class="sd">    [&#39;DEFAULT&#39;, &#39;nothing&#39;, &#39;add&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; config_reader = ConfigReader(ini_filepath)</span>
+<span class="sd">    &gt;&gt;&gt; list(config_reader)</span>
+<span class="sd">    [&#39;DEFAULT&#39;, &#39;nothing&#39;]</span>
+
+<span class="sd">    You can use `update` to write several sections at the same time.</span>
+<span class="sd">    Note that existing sections will be completely overwritten.</span>
+<span class="sd">    &gt;&gt;&gt; s.update({&#39;nothing&#39;: {&#39;like&#39;: &#39;you&#39;}, &#39;new_section&#39;: {&#39;a&#39;: &#39;b&#39;, &#39;c&#39;: &#39;d&#39;}})</span>
+<span class="sd">    &gt;&gt;&gt; ConfigReader(ini_filepath).to_dict()</span>
+<span class="sd">    {&#39;DEFAULT&#39;: {}, &#39;nothing&#39;: {&#39;like&#39;: &#39;you&#39;}, &#39;new_section&#39;: {&#39;a&#39;: &#39;b&#39;, &#39;c&#39;: &#39;d&#39;}}</span>
+
+<span class="sd">    **Warning: On the other hand, updating a section will not persist the updates**</span>
+
+<span class="sd">    Updates are automatically persisted at the top level, as shown in the example above.</span>
+<span class="sd">    This means you can change a section entirely, but partial updates of a section</span>
+<span class="sd">    will not be persisted.</span>
+
+<span class="sd">    You&#39;ll see the updated section in the store.</span>
+<span class="sd">    &gt;&gt;&gt; s[&#39;nothing&#39;].update({&#39;something&#39;: &#39;else&#39;})</span>
+<span class="sd">    &gt;&gt;&gt; dict(s[&#39;nothing&#39;])</span>
+<span class="sd">    {&#39;like&#39;: &#39;you&#39;, &#39;something&#39;: &#39;else&#39;}</span>
+
+<span class="sd">    But it&#39;s not automatically persisted</span>
+<span class="sd">    &gt;&gt;&gt; dict(ConfigReader(ini_filepath)[&#39;nothing&#39;])</span>
+<span class="sd">    {&#39;like&#39;: &#39;you&#39;}</span>
+
+<span class="sd">    ... unless you ask for it explicitly</span>
+<span class="sd">    &gt;&gt;&gt; s.persist()</span>
+<span class="sd">    &gt;&gt;&gt; dict(ConfigReader(ini_filepath)[&#39;nothing&#39;])</span>
+<span class="sd">    {&#39;like&#39;: &#39;you&#39;, &#39;something&#39;: &#39;else&#39;}</span>
+
+<span class="sd">    # TODO: Could make section updates auto-persistent by wrapping configparser.SectionProxy</span>
+
+<span class="sd">    For your convenience, the ConfigStore is also a context manager, that will,</span>
+<span class="sd">    you guessed, persist stuff when (and only when) you exit it.</span>
+
+<span class="sd">    &gt;&gt;&gt; ConfigReader(ini_filepath).to_dict()</span>
+<span class="sd">    {&#39;DEFAULT&#39;: {}, &#39;nothing&#39;: {&#39;like&#39;: &#39;you&#39;, &#39;something&#39;: &#39;else&#39;}, &#39;new_section&#39;: {&#39;a&#39;: &#39;b&#39;, &#39;c&#39;: &#39;d&#39;}}</span>
+<span class="sd">    &gt;&gt;&gt; with ConfigStore(ini_filepath) as s:</span>
+<span class="sd">    ...     del s[&#39;new_section&#39;]  # that&#39;s usually immediately persisted. This time, it&#39;ll wait to be</span>
+<span class="sd">    ...     del s[&#39;nothing&#39;][&#39;something&#39;]  # delete the something field of nothing section</span>
+<span class="sd">    ...     s[&#39;nothing&#39;].update({&#39;like&#39;: &#39;that&#39;, &#39;ever&#39;: &#39;happened&#39;})  # update &#39;like&#39; config and add an &#39;ever&#39; one</span>
+<span class="sd">    &gt;&gt;&gt; ConfigReader(ini_filepath).to_dict()</span>
+<span class="sd">    {&#39;DEFAULT&#39;: {}, &#39;nothing&#39;: {&#39;like&#39;: &#39;that&#39;, &#39;ever&#39;: &#39;happened&#39;}}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="n">space_around_delimiters</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">BasicInterpolation</span> <span class="o">=</span> <span class="n">BasicInterpolation</span>
+    <span class="n">ExtendedInterpolation</span> <span class="o">=</span> <span class="n">ExtendedInterpolation</span>
+    <span class="n">source_kind</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># @Sig.from_objs([&#39;source&#39;, ConfigParser.__init__, (&#39;target_kind&#39;, None)])  # need to add source and target_kind</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">defaults</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dict_type</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
+        <span class="n">allow_no_value</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">target_kind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">more_config_parser_kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">defaults</span><span class="p">,</span> <span class="n">dict_type</span><span class="p">,</span> <span class="n">allow_no_value</span><span class="p">,</span> <span class="o">**</span><span class="n">more_config_parser_kwargs</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_within_context_manager</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">read_string</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+                <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+                <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;filepath&#39;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_string</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;bytes&#39;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_dict</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;read&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;stream&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_kind</span> <span class="o">=</span> <span class="n">source_kind</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">=</span> <span class="n">target_kind</span> <span class="ow">or</span> <span class="n">source_kind</span>
+
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">section</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">section_contents</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">section</span><span class="p">,</span> <span class="n">section_contents</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="ConfigStore.get"><a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigStore.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Needed because the Store.get didn&#39;t catch the NoSectionError&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span></div>
+
+<div class="viewcode-block" id="ConfigStore.persist"><a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigStore.persist">[docs]</a>    <span class="k">def</span> <span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Persists the data (if not in a context manager).</span>
+<span class="sd">        Persists means to call</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_within_context_manager</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s1">&#39;filepath&#39;</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s1">&#39;stream&#39;</span><span class="p">:</span>
+                    <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;bytes&#39;</span><span class="p">}:</span>
+                    <span class="n">string_target</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string_target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
+                    <span class="n">string_target</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">string_data</span> <span class="o">=</span> <span class="n">string_target</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">string_data</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s1">&#39;bytes&#39;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">string_data</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_within_context_manager</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc_details</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_within_context_manager</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">persist</span><span class="p">()</span>
+
+    <span class="nd">@persist_after_operation</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ConfigStore</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+    <span class="nd">@persist_after_operation</span>
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ConfigStore</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">k</span><span class="p">)</span></div>
+
+    <span class="c1"># __setitem__ = super_and_persist(ConfigParser, &#39;__setitem__&#39;)</span>
+    <span class="c1"># __delitem__ = super_and_persist(ConfigParser, &#39;__delitem__&#39;)</span>
+
+
+<div class="viewcode-block" id="ConfigReader"><a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigReader">[docs]</a><span class="k">class</span> <span class="nc">ConfigReader</span><span class="p">(</span><span class="n">ConfigStore</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A KvReader to read config files</span>
+<span class="sd">    &gt;&gt;&gt; from config2py.s_configparser import ConfigReader</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # from a (pretend) file</span>
+<span class="sd">    &gt;&gt;&gt; from io import BytesIO, StringIO</span>
+<span class="sd">    &gt;&gt;&gt; file_content_bytes = b&#39;&#39;&#39;</span>
+<span class="sd">    ... [Paths]</span>
+<span class="sd">    ... home_dir: /Users</span>
+<span class="sd">    ... my_dir: %(home_dir)s/lumberjack</span>
+<span class="sd">    ... my_pictures: %(my_dir)s/Pictures</span>
+<span class="sd">    ...</span>
+<span class="sd">    ... [Escape]</span>
+<span class="sd">    ... gain: 80%%  # use a %% to escape the % sign (% is the only character that needs to be escaped)&#39;&#39;&#39;</span>
+<span class="sd">    &gt;&gt;&gt; c = ConfigReader(file_content_bytes)  # get configs from the bytes</span>
+<span class="sd">    &gt;&gt;&gt; list(c)</span>
+<span class="sd">    [&#39;DEFAULT&#39;, &#39;Paths&#39;, &#39;Escape&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; ######## From a (pretend) file (pointer) ########</span>
+<span class="sd">    &gt;&gt;&gt; # Usually, you write your configs in a file and give ConfigReader the filepath, or open file pointer...</span>
+<span class="sd">    &gt;&gt;&gt; pretend_file_pointer = StringIO(file_content_bytes.decode())</span>
+<span class="sd">    &gt;&gt;&gt; c = ConfigReader(pretend_file_pointer)</span>
+<span class="sd">    &gt;&gt;&gt; list(c)</span>
+<span class="sd">    [&#39;DEFAULT&#39;, &#39;Paths&#39;, &#39;Escape&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; c[&#39;Paths&#39;]  # gives you a configparser.Section object</span>
+<span class="sd">    &lt;Section: Paths&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # A configparser.Section is a mapping. Let&#39;s see the keys</span>
+<span class="sd">    &gt;&gt;&gt; list(c[&#39;Paths&#39;])</span>
+<span class="sd">    [&#39;home_dir&#39;, &#39;my_dir&#39;, &#39;my_pictures&#39;]</span>
+
+<span class="sd">    # &gt;&gt;&gt; # here&#39;s a quick way to see both keys and values. Note how the home_dir interpolation was performed!</span>
+<span class="sd">    # &gt;&gt;&gt; dict(c[&#39;Paths&#39;])</span>
+<span class="sd">    # {&#39;home_dir&#39;: &#39;/Users&#39;, &#39;my_dir&#39;: &#39;/Users/lumberjack&#39;, &#39;my_pictures&#39;: &#39;/Users/lumberjack/Pictures&#39;}</span>
+
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; ######## Get configs from a dict ########</span>
+<span class="sd">    &gt;&gt;&gt; config_dict = {&#39;section1&#39;: {&#39;key1&#39;: &#39;value1&#39;},</span>
+<span class="sd">    ...                &#39;section2&#39;: {&#39;keyA&#39;: &#39;valueA&#39;, &#39;keyB&#39;: &#39;valueB&#39;},</span>
+<span class="sd">    ...                &#39;section3&#39;: {&#39;foo&#39;: &#39;x&#39;, &#39;bar&#39;: &#39;y&#39;,&#39;baz&#39;: &#39;z&#39;}}</span>
+<span class="sd">    &gt;&gt;&gt; c = ConfigReader(config_dict)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; assert list(c) == [&#39;DEFAULT&#39;, &#39;section1&#39;, &#39;section2&#39;, &#39;section3&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; assert list(c[&#39;section3&#39;]) == [&#39;foo&#39;, &#39;bar&#39;, &#39;baz&#39;]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; ######## Get configs from a string ########</span>
+<span class="sd">    &gt;&gt;&gt; from config2py.s_configparser import _test_config_str</span>
+<span class="sd">    &gt;&gt;&gt; c = ConfigReader(_test_config_str, allow_no_value=True)</span>
+<span class="sd">    &gt;&gt;&gt; list(c)</span>
+<span class="sd">    [&#39;DEFAULT&#39;, &#39;Simple Values&#39;, &#39;All Values Are Strings&#39;, &#39;Multiline Values&#39;, &#39;No Values&#39;, &#39;You can use comments&#39;, &#39;Sections Can Be Indented&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; list(c[&#39;Simple Values&#39;])</span>
+<span class="sd">    [&#39;key&#39;, &#39;spaces in keys&#39;, &#39;spaces in values&#39;, &#39;spaces around the delimiter&#39;, &#39;you can also use&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ConfigReader.persist"><a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigReader.persist">[docs]</a>    <span class="k">def</span> <span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;persist disabled for ConfigReader&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;__setitem__ disabled for ConfigReader&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;__delitem__ disabled for ConfigReader&#39;</span><span class="p">)</span></div>
+
+
+<span class="c1"># TODO: Need to wrap SectionProxy to make this work, since the obj and data here are</span>
+<span class="c1">#   those at a second level down.</span>
+<span class="c1">#   That is, when you do s[&#39;section&#39;][&#39;key&#39;] = obj, _data_of_obj gets activated on s, not s[&#39;section&#39;] as desired</span>
+<span class="c1"># class ConfigStoreWithLists(ConfigStore):</span>
+<span class="c1">#     def _data_of_obj(self, obj):</span>
+<span class="c1">#         if isinstance(obj, list):</span>
+<span class="c1">#             return &#39;\n&#39;.join(obj)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             return super()._data_of_obj(obj)</span>
+<span class="c1">#</span>
+<span class="c1">#     def _obj_of_data(self, data):</span>
+<span class="c1">#         if data.startswith(&#39;\n&#39;):</span>
+<span class="c1">#             return data.split(&#39;\n&#39;)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             return super()._obj_of_data(data)</span>
+
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<span class="c1"># TODO: postprocess_ini_section_items and preprocess_ini_section_items: Add comma separated possibility?</span>
+<span class="c1"># TODO: Find out if configparse has an option to do this processing alreadys</span>
+<div class="viewcode-block" id="postprocess_ini_section_items"><a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.postprocess_ini_section_items">[docs]</a><span class="k">def</span> <span class="nf">postprocess_ini_section_items</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Transform newline-separated string values into actual list of strings (assuming that intent)</span>
+
+<span class="sd">    &gt;&gt;&gt; section_from_ini = {</span>
+<span class="sd">    ...     &#39;name&#39;: &#39;aspyre&#39;,</span>
+<span class="sd">    ...     &#39;keywords&#39;: &#39;\n\tdocumentation\n\tpackaging\n\tpublishing&#39;</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &gt;&gt;&gt; section_for_python = dict(postprocess_ini_section_items(section_from_ini))</span>
+<span class="sd">    &gt;&gt;&gt; section_for_python</span>
+<span class="sd">    {&#39;name&#39;: &#39;aspyre&#39;, &#39;keywords&#39;: [&#39;documentation&#39;, &#39;packaging&#39;, &#39;publishing&#39;]}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">splitter_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[</span><span class="se">\n\r\t</span><span class="s1">]+&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">splitter_re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">vv</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">vv</span> <span class="ow">in</span> <span class="n">v</span> <span class="k">if</span> <span class="n">vv</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span></div>
+
+
+<span class="c1"># TODO: Find out if configparse has an option to do this processing alreadys</span>
+<div class="viewcode-block" id="preprocess_ini_section_items"><a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.preprocess_ini_section_items">[docs]</a><span class="k">def</span> <span class="nf">preprocess_ini_section_items</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform list values into newline-separated strings, in view of writing the value to a ini formatted section</span>
+<span class="sd">    &gt;&gt;&gt; section = {</span>
+<span class="sd">    ...     &#39;name&#39;: &#39;aspyre&#39;,</span>
+<span class="sd">    ...     &#39;keywords&#39;: [&#39;documentation&#39;, &#39;packaging&#39;, &#39;publishing&#39;]</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &gt;&gt;&gt; for_ini = dict(preprocess_ini_section_items(section))</span>
+<span class="sd">    &gt;&gt;&gt; print(&#39;keywords =&#39; + for_ini[&#39;keywords&#39;])  # doctest: +NORMALIZE_WHITESPACE</span>
+<span class="sd">    keywords =</span>
+<span class="sd">        documentation</span>
+<span class="sd">        packaging</span>
+<span class="sd">        publishing</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

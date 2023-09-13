@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>config2py.base &mdash; config2py 0.1.6 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="config2py.errors" href="errors.html" />
+    <link rel="prev" title="config2py" href="../config2py.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            config2py
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../config2py.html">config2py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">config2py.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="errors.html">config2py.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="s_configparser.html">config2py.s_configparser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/util.html">config2py.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">config2py.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">config2py.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">config2py</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">config2py.base</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/config2py/base.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-config2py.base">
+<span id="config2py-base"></span><h1>config2py.base<a class="headerlink" href="#module-config2py.base" title="Permalink to this headline">¶</a></h1>
+<p>Base for getting configs from various sources and formats</p>
+<dl class="py class">
+<dt id="config2py.base.FuncBasedGettableContainer">
+<em class="property">class </em><code class="sig-prename descclassname">config2py.base.</code><code class="sig-name descname">FuncBasedGettableContainer</code><span class="sig-paren">(</span><em class="sig-param">getter: Callable[[KT], VT], val_is_valid: Callable[[VT], bool] = &lt;function always_true&gt;, config_not_found_exceptions: Iterable[Exception] = (&lt;class 'Exception'&gt;,)</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#FuncBasedGettableContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config2py.base.FuncBasedGettableContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that wraps a <code class="docutils literal notranslate"><span class="pre">Callable[[KT],</span> <span class="pre">VT]</span></code> function so it has a (partial)
+Mapping[KT, TT] interface. It is “partial” in the sense that it only implements
+<code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>, raise a <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> when a key can’t be computed.
+This is the standard for <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> types, which enables us to use the
+<code class="docutils literal notranslate"><span class="pre">FuncBasedGettable</span></code> in a <code class="docutils literal notranslate"><span class="pre">collections.ChainMap</span></code> to catch the error and move on
+to the next source.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">getter</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;quux&#39;</span>
+<span class="gp">... </span>    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;green&#39;</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;eggs&#39;</span>
+<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;I don&#39;t handle that: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span> <span class="o">=</span> <span class="n">FuncBasedGettableContainer</span><span class="p">(</span><span class="n">getter</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span>
+<span class="go">&#39;quux&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;green&#39;</span><span class="p">]</span>
+<span class="go">&#39;eggs&#39;</span>
+</pre></div>
+</div>
+<p>Observe below that though the <code class="docutils literal notranslate"><span class="pre">getter</span></code> function raises a <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>, the
+<code class="docutils literal notranslate"><span class="pre">FuncBasedGettableContainer</span></code> raises a <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>, to conform to the
+<code class="docutils literal notranslate"><span class="pre">Mapping</span></code> protocol.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;no_a_key&#39;</span><span class="p">]</span>  
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">KeyError</span>: <span class="n">&#39;There was an exception ... : &quot;I don&#39;t handle that: no_a_key&quot;&#39;</span>
+</pre></div>
+</div>
+<p>Note that by default, <code class="docutils literal notranslate"><span class="pre">FuncBasedGettableContainer</span></code> will catch all <code class="docutils literal notranslate"><span class="pre">Exception</span></code>
+exceptions, but you can specify a different set of exceptions to catch.</p>
+<p>Note as well that you can specify a <code class="docutils literal notranslate"><span class="pre">val_is_valid</span></code> function that will be used to
+check the value returned by the <code class="docutils literal notranslate"><span class="pre">getter</span></code> function. If the value is not valid, a
+<code class="docutils literal notranslate"><span class="pre">KeyError</span></code> will also be raised.
+This is useful, for example, when you have a function that returns a sentinel like
+<code class="docutils literal notranslate"><span class="pre">None</span></code> instead of raising an exception, but you want to treat that as a
+<code class="docutils literal notranslate"><span class="pre">KeyError</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">getter</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;quux&#39;</span>
+<span class="gp">... </span>    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;green&#39;</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;eggs&#39;</span>
+<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="kc">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span> <span class="o">=</span> <span class="n">FuncBasedGettableContainer</span><span class="p">(</span><span class="n">getter</span><span class="p">,</span> <span class="n">val_is_valid</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">]</span>
+<span class="go">&#39;quux&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;no_a_key&#39;</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">KeyError</span>: <span class="n">&#39;Value for key no_a_key is not valid: None&#39;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="config2py.base.FuncBasedGettableContainer.val_is_valid">
+<code class="sig-name descname">val_is_valid</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#config2py.base.FuncBasedGettableContainer.val_is_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that just returns True.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="config2py.base.GettableContainer">
+<em class="property">class </em><code class="sig-prename descclassname">config2py.base.</code><code class="sig-name descname">GettableContainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#GettableContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config2py.base.GettableContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">Containers</span></code> that are “gettable””.</p>
+<p>By “gettable”, we mean that we can fetch an element from <code class="docutils literal notranslate"><span class="pre">obj</span></code> with brackets:
+<code class="docutils literal notranslate"><span class="pre">obj[k]</span></code>. That is, <code class="docutils literal notranslate"><span class="pre">obj</span></code> has a <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> method.
+A <code class="docutils literal notranslate"><span class="pre">Container</span></code> means that <code class="docutils literal notranslate"><span class="pre">obj</span></code> has a <code class="docutils literal notranslate"><span class="pre">__contains__</span></code> method, i.e. the
+expression <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">in</span> <span class="pre">obj</span></code> is valid.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">GettableContainer</span><span class="p">)</span>  <span class="c1"># 3 is not Gettable (can&#39;t do 3[...])</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>But <code class="docutils literal notranslate"><span class="pre">dict</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, and <code class="docutils literal notranslate"><span class="pre">str</span></code> are GettableContainer:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">GettableContainer</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">({</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">},</span> <span class="n">GettableContainer</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">GettableContainer</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Note that so are their types:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">GettableContainer</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>But <cite>set</cite> is not a <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myset</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">myset</span><span class="p">,</span> <span class="n">GettableContainer</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>This is because a <code class="docutils literal notranslate"><span class="pre">set</span></code> is a <code class="docutils literal notranslate"><span class="pre">Container</span></code>, but it is not gettable:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mi">4</span> <span class="ow">in</span> <span class="n">myset</span>  <span class="c1"># set is a container</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myset</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>  <span class="c1"># ... but not gettable</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">TypeError</span>: <span class="n">&#39;set&#39; object is not subscriptable</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="config2py.base.get_config">
+<code class="sig-prename descclassname">config2py.base.</code><code class="sig-name descname">get_config</code><span class="sig-paren">(</span><em class="sig-param">key: KT = None, sources: Iterable[Union[config2py.base.GettableContainer, Callable[[KT], VT]]] = None, *, default: VT = Sentinel('no_default'), egress: Callable[[KT, VT], VT] = None, val_is_valid: Callable[[VT], bool] = &lt;function always_true&gt;, config_not_found_exceptions: Iterable[Exception] = (&lt;class 'Exception'&gt;,)</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config2py.base.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a config value from a list of sources</p>
+<p>A source can be a function or a <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code>.
+(A <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code> is anything that can be indexed with brackets: <code class="docutils literal notranslate"><span class="pre">obj[k]</span></code>,
+like <code class="docutils literal notranslate"><span class="pre">dict</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code>, etc..).</p>
+<p>Let’s take two sources: a <code class="docutils literal notranslate"><span class="pre">dict</span></code> and a <code class="docutils literal notranslate"><span class="pre">Callable</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;quux&#39;</span>
+<span class="gp">... </span>    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;green&#39;</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;eggs&#39;</span>
+<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;I don&#39;t handle that: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dict_</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">:</span> <span class="s1">&#39;qux&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span><span class="p">,</span> <span class="n">dict_</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>See that <code class="docutils literal notranslate"><span class="pre">get_config</span></code> go through the sources in the order they were listed,
+and returns the first value it finds (or manages to compute) for the key:</p>
+<p><code class="docutils literal notranslate"><span class="pre">get_config</span></code> finds <code class="docutils literal notranslate"><span class="pre">'foo'</span></code> in the very first source (<code class="docutils literal notranslate"><span class="pre">func</span></code>):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_config</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="p">)</span>
+<span class="go">&#39;quux&#39;</span>
+</pre></div>
+</div>
+<p>But <code class="docutils literal notranslate"><span class="pre">baz</span></code> makes <code class="docutils literal notranslate"><span class="pre">func</span></code> raise an error, so it goes to the next source: <code class="docutils literal notranslate"><span class="pre">dict_</span></code>.
+There, it finds <code class="docutils literal notranslate"><span class="pre">'baz'</span></code> and returns its value:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_config</span><span class="p">(</span><span class="s1">&#39;baz&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="p">)</span>
+<span class="go">&#39;qux&#39;</span>
+</pre></div>
+</div>
+<p>On the other hand, no one manages to find a config value for <code class="docutils literal notranslate"><span class="pre">'no_a_key'</span></code>, so
+<code class="docutils literal notranslate"><span class="pre">get_config</span></code> raises an error:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_config</span><span class="p">(</span><span class="s1">&#39;no_a_key&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">config2py.errors.ConfigNotFound</span>: <span class="n">Could not find config for key: no_a_key</span>
+</pre></div>
+</div>
+<p>But if you provide a default value, it will return that instead:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_config</span><span class="p">(</span><span class="s1">&#39;no_a_key&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+<span class="go">&#39;default&#39;</span>
+</pre></div>
+</div>
+<p>You can also provide a function that will be called on the value before it is
+returned. This is useful if you want to do some post-processing on the value,
+or if you want to make sure that the value is of a certain type:</p>
+<p>This “search the next source if the previous one fails” behavior may not be what
+you want in some situations, since you’d be hiding some errors that you might
+want to be aware of. This is why allow you to specify what exceptions should
+actually be considered as “config not found” exceptions, through the
+<code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions</span></code> argument, which defaults to <code class="docutils literal notranslate"><span class="pre">Exception</span></code>.</p>
+<p>Further, your sources may return a value, but not one that you consider valid:
+For example, a sentinel like <code class="docutils literal notranslate"><span class="pre">None</span></code>. In this case you may want the search to
+continue. This is what the <code class="docutils literal notranslate"><span class="pre">val_is_valid</span></code> argument is for. It is a function
+that takes a value and returns a boolean. If it returns <code class="docutils literal notranslate"><span class="pre">False</span></code>, the search
+will continue. If it returns <code class="docutils literal notranslate"><span class="pre">True</span></code>, the search will stop and the value will
+be returned.</p>
+<p>Finally, we have <code class="docutils literal notranslate"><span class="pre">egress</span> <span class="pre">:</span> <span class="pre">Callable[[KT,</span> <span class="pre">TT],</span> <span class="pre">VT]</span></code>.
+This is a function that takes a key and a value, and
+returns a value. It is called after the value has been found, and its return
+value is the one that is returned by <code class="docutils literal notranslate"><span class="pre">get_config</span></code>. This is useful if you want
+to do some post-processing on the value, or before you return the value, or if you
+want to do some caching.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config_store</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">store_before_returning</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">config_store</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+<span class="gp">... </span>   <span class="k">return</span> <span class="n">v</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_config</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="n">store_before_returning</span><span class="p">)</span>
+<span class="go">&#39;quux&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config_store</span>
+<span class="go">{&#39;foo&#39;: &#39;quux&#39;}</span>
+</pre></div>
+</div>
+<p>Note that a source can be a callable or a <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code> (most of the
+time, a <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">dict</span></code>)).
+Here, you should be compelled to use the resources of <code class="docutils literal notranslate"><span class="pre">dol</span></code>
+(<a class="reference external" href="https://pypi.org/project/dol/">https://pypi.org/project/dol/</a>) which will allow you to make <a href="#id1"><span class="problematic" id="id2">``</span></a>Mapping``s for all
+sorts of data sources.</p>
+<p>For more info, see: <a class="reference external" href="https://github.com/i2mint/config2py/issues/4">https://github.com/i2mint/config2py/issues/4</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="config2py.base.gettable_containers">
+<code class="sig-prename descclassname">config2py.base.</code><code class="sig-name descname">gettable_containers</code><span class="sig-paren">(</span><em class="sig-param">sources: Iterable[Union[config2py.base.GettableContainer, Callable[[KT], VT]]], val_is_valid: Callable[[VT], bool] = &lt;function always_true&gt;, config_not_found_exceptions: Iterable[Exception] = (&lt;class 'Exception'&gt;,)</em><span class="sig-paren">)</span> &#x2192; Iterable<span class="p">[</span><a class="reference internal" href="#config2py.base.GettableContainer" title="config2py.base.GettableContainer">config2py.base.GettableContainer</a><span class="p">]</span><a class="reference internal" href="../../_modules/config2py/base.html#gettable_containers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config2py.base.gettable_containers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an iterable of sources into <code class="docutils literal notranslate"><span class="pre">GettableContainers</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="config2py.base.sources_chainmap">
+<code class="sig-prename descclassname">config2py.base.</code><code class="sig-name descname">sources_chainmap</code><span class="sig-paren">(</span><em class="sig-param">sources: Iterable[Union[config2py.base.GettableContainer, Callable[[KT], VT]]], val_is_valid: Callable[[VT], bool] = &lt;function always_true&gt;, config_not_found_exceptions: Iterable[Exception] = (&lt;class 'Exception'&gt;,)</em><span class="sig-paren">)</span> &#x2192; collections.ChainMap<a class="reference internal" href="../../_modules/config2py/base.html#sources_chainmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config2py.base.sources_chainmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <code class="docutils literal notranslate"><span class="pre">ChainMap</span></code> from a list of sources</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="config2py.base.user_gettable">
+<code class="sig-prename descclassname">config2py.base.</code><code class="sig-name descname">user_gettable</code><span class="sig-paren">(</span><em class="sig-param">save_to: Optional[MutableMapping, None] = None, *, prompt_template='Enter a value for {}: ', egress: Optional[Callable, None] = None, user_asker=&lt;function ask_user_for_input&gt;, val_is_valid: Callable[[VT], bool] = &lt;function always_true&gt;, config_not_found_exceptions: Iterable[Exception] = (&lt;class 'Exception'&gt;,)</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#user_gettable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config2py.base.user_gettable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code> that asks the user for a value, optionally saving it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_to</strong> – A <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> to save the user’s response to. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+the user’s response is not saved.</p></li>
+<li><p><strong>prompt_template</strong> – A template string to prompt the user with. It should
+contain a placeholder for the key, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;Enter</span> <span class="pre">a</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">{}:</span> <span class="pre">&quot;</span></code>.</p></li>
+<li><p><strong>egress</strong> – A function to apply to the user’s response before returning it.
+This can be used to validate the response, for example.</p></li>
+<li><p><strong>user_asker</strong> – A function that asks the user for input. It should take a
+prompt string and return the user’s response.</p></li>
+<li><p><strong>val_is_valid</strong> – A function that takes a value and returns a boolean. If it
+returns <code class="docutils literal notranslate"><span class="pre">False</span></code>, the user will be asked for a new value.</p></li>
+<li><p><strong>config_not_found_exceptions</strong> – An iterable of exceptions that should be
+considered as “config not found” exceptions. If the user’s response raises
+one of these exceptions, the user will be asked for a new value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code> that asks the user for a value, optionally saving
+it.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">user_gettable</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;SOME_KEY&#39;</span><span class="p">]</span>  
+<span class="go">&#39;SOME_VAL&#39;</span>
+</pre></div>
+</div>
+<p>This will trigger a prompt for the user to enter the value of <code class="docutils literal notranslate"><span class="pre">SOME_KEY</span></code>.
+When they do (say they entered ‘SOME_VAL’) it will return that value.</p>
+<p>And if you specify a save_to store (usually a persistent MutableMapping made with
+the <code class="docutils literal notranslate"><span class="pre">dol</span></code> package) then it will save the value to that store for future use.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">some</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">user_gettable</span><span class="p">(</span><span class="n">save_to</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;SOME_KEY&#39;</span><span class="p">]</span>  
+<span class="go">&#39;SOME_VAL&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>  
+<span class="go">{&#39;some&#39;: &#39;store&#39;, &#39;SOME_KEY&#39;: &#39;SOME_VAL&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../config2py.html" class="btn btn-neutral float-left" title="config2py" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="errors.html" class="btn btn-neutral float-right" title="config2py.errors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

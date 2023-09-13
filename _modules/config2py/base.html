@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>config2py.base &mdash; config2py 0.1.6 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            config2py
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py.html">config2py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/base.html">config2py.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/errors.html">config2py.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/util.html">config2py.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tools.html">config2py.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/util.html">config2py.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">config2py</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">config2py.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for config2py.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Base for getting configs from various sources and formats</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">ChainMap</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">KT</span><span class="p">,</span>
+    <span class="n">VT</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">Protocol</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+    <span class="n">runtime_checkable</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">MutableMapping</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span><span class="p">,</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">mk_sentinel</span>  <span class="c1"># TODO: Only i2 dependency. Consider replacing.</span>
+
+<span class="kn">from</span> <span class="nn">config2py.util</span> <span class="kn">import</span> <span class="n">always_true</span><span class="p">,</span> <span class="n">ask_user_for_input</span>
+<span class="kn">from</span> <span class="nn">config2py.errors</span> <span class="kn">import</span> <span class="n">ConfigNotFound</span>
+
+<span class="c1"># def mk_sentinel(name):  # TODO: Only i2 dependency. Here&#39;s replacement, but not picklable</span>
+<span class="c1">#     return type(name, (), {&#39;__repr__&#39;: lambda self: name})()</span>
+
+
+<div class="viewcode-block" id="GettableContainer"><a class="viewcode-back" href="../../module_docs/config2py/base.html#config2py.base.GettableContainer">[docs]</a><span class="nd">@runtime_checkable</span>
+<span class="k">class</span> <span class="nc">GettableContainer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;``Containers`` that are &quot;gettable&quot;&quot;.</span>
+
+<span class="sd">    By &quot;gettable&quot;, we mean that we can fetch an element from ``obj`` with brackets:</span>
+<span class="sd">    ``obj[k]``. That is, ``obj`` has a ``__getitem__`` method.</span>
+<span class="sd">    A ``Container`` means that ``obj`` has a ``__contains__`` method, i.e. the</span>
+<span class="sd">    expression ``k in obj`` is valid.</span>
+
+<span class="sd">    &gt;&gt;&gt; isinstance(3, GettableContainer)  # 3 is not Gettable (can&#39;t do 3[...])</span>
+<span class="sd">    False</span>
+
+<span class="sd">    But ``dict``, ``list``, and ``str`` are GettableContainer:</span>
+
+<span class="sd">    &gt;&gt;&gt; isinstance([1, 2, 3], GettableContainer)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; isinstance({&#39;foo&#39;: &#39;bar&#39;}, GettableContainer)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; isinstance(&#39;foo&#39;, GettableContainer)</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Note that so are their types:</span>
+
+<span class="sd">    &gt;&gt;&gt; all(isinstance(c, GettableContainer) for c in (list, dict, str))</span>
+<span class="sd">    True</span>
+
+<span class="sd">    But `set` is not a ``GettableContainer``.</span>
+
+<span class="sd">    &gt;&gt;&gt; myset = {1, 2, 3}</span>
+<span class="sd">    &gt;&gt;&gt; isinstance(myset, GettableContainer)</span>
+<span class="sd">    False</span>
+
+<span class="sd">    This is because a ``set`` is a ``Container``, but it is not gettable:</span>
+
+<span class="sd">    &gt;&gt;&gt; 4 in myset  # set is a container</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; myset[4]  # ... but not gettable</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    TypeError: &#39;set&#39; object is not subscriptable</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<span class="n">Getter</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">KT</span><span class="p">],</span> <span class="n">VT</span><span class="p">]</span>
+<span class="n">Sources</span> <span class="o">=</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">GettableContainer</span><span class="p">,</span> <span class="n">Getter</span><span class="p">]]</span>
+<span class="n">GetConfigEgress</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">KT</span><span class="p">,</span> <span class="n">VT</span><span class="p">],</span> <span class="n">VT</span><span class="p">]</span>
+
+<span class="c1"># # TODO: Refactor into reusable function that can look (and write) in multiple stores</span>
+<span class="c1"># _open_api_key_env_name = &#39;OPENAI_API_KEY&#39;</span>
+<span class="c1"># _api_key = os.environ.get(_open_api_key_env_name, None)</span>
+<span class="c1"># if _api_key is None:</span>
+<span class="c1">#     # TODO: Figure out a way to make input response invisible (using * or something)</span>
+<span class="c1">#     _api_key = getpass.getpass(</span>
+<span class="c1">#         f&quot;Please set your OpenAI API key and press enter to continue. &quot;</span>
+<span class="c1">#         f&quot;I will put it in the environment variable {_open_api_key_env_name} &quot;</span>
+<span class="c1">#     )</span>
+<span class="c1"># openai.api_key = _api_key</span>
+
+<span class="n">config_not_found</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;config_not_found&#39;</span><span class="p">)</span>
+<span class="n">no_default</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;no_default&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_config"><a class="viewcode-back" href="../../module_docs/config2py/base.html#config2py.base.get_config">[docs]</a><span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="n">KT</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">sources</span><span class="p">:</span> <span class="n">Sources</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">VT</span> <span class="o">=</span> <span class="n">no_default</span><span class="p">,</span>
+    <span class="n">egress</span><span class="p">:</span> <span class="n">GetConfigEgress</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">always_true</span><span class="p">,</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a config value from a list of sources</span>
+
+<span class="sd">    A source can be a function or a ``GettableContainer``.</span>
+<span class="sd">    (A ``GettableContainer`` is anything that can be indexed with brackets: ``obj[k]``,</span>
+<span class="sd">    like ``dict``, ``list``, ``str``, etc..).</span>
+
+<span class="sd">    Let&#39;s take two sources: a ``dict`` and a ``Callable``.</span>
+
+<span class="sd">    &gt;&gt;&gt; def func(k):</span>
+<span class="sd">    ...     if k == &#39;foo&#39;:</span>
+<span class="sd">    ...         return &#39;quux&#39;</span>
+<span class="sd">    ...     elif k == &#39;green&#39;:</span>
+<span class="sd">    ...         return &#39;eggs&#39;</span>
+<span class="sd">    ...     else:</span>
+<span class="sd">    ...         raise RuntimeError(f&quot;I don&#39;t handle that: {k}&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; dict_ = {&#39;foo&#39;: &#39;bar&#39;, &#39;baz&#39;: &#39;qux&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; sources = [func, dict_]</span>
+
+
+<span class="sd">    See that ``get_config`` go through the sources in the order they were listed,</span>
+<span class="sd">    and returns the first value it finds (or manages to compute) for the key:</span>
+
+<span class="sd">    ``get_config`` finds ``&#39;foo&#39;`` in the very first source (``func``):</span>
+
+<span class="sd">    &gt;&gt;&gt; get_config(&#39;foo&#39;, sources)</span>
+<span class="sd">    &#39;quux&#39;</span>
+
+<span class="sd">    But ``baz`` makes ``func`` raise an error, so it goes to the next source: ``dict_``.</span>
+<span class="sd">    There, it finds ``&#39;baz&#39;`` and returns its value:</span>
+
+<span class="sd">    &gt;&gt;&gt; get_config(&#39;baz&#39;, sources)</span>
+<span class="sd">    &#39;qux&#39;</span>
+
+<span class="sd">    On the other hand, no one manages to find a config value for ``&#39;no_a_key&#39;``, so</span>
+<span class="sd">    ``get_config`` raises an error:</span>
+
+<span class="sd">    &gt;&gt;&gt; get_config(&#39;no_a_key&#39;, sources)</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    config2py.errors.ConfigNotFound: Could not find config for key: no_a_key</span>
+
+<span class="sd">    But if you provide a default value, it will return that instead:</span>
+
+<span class="sd">    &gt;&gt;&gt; get_config(&#39;no_a_key&#39;, sources, default=&#39;default&#39;)</span>
+<span class="sd">    &#39;default&#39;</span>
+
+<span class="sd">    You can also provide a function that will be called on the value before it is</span>
+<span class="sd">    returned. This is useful if you want to do some post-processing on the value,</span>
+<span class="sd">    or if you want to make sure that the value is of a certain type:</span>
+
+<span class="sd">    This &quot;search the next source if the previous one fails&quot; behavior may not be what</span>
+<span class="sd">    you want in some situations, since you&#39;d be hiding some errors that you might</span>
+<span class="sd">    want to be aware of. This is why allow you to specify what exceptions should</span>
+<span class="sd">    actually be considered as &quot;config not found&quot; exceptions, through the</span>
+<span class="sd">    ``config_not_found_exceptions`` argument, which defaults to ``Exception``.</span>
+
+<span class="sd">    Further, your sources may return a value, but not one that you consider valid:</span>
+<span class="sd">    For example, a sentinel like ``None``. In this case you may want the search to</span>
+<span class="sd">    continue. This is what the ``val_is_valid`` argument is for. It is a function</span>
+<span class="sd">    that takes a value and returns a boolean. If it returns ``False``, the search</span>
+<span class="sd">    will continue. If it returns ``True``, the search will stop and the value will</span>
+<span class="sd">    be returned.</span>
+
+<span class="sd">    Finally, we have ``egress : Callable[[KT, TT], VT]``.</span>
+<span class="sd">    This is a function that takes a key and a value, and</span>
+<span class="sd">    returns a value. It is called after the value has been found, and its return</span>
+<span class="sd">    value is the one that is returned by ``get_config``. This is useful if you want</span>
+<span class="sd">    to do some post-processing on the value, or before you return the value, or if you</span>
+<span class="sd">    want to do some caching.</span>
+
+<span class="sd">    &gt;&gt;&gt; config_store = dict()</span>
+<span class="sd">    &gt;&gt;&gt; def store_before_returning(k, v):</span>
+<span class="sd">    ...    config_store[k] = v</span>
+<span class="sd">    ...    return v</span>
+<span class="sd">    &gt;&gt;&gt; get_config(&#39;foo&#39;, sources, egress=store_before_returning)</span>
+<span class="sd">    &#39;quux&#39;</span>
+<span class="sd">    &gt;&gt;&gt; config_store</span>
+<span class="sd">    {&#39;foo&#39;: &#39;quux&#39;}</span>
+
+<span class="sd">    Note that a source can be a callable or a ``GettableContainer`` (most of the</span>
+<span class="sd">    time, a ``Mapping`` (e.g. ``dict``)).</span>
+<span class="sd">    Here, you should be compelled to use the resources of ``dol``</span>
+<span class="sd">    (https://pypi.org/project/dol/) which will allow you to make ``Mapping``s for all</span>
+<span class="sd">    sorts of data sources.</span>
+
+<span class="sd">    For more info, see: https://github.com/i2mint/config2py/issues/4</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">sources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span>
+            <span class="n">get_config</span><span class="p">,</span>
+            <span class="n">sources</span><span class="o">=</span><span class="n">sources</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span>
+            <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">,</span>
+            <span class="n">val_is_valid</span><span class="o">=</span><span class="n">val_is_valid</span><span class="p">,</span>
+            <span class="n">config_not_found_exceptions</span><span class="o">=</span><span class="n">config_not_found_exceptions</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">chain_map</span> <span class="o">=</span> <span class="n">sources_chainmap</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">val_is_valid</span><span class="p">,</span> <span class="n">config_not_found_exceptions</span><span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">chain_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">config_not_found</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">config_not_found</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="n">no_default</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConfigNotFound</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not find config for key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">default</span>
+    <span class="k">if</span> <span class="n">egress</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">egress</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+<span class="c1"># TODO: add/enable an __iter__ method if the function&#39;s first arg is annotated with</span>
+<span class="c1">#  an Enum or Literal?</span>
+<div class="viewcode-block" id="FuncBasedGettableContainer"><a class="viewcode-back" href="../../module_docs/config2py/base.html#config2py.base.FuncBasedGettableContainer">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">FuncBasedGettableContainer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that wraps a ``Callable[[KT], VT]`` function so it has a (partial)</span>
+<span class="sd">    Mapping[KT, TT] interface. It is &quot;partial&quot; in the sense that it only implements</span>
+<span class="sd">    ``__getitem__``, raise a ``KeyError`` when a key can&#39;t be computed.</span>
+<span class="sd">    This is the standard for ``Mapping`` types, which enables us to use the</span>
+<span class="sd">    ``FuncBasedGettable`` in a ``collections.ChainMap`` to catch the error and move on</span>
+<span class="sd">    to the next source.</span>
+
+<span class="sd">    &gt;&gt;&gt; def getter(k):</span>
+<span class="sd">    ...     if k == &#39;foo&#39;:</span>
+<span class="sd">    ...         return &#39;quux&#39;</span>
+<span class="sd">    ...     elif k == &#39;green&#39;:</span>
+<span class="sd">    ...         return &#39;eggs&#39;</span>
+<span class="sd">    ...     else:</span>
+<span class="sd">    ...         raise RuntimeError(f&quot;I don&#39;t handle that: {k}&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; gc = FuncBasedGettableContainer(getter)</span>
+<span class="sd">    &gt;&gt;&gt; gc[&#39;foo&#39;]</span>
+<span class="sd">    &#39;quux&#39;</span>
+<span class="sd">    &gt;&gt;&gt; gc[&#39;green&#39;]</span>
+<span class="sd">    &#39;eggs&#39;</span>
+
+<span class="sd">    Observe below that though the ``getter`` function raises a ``RuntimeError``, the</span>
+<span class="sd">    ``FuncBasedGettableContainer`` raises a ``KeyError``, to conform to the</span>
+<span class="sd">    ``Mapping`` protocol.</span>
+
+<span class="sd">    &gt;&gt;&gt; gc[&#39;no_a_key&#39;]  # doctest: +ELLIPSIS +IGNORE_EXCEPTION_DETAIL</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    KeyError: &#39;There was an exception ... : &quot;I don\&#39;t handle that: no_a_key&quot;&#39;</span>
+
+<span class="sd">    Note that by default, ``FuncBasedGettableContainer`` will catch all ``Exception``</span>
+<span class="sd">    exceptions, but you can specify a different set of exceptions to catch.</span>
+
+<span class="sd">    Note as well that you can specify a ``val_is_valid`` function that will be used to</span>
+<span class="sd">    check the value returned by the ``getter`` function. If the value is not valid, a</span>
+<span class="sd">    ``KeyError`` will also be raised.</span>
+<span class="sd">    This is useful, for example, when you have a function that returns a sentinel like</span>
+<span class="sd">    ``None`` instead of raising an exception, but you want to treat that as a</span>
+<span class="sd">    ``KeyError``.</span>
+
+<span class="sd">    &gt;&gt;&gt; def getter(k):</span>
+<span class="sd">    ...     if k == &#39;foo&#39;:</span>
+<span class="sd">    ...         return &#39;quux&#39;</span>
+<span class="sd">    ...     elif k == &#39;green&#39;:</span>
+<span class="sd">    ...         return &#39;eggs&#39;</span>
+<span class="sd">    ...     else:</span>
+<span class="sd">    ...         return None</span>
+<span class="sd">    &gt;&gt;&gt; gc = FuncBasedGettableContainer(getter, val_is_valid=lambda x: x is not None)</span>
+<span class="sd">    &gt;&gt;&gt; gc[&#39;foo&#39;]</span>
+<span class="sd">    &#39;quux&#39;</span>
+<span class="sd">    &gt;&gt;&gt; gc[&#39;no_a_key&#39;]</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    KeyError: &#39;Value for key no_a_key is not valid: None&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">getter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">KT</span><span class="p">],</span> <span class="n">VT</span><span class="p">]</span>
+    <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">always_true</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Note: The only purpose of the cache is to avoid calling the getter function</span>
+        <span class="c1"># twice when doing a ``in`` check before doing a ``[]`` lookup, for instance,</span>
+        <span class="c1"># in a``collections.ChainMap``.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getter</span> <span class="o">=</span> <span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">getter</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VT</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getter</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_not_found_exceptions</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;There was an exception when computing key: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> with the function &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">getter</span><span class="si">}</span><span class="s1">. The exception was: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_is_valid</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Value for key </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> is not valid: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">v</span>
+
+    <span class="c1"># TODO: Is this used to indicate that the getter couldn&#39;t find a key.</span>
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="gettable_containers"><a class="viewcode-back" href="../../module_docs/config2py/base.html#config2py.base.gettable_containers">[docs]</a><span class="k">def</span> <span class="nf">gettable_containers</span><span class="p">(</span>
+    <span class="n">sources</span><span class="p">:</span> <span class="n">Sources</span><span class="p">,</span>
+    <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">always_true</span><span class="p">,</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">GettableContainer</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an iterable of sources into ``GettableContainers``&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">GettableContainer</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">src</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">FuncBasedGettableContainer</span><span class="p">(</span>
+                <span class="n">src</span><span class="p">,</span>
+                <span class="n">val_is_valid</span><span class="o">=</span><span class="n">val_is_valid</span><span class="p">,</span>
+                <span class="n">config_not_found_exceptions</span><span class="o">=</span><span class="n">config_not_found_exceptions</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Source must be a Gettable or a Callable, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">src</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sources_chainmap"><a class="viewcode-back" href="../../module_docs/config2py/base.html#config2py.base.sources_chainmap">[docs]</a><span class="k">def</span> <span class="nf">sources_chainmap</span><span class="p">(</span>
+    <span class="n">sources</span><span class="p">:</span> <span class="n">Sources</span><span class="p">,</span>
+    <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">always_true</span><span class="p">,</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChainMap</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a ``ChainMap`` from a list of sources&quot;&quot;&quot;</span>
+    <span class="n">sources</span> <span class="o">=</span> <span class="n">gettable_containers</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">val_is_valid</span><span class="p">,</span> <span class="n">config_not_found_exceptions</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ChainMap</span><span class="p">(</span><span class="o">*</span><span class="n">gettable_containers</span><span class="p">(</span><span class="n">sources</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">ask_user_for_key</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">prompt_template</span><span class="o">=</span><span class="s1">&#39;Enter a value for </span><span class="si">{}</span><span class="s1">: &#39;</span><span class="p">,</span>
+    <span class="n">save_to</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MutableMapping</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">user_asker</span><span class="o">=</span><span class="n">ask_user_for_input</span><span class="p">,</span>
+    <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span>
+            <span class="n">ask_user_for_key</span><span class="p">,</span>
+            <span class="n">prompt_template</span><span class="o">=</span><span class="n">prompt_template</span><span class="p">,</span>
+            <span class="n">save_to</span><span class="o">=</span><span class="n">save_to</span><span class="p">,</span>
+            <span class="n">user_asker</span><span class="o">=</span><span class="n">user_asker</span><span class="p">,</span>
+            <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">user_asker</span><span class="p">(</span><span class="n">prompt_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">egress</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">egress</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">save_to</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">return</span> <span class="n">val</span>
+
+
+<div class="viewcode-block" id="user_gettable"><a class="viewcode-back" href="../../module_docs/config2py/base.html#config2py.base.user_gettable">[docs]</a><span class="k">def</span> <span class="nf">user_gettable</span><span class="p">(</span>
+    <span class="n">save_to</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MutableMapping</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">prompt_template</span><span class="o">=</span><span class="s1">&#39;Enter a value for </span><span class="si">{}</span><span class="s1">: &#39;</span><span class="p">,</span>
+    <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">user_asker</span><span class="o">=</span><span class="n">ask_user_for_input</span><span class="p">,</span>
+    <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">always_true</span><span class="p">,</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a ``GettableContainer`` that asks the user for a value, optionally saving it.</span>
+
+<span class="sd">    :param save_to: A ``MutableMapping`` to save the user&#39;s response to. If ``None``,</span>
+<span class="sd">        the user&#39;s response is not saved.</span>
+<span class="sd">    :param prompt_template: A template string to prompt the user with. It should</span>
+<span class="sd">        contain a placeholder for the key, e.g. ``&quot;Enter a value for {}: &quot;``.</span>
+<span class="sd">    :param egress: A function to apply to the user&#39;s response before returning it.</span>
+<span class="sd">        This can be used to validate the response, for example.</span>
+<span class="sd">    :param user_asker: A function that asks the user for input. It should take a    </span>
+<span class="sd">        prompt string and return the user&#39;s response.</span>
+<span class="sd">    :param val_is_valid: A function that takes a value and returns a boolean. If it</span>
+<span class="sd">        returns ``False``, the user will be asked for a new value.</span>
+<span class="sd">    :param config_not_found_exceptions: An iterable of exceptions that should be</span>
+<span class="sd">        considered as &quot;config not found&quot; exceptions. If the user&#39;s response raises</span>
+<span class="sd">        one of these exceptions, the user will be asked for a new value.</span>
+<span class="sd">    :return: A ``GettableContainer`` that asks the user for a value, optionally saving</span>
+<span class="sd">        it.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; s = user_gettable()</span>
+<span class="sd">    &gt;&gt;&gt; v = s[&#39;SOME_KEY&#39;]  # doctest: +SKIP</span>
+<span class="sd">    &#39;SOME_VAL&#39;</span>
+
+<span class="sd">    This will trigger a prompt for the user to enter the value of ``SOME_KEY``.</span>
+<span class="sd">    When they do (say they entered &#39;SOME_VAL&#39;) it will return that value.</span>
+
+<span class="sd">    And if you specify a save_to store (usually a persistent MutableMapping made with </span>
+<span class="sd">    the ``dol`` package) then it will save the value to that store for future use. </span>
+
+<span class="sd">    &gt;&gt;&gt; d = dict(some=&#39;store&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; s = user_gettable(save_to=d)</span>
+<span class="sd">    &gt;&gt;&gt; s[&#39;SOME_KEY&#39;]  # doctest: +SKIP</span>
+<span class="sd">    &#39;SOME_VAL&#39;</span>
+<span class="sd">    &gt;&gt;&gt; d  # doctest: +SKIP</span>
+<span class="sd">    {&#39;some&#39;: &#39;store&#39;, &#39;SOME_KEY&#39;: &#39;SOME_VAL&#39;}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">getter</span> <span class="o">=</span> <span class="n">ask_user_for_key</span><span class="p">(</span>
+        <span class="n">prompt_template</span><span class="o">=</span><span class="n">prompt_template</span><span class="p">,</span>
+        <span class="n">save_to</span><span class="o">=</span><span class="n">save_to</span><span class="p">,</span>
+        <span class="n">user_asker</span><span class="o">=</span><span class="n">user_asker</span><span class="p">,</span>
+        <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">FuncBasedGettableContainer</span><span class="p">(</span>
+        <span class="n">getter</span><span class="p">,</span>
+        <span class="n">val_is_valid</span><span class="o">=</span><span class="n">val_is_valid</span><span class="p">,</span>
+        <span class="n">config_not_found_exceptions</span><span class="o">=</span><span class="n">config_not_found_exceptions</span><span class="p">,</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

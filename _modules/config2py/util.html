@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>config2py.util &mdash; config2py 0.1.6 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            config2py
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py.html">config2py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/base.html">config2py.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/errors.html">config2py.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/util.html">config2py.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tools.html">config2py.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/util.html">config2py.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">config2py</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">config2py.util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for config2py.util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility functions for config2py.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">dol</span> <span class="kn">import</span> <span class="n">TextFiles</span>
+<span class="kn">import</span> <span class="nn">getpass</span>
+
+<span class="n">pkg_name</span> <span class="o">=</span> <span class="s1">&#39;config2py&#39;</span>
+<span class="n">DFLT_MASKING_INPUT</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="always_true"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.always_true">[docs]</a><span class="k">def</span> <span class="nf">always_true</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that just returns True.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="identity"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.identity">[docs]</a><span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that just returns its argument.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+<span class="c1"># TODO: Make this into an open-closed mini-framework</span>
+<div class="viewcode-block" id="ask_user_for_input"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.ask_user_for_input">[docs]</a><span class="k">def</span> <span class="nf">ask_user_for_input</span><span class="p">(</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">mask_input</span><span class="o">=</span><span class="n">DFLT_MASKING_INPUT</span><span class="p">,</span>
+    <span class="n">masking_toggle_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">egress</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">identity</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ask the user for input, optionally masking, validating and transforming the input.</span>
+
+<span class="sd">    :param prompt: Prompt to display to the user</span>
+<span class="sd">    :param default: Default value to return if the user enters nothing</span>
+<span class="sd">    :param mask_input: Whether to mask the user&#39;s input</span>
+<span class="sd">    :param masking_toggle_str: String to toggle input masking. If ``None``, no toggle</span>
+<span class="sd">        is available. If not ``None`` (a common choice is the empty string)</span>
+<span class="sd">        the user can enter this string to toggle input masking.</span>
+<span class="sd">    :param egress: Function to apply to the user&#39;s response before returning it.</span>
+<span class="sd">        This can be used to validate the response, for example.</span>
+<span class="sd">    :return: The user&#39;s response (or the default value if the user entered nothing)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_original_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+    <span class="k">if</span> <span class="n">prompt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39; &#39;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>
+    <span class="k">if</span> <span class="n">masking_toggle_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s2">&quot;    (Input masking is </span><span class="si">{</span><span class="s1">&#39;ENABLED&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">mask_input</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;DISABLED&#39;</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Enter &#39;</span><span class="si">{</span><span class="n">masking_toggle_str</span><span class="si">}</span><span class="s2">&#39; (without quotes) to toggle input masking)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">default</span><span class="p">:</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39; [</span><span class="si">{</span><span class="n">default</span><span class="si">}</span><span class="s1">]: &#39;</span>
+    <span class="k">if</span> <span class="n">mask_input</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">masking_toggle_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">response</span> <span class="o">==</span> <span class="n">masking_toggle_str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ask_user_for_input</span><span class="p">(</span>
+            <span class="n">_original_prompt</span><span class="p">,</span>
+            <span class="n">default</span><span class="p">,</span>
+            <span class="n">mask_input</span><span class="o">=</span><span class="ow">not</span> <span class="n">mask_input</span><span class="p">,</span>
+            <span class="n">masking_toggle_str</span><span class="o">=</span><span class="n">masking_toggle_str</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">egress</span><span class="p">(</span><span class="n">response</span> <span class="ow">or</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+<span class="c1"># Note: Could be made more efficient, but this is good enough (for now)</span>
+<div class="viewcode-block" id="extract_variable_declarations"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.extract_variable_declarations">[docs]</a><span class="k">def</span> <span class="nf">extract_variable_declarations</span><span class="p">(</span>
+    <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expand</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the contents of a config file, extracting Unix-style environment variable</span>
+<span class="sd">    declarations of the form</span>
+<span class="sd">    `export {NAME}={value}`, returning a dictionary of `{NAME: value, ...}` pairs.</span>
+
+<span class="sd">    See issue for more info and applications:</span>
+<span class="sd">    https://github.com/i2mint/config2py/issues/2</span>
+
+<span class="sd">    :param string: String to extract variable declarations from</span>
+<span class="sd">    :param expand: An optional dictionary of variable names and values to use to</span>
+<span class="sd">        expand variables that are referenced (i.e. ``$NAME`` is a reference to ``NAME``</span>
+<span class="sd">        variable) in the values of config variables.</span>
+<span class="sd">        If ``True``, ``expand`` is replaced with an empty dictionary, which means we</span>
+<span class="sd">        want to expand variables recursively, but we have no references to seed the</span>
+<span class="sd">        expansion with. If ``False``, ``expand`` is replaced with ``None``, indicating</span>
+<span class="sd">        that we don&#39;t want to expand any variables.</span>
+
+<span class="sd">    :return: A dictionary of variable names and values.</span>
+
+<span class="sd">    &gt;&gt;&gt; config = &#39;export ENVIRONMENT=&quot;dev&quot;\\nexport PORT=8080\\nexport DEBUG=true&#39;</span>
+<span class="sd">    &gt;&gt;&gt; extract_variable_declarations(config)</span>
+<span class="sd">    {&#39;ENVIRONMENT&#39;: &#39;dev&#39;, &#39;PORT&#39;: &#39;8080&#39;, &#39;DEBUG&#39;: &#39;true&#39;}</span>
+
+<span class="sd">    &gt;&gt;&gt; config = &#39;export PATH=&quot;$PATH:/usr/local/bin&quot;\\nexport EDITOR=&quot;nano&quot;&#39;</span>
+<span class="sd">    &gt;&gt;&gt; extract_variable_declarations(config)</span>
+<span class="sd">    {&#39;PATH&#39;: &#39;$PATH:/usr/local/bin&#39;, &#39;EDITOR&#39;: &#39;nano&#39;}</span>
+
+<span class="sd">    The ``expand`` argument can be used to expand variables in the values of other.</span>
+
+<span class="sd">    Let&#39;s add a reference to the ``PATH`` variable in the ``EDITOR`` variable:</span>
+
+<span class="sd">    &gt;&gt;&gt; config = &#39;export PATH=&quot;$PATH:/usr/local/bin&quot;\\nexport EDITOR=&quot;nano $PATH&quot;&#39;</span>
+
+<span class="sd">    If you specify a value for ``PATH`` in the ``expand`` argument, you&#39;ll see it</span>
+<span class="sd">    reflected in the ``PATH`` variable (self reference) and the ``EDITOR`` variable.</span>
+<span class="sd">    (Note if you changed the order of ``PATH`` and ``EDITOR`` in the ``config``,</span>
+<span class="sd">    you wouldn&#39;t get the same thing though.)</span>
+
+<span class="sd">    &gt;&gt;&gt; extract_variable_declarations(config, expand={&#39;PATH&#39;: &#39;/root&#39;})</span>
+<span class="sd">    {&#39;PATH&#39;: &#39;/root:/usr/local/bin&#39;, &#39;EDITOR&#39;: &#39;nano /root:/usr/local/bin&#39;}</span>
+
+<span class="sd">    If you specify ``expand={}``, the first ``PATH`` variable will not be expanded,</span>
+<span class="sd">    since PATH is not in the expand dictionary. But the second ``PATH`` variable,</span>
+<span class="sd">    referenced in the definition of ``EDITOR`` will be expanded, since it is in the</span>
+<span class="sd">    expand dictionary.</span>
+
+<span class="sd">    &gt;&gt;&gt; extract_variable_declarations(config, expand={})</span>
+<span class="sd">    {&#39;PATH&#39;: &#39;$PATH:/usr/local/bin&#39;, &#39;EDITOR&#39;: &#39;nano $PATH:/usr/local/bin&#39;}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">expand</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># If expand is True, we&#39;ll use an empty dictionary as the expand dictionary</span>
+        <span class="c1"># This means we want variables to be expanded recursively, but we have no</span>
+        <span class="c1"># references to seed the expansion with.</span>
+        <span class="n">expand</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">elif</span> <span class="n">expand</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="c1"># If expand is False, we don&#39;t want to expand any variables.</span>
+        <span class="n">expand</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^export\s+([A-Za-z0-9_]+)=(.*)$&#39;</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">expand</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">expand</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;$</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                <span class="n">env_vars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="n">expand</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">expand</span><span class="p">,</span> <span class="o">**</span><span class="n">env_vars</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">env_vars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">env_vars</span></div>
+
+
+<span class="c1"># Note: First possible i2 dependency -- vendoring for now</span>
+<div class="viewcode-block" id="get_app_data_folder"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.get_app_data_folder">[docs]</a><span class="k">def</span> <span class="nf">get_app_data_folder</span><span class="p">(</span><span class="n">ensure_exists</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the full path of a directory suitable for storing application-specific data.</span>
+
+<span class="sd">    On Windows, this is typically %APPDATA%.</span>
+<span class="sd">    On macOS, this is typically ~/.config.</span>
+<span class="sd">    On Linux, this is typically ~/.config.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The full path of the app data folder.</span>
+
+<span class="sd">    See https://github.com/i2mint/i2mint/issues/1.</span>
+
+<span class="sd">    For a more complete implementation, see:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span><span class="p">:</span>
+        <span class="c1"># Windows</span>
+        <span class="n">app_data_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;APPDATA&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># macOS and Linux/Unix</span>
+        <span class="n">app_data_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~/.config&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ensure_exists</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">app_data_folder</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">app_data_folder</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">app_data_folder</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_app_data_dir</span><span class="p">(</span><span class="n">dirname</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the app data directory.&quot;&quot;&quot;</span>
+    <span class="n">app_data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_app_data_folder</span><span class="p">(</span><span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">dirname</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">app_data_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">app_data_dir</span><span class="p">)</span>
+        <span class="c1"># Add a hidden file that annotates the directory as one managed by config2py,</span>
+        <span class="c1"># so that we at least have a chance of distinguishing it from a directory of</span>
+        <span class="c1"># the same name that another program might create (we don&#39;t want to write in</span>
+        <span class="c1"># someone else&#39;s directory!).</span>
+        <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">app_data_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;.config2py&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s1">&#39;I was created by config2py.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">app_data_dir</span>
+
+
+<span class="c1"># TODO: Build Configs from dol.Files, returning dol.TextFiles except if .bin extension,</span>
+<span class="c1">#  and returning Configs(dirpath) if key is a directory</span>
+<span class="c1"># TODO: Make the Configs class with use outside config2py in mind.</span>
+<span class="n">Configs</span> <span class="o">=</span> <span class="n">TextFiles</span>
+
+
+<div class="viewcode-block" id="get_configs_local_store"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.get_configs_local_store">[docs]</a><span class="k">def</span> <span class="nf">get_configs_local_store</span><span class="p">(</span><span class="n">dirname</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the local store of configs.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Configs</span><span class="p">(</span><span class="n">_get_app_data_dir</span><span class="p">(</span><span class="n">dirname</span><span class="p">))</span></div>
+
+
+<span class="n">configs</span> <span class="o">=</span> <span class="n">get_configs_local_store</span><span class="p">()</span>
+
+
+<span class="c1"># def extract_variable_declarations(string):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Reads the contents of a config file, extracting Unix-style environment variable</span>
+<span class="c1">#     declarations of the form</span>
+<span class="c1">#     `export {NAME}={value}`, returning a dictionary of `{NAME: value, ...}` pairs.</span>
+<span class="c1">#</span>
+<span class="c1">#     # &gt;&gt;&gt; config = (</span>
+<span class="c1">#     # ...   &#39;export ENVIRONMENT=&quot;development&quot;\\n&#39;</span>
+<span class="c1">#     # ...   &#39;export PORT=8080\\n&#39;</span>
+<span class="c1">#     # ...   &#39;alias = &quot;just to make it harder&quot;\\n&#39;</span>
+<span class="c1">#     # ...   &#39;\\n&#39;</span>
+<span class="c1">#     # ...   &#39;export DEBUG=true&#39;</span>
+<span class="c1">#     # ...)</span>
+<span class="c1">#     # &gt;&gt;&gt; extract_variable_declarations(config)</span>
+<span class="c1">#     # {&#39;ENVIRONMENT&#39;: &#39;&quot;development&quot;&#39;, &#39;PORT&#39;: &#39;8080&#39;, &#39;DEBUG&#39;: &#39;true&#39;}</span>
+<span class="c1">#</span>
+<span class="c1">#     &gt;&gt;&gt; config = &#39;export PATH=&quot;$PATH:/usr/local/bin&quot;\\nexport EDITOR=&quot;nano&quot;&#39;</span>
+<span class="c1">#     &gt;&gt;&gt; extract_variable_declarations(config)</span>
+<span class="c1">#     {&#39;PATH&#39;: &#39;$PATH:/usr/local/bin&#39;, &#39;EDITOR&#39;: &#39;nano&#39;}</span>
+<span class="c1">#</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     env_vars = {}</span>
+<span class="c1">#     lines = string.split(&quot;\n&quot;)</span>
+<span class="c1">#     for line in lines:</span>
+<span class="c1">#         line = line.strip()</span>
+<span class="c1">#         if line.startswith(&quot;export&quot;):</span>
+<span class="c1">#             parts = line.split(&quot;=&quot;)</span>
+<span class="c1">#             name = parts[0].split(&quot; &quot;)[1]</span>
+<span class="c1">#             value = parts[1]</span>
+<span class="c1">#             env_vars[name] = value</span>
+<span class="c1">#     return env_vars</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
