@@ -258,7 +258,6 @@ local_configs = get_configs_local_store()
 configs = local_configs  # TODO: backwards compatibility alias
 
 
-
 # def extract_variable_declarations(string):
 #     """
 #     Reads the contents of a config file, extracting Unix-style environment variable
