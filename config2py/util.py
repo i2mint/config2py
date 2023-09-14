@@ -8,7 +8,7 @@ from typing import Optional, Union, Any, Callable
 from dol import TextFiles
 import getpass
 
-pkg_name = 'config2py'
+pkg_name = "config2py"
 DFLT_MASKING_INPUT = False
 
 
@@ -45,16 +45,16 @@ def ask_user_for_input(
     :return: The user's response (or the default value if the user entered nothing)
     """
     _original_prompt = prompt
-    if prompt[-1] != ' ':  # pragma: no cover
-        prompt = prompt + ' '
+    if prompt[-1] != " ":  # pragma: no cover
+        prompt = prompt + " "
     if masking_toggle_str is not None:
         prompt = (
-            f'{prompt}\n'
+            f"{prompt}\n"
             f"    (Input masking is {'ENABLED' if mask_input else 'DISABLED'}. "
             f"Enter '{masking_toggle_str}' (without quotes) to toggle input masking)\n"
         )
     if default:
-        prompt = prompt + f' [{default}]: '
+        prompt = prompt + f" [{default}]: "
     if mask_input:
         response = getpass.getpass(prompt)
     else:
@@ -134,8 +134,8 @@ def extract_variable_declarations(
         expand = None
 
     env_vars = {}
-    pattern = re.compile(r'^export\s+([A-Za-z0-9_]+)=(.*)$')
-    lines = string.split('\n')
+    pattern = re.compile(r"^export\s+([A-Za-z0-9_]+)=(.*)$")
+    lines = string.split("\n")
     for line in lines:
         line = line.strip()
         match = pattern.match(line)
@@ -144,7 +144,7 @@ def extract_variable_declarations(
             value = match.group(2).strip('"')
             if expand is not None:
                 for key, val in expand.items():
-                    value = value.replace(f'${key}', val)
+                    value = value.replace(f"${key}", val)
                 env_vars[name] = value
                 expand = dict(expand, **env_vars)
             else:
@@ -152,8 +152,25 @@ def extract_variable_declarations(
     return env_vars
 
 
+def _system_default_for_app_data_folder():
+    """Get the system default for the app data folder."""
+    if os.name == "nt":
+        # Windows
+        app_data_folder = os.getenv("APPDATA")
+    else:
+        # macOS and Linux/Unix
+        app_data_folder = os.path.expanduser("~/.config")
+    return app_data_folder
+
+
 # Note: First possible i2 dependency -- vendoring for now
-def get_app_data_folder(ensure_exists=False):
+def get_app_data_folder(
+    *,
+    app_data_folder: Union[
+        Callable[[], str], str
+    ] = _system_default_for_app_data_folder,
+    ensure_exists=False,
+) -> str:
     """
     Returns the full path of a directory suitable for storing application-specific data.
 
@@ -166,15 +183,32 @@ def get_app_data_folder(ensure_exists=False):
 
     See https://github.com/i2mint/i2mint/issues/1.
 
-    For a more complete implementation, see:
-    """
-    if os.name == 'nt':
-        # Windows
-        app_data_folder = os.getenv('APPDATA')
-    else:
-        # macOS and Linux/Unix
-        app_data_folder = os.path.expanduser('~/.config')
+    >>> get_app_data_folder()  # doctest: +SKIP
+    '/Users/.../.config'
+    >>> get_app_data_folder(ensure_exists=True)  # doctest: +SKIP
+    '/Users/.../.config'
 
+    The default app data folder is the system default for the current operating system.
+    But if you don't like that, you can specify your own.
+
+    Explicitly via a string:
+
+    >>> get_app_data_folder(app_data_folder='where/I/want', ensure_exists=False)
+    'where/I/want'
+
+    Or via a function that returns a string. For example, to get the app data folder
+    from an environment variable, you could do this:
+
+    >>> from functools import partial
+    >>> get_app_data_folder(
+    ...     app_data_folder=partial(os.getenv, 'MY_APP_DATA_FOLDER'), 
+    ...     ensure_exists=False
+    ... )  # doctest: +SKIP
+    None
+
+    """
+    if callable(app_data_folder):
+        app_data_folder = app_data_folder()
     if ensure_exists and not os.path.isdir(app_data_folder):
         os.mkdir(app_data_folder)
     return app_data_folder
@@ -189,7 +223,7 @@ def _get_app_data_dir(dirname=pkg_name):
         # so that we at least have a chance of distinguishing it from a directory of
         # the same name that another program might create (we don't want to write in
         # someone else's directory!).
-        (Path(app_data_dir) / '.config2py').write_text('I was created by config2py.')
+        (Path(app_data_dir) / ".config2py").write_text("I was created by config2py.")
     return app_data_dir
 
 
