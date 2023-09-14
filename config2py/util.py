@@ -163,14 +163,13 @@ def _system_default_for_app_data_folder():
     return app_data_folder
 
 
+DFLT_APP_DATA_FOLDER = os.getenv(
+    "CONFIG2PY_APP_DATA_FOLDER", 
+    _system_default_for_app_data_folder()
+)
+
 # Note: First possible i2 dependency -- vendoring for now
-def get_app_data_folder(
-    *,
-    app_data_folder: Union[
-        Callable[[], str], str
-    ] = _system_default_for_app_data_folder,
-    ensure_exists=False,
-) -> str:
+def get_app_data_folder(*, ensure_exists=False) -> str:
     """
     Returns the full path of a directory suitable for storing application-specific data.
 
@@ -185,46 +184,64 @@ def get_app_data_folder(
 
     >>> get_app_data_folder()  # doctest: +SKIP
     '/Users/.../.config'
+
+    If ``ensure_exists`` is ``True``, the folder will be created if it doesn't exist.
+
     >>> get_app_data_folder(ensure_exists=True)  # doctest: +SKIP
     '/Users/.../.config'
 
-    The default app data folder is the system default for the current operating system.
-    But if you don't like that, you can specify your own.
-
-    Explicitly via a string:
-
-    >>> get_app_data_folder(app_data_folder='where/I/want', ensure_exists=False)
-    'where/I/want'
-
-    Or via a function that returns a string. For example, to get the app data folder
-    from an environment variable, you could do this:
-
-    >>> from functools import partial
-    >>> get_app_data_folder(
-    ...     app_data_folder=partial(os.getenv, 'MY_APP_DATA_FOLDER'), 
-    ...     ensure_exists=False
-    ... )  # doctest: +SKIP
-    None
+    Note: The default app data folder is the system default for the current operating 
+    system. If you want to override this, you can do so by setting the 
+    CONFIG2PY_APP_DATA_FOLDER environment variable to the path of the folder you want 
+    to use.
 
     """
-    if callable(app_data_folder):
-        app_data_folder = app_data_folder()
+
     if ensure_exists and not os.path.isdir(app_data_folder):
         os.mkdir(app_data_folder)
     return app_data_folder
 
+def _default_folder_setup(directory_path: str) -> None:
+    """
+    Create the given directory if it doesn't exist and initialize it 
+    with a hidden file for identification.
 
-def _get_app_data_dir(dirname=pkg_name):
-    """Get the app data directory."""
-    app_data_dir = os.path.join(get_app_data_folder(ensure_exists=True), dirname)
-    if not os.path.isdir(app_data_dir):
-        os.mkdir(app_data_dir)
-        # Add a hidden file that annotates the directory as one managed by config2py,
-        # so that we at least have a chance of distinguishing it from a directory of
-        # the same name that another program might create (we don't want to write in
-        # someone else's directory!).
-        (Path(app_data_dir) / ".config2py").write_text("I was created by config2py.")
-    return app_data_dir
+    Args:
+    - directory_path (str): Path to the directory to be initialized.
+
+    Note:
+    This is the default setup callback for directories managed by config2py.
+    """
+    if not os.path.isdir(directory_path):
+        os.mkdir(directory_path)
+        # Add a hidden file to annotate the directory as one managed by config2py.
+        # This helps distinguish it from directories created by other programs
+        # (this can be useful to avoid conflicts).
+        (Path(directory_path) / ".config2py").write_text("Created by config2py.")
+
+
+def get_app_data_directory(
+    app_name: str = pkg_name, 
+    *, 
+    setup_callback: Callable[[str], None] = _default_folder_setup
+) -> str:
+    """
+    Retrieve or create the app data directory specific to the given app name.
+
+    Args:
+    - app_name (str): Name of the app for which the data directory is needed.
+    - setup_callback (Callable[[str], None]): A callback function to initialize the directory. 
+                                              Default is _default_folder_setup.
+
+    Returns:
+    - str: Path to the app data directory.
+    """
+    app_data_path = os.path.join(get_app_data_folder(ensure_exists=True), app_name)
+
+    if not os.path.isdir(app_data_path):
+        setup_callback(app_data_path)
+    return app_data_path
+
 
 
 # TODO: Build Configs from dol.Files, returning dol.TextFiles except if .bin extension,
@@ -235,7 +252,7 @@ Configs = TextFiles
 
 def get_configs_local_store(dirname=pkg_name):
     """Get the local store of configs."""
-    return Configs(_get_app_data_dir(dirname))
+    return Configs(get_app_data_directory(dirname))
 
 
 configs = get_configs_local_store()
