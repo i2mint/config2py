@@ -5,7 +5,8 @@ import re
 import getpass
 from dol import Pipe, resolve_path
 import os
-from config2py.util import get_config, local_configs, user_gettable
+from config2py.util import local_configs
+from config2py.base import get_config, user_gettable
 
 
 config_getter = get_config(sources=[
