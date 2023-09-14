@@ -254,7 +254,9 @@ def get_configs_local_store(dirname=DFLT_APP_NAME):
     return Configs(get_app_data_directory(dirname))
 
 
-configs = get_configs_local_store()
+local_configs = get_configs_local_store()
+configs = local_configs  # TODO: backwards compatibility alias
+
 
 
 # def extract_variable_declarations(string):
