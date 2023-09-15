@@ -9,11 +9,12 @@ from config2py.util import local_configs
 from config2py.base import get_config, user_gettable
 
 
-config_getter = get_config(sources=[
+repl_config_getter = get_config(sources=[
     os.environ,  # search in environment variables first
     local_configs,  # then search in local_configs
     user_gettable(local_configs)  # if not found, ask the user and store in local_configs
 ])
+repl_config_getter.local_configs = local_configs
 
 export_line_p = re.compile('export .+')
 export_p = re.compile(r'(\w+)\s?\=\s?"(.+)"')

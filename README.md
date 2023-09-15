@@ -6,7 +6,102 @@ To install:	```pip install config2py```
 
 [Documentation](https://i2mint.github.io/config2py/)
 
-## Illustrative example
+
+
+# The cherry on top: repl_config_getter
+
+```python
+from config2py import repl_config_getter
+```
+
+Let's start with an extremely convenient, no questions asked, object.
+Later, we'll look under the hood to show the many tools that support it, and can be 
+shaped to fit many desired behaviors. 
+
+What `config2py.repl_config_getter(key)` will do is:
+* search for `key` in your environment variables, and if not found...
+* ... search for it in a `config2py` directory (automatically made) of the standard "app data" folder of your system (`~/.config` for linus/mac, `$APPDATA` for windows), and if not found...
+* ... ask the user to enter the value that key should have, and then put it in the `config2py` directory so it's persisted.
+
+<img width="341" alt="image" src="https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617">
+
+
+```python
+repl_config_getter('HOME')  # if you are using Linux/MacOS
+# repl_config_getter('USERPROFILE')  # if you are using Windows
+```
+
+    '/Users/thorwhalen'
+
+
+Now, normally all systems come with a `HOME` environment variable (or a `USERPROFILE` on windows), so the above should always work fine. 
+But see what happens if you ask for a key that is not an environment variable:
+
+
+```python
+my_config_val = repl_config_getter('_TEST_NON_EXISTING_KEY_')  # triggers a user input dialog
+# ... I enter 'my config value' in the dialog, and then...
+```
+
+
+```python
+my_config_val
+```
+
+    'my config value'
+
+
+
+But if I do that again (even on a different day, somewhere else (on my same computer), in a different session), it will get me the value I entered in the user input dialog.
+
+
+```python
+my_config_val = repl_config_getter('_TEST_NON_EXISTING_KEY_')  # does not trigger input dialog
+my_config_val
+```
+
+    'my config value'
+
+
+
+And of course, we give you a means to delete that value, since `repl_config_getter` has a `local_configs` mapping (think `dict`) to the local files where it has been stored. 
+You can do all the usual stuff you do with a `dict` (except the effects will be on local files), 
+like list the keys (with `list(.)`), get values for a key (with `.[key]`), ask for the number of keys (`len(.)`), and, well, delete stuff:
+
+
+```python
+if '_TEST_NON_EXISTING_KEY_' in repl_config_getter.local_configs:
+    del repl_config_getter.local_configs['_TEST_NON_EXISTING_KEY_']
+```
+
+This tool allows you to:
+* not have to set up any special configs stuff (unless you want/need to)
+* enables you to share your notebooks (CLIs etc.) with others without having to polute the code with configs-setup gunk...
+* ... including when you put local file/folder paths (or worse, secrets) in your notebook or code, which others then have to edit (instead, here, just enter a probably-unique name for the needed resource, then enter your filepath in the user input dialog instead)
+
+This is very convenient situation where user input (via things like `__builtins__.input` or `getpass.getpass` etc) is available. But **you should not use this to manage configurations/resources anywhere were there's not a user to see and respond to the builtin user input dialog**
+
+Don't fret though, this `repl_config_getter` is just our no-BS entry point to much more. 
+Let's have a slight look under its hood to see what else we can do with it. 
+
+And of course, if you're that type, you can already have a look at [the documentation](https://i2mint.github.io/config2py/)
+
+# Setting the config key search path
+
+If you check out the code for `repl_config_getter`, you'll find that all it is is:
+
+```python
+repl_config_getter = get_config(sources=[
+    os.environ,  # search in environment variables first
+    local_configs,  # then search in local_configs
+    user_gettable(local_configs)  # if not found, ask the user and store in local_configs
+])
+repl_config_getter.local_configs = local_configs
+```
+
+So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don't want that "ask the user for the value" thing, you can just remove the `user_gettable(local_configs)` part. If you wanted instead to add a place to look before the environment variables -- say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.
+
+Let's work through a custom-made `config_getter`.
 
 ```python
 from config2py import get_config, user_gettable
@@ -25,7 +120,8 @@ config_getter('SOME_CONFIG_KEY')
 ```
 
 Well, it will first look in `locals()`, which is a dictionary containing local variables
-(this could happen, for example, if we're in a function and want to first see if there was an argument where we could find that value).
+where the `config_getter` was **defined** (careful -- not called!!). 
+This is desirable sometimes when you define your `config_getter` in a module that has other python variables you'd like to use. 
 
 Assuming it doesn't find such a key in `locals()` it goes on to try to find it in 
 `os.environ`, which is a dict containing system environment variables. 
@@ -36,7 +132,7 @@ The function finally returns with the value that the user entered.
 
 But there's more!
 
-Now look at what's in my_configs! 
+Now look at what's in `my_configs`! 
 If you've used `TextFiles`, look in the folder to see that there's a new file.
 Either way, if you do:
 
@@ -156,3 +252,35 @@ want to do some caching.
     sorts of data sources.
 
 For more info, see: https://github.com/i2mint/config2py/issues/4
+
+
+
+
+# user_gettable
+
+So, what's that `user_gettable`? 
+
+It's a way for you to specify that the system should ask the user for a key, and optionally save it somewhere, plus many other parameters (like what to ask the user, etc.)
+
+
+```python
+from config2py.base import user_gettable
+
+s = user_gettable()
+s['SOME_KEY'] 
+# will trigger a prompt for the user to enter the value of SOME_KEY
+# ... and when they do (say they entered 'SOME_VAL') it will return that value
+
+# And if you specify a save_to store (usually a persistent MutableMapping made with the dol package)
+# then it will save the value to that store for future use
+d = dict(some='store')
+s = user_gettable(save_to=d)
+s['SOME_KEY'] 
+```
+
+More on that another day...
+
+
+```python
+
+```
