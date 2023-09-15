@@ -20,13 +20,13 @@ repl_config_getter = get_config(
 )
 repl_config_getter.local_configs = local_configs
 
-export_line_p = re.compile("export .+")
+export_line_p = re.compile('export .+')
 export_p = re.compile(r'(\w+)\s?\=\s?"(.+)"')
 
 _extract_name_and_value_from_export_line = Pipe(
-    lambda x: x[len("export ") :],
+    lambda x: x[len('export ') :],
     lambda x: export_p.match(x),
-    lambda x: x.groups() if x else "",
+    lambda x: x.groups() if x else '',
 )
 
 
@@ -49,7 +49,7 @@ def extract_exports(exports: str) -> dict:
     then this simple parser can be useful.
 
     """
-    if "\n" not in exports and Path(resolve_path(exports)).is_file():
+    if '\n' not in exports and Path(resolve_path(exports)).is_file():
         exports = Path(resolve_path(exports)).read_text()
     return dict(
         filter(
