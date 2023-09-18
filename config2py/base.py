@@ -4,6 +4,8 @@ Base for getting configs from various sources and formats
 from collections import ChainMap
 from typing import (
     Callable,
+    Type,
+    Tuple,
     KT,
     VT,
     Iterable,
@@ -23,6 +25,7 @@ from config2py.errors import ConfigNotFound
 # def mk_sentinel(name):  # TODO: Only i2 dependency. Here's replacement, but not picklable
 #     return type(name, (), {'__repr__': lambda self: name})()
 
+Exceptions = Tuple[Type[Exception], ...]
 
 @runtime_checkable
 class GettableContainer(Protocol):
@@ -100,7 +103,7 @@ def get_config(
     default: VT = no_default,
     egress: GetConfigEgress = None,
     val_is_valid: Callable[[VT], bool] = always_true,
-    config_not_found_exceptions: Iterable[Exception] = (Exception,),
+    config_not_found_exceptions: Exceptions = (Exception,),
 ):
     """Get a config value from a list of sources
 
@@ -274,7 +277,7 @@ class FuncBasedGettableContainer:
 
     getter: Callable[[KT], VT]
     val_is_valid: Callable[[VT], bool] = always_true
-    config_not_found_exceptions: Iterable[Exception] = (Exception,)
+    config_not_found_exceptions: Exceptions = (Exception,)
 
     def __post_init__(self):
         # Note: The only purpose of the cache is to avoid calling the getter function
@@ -307,7 +310,7 @@ class FuncBasedGettableContainer:
 def gettable_containers(
     sources: Sources,
     val_is_valid: Callable[[VT], bool] = always_true,
-    config_not_found_exceptions: Iterable[Exception] = (Exception,),
+    config_not_found_exceptions: Exceptions = (Exception,),
 ) -> Iterable[GettableContainer]:
     """Convert an iterable of sources into ``GettableContainers``"""
     for src in sources:
@@ -328,7 +331,7 @@ def gettable_containers(
 def sources_chainmap(
     sources: Sources,
     val_is_valid: Callable[[VT], bool] = always_true,
-    config_not_found_exceptions: Iterable[Exception] = (Exception,),
+    config_not_found_exceptions: Exceptions = (Exception,),
 ) -> ChainMap:
     """Create a ``ChainMap`` from a list of sources"""
     sources = gettable_containers(sources, val_is_valid, config_not_found_exceptions)
@@ -366,7 +369,7 @@ def user_gettable(
     egress: Optional[Callable] = None,
     user_asker=ask_user_for_input,
     val_is_valid: Callable[[VT], bool] = always_true,
-    config_not_found_exceptions: Iterable[Exception] = (Exception,),
+    config_not_found_exceptions: Exceptions = (Exception,),
 ):
     """
     Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
