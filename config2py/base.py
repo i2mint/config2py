@@ -27,6 +27,7 @@ from config2py.errors import ConfigNotFound
 
 Exceptions = Tuple[Type[Exception], ...]
 
+
 @runtime_checkable
 class GettableContainer(Protocol):
     """``Containers`` that are "gettable"".
