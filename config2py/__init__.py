@@ -10,5 +10,6 @@ from config2py.util import (
     # or make configs be more of a default get_configs "chained Mapping"
     local_configs,
     get_configs_local_store,
-    get_app_data_folder,
+    get_app_data_directory,
+    get_configs_directory_for_app,
 )

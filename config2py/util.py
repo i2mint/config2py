@@ -8,7 +8,7 @@ from typing import Optional, Union, Any, Callable
 from dol import TextFiles
 import getpass
 
-DFLT_APP_NAME = 'config2py'
+DFLT_APP_NAME = "config2py"
 DFLT_MASKING_INPUT = False
 
 
@@ -45,16 +45,16 @@ def ask_user_for_input(
     :return: The user's response (or the default value if the user entered nothing)
     """
     _original_prompt = prompt
-    if prompt[-1] != ' ':  # pragma: no cover
-        prompt = prompt + ' '
+    if prompt[-1] != " ":  # pragma: no cover
+        prompt = prompt + " "
     if masking_toggle_str is not None:
         prompt = (
-            f'{prompt}\n'
+            f"{prompt}\n"
             f"    (Input masking is {'ENABLED' if mask_input else 'DISABLED'}. "
             f"Enter '{masking_toggle_str}' (without quotes) to toggle input masking)\n"
         )
     if default:
-        prompt = prompt + f' [{default}]: '
+        prompt = prompt + f" [{default}]: "
     if mask_input:
         response = getpass.getpass(prompt)
     else:
@@ -134,8 +134,8 @@ def extract_variable_declarations(
         expand = None
 
     env_vars = {}
-    pattern = re.compile(r'^export\s+([A-Za-z0-9_]+)=(.*)$')
-    lines = string.split('\n')
+    pattern = re.compile(r"^export\s+([A-Za-z0-9_]+)=(.*)$")
+    lines = string.split("\n")
     for line in lines:
         line = line.strip()
         match = pattern.match(line)
@@ -144,7 +144,7 @@ def extract_variable_declarations(
             value = match.group(2).strip('"')
             if expand is not None:
                 for key, val in expand.items():
-                    value = value.replace(f'${key}', val)
+                    value = value.replace(f"${key}", val)
                 env_vars[name] = value
                 expand = dict(expand, **env_vars)
             else:
@@ -154,22 +154,22 @@ def extract_variable_declarations(
 
 def _system_default_for_app_data_folder():
     """Get the system default for the app data folder."""
-    if os.name == 'nt':
+    if os.name == "nt":
         # Windows
-        app_data_folder = os.getenv('APPDATA')
+        app_data_folder = os.getenv("APPDATA")
     else:
         # macOS and Linux/Unix
-        app_data_folder = os.path.expanduser('~/.config')
+        app_data_folder = os.path.expanduser("~/.config")
     return app_data_folder
 
 
 DFLT_APP_DATA_FOLDER = os.getenv(
-    'CONFIG2PY_APP_DATA_FOLDER', _system_default_for_app_data_folder()
+    "CONFIG2PY_APP_DATA_FOLDER", _system_default_for_app_data_folder()
 )
 
 
 # Note: First possible i2 dependency -- vendoring for now
-def get_app_data_folder(*, ensure_exists=False) -> str:
+def get_app_data_rootdir(*, ensure_exists=False) -> str:
     """
     Returns the full path of a directory suitable for storing application-specific data.
 
@@ -182,12 +182,12 @@ def get_app_data_folder(*, ensure_exists=False) -> str:
 
     See https://github.com/i2mint/i2mint/issues/1.
 
-    >>> get_app_data_folder()  # doctest: +SKIP
+    >>> get_app_data_rootdir()  # doctest: +SKIP
     '/Users/.../.config'
 
     If ``ensure_exists`` is ``True``, the folder will be created if it doesn't exist.
 
-    >>> get_app_data_folder(ensure_exists=True)  # doctest: +SKIP
+    >>> get_app_data_rootdir(ensure_exists=True)  # doctest: +SKIP
     '/Users/.../.config'
 
     Note: The default app data folder is the system default for the current operating
@@ -217,7 +217,7 @@ def _default_folder_setup(directory_path: str) -> None:
         # Add a hidden file to annotate the directory as one managed by config2py.
         # This helps distinguish it from directories created by other programs
         # (this can be useful to avoid conflicts).
-        (Path(directory_path) / '.config2py').write_text('Created by config2py.')
+        (Path(directory_path) / ".config2py").write_text("Created by config2py.")
 
 
 def get_app_data_directory(
@@ -236,11 +236,35 @@ def get_app_data_directory(
     Returns:
     - str: Path to the app data directory.
     """
-    app_data_path = os.path.join(get_app_data_folder(ensure_exists=True), app_name)
+    app_data_path = os.path.join(get_app_data_rootdir(ensure_exists=True), app_name)
 
     if not os.path.isdir(app_data_path):
         setup_callback(app_data_path)
     return app_data_path
+
+
+def get_configs_directory_for_app(
+    app_name: str = DFLT_APP_NAME,
+    *,
+    configs_name: str = "configs",
+    app_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
+    config_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
+):
+    """
+    Retrieve or create the configs directory specific to the given app name.
+
+    Args:
+    - app_name (str): Name of the app for which the configs directory is needed.
+    - configs_name (str): Name of the configs directory.
+    - app_dir_setup_callback (Callable[[str], None]): A callback function to initialize the app directory.
+                                                       Default is _default_folder_setup.
+    - config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.
+                                                         Default is _default_folder_setup.
+    """
+    app_dir = get_app_data_directory(app_name, setup_callback=app_dir_setup_callback)
+    configs_dir = os.path.join(app_dir, configs_name)
+    config_dir_setup_callback(configs_dir)
+    return configs_dir
 
 
 # TODO: Build Configs from dol.Files, returning dol.TextFiles except if .bin extension,
@@ -251,7 +275,7 @@ Configs = TextFiles
 
 def get_configs_local_store(dirname=DFLT_APP_NAME):
     """Get the local store of configs."""
-    return Configs(get_app_data_directory(dirname))
+    return Configs(get_configs_directory_for_app(dirname))
 
 
 local_configs = get_configs_local_store()
