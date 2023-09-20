@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.util &mdash; config2py 0.1.10 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>config2py.util &mdash; config2py 0.1.11 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -89,7 +89,7 @@
 <span class="kn">from</span> <span class="nn">dol</span> <span class="kn">import</span> <span class="n">TextFiles</span>
 <span class="kn">import</span> <span class="nn">getpass</span>
 
-<span class="n">DFLT_APP_NAME</span> <span class="o">=</span> <span class="s1">&#39;config2py&#39;</span>
+<span class="n">DFLT_APP_NAME</span> <span class="o">=</span> <span class="s2">&quot;config2py&quot;</span>
 <span class="n">DFLT_MASKING_INPUT</span> <span class="o">=</span> <span class="kc">False</span>
 
 
@@ -126,16 +126,16 @@
 <span class="sd">    :return: The user&#39;s response (or the default value if the user entered nothing)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_original_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
-    <span class="k">if</span> <span class="n">prompt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39; &#39;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-        <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>
+    <span class="k">if</span> <span class="n">prompt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot; &quot;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>
     <span class="k">if</span> <span class="n">masking_toggle_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;    (Input masking is </span><span class="si">{</span><span class="s1">&#39;ENABLED&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">mask_input</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;DISABLED&#39;</span><span class="si">}</span><span class="s2">. &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Enter &#39;</span><span class="si">{</span><span class="n">masking_toggle_str</span><span class="si">}</span><span class="s2">&#39; (without quotes) to toggle input masking)</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">default</span><span class="p">:</span>
-        <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39; [</span><span class="si">{</span><span class="n">default</span><span class="si">}</span><span class="s1">]: &#39;</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; [</span><span class="si">{</span><span class="n">default</span><span class="si">}</span><span class="s2">]: &quot;</span>
     <span class="k">if</span> <span class="n">mask_input</span><span class="p">:</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -215,8 +215,8 @@
         <span class="n">expand</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">env_vars</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^export\s+([A-Za-z0-9_]+)=(.*)$&#39;</span><span class="p">)</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^export\s+([A-Za-z0-9_]+)=(.*)$&quot;</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
@@ -225,7 +225,7 @@
             <span class="n">value</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">expand</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">expand</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;$</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
                 <span class="n">env_vars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
                 <span class="n">expand</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">expand</span><span class="p">,</span> <span class="o">**</span><span class="n">env_vars</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -235,22 +235,22 @@
 
 <span class="k">def</span> <span class="nf">_system_default_for_app_data_folder</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the system default for the app data folder.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
         <span class="c1"># Windows</span>
-        <span class="n">app_data_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;APPDATA&#39;</span><span class="p">)</span>
+        <span class="n">app_data_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;APPDATA&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># macOS and Linux/Unix</span>
-        <span class="n">app_data_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~/.config&#39;</span><span class="p">)</span>
+        <span class="n">app_data_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/.config&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">app_data_folder</span>
 
 
 <span class="n">DFLT_APP_DATA_FOLDER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span>
-    <span class="s1">&#39;CONFIG2PY_APP_DATA_FOLDER&#39;</span><span class="p">,</span> <span class="n">_system_default_for_app_data_folder</span><span class="p">()</span>
+    <span class="s2">&quot;CONFIG2PY_APP_DATA_FOLDER&quot;</span><span class="p">,</span> <span class="n">_system_default_for_app_data_folder</span><span class="p">()</span>
 <span class="p">)</span>
 
 
 <span class="c1"># Note: First possible i2 dependency -- vendoring for now</span>
-<div class="viewcode-block" id="get_app_data_folder"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.get_app_data_folder">[docs]</a><span class="k">def</span> <span class="nf">get_app_data_folder</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="get_app_data_rootdir"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.get_app_data_rootdir">[docs]</a><span class="k">def</span> <span class="nf">get_app_data_rootdir</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the full path of a directory suitable for storing application-specific data.</span>
 
@@ -263,12 +263,12 @@
 
 <span class="sd">    See https://github.com/i2mint/i2mint/issues/1.</span>
 
-<span class="sd">    &gt;&gt;&gt; get_app_data_folder()  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; get_app_data_rootdir()  # doctest: +SKIP</span>
 <span class="sd">    &#39;/Users/.../.config&#39;</span>
 
 <span class="sd">    If ``ensure_exists`` is ``True``, the folder will be created if it doesn&#39;t exist.</span>
 
-<span class="sd">    &gt;&gt;&gt; get_app_data_folder(ensure_exists=True)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; get_app_data_rootdir(ensure_exists=True)  # doctest: +SKIP</span>
 <span class="sd">    &#39;/Users/.../.config&#39;</span>
 
 <span class="sd">    Note: The default app data folder is the system default for the current operating</span>
@@ -298,7 +298,7 @@
         <span class="c1"># Add a hidden file to annotate the directory as one managed by config2py.</span>
         <span class="c1"># This helps distinguish it from directories created by other programs</span>
         <span class="c1"># (this can be useful to avoid conflicts).</span>
-        <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory_path</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;.config2py&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s1">&#39;Created by config2py.&#39;</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory_path</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;.config2py&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;Created by config2py.&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_app_data_directory"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.get_app_data_directory">[docs]</a><span class="k">def</span> <span class="nf">get_app_data_directory</span><span class="p">(</span>
@@ -317,11 +317,35 @@
 <span class="sd">    Returns:</span>
 <span class="sd">    - str: Path to the app data directory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">app_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_app_data_folder</span><span class="p">(</span><span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">app_name</span><span class="p">)</span>
+    <span class="n">app_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_app_data_rootdir</span><span class="p">(</span><span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">app_name</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">app_data_path</span><span class="p">):</span>
         <span class="n">setup_callback</span><span class="p">(</span><span class="n">app_data_path</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">app_data_path</span></div>
+
+
+<div class="viewcode-block" id="get_configs_directory_for_app"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.get_configs_directory_for_app">[docs]</a><span class="k">def</span> <span class="nf">get_configs_directory_for_app</span><span class="p">(</span>
+    <span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_APP_NAME</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">configs_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;configs&quot;</span><span class="p">,</span>
+    <span class="n">app_dir_setup_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">_default_folder_setup</span><span class="p">,</span>
+    <span class="n">config_dir_setup_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">_default_folder_setup</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve or create the configs directory specific to the given app name.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">    - app_name (str): Name of the app for which the configs directory is needed.</span>
+<span class="sd">    - configs_name (str): Name of the configs directory.</span>
+<span class="sd">    - app_dir_setup_callback (Callable[[str], None]): A callback function to initialize the app directory.</span>
+<span class="sd">                                                       Default is _default_folder_setup.</span>
+<span class="sd">    - config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.</span>
+<span class="sd">                                                         Default is _default_folder_setup.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">app_dir</span> <span class="o">=</span> <span class="n">get_app_data_directory</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">setup_callback</span><span class="o">=</span><span class="n">app_dir_setup_callback</span><span class="p">)</span>
+    <span class="n">configs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app_dir</span><span class="p">,</span> <span class="n">configs_name</span><span class="p">)</span>
+    <span class="n">config_dir_setup_callback</span><span class="p">(</span><span class="n">configs_dir</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">configs_dir</span></div>
 
 
 <span class="c1"># TODO: Build Configs from dol.Files, returning dol.TextFiles except if .bin extension,</span>
@@ -332,7 +356,7 @@
 
 <div class="viewcode-block" id="get_configs_local_store"><a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.base.get_configs_local_store">[docs]</a><span class="k">def</span> <span class="nf">get_configs_local_store</span><span class="p">(</span><span class="n">dirname</span><span class="o">=</span><span class="n">DFLT_APP_NAME</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the local store of configs.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">Configs</span><span class="p">(</span><span class="n">get_app_data_directory</span><span class="p">(</span><span class="n">dirname</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="n">Configs</span><span class="p">(</span><span class="n">get_configs_directory_for_app</span><span class="p">(</span><span class="n">dirname</span><span class="p">))</span></div>
 
 
 <span class="n">local_configs</span> <span class="o">=</span> <span class="n">get_configs_local_store</span><span class="p">()</span>
