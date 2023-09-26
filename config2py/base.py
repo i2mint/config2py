@@ -195,7 +195,7 @@ def get_config(
 
     """
     if key is None and sources is not None:
-        return partial(
+        get_config_ = partial(
             get_config,
             sources=sources,
             default=default,
@@ -203,6 +203,8 @@ def get_config(
             val_is_valid=val_is_valid,
             config_not_found_exceptions=config_not_found_exceptions,
         )
+        get_config_.sources = sources
+        return get_config_
     chain_map = sources_chainmap(sources, val_is_valid, config_not_found_exceptions)
     value = chain_map.get(key, config_not_found)
     if value is config_not_found:
