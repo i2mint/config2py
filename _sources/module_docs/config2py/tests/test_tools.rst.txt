@@ -1,0 +1,4 @@
+config2py.tests.test_tools
+==========================
+.. automodule:: config2py.tests.test_tools
+   :members:
