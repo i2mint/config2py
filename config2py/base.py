@@ -8,6 +8,7 @@ from typing import (
     Tuple,
     KT,
     VT,
+    Any,
     Iterable,
     Protocol,
     Union,
@@ -341,11 +342,14 @@ def sources_chainmap(
     return ChainMap(*gettable_containers(sources))
 
 
+KTSaver = Callable[[KT, VT], Any]
+SaveTo = Optional[Union[MutableMapping, KTSaver]]
+
 def ask_user_for_key(
     key=None,
     *,
     prompt_template='Enter a value for {}: ',
-    save_to: Optional[MutableMapping] = None,
+    save_to: SaveTo = None,
     user_asker=ask_user_for_input,
     egress: Optional[Callable] = None,
 ):
@@ -361,12 +365,14 @@ def ask_user_for_key(
     if isinstance(egress, Callable):
         val = egress(key, val)
     if save_to is not None:
-        save_to[key] = val
+        if hasattr(save_to, '__setitem__'):
+            save_to_func = save_to.__setitem__
+        save_to_func(key, val)
     return val
 
 
 def user_gettable(
-    save_to: Optional[MutableMapping] = None,
+    save_to: SaveTo = None,
     *,
     prompt_template='Enter a value for {}: ',
     egress: Optional[Callable] = None,

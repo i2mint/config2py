@@ -19,20 +19,22 @@ def get_configs_local_store(config_src=DFLT_CONFIG_FOLDER):
         # TODO: Not tested
         # TODO: Make this open-closed plug-in via routing argument
         _, extension = os.path.splitext(config_src)
-        if extension in {'.ini', '.cfg'}:
+        if extension in {".ini", ".cfg"}:
             from config2py.s_configparser import ConfigStore
 
             return ConfigStore(config_src)
     elif os.path.sep not in config_src:  # it's just a string
+        # TODO: is "get" the right word, since it makes the folder too
         path = get_configs_folder_for_app(config_src)
         return TextFiles(path)
     else:
         raise ValueError(
-            f'config_src must be a directory, ini or cfg file, or app name. '
-            f'Was: {config_src}'
+            f"config_src must be a directory, ini or cfg file, or app name. "
+            f"Was: {config_src}"
         )
 
 
+# TODO: Need tests and demo
 def simple_config_getter(
     configs_src: str = DFLT_CONFIG_FOLDER,
     *,
@@ -103,13 +105,13 @@ repl_config_getter.local_configs = local_configs
 
 # --------------------------------------------------------------------
 
-export_line_p = re.compile('export .+')
+export_line_p = re.compile("export .+")
 export_p = re.compile(r'(\w+)\s?\=\s?"(.+)"')
 
 _extract_name_and_value_from_export_line = Pipe(
-    lambda x: x[len('export ') :],
+    lambda x: x[len("export ") :],
     lambda x: export_p.match(x),
-    lambda x: x.groups() if x else '',
+    lambda x: x.groups() if x else "",
 )
 
 
@@ -132,7 +134,7 @@ def extract_exports(exports: str) -> dict:
     then this simple parser can be useful.
 
     """
-    if '\n' not in exports and Path(resolve_path(exports)).is_file():
+    if "\n" not in exports and Path(resolve_path(exports)).is_file():
         exports = Path(resolve_path(exports)).read_text()
     return dict(
         filter(

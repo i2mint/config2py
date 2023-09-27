@@ -241,6 +241,7 @@ def get_app_data_folder(
     return app_data_path
 
 
+# TODO: is "get" the right word, since it makes the folder too?
 def get_configs_folder_for_app(
     app_name: str = DFLT_APP_NAME,
     *,
