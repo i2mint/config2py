@@ -157,9 +157,9 @@ user again.
 * `get_config`: Get a config value from a list of sources. See more below.
 * `user_gettable`: Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
 * `ask_user_for_input`: Ask the user for input, optionally masking, validating and transforming the input.
-* `get_app_data_directory`: Returns the full path of a directory suitable for storing application-specific data for a given app name.
+* `get_app_data_folder`: Returns the full path of a directory suitable for storing application-specific data for a given app name.
 * `get_configs_local_store`: Get a local store (mapping interface of local files) of configs for a given app or package name
-* `configs`: A default local store (mapping interface of local files) for configs.
+* `configs`: A default store instance for configs, defaulting to a local store under a default configuration local directory.
 
 ## get_config
 

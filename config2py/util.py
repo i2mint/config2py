@@ -3,12 +3,10 @@
 import re
 import os
 from pathlib import Path
-from functools import partial
 from typing import Optional, Union, Any, Callable
-from dol import TextFiles
 import getpass
 
-DFLT_APP_NAME = 'config2py'
+DFLT_APP_NAME = "config2py"
 DFLT_MASKING_INPUT = False
 
 
@@ -45,16 +43,16 @@ def ask_user_for_input(
     :return: The user's response (or the default value if the user entered nothing)
     """
     _original_prompt = prompt
-    if prompt[-1] != ' ':  # pragma: no cover
-        prompt = prompt + ' '
+    if prompt[-1] != " ":  # pragma: no cover
+        prompt = prompt + " "
     if masking_toggle_str is not None:
         prompt = (
-            f'{prompt}\n'
+            f"{prompt}\n"
             f"    (Input masking is {'ENABLED' if mask_input else 'DISABLED'}. "
             f"Enter '{masking_toggle_str}' (without quotes) to toggle input masking)\n"
         )
     if default:
-        prompt = prompt + f' [{default}]: '
+        prompt = prompt + f" [{default}]: "
     if mask_input:
         response = getpass.getpass(prompt)
     else:
@@ -134,8 +132,8 @@ def extract_variable_declarations(
         expand = None
 
     env_vars = {}
-    pattern = re.compile(r'^export\s+([A-Za-z0-9_]+)=(.*)$')
-    lines = string.split('\n')
+    pattern = re.compile(r"^export\s+([A-Za-z0-9_]+)=(.*)$")
+    lines = string.split("\n")
     for line in lines:
         line = line.strip()
         match = pattern.match(line)
@@ -144,7 +142,7 @@ def extract_variable_declarations(
             value = match.group(2).strip('"')
             if expand is not None:
                 for key, val in expand.items():
-                    value = value.replace(f'${key}', val)
+                    value = value.replace(f"${key}", val)
                 env_vars[name] = value
                 expand = dict(expand, **env_vars)
             else:
@@ -154,17 +152,17 @@ def extract_variable_declarations(
 
 def _system_default_for_app_data_folder():
     """Get the system default for the app data folder."""
-    if os.name == 'nt':
+    if os.name == "nt":
         # Windows
-        app_data_folder = os.getenv('APPDATA')
+        app_data_folder = os.getenv("APPDATA")
     else:
         # macOS and Linux/Unix
-        app_data_folder = os.path.expanduser('~/.config')
+        app_data_folder = os.path.expanduser("~/.config")
     return app_data_folder
 
 
 DFLT_APP_DATA_FOLDER = os.getenv(
-    'CONFIG2PY_APP_DATA_FOLDER', _system_default_for_app_data_folder()
+    "CONFIG2PY_APP_DATA_FOLDER", _system_default_for_app_data_folder()
 )
 
 
@@ -217,10 +215,10 @@ def _default_folder_setup(directory_path: str) -> None:
         # Add a hidden file to annotate the directory as one managed by config2py.
         # This helps distinguish it from directories created by other programs
         # (this can be useful to avoid conflicts).
-        (Path(directory_path) / '.config2py').write_text('Created by config2py.')
+        (Path(directory_path) / ".config2py").write_text("Created by config2py.")
 
 
-def get_app_data_directory(
+def get_app_data_folder(
     app_name: str = DFLT_APP_NAME,
     *,
     setup_callback: Callable[[str], None] = _default_folder_setup,
@@ -243,10 +241,10 @@ def get_app_data_directory(
     return app_data_path
 
 
-def get_configs_directory_for_app(
+def get_configs_folder_for_app(
     app_name: str = DFLT_APP_NAME,
     *,
-    configs_name: str = 'configs',
+    configs_name: str = "configs",
     app_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
     config_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
 ):
@@ -261,55 +259,15 @@ def get_configs_directory_for_app(
     - config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.
                                                          Default is _default_folder_setup.
     """
-    app_dir = get_app_data_directory(app_name, setup_callback=app_dir_setup_callback)
+    app_dir = get_app_data_folder(app_name, setup_callback=app_dir_setup_callback)
     configs_dir = os.path.join(app_dir, configs_name)
     config_dir_setup_callback(configs_dir)
     return configs_dir
 
 
-# TODO: Build Configs from dol.Files, returning dol.TextFiles except if .bin extension,
-#  and returning Configs(dirpath) if key is a directory
-# TODO: Make the Configs class with use outside config2py in mind.
-Configs = TextFiles
+get_app_data_directory = get_app_data_folder  # backwards compatibility alias
+get_configs_directory_for_app = (
+    get_configs_folder_for_app  # backwards compatibility alias
+)
 
-
-def get_configs_local_store(dirname=DFLT_APP_NAME):
-    """Get the local store of configs."""
-    return Configs(get_configs_directory_for_app(dirname))
-
-
-local_configs = get_configs_local_store()
-configs = local_configs  # TODO: backwards compatibility alias
-
-
-# def extract_variable_declarations(string):
-#     """
-#     Reads the contents of a config file, extracting Unix-style environment variable
-#     declarations of the form
-#     `export {NAME}={value}`, returning a dictionary of `{NAME: value, ...}` pairs.
-#
-#     # >>> config = (
-#     # ...   'export ENVIRONMENT="development"\\n'
-#     # ...   'export PORT=8080\\n'
-#     # ...   'alias = "just to make it harder"\\n'
-#     # ...   '\\n'
-#     # ...   'export DEBUG=true'
-#     # ...)
-#     # >>> extract_variable_declarations(config)
-#     # {'ENVIRONMENT': '"development"', 'PORT': '8080', 'DEBUG': 'true'}
-#
-#     >>> config = 'export PATH="$PATH:/usr/local/bin"\\nexport EDITOR="nano"'
-#     >>> extract_variable_declarations(config)
-#     {'PATH': '$PATH:/usr/local/bin', 'EDITOR': 'nano'}
-#
-#     """
-#     env_vars = {}
-#     lines = string.split("\n")
-#     for line in lines:
-#         line = line.strip()
-#         if line.startswith("export"):
-#             parts = line.split("=")
-#             name = parts[0].split(" ")[1]
-#             value = parts[1]
-#             env_vars[name] = value
-#     return env_vars
+DFLT_CONFIG_FOLDER = get_configs_folder_for_app()
