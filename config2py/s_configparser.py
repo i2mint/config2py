@@ -107,7 +107,11 @@ class ConfigStore(ConfigParserStore):
 
     >>> import os
     >>> from config2py.s_configparser import ConfigStore, ConfigReader
-    >>> ini_filepath = 'config_store_test.ini'
+    >>> import tempfile
+    >>> temp_dir_path = tempfile.TemporaryDirectory().name
+    >>> if not os.path.exists(temp_dir_path):
+    ...     os.makedirs(temp_dir_path)
+    >>> ini_filepath = os.path.join(temp_dir_path, 'config_store_test.ini')
     >>> if os.path.isfile(ini_filepath):
     ...     os.remove(ini_filepath)
     >>>
