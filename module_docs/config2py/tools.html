@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.tools &mdash; config2py 0.1.12 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>config2py.tools &mdash; config2py 0.1.13 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -105,6 +105,38 @@
 if you want to extract exports from only a specific file (env vars are often
 placed in different linked files), or the exports are defined in a string you hold,
 then this simple parser can be useful.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="config2py.tools.get_configs_local_store">
+<code class="sig-prename descclassname">config2py.tools.</code><code class="sig-name descname">get_configs_local_store</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_src</span><span class="o">=</span><span class="default_value">'/home/runner/.config/config2py/configs'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/tools.html#get_configs_local_store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config2py.tools.get_configs_local_store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the local store of configs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="config2py.tools.simple_config_getter">
+<code class="sig-prename descclassname">config2py.tools.</code><code class="sig-name descname">simple_config_getter</code><span class="sig-paren">(</span><em class="sig-param">configs_src: str = '/home/runner/.config/config2py/configs'</em>, <em class="sig-param">*</em>, <em class="sig-param">first_look_in_env_vars: bool = True</em>, <em class="sig-param">ask_user_if_key_not_found: bool = False</em>, <em class="sig-param">config_store_factory: Callable = &lt;function get_configs_local_store&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/tools.html#simple_config_getter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#config2py.tools.simple_config_getter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a simple config getter from a “central” config source specification.</p>
+<p>The purpose of this function is to implement a common pattern of getting configs:
+One that, by default (but optionally), looks in environment variables first,
+then in a central config store, created via a simple <code class="docutils literal notranslate"><span class="pre">configs_src</span></code> specification
+and then, if the key is not found in this “central” store, optionally (but not by
+default) asks the user for the value and stores it in the central config store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configs_src</strong> – A specification of the central config store. By default:
+If it’s a directory, it’s assumed to be a folder of text files.
+If it’s a file, it’s assumed to be an ini or cfg file.
+If it’s a string, it’s assumed to be an app name, from which to create a folder</p></li>
+<li><p><strong>first_look_in_env_vars</strong> – Whether to look in environment variables first</p></li>
+<li><p><strong>ask_user_if_key_not_found</strong> – Whether to ask the user if the key is not found
+(and subsequently store the key in the central config store)</p></li>
+<li><p><strong>config_store_factory</strong> – A function that takes a config source specification
+and returns the central config store</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
