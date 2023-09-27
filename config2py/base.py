@@ -345,6 +345,7 @@ def sources_chainmap(
 KTSaver = Callable[[KT, VT], Any]
 SaveTo = Optional[Union[MutableMapping, KTSaver]]
 
+
 def ask_user_for_key(
     key=None,
     *,
