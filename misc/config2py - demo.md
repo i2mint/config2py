@@ -2,16 +2,16 @@
 
 ```
 
-# The cherry on top
+# The cherry on top: `config_getter`
 
 
 ```python
-from config2py import repl_config_getter
+from config2py import config_getter
 ```
 
 Let's start with an extremely convenient, no questions asked, object.
 
-What `config2py.repl_config_getter(key)` will do is:
+What `config2py.config_getter(key)` will do is:
 * search for `key` in your environment variables, and if not found...
 * ... search for it in a `config2py` directory (automatically made) of the standard "app data" folder of your system (`~/.config` for linus/mac, `$APPDATA` for windows), and if not found...
 * ... ask the user to enter the value that key should have, and then put it in the `config2py` directory so it's persisted.
@@ -20,8 +20,8 @@ What `config2py.repl_config_getter(key)` will do is:
 
 
 ```python
-repl_config_getter('HOME')  # if you are using Linux/MacOS
-# repl_config_getter('USERPROFILE')  # if you are using Windows
+config_getter('HOME')  # if you are using Linux/MacOS
+# config_getter('USERPROFILE')  # if you are using Windows
 ```
 
 
@@ -36,7 +36,7 @@ But see what happens if you ask for a key that is not an environment variable:
 
 
 ```python
-my_config_val = repl_config_getter('_TEST_NON_EXISTING_KEY_')  # triggers a user input dialog
+my_config_val = config_getter('_TEST_NON_EXISTING_KEY_')  # triggers a user input dialog
 # ... I enter 'my config value' in the dialog, and then...
 ```
 
@@ -56,7 +56,7 @@ But if I do that again (even on a different day, somewhere else (on my same comp
 
 
 ```python
-my_config_val = repl_config_getter('_TEST_NON_EXISTING_KEY_')  # does not trigger input dialog
+my_config_val = config_getter('_TEST_NON_EXISTING_KEY_')  # does not trigger input dialog
 my_config_val
 ```
 
@@ -67,40 +67,43 @@ my_config_val
 
 
 
-And of course, we give you a means to delete that value, since `repl_config_getter` has a `local_configs` mapping (think `dict`) to the local files where it has been stored. 
+And of course, we give you a means to delete that value, since `config_getter` has a `local_configs` mapping (think `dict`) to the local files where it has been stored. 
 You can do all the usual stuff you do with a `dict` (except the effects will be on local files), 
 like list the keys (with `list(.)`), get values for a key (with `.[key]`), ask for the number of keys (`len(.)`), and, well, delete stuff:
 
 
 ```python
-if '_TEST_NON_EXISTING_KEY_' in repl_config_getter.local_configs:
-    del repl_config_getter.local_configs['_TEST_NON_EXISTING_KEY_']
+if '_TEST_NON_EXISTING_KEY_' in config_getter.configs:
+    del config_getter.configs['_TEST_NON_EXISTING_KEY_']
 
 ```
+
+Where **is** this configs store actually stored? 
+Well, you will get to chose, but by default it's in a `config2py` directory (automatically made) of the standard "app data" folder of your system (`~/.config` for linux/mac, `$APPDATA` for windows).
 
 This tool allows you to:
 * not have to set up any special configs stuff (unless you want/need to)
 * enables you to share your notebooks (CLIs etc.) with others without having to polute the code with configs-setup gunk...
 * ... including when you put local file/folder paths (or worse, secrets) in your notebook or code, which others then have to edit (instead, here, just enter a probably-unique name for the needed resource, then enter your filepath in the user input dialog instead)
 
-This is very convenient situation where user input (via things like `__builtins__.input` or `getpass.getpass` etc) is available. But **you should not use this to manage configurations/resources anywhere were there's not a user to see and respond to the builtin user input dialog**
+This is very convenient situation where user input (via things like `__builtins__.input` or `getpass.getpass` etc) is available. But you should use this only in iteractive situations, **anywhere where there's not a user to see and respond to the builtin user input dialog**
 
-Don't fret though, this `repl_config_getter` is just our no-BS entry point to much more. 
+Don't fret though, this `config_getter` is just our no-BS entry point to much more. 
 Let's have a slight look under its hood to see what else we can do with it. 
 
 And of course, if you're that type, you can already have a look at [the documentation](https://i2mint.github.io/config2py/)
 
 # Setting the config key search path
 
-If you check out the code for `repl_config_getter`, you'll find that all it is is:
+If you check out the code for `config_getter`, you'll find that all it is is:
 
 ```python
-repl_config_getter = get_config(sources=[
+config_getter = get_config(sources=[
     os.environ,  # search in environment variables first
     local_configs,  # then search in local_configs
     user_gettable(local_configs)  # if not found, ask the user and store in local_configs
 ])
-repl_config_getter.local_configs = local_configs
+config_getter.configs = local_configs
 ```
 
 So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don't want that "ask the user for the value" thing, you can just remove the `user_gettable(local_configs)` part. If you wanted instead to add a place to look before the environment variables -- say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.

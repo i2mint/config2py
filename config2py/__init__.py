@@ -5,7 +5,7 @@ from config2py.tools import (
     extract_exports,
     get_configs_local_store,
     simple_config_getter,
-    repl_config_getter,
+    config_getter,
     local_configs,
     Configs,  # user-customized configs store class (default is TextFiles)
     configs,  # user-customized configs store instance (default is local_configs)
@@ -16,4 +16,5 @@ from config2py.util import (
     ask_user_for_input,
     get_app_data_folder,
     get_configs_folder_for_app,
+    is_repl,
 )

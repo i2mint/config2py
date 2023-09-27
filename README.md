@@ -8,27 +8,27 @@ To install:	```pip install config2py```
 
 
 
-# The cherry on top: repl_config_getter
+# The cherry on top: config_getter
 
 ```python
-from config2py import repl_config_getter
+from config2py import config_getter
 ```
 
 Let's start with an extremely convenient, no questions asked, object.
-Later, we'll look under the hood to show the many tools that support it, and can be 
-shaped to fit many desired behaviors. 
+Later, we'll look under the hood to show the many tools that support it, and can be shaped to fit many desired behaviors. 
 
-What `config2py.repl_config_getter(key)` will do is:
+What `config2py.config_getter(key)` will do is:
 * search for `key` in your environment variables, and if not found...
-* ... search for it in a `config2py` directory (automatically made) of the standard "app data" folder of your system (`~/.config` for linus/mac, `$APPDATA` for windows), and if not found...
-* ... ask the user to enter the value that key should have, and then put it in the `config2py` directory so it's persisted.
+* ... search for it in a default local directory (more on that later), and if not found...
+* ... ask the user to enter the value that key should have, and then put it in the local directory mentioned above.
 
 <img width="341" alt="image" src="https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617">
 
+_Note: The "... ask the user to enter the value..." will be activated only when in an interactive environment (python console, jupyter notebook, etc.), as decided by the `config2py.is_repl()` function_
 
 ```python
-repl_config_getter('HOME')  # if you are using Linux/MacOS
-# repl_config_getter('USERPROFILE')  # if you are using Windows
+config_getter('HOME')  # if you are using Linux/MacOS
+# config_getter('USERPROFILE')  # if you are using Windows
 ```
 
     '/Users/thorwhalen'
@@ -39,7 +39,7 @@ But see what happens if you ask for a key that is not an environment variable:
 
 
 ```python
-my_config_val = repl_config_getter('_TEST_NON_EXISTING_KEY_')  # triggers a user input dialog
+my_config_val = config_getter('_TEST_NON_EXISTING_KEY_')  # triggers a user input dialog
 # ... I enter 'my config value' in the dialog, and then...
 ```
 
@@ -56,7 +56,7 @@ But if I do that again (even on a different day, somewhere else (on my same comp
 
 
 ```python
-my_config_val = repl_config_getter('_TEST_NON_EXISTING_KEY_')  # does not trigger input dialog
+my_config_val = config_getter('_TEST_NON_EXISTING_KEY_')  # does not trigger input dialog
 my_config_val
 ```
 
@@ -64,14 +64,14 @@ my_config_val
 
 
 
-And of course, we give you a means to delete that value, since `repl_config_getter` has a `local_configs` mapping (think `dict`) to the local files where it has been stored. 
+And of course, we give you a means to delete that value, since `config_getter` has a `local_configs` mapping (think `dict`) to the local files where it has been stored. 
 You can do all the usual stuff you do with a `dict` (except the effects will be on local files), 
 like list the keys (with `list(.)`), get values for a key (with `.[key]`), ask for the number of keys (`len(.)`), and, well, delete stuff:
 
 
 ```python
-if '_TEST_NON_EXISTING_KEY_' in repl_config_getter.local_configs:
-    del repl_config_getter.local_configs['_TEST_NON_EXISTING_KEY_']
+if '_TEST_NON_EXISTING_KEY_' in config_getter.configs:
+    del config_getter.configs['_TEST_NON_EXISTING_KEY_']
 ```
 
 This tool allows you to:
@@ -81,23 +81,68 @@ This tool allows you to:
 
 This is very convenient situation where user input (via things like `__builtins__.input` or `getpass.getpass` etc) is available. But **you should not use this to manage configurations/resources anywhere were there's not a user to see and respond to the builtin user input dialog**
 
-Don't fret though, this `repl_config_getter` is just our no-BS entry point to much more. 
+Don't fret though, this `config_getter` is just our no-BS entry point to much more. 
 Let's have a slight look under its hood to see what else we can do with it. 
 
 And of course, if you're that type, you can already have a look at [the documentation](https://i2mint.github.io/config2py/)
 
-# Setting the config key search path
 
-If you check out the code for `repl_config_getter`, you'll find that all it is is:
+## `simple_config_getter`: Controlling your config_getter a bit more
+
+If you look up for the definition of the `config_getter` function you imported above, you'll find this: `config_getter = simple_config_getter()`. 
+That is, it was created by `simple_config_getter` with its default arguments. 
+Let's have a look at what these are.
+
+In fact, `simple_config_getter` is a function to make configuration getters that ressemble the one we've seen above:
+
+<img width="341" alt="image" src="https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617">
+
+But where you can control what the central store (by default "Local App Data Files" store) is, and whether to first search in environment variables or not, and whether to ask the user for the value, if not found before, or not. 
 
 ```python
-repl_config_getter = get_config(sources=[
-    os.environ,  # search in environment variables first
-    local_configs,  # then search in local_configs
-    user_gettable(local_configs)  # if not found, ask the user and store in local_configs
-])
-repl_config_getter.local_configs = local_configs
+from config2py import simple_config_getter, get_configs_local_store
+from i2 import Sig
+
+print(*str(Sig(simple_config_getter)).split(','), sep='\n')
 ```
+
+    (configs_src: str = '.../.config/config2py/configs'
+    *
+    first_look_in_env_vars: bool = True
+    ask_user_if_key_not_found: bool = None
+    config_store_factory: Callable = <function get_configs_local_store at 0x10a457370>)
+
+`first_look_in_env_vars` specifies whether to look into environment variables first, or not.
+
+`ask_user_if_key_not_found` specifies whether to ask the user if a configuration key is not found. The default is `None`, which will result in checking if you're running in an interactive environment or not. 
+When you use `config2py` in production though, you should definitely specify `ask_user_if_key_not_found=False` to make that choice explicit.
+
+The `configs_src` default is automatically set to be the `config2py/configs` folder of your systems's "App Data" folder (also configurable via a `CONFIG2PY_APP_DATA_FOLDER` environment variable). 
+
+Your central store will be `config_store_factory(configs_src)`, and since you can also specify `config_store_factory`, you have total control over the store.
+
+The default `config_store_factory` is `get_configs_local_store` which will give you a locally persisted store where if `configs_src`:
+* is a directory, it's assumed to be a folder of text files.
+* is a file, it's assumed to be an ini or cfg file.
+* is a string, it's assumed to be an app name, from which to create a config folder for with the default method
+
+
+# Setting the config key search path
+
+If you check out the code for `simple_config_getter`, you'll find that all it it is simply setting the `sources` argument for the `get_config` function. 
+Something more or less like:
+
+```python
+configs = config_store_factory(configs_src)
+source = [
+    os.environ,  # search in environment variables first
+    configs,  # then search in configs
+    user_gettable(configs)  # if not found, ask the user and store in 
+]
+config_getter = get_config(sources=source)
+```
+
+So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don't want that "ask the user for the value" thing, you can just remove the `user_gettable(local_configs)` part. If you wanted instead to add a place to look before the environment variables -- say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.
 
 So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don't want that "ask the user for the value" thing, you can just remove the `user_gettable(local_configs)` part. If you wanted instead to add a place to look before the environment variables -- say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.
 
