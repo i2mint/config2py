@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional, Union, Any, Callable, Set
 import getpass
 
-DFLT_APP_NAME = "config2py"
+DFLT_APP_NAME = 'config2py'
 DFLT_MASKING_INPUT = False
 
 
@@ -44,16 +44,16 @@ def ask_user_for_input(
     :return: The user's response (or the default value if the user entered nothing)
     """
     _original_prompt = prompt
-    if prompt[-1] != " ":  # pragma: no cover
-        prompt = prompt + " "
+    if prompt[-1] != ' ':  # pragma: no cover
+        prompt = prompt + ' '
     if masking_toggle_str is not None:
         prompt = (
-            f"{prompt}\n"
+            f'{prompt}\n'
             f"    (Input masking is {'ENABLED' if mask_input else 'DISABLED'}. "
             f"Enter '{masking_toggle_str}' (without quotes) to toggle input masking)\n"
         )
     if default:
-        prompt = prompt + f" [{default}]: "
+        prompt = prompt + f' [{default}]: '
     if mask_input:
         response = getpass.getpass(prompt)
     else:
@@ -133,8 +133,8 @@ def extract_variable_declarations(
         expand = None
 
     env_vars = {}
-    pattern = re.compile(r"^export\s+([A-Za-z0-9_]+)=(.*)$")
-    lines = string.split("\n")
+    pattern = re.compile(r'^export\s+([A-Za-z0-9_]+)=(.*)$')
+    lines = string.split('\n')
     for line in lines:
         line = line.strip()
         match = pattern.match(line)
@@ -143,7 +143,7 @@ def extract_variable_declarations(
             value = match.group(2).strip('"')
             if expand is not None:
                 for key, val in expand.items():
-                    value = value.replace(f"${key}", val)
+                    value = value.replace(f'${key}', val)
                 env_vars[name] = value
                 expand = dict(expand, **env_vars)
             else:
@@ -153,17 +153,17 @@ def extract_variable_declarations(
 
 def _system_default_for_app_data_folder():
     """Get the system default for the app data folder."""
-    if os.name == "nt":
+    if os.name == 'nt':
         # Windows
-        app_data_folder = os.getenv("APPDATA")
+        app_data_folder = os.getenv('APPDATA')
     else:
         # macOS and Linux/Unix
-        app_data_folder = os.path.expanduser("~/.config")
+        app_data_folder = os.path.expanduser('~/.config')
     return app_data_folder
 
 
 DFLT_APP_DATA_FOLDER = os.getenv(
-    "CONFIG2PY_APP_DATA_FOLDER", _system_default_for_app_data_folder()
+    'CONFIG2PY_APP_DATA_FOLDER', _system_default_for_app_data_folder()
 )
 
 
@@ -216,7 +216,7 @@ def _default_folder_setup(directory_path: str) -> None:
         # Add a hidden file to annotate the directory as one managed by config2py.
         # This helps distinguish it from directories created by other programs
         # (this can be useful to avoid conflicts).
-        (Path(directory_path) / ".config2py").write_text("Created by config2py.")
+        (Path(directory_path) / '.config2py').write_text('Created by config2py.')
 
 
 def get_app_data_folder(
@@ -246,7 +246,7 @@ def get_app_data_folder(
 def get_configs_folder_for_app(
     app_name: str = DFLT_APP_NAME,
     *,
-    configs_name: str = "configs",
+    configs_name: str = 'configs',
     app_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
     config_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
 ):
@@ -279,11 +279,11 @@ import sys
 
 
 def _get_ipython_in_globals():
-    return "get_ipython" in globals()
+    return 'get_ipython' in globals()
 
 
 def _main_does_not_have_file_attribute():
-    return not hasattr(sys.modules["__main__"], "__file__")
+    return not hasattr(sys.modules['__main__'], '__file__')
 
 
 _repl_conditions = {_get_ipython_in_globals, _main_does_not_have_file_attribute}
