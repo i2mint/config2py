@@ -5,8 +5,9 @@ from pathlib import Path
 import re
 from dol import Pipe, TextFiles, resolve_path
 import os
-from config2py.util import get_configs_folder_for_app, DFLT_CONFIG_FOLDER, is_repl
+from i2 import Sig
 
+from config2py.util import get_configs_folder_for_app, DFLT_CONFIG_FOLDER, is_repl
 from config2py.base import get_config, user_gettable
 
 
@@ -145,3 +146,42 @@ def extract_exports(exports: str) -> dict:
             ),
         )
     )
+
+
+def source_config_params(*config_params):
+    """A decorator factorythat sources config params, based on their names, to a config 
+    getter that will be provided when calling the wrapped function.
+
+    :param config_params: The names of the config params to source
+    :return: A decorator that sources the config params to the config getter
+
+    >>> @source_config_params('a', 'b')
+    ... def foo(a, b, c):
+    ...     return a, b, c
+    >>> config = {'a': 1, 'b': 2, 'c': 3}
+    >>> foo(a='a', b='b', c=3, _config_getter=config.get)
+    (1, 2, 3)
+
+    A common use case is when you need to partialize a function with configs but the 
+    config source is not defined yet.
+
+    >>> from functools import partial
+    >>> bar = partial(foo, a='a')
+
+    `a` is set, but you'll be able to call `bar` with different config sources,
+    >>> other_config = {'a': 11, 'b': 22, 'c': 33}
+    >>> bar(b='b', c=3, _config_getter=other_config.get)
+    (11, 22, 3)
+    """
+    def wrapper(func):
+        sig = Sig(func)
+        @sig.add_params(['_config_getter'])
+        def wrapped_func(*args, _config_getter, **kwargs):
+            _kwargs = sig.extract_kwargs(*args, **kwargs)
+            _kwargs = {k: (_config_getter(v) if k in config_params else v) for k, v in _kwargs.items()}
+            _args, _kwargs = sig.extract_args_and_kwargs(**_kwargs)
+            return func(*_args, **_kwargs)
+
+        return wrapped_func
+    
+    return wrapper
