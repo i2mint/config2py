@@ -173,15 +173,20 @@ def source_config_params(*config_params):
     >>> bar(b='b', c=3, _config_getter=other_config.get)
     (11, 22, 3)
     """
+
     def wrapper(func):
         sig = Sig(func)
+
         @sig.add_params(['_config_getter'])
         def wrapped_func(*args, _config_getter, **kwargs):
             _kwargs = sig.extract_kwargs(*args, **kwargs)
-            _kwargs = {k: (_config_getter(v) if k in config_params else v) for k, v in _kwargs.items()}
+            _kwargs = {
+                k: (_config_getter(v) if k in config_params else v)
+                for k, v in _kwargs.items()
+            }
             _args, _kwargs = sig.extract_args_and_kwargs(**_kwargs)
             return func(*_args, **_kwargs)
 
         return wrapped_func
-    
+
     return wrapper
