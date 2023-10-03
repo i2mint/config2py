@@ -169,6 +169,8 @@ def source_config_params(*config_params):
     >>> bar = partial(foo, a='a')
 
     `a` is set, but you'll be able to call `bar` with different config sources,
+    >>> bar(b='b', c=3, _config_getter=config.get)
+    (1, 2, 3)
     >>> other_config = {'a': 11, 'b': 22, 'c': 33}
     >>> bar(b='b', c=3, _config_getter=other_config.get)
     (11, 22, 3)
