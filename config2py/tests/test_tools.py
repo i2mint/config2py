@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from config2py.tools import simple_config_getter
+from config2py.tools import simple_config_getter, source_config_params
 
 
 @pytest.fixture
@@ -39,3 +39,25 @@ def test_simple_config_getter(mock_config_store_factory):
     # TODO: Make this test work
     # Test that config_getter.configs is set correctly
     # assert config_getter.configs is mock_config_store
+
+
+def test_source_config_params():
+    @source_config_params('a', 'b')
+    def foo(a, b, c):
+        return a, b, c
+
+    config = {'a': 1, 'b': 2, 'c': 3}
+    _v = foo(a='a', b='b', c=3, _config_getter=config.get)
+    assert _v == (1, 2, 3)
+
+    @source_config_params('a', 'b')
+    def bar(a, b, c, **kw):
+        assert 'kw' not in kw, f'kw should be unpacked into **kw. Got: {kw=}'
+        return a + b + c + sum(kw.values())
+
+    _v = bar(a='a', b='b', c=3, d=4, e=5, _config_getter=config.get)
+    assert _v == 15
+
+
+if __name__ == '__main__':
+    pytest.main(['-v', __file__])
