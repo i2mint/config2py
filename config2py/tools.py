@@ -14,7 +14,7 @@ from config2py.base import get_config, user_gettable
 # TODO: Make it into an open-closed plug-in using routing
 def get_configs_local_store(config_src=DFLT_CONFIG_FOLDER):
     """Get the local store of configs.
-    
+
     :param config_src: A specification of the local config store. By default:
         If it's a directory, it's assumed to be a folder of text files.
         If it's a file, it's assumed to be an ini or cfg file.
@@ -149,7 +149,7 @@ def extract_exports(exports: str) -> dict:
 
 
 def source_config_params(*config_params):
-    """A decorator factorythat sources config params, based on their names, to a config 
+    """A decorator factorythat sources config params, based on their names, to a config
     getter that will be provided when calling the wrapped function.
 
     :param config_params: The names of the config params to source
@@ -162,7 +162,7 @@ def source_config_params(*config_params):
     >>> foo(a='a', b='b', c=3, _config_getter=config.get)
     (1, 2, 3)
 
-    A common use case is when you need to partialize a function with configs but the 
+    A common use case is when you need to partialize a function with configs but the
     config source is not defined yet.
 
     >>> from functools import partial
@@ -176,6 +176,16 @@ def source_config_params(*config_params):
     (11, 22, 3)
     """
 
+    def bump_varkw(f, kw):
+        """Unpack the varkw if it's in the kwargs"""
+        import inspect
+
+        argspec = inspect.getfullargspec(f)
+        if argspec.varkw in kw:
+            varkw = kw.pop(argspec.varkw)
+            kw.update(varkw)
+        return kw
+
     def wrapper(func):
         sig = Sig(func)
 
@@ -187,6 +197,7 @@ def source_config_params(*config_params):
                 for k, v in _kwargs.items()
             }
             _args, _kwargs = sig.extract_args_and_kwargs(**_kwargs)
+            _kwargs = bump_varkw(func, _kwargs)
             return func(*_args, **_kwargs)
 
         return wrapped_func
