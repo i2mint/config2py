@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.tools &mdash; config2py 0.1.19 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>config2py.tools &mdash; config2py 0.1.20 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -96,7 +96,7 @@
 <span class="c1"># TODO: Make it into an open-closed plug-in using routing</span>
 <div class="viewcode-block" id="get_configs_local_store"><a class="viewcode-back" href="../../module_docs/config2py/tools.html#config2py.tools.get_configs_local_store">[docs]</a><span class="k">def</span> <span class="nf">get_configs_local_store</span><span class="p">(</span><span class="n">config_src</span><span class="o">=</span><span class="n">DFLT_CONFIG_FOLDER</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the local store of configs.</span>
-<span class="sd">    </span>
+
 <span class="sd">    :param config_src: A specification of the local config store. By default:</span>
 <span class="sd">        If it&#39;s a directory, it&#39;s assumed to be a folder of text files.</span>
 <span class="sd">        If it&#39;s a file, it&#39;s assumed to be an ini or cfg file.</span>
@@ -231,7 +231,7 @@
 
 
 <div class="viewcode-block" id="source_config_params"><a class="viewcode-back" href="../../module_docs/config2py/tools.html#config2py.tools.source_config_params">[docs]</a><span class="k">def</span> <span class="nf">source_config_params</span><span class="p">(</span><span class="o">*</span><span class="n">config_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator factorythat sources config params, based on their names, to a config </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator factorythat sources config params, based on their names, to a config</span>
 <span class="sd">    getter that will be provided when calling the wrapped function.</span>
 
 <span class="sd">    :param config_params: The names of the config params to source</span>
@@ -244,7 +244,7 @@
 <span class="sd">    &gt;&gt;&gt; foo(a=&#39;a&#39;, b=&#39;b&#39;, c=3, _config_getter=config.get)</span>
 <span class="sd">    (1, 2, 3)</span>
 
-<span class="sd">    A common use case is when you need to partialize a function with configs but the </span>
+<span class="sd">    A common use case is when you need to partialize a function with configs but the</span>
 <span class="sd">    config source is not defined yet.</span>
 
 <span class="sd">    &gt;&gt;&gt; from functools import partial</span>
@@ -258,6 +258,16 @@
 <span class="sd">    (11, 22, 3)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">def</span> <span class="nf">bump_varkw</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">kw</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unpack the varkw if it&#39;s in the kwargs&quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">inspect</span>
+
+        <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">argspec</span><span class="o">.</span><span class="n">varkw</span> <span class="ow">in</span> <span class="n">kw</span><span class="p">:</span>
+            <span class="n">varkw</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">argspec</span><span class="o">.</span><span class="n">varkw</span><span class="p">)</span>
+            <span class="n">kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">varkw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">kw</span>
+
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
@@ -269,6 +279,7 @@
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="p">}</span>
             <span class="n">_args</span><span class="p">,</span> <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">extract_args_and_kwargs</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+            <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">bump_varkw</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_kwargs</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">wrapped_func</span>
