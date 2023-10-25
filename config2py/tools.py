@@ -180,11 +180,12 @@ def source_config_params(*config_params):
         """Unpack the varkw if it's in the kwargs"""
         import inspect
 
+        _kw = dict(kw)
         argspec = inspect.getfullargspec(f)
-        if argspec.varkw in kw:
-            varkw = kw.pop(argspec.varkw)
-            kw.update(varkw)
-        return kw
+        if argspec.varkw in _kw:
+            varkw = _kw.pop(argspec.varkw)
+            _kw.update(varkw)
+        return _kw
 
     def wrapper(func):
         sig = Sig(func)
@@ -192,6 +193,7 @@ def source_config_params(*config_params):
         @sig.add_params(['_config_getter'])
         def wrapped_func(*args, _config_getter, **kwargs):
             _kwargs = sig.extract_kwargs(*args, **kwargs)
+            _kwargs = bump_varkw(func, _kwargs)
             _kwargs = {
                 k: (_config_getter(v) if k in config_params else v)
                 for k, v in _kwargs.items()
