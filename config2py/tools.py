@@ -7,12 +7,19 @@ from dol import Pipe, TextFiles, resolve_path
 import os
 from i2 import Sig
 
-from config2py.util import get_configs_folder_for_app, DFLT_CONFIG_FOLDER, is_repl
+from config2py.util import (
+    get_configs_folder_for_app,
+    DFLT_CONFIG_FOLDER,
+    is_repl,
+    DFLT_CONFIGS_NAME,
+)
 from config2py.base import get_config, user_gettable
 
 
 # TODO: Make it into an open-closed plug-in using routing
-def get_configs_local_store(config_src=DFLT_CONFIG_FOLDER):
+def get_configs_local_store(
+    config_src=DFLT_CONFIG_FOLDER, *, configs_name=DFLT_CONFIGS_NAME
+):
     """Get the local store of configs.
 
     :param config_src: A specification of the local config store. By default:
@@ -32,7 +39,7 @@ def get_configs_local_store(config_src=DFLT_CONFIG_FOLDER):
             return ConfigStore(config_src)
     elif os.path.sep not in config_src:  # it's just a string
         # TODO: is "get" the right word, since it makes the folder too
-        path = get_configs_folder_for_app(config_src)
+        path = get_configs_folder_for_app(config_src, configs_name=configs_name)
         return TextFiles(path)
     else:
         raise ValueError(
@@ -86,6 +93,7 @@ def simple_config_getter(
 
 # Make a ready-to-use config getter, using the defaults
 config_getter = simple_config_getter()
+
 
 # --------------------------------------------------------------------
 # Ready to import instances
