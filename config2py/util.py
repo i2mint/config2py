@@ -242,11 +242,14 @@ def get_app_data_folder(
     return app_data_path
 
 
+DFLT_CONFIGS_NAME = 'configs'
+
+
 # TODO: is "get" the right word, since it makes the folder too?
 def get_configs_folder_for_app(
     app_name: str = DFLT_APP_NAME,
     *,
-    configs_name: str = 'configs',
+    configs_name: str = DFLT_CONFIGS_NAME,
     app_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
     config_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
 ):
