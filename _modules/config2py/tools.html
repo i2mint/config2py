@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.tools &mdash; config2py 0.1.23 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>config2py.tools &mdash; config2py 0.1.24 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -239,7 +239,7 @@
 
 
 <div class="viewcode-block" id="source_config_params"><a class="viewcode-back" href="../../module_docs/config2py/tools.html#config2py.tools.source_config_params">[docs]</a><span class="k">def</span> <span class="nf">source_config_params</span><span class="p">(</span><span class="o">*</span><span class="n">config_params</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator factorythat sources config params, based on their names, to a config</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator factory that sources config params, based on their names, to a config</span>
 <span class="sd">    getter that will be provided when calling the wrapped function.</span>
 
 <span class="sd">    :param config_params: The names of the config params to source</span>
@@ -264,32 +264,40 @@
 <span class="sd">    &gt;&gt;&gt; other_config = {&#39;a&#39;: 11, &#39;b&#39;: 22, &#39;c&#39;: 33}</span>
 <span class="sd">    &gt;&gt;&gt; bar(b=&#39;b&#39;, c=3, _config_getter=other_config.get)</span>
 <span class="sd">    (11, 22, 3)</span>
+
+<span class="sd">    What if the function as kwargs? No problem, the decorator will handle it. Just</span>
+<span class="sd">    make sure to use the same names for the kwargs as the config params.</span>
+
+<span class="sd">    &gt;&gt;&gt; @source_config_params(&#39;a&#39;, &#39;b&#39;, &#39;d&#39;)</span>
+<span class="sd">    ... def foo(a, b, c, **kwargs):</span>
+<span class="sd">    ...     return a, b, c, kwargs</span>
+<span class="sd">    &gt;&gt;&gt; config = {&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3, &#39;d&#39;: 4}</span>
+<span class="sd">    &gt;&gt;&gt; foo(a=&#39;a&#39;, b=&#39;b&#39;, c=3, d=&#39;d&#39;, _config_getter=config.get)</span>
+<span class="sd">    (1, 2, 3, {&#39;d&#39;: 4})</span>
+
+<span class="sd">    As you can see, `d` is sourced as well.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">bump_varkw</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">kw</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unpack the varkw if it&#39;s in the kwargs&quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">inspect</span>
-
-        <span class="n">_kw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
-        <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">argspec</span><span class="o">.</span><span class="n">varkw</span> <span class="ow">in</span> <span class="n">_kw</span><span class="p">:</span>
-            <span class="n">varkw</span> <span class="o">=</span> <span class="n">_kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">argspec</span><span class="o">.</span><span class="n">varkw</span><span class="p">)</span>
-            <span class="n">_kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">varkw</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">_kw</span>
-
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+
         <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
         <span class="nd">@sig</span><span class="o">.</span><span class="n">add_params</span><span class="p">([</span><span class="s1">&#39;_config_getter&#39;</span><span class="p">])</span>
         <span class="k">def</span> <span class="nf">wrapped_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">_config_getter</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">extract_kwargs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">bump_varkw</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_kwargs</span><span class="p">)</span>
-            <span class="n">_kwargs</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">k</span><span class="p">:</span> <span class="p">(</span><span class="n">_config_getter</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">config_params</span> <span class="k">else</span> <span class="n">v</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="p">}</span>
-            <span class="n">_args</span><span class="p">,</span> <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">extract_args_and_kwargs</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
-            <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">bump_varkw</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_kwargs</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">sig</span><span class="o">.</span><span class="n">var_keyword_name</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="n">kk</span><span class="p">:</span> <span class="n">_config_getter</span><span class="p">(</span><span class="n">vv</span><span class="p">)</span> <span class="k">if</span> <span class="n">kk</span> <span class="ow">in</span> <span class="n">config_params</span> <span class="k">else</span> <span class="n">vv</span>
+                        <span class="k">for</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">_config_getter</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">config_params</span> <span class="k">else</span> <span class="n">v</span>
+
+            <span class="n">arguments</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">map_arguments_from_variadics</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">source</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+            <span class="n">_args</span><span class="p">,</span> <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">mk_args_and_kwargs</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
+
             <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">wrapped_func</span>
