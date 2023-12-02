@@ -97,6 +97,7 @@ GetConfigEgress = Callable[[KT, VT], VT]
 config_not_found = mk_sentinel('config_not_found')
 no_default = mk_sentinel('no_default')
 
+
 def is_not_none_nor_empty(x):
     if isinstance(x, str):
         return x != ''
