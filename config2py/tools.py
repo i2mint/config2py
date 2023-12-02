@@ -157,7 +157,7 @@ def extract_exports(exports: str) -> dict:
 
 
 def source_config_params(*config_params):
-    """A decorator factorythat sources config params, based on their names, to a config
+    """A decorator factory that sources config params, based on their names, to a config
     getter that will be provided when calling the wrapped function.
 
     :param config_params: The names of the config params to source
@@ -182,32 +182,40 @@ def source_config_params(*config_params):
     >>> other_config = {'a': 11, 'b': 22, 'c': 33}
     >>> bar(b='b', c=3, _config_getter=other_config.get)
     (11, 22, 3)
+
+    What if the function as kwargs? No problem, the decorator will handle it. Just
+    make sure to use the same names for the kwargs as the config params.
+
+    >>> @source_config_params('a', 'b', 'd')
+    ... def foo(a, b, c, **kwargs):
+    ...     return a, b, c, kwargs
+    >>> config = {'a': 1, 'b': 2, 'c': 3, 'd': 4}
+    >>> foo(a='a', b='b', c=3, d='d', _config_getter=config.get)
+    (1, 2, 3, {'d': 4})
+
+    As you can see, `d` is sourced as well.
     """
 
-    def bump_varkw(f, kw):
-        """Unpack the varkw if it's in the kwargs"""
-        import inspect
-
-        _kw = dict(kw)
-        argspec = inspect.getfullargspec(f)
-        if argspec.varkw in _kw:
-            varkw = _kw.pop(argspec.varkw)
-            _kw.update(varkw)
-        return _kw
-
     def wrapper(func):
+
         sig = Sig(func)
 
         @sig.add_params(['_config_getter'])
         def wrapped_func(*args, _config_getter, **kwargs):
-            _kwargs = sig.extract_kwargs(*args, **kwargs)
-            _kwargs = bump_varkw(func, _kwargs)
-            _kwargs = {
-                k: (_config_getter(v) if k in config_params else v)
-                for k, v in _kwargs.items()
-            }
-            _args, _kwargs = sig.extract_args_and_kwargs(**_kwargs)
-            _kwargs = bump_varkw(func, _kwargs)
+            def source(k, v):
+                if k == sig.var_keyword_name:
+                    return {
+                        kk: _config_getter(vv) if kk in config_params else vv
+                        for kk, vv in v.items()
+                    }
+                else:
+                    return _config_getter(v) if k in config_params else v
+
+            arguments = sig.map_arguments_from_variadics(*args, **kwargs)
+            arguments = {k: source(k, v) for k, v in arguments.items()}
+
+            _args, _kwargs = sig.mk_args_and_kwargs(arguments)
+
             return func(*_args, **_kwargs)
 
         return wrapped_func
