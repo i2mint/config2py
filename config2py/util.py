@@ -168,14 +168,14 @@ DFLT_APP_DATA_FOLDER = os.getenv(
 
 
 def process_path(
-        path: str, 
-        *, 
-        ensure_dir_exists=False, 
-        assert_exists=False,
-        ensure_endswith_slash=False,
-        ensure_does_not_end_with_slash=False,
-        expanduser=True,
-    ) -> str:
+    path: str,
+    *,
+    ensure_dir_exists=False,
+    assert_exists=False,
+    ensure_endswith_slash=False,
+    ensure_does_not_end_with_slash=False,
+    expanduser=True,
+) -> str:
     """
     Process a path string, ensuring it exists, and optionally expanding user.
 
@@ -208,6 +208,7 @@ def process_path(
     if assert_exists:
         assert os.path.exists(path), f'Path does not exist: {path}'
     return path
+
 
 # Note: First possible i2 dependency -- vendoring for now
 def get_app_data_rootdir(*, ensure_exists=False) -> str:

@@ -2,6 +2,7 @@ import tempfile
 import os
 import pytest
 
+
 def test_process_path():
     # Create a temporary directory
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -17,7 +18,7 @@ def test_process_path():
 
         with pytest.raises(AssertionError):
             output_path = process_path(temp_path, assert_exists=True)
-            
+
         output_path = process_path(temp_path, ensure_dir_exists=True)
         assert output_path == temp_path
         assert os.path.exists(output_path)
@@ -35,4 +36,3 @@ def test_process_path():
             temp_path + os.path.sep, ensure_does_not_end_with_slash=True
         )
         assert output_path == temp_path
-
