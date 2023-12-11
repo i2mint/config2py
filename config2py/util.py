@@ -167,6 +167,48 @@ DFLT_APP_DATA_FOLDER = os.getenv(
 )
 
 
+def process_path(
+        path: str, 
+        *, 
+        ensure_dir_exists=False, 
+        assert_exists=False,
+        ensure_endswith_slash=False,
+        ensure_does_not_end_with_slash=False,
+        expanduser=True,
+    ) -> str:
+    """
+    Process a path string, ensuring it exists, and optionally expanding user.
+
+    Args:
+        path (str): The path to process.
+        ensure_dir_exists (bool): Whether to ensure the path exists.
+        assert_exists (bool): Whether to assert that the path exists.
+        ensure_endswith_slash (bool): Whether to ensure the path ends with a slash.
+        ensure_does_not_end_with_slash (bool): Whether to ensure the path does not end with a slash.
+        expanduser (bool): Whether to expand the user in the path.
+
+    Returns:
+        str: The processed path.
+
+    """
+    if ensure_endswith_slash and ensure_does_not_end_with_slash:
+        raise ValueError(
+            'Cannot ensure both ends with slash and does not end with slash.'
+        )
+    if expanduser:
+        path = os.path.expanduser(path)
+    if ensure_endswith_slash:
+        if not path.endswith('/'):
+            path = path + '/'
+    if ensure_does_not_end_with_slash:
+        if path.endswith('/'):
+            path = path[:-1]
+    if ensure_dir_exists:
+        os.makedirs(path, exist_ok=True)
+    if assert_exists:
+        assert os.path.exists(path), f'Path does not exist: {path}'
+    return path
+
 # Note: First possible i2 dependency -- vendoring for now
 def get_app_data_rootdir(*, ensure_exists=False) -> str:
     """
@@ -195,9 +237,7 @@ def get_app_data_rootdir(*, ensure_exists=False) -> str:
     to use.
 
     """
-    if ensure_exists and not os.path.isdir(DFLT_APP_DATA_FOLDER):
-        os.mkdir(DFLT_APP_DATA_FOLDER)
-    return DFLT_APP_DATA_FOLDER
+    return process_path(DFLT_APP_DATA_FOLDER, ensure_dir_exists=True)
 
 
 def _default_folder_setup(directory_path: str) -> None:
@@ -223,6 +263,7 @@ def get_app_data_folder(
     app_name: str = DFLT_APP_NAME,
     *,
     setup_callback: Callable[[str], None] = _default_folder_setup,
+    ensure_exists: bool = False,
 ) -> str:
     """
     Retrieve or create the app data directory specific to the given app name.
@@ -231,13 +272,39 @@ def get_app_data_folder(
     - app_name (str): Name of the app for which the data directory is needed.
     - setup_callback (Callable[[str], None]): A callback function to initialize the directory.
                                               Default is _default_folder_setup.
+    - ensure_exists (bool): Whether to ensure the directory exists.
 
     Returns:
     - str: Path to the app data directory.
-    """
-    app_data_path = os.path.join(get_app_data_rootdir(ensure_exists=True), app_name)
 
-    if not os.path.isdir(app_data_path):
+    By default, the app will be "config2py":
+
+    >>> get_app_data_folder()  # doctest: +ELLIPSIS
+    '.../.config/config2py'
+
+    You can specify a different app name though. 
+    And if you want, you can also specify a callback function to initialize the 
+    directory.
+
+    >>> path = get_app_data_folder('my_app', ensure_exists=True)  # doctest: +SKIP
+    >>> path  # doctest: +SKIP
+    '/Users/.../.config/my_app'
+    >>> os.path.exists(path)  # doctest: +SKIP
+
+    You can also specify a path relative to the app data root directory
+    (on linux/mac systems, this is typically ~/.config)
+
+    >>> get_app_data_folder('another/app/and/subfolder')  # doctest: +SKIP
+    '/Users/.../.config/another/app/and/subfolder'
+
+    """
+    app_data_path = os.path.join(
+        get_app_data_rootdir(ensure_exists=ensure_exists), app_name
+    )
+    app_data_folder_did_not_exist = not os.path.isdir(app_data_path)
+    app_data_folder = process_path(app_data_path, ensure_dir_exists=True)
+
+    if app_data_folder_did_not_exist:
         setup_callback(app_data_path)
     return app_data_path
 
