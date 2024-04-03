@@ -37,6 +37,7 @@ def get_configs_local_store(
             from config2py.s_configparser import ConfigStore
 
             return ConfigStore(config_src)
+
     elif os.path.sep not in config_src:  # it's just a string
         # TODO: is "get" the right word, since it makes the folder too
         path = get_configs_folder_for_app(config_src, configs_name=configs_name)

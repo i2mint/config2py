@@ -4,7 +4,7 @@ import re
 import os
 import ast
 from pathlib import Path
-from typing import Optional, Union, Any, Callable, Set
+from typing import Optional, Union, Any, Callable, Set, Iterable
 import getpass
 
 DFLT_APP_NAME = 'config2py'
@@ -168,19 +168,19 @@ DFLT_APP_DATA_FOLDER = os.getenv(
 
 
 def process_path(
-    path: str,
-    *,
+    *path: Iterable[str],
     ensure_dir_exists=False,
     assert_exists=False,
     ensure_endswith_slash=False,
     ensure_does_not_end_with_slash=False,
     expanduser=True,
+    rootdir: str = '',
 ) -> str:
     """
     Process a path string, ensuring it exists, and optionally expanding user.
 
     Args:
-        path (str): The path to process.
+        path (Iterable[str]): The path to process. Can be multiple components of a path.
         ensure_dir_exists (bool): Whether to ensure the path exists.
         assert_exists (bool): Whether to assert that the path exists.
         ensure_endswith_slash (bool): Whether to ensure the path ends with a slash.
@@ -190,11 +190,20 @@ def process_path(
     Returns:
         str: The processed path.
 
+    >>> process_path('a', 'b', 'c')
+    'a/b/c'
+    >>> from functools import partial
+    >>> process_path('a', 'b', 'c', rootdir='/root/dir/', ensure_endswith_slash=True)
+    '/root/dir/a/b/c/'
+
     """
+    path = os.path.join(*path)
     if ensure_endswith_slash and ensure_does_not_end_with_slash:
         raise ValueError(
             'Cannot ensure both ends with slash and does not end with slash.'
         )
+    if rootdir:
+        path = os.path.join(rootdir, path)
     if expanduser:
         path = os.path.expanduser(path)
     if ensure_endswith_slash:
@@ -303,7 +312,7 @@ def get_app_data_folder(
         get_app_data_rootdir(ensure_exists=ensure_exists), app_name
     )
     app_data_folder_did_not_exist = not os.path.isdir(app_data_path)
-    app_data_folder = process_path(app_data_path, ensure_dir_exists=True)
+    process_path(app_data_path, ensure_dir_exists=True)
 
     if app_data_folder_did_not_exist:
         setup_callback(app_data_path)

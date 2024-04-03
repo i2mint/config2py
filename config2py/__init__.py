@@ -18,4 +18,5 @@ from config2py.util import (
     get_configs_folder_for_app,
     is_repl,
     parse_assignments_from_py_source,
+    process_path,
 )
