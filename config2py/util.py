@@ -21,6 +21,11 @@ def identity(x: Any) -> Any:
     return x
 
 
+def is_not_empty(x: Any) -> bool:
+    """Function that returns True if x is not empty."""
+    return bool(x)
+
+
 # TODO: Make this into an open-closed mini-framework
 def ask_user_for_input(
     prompt: str,
@@ -55,9 +60,12 @@ def ask_user_for_input(
     if default:
         prompt = prompt + f' [{default}]: '
     if mask_input:
-        response = getpass.getpass(prompt)
+        _prompt_func = getpass.getpass
     else:
-        response = input(prompt)
+        _prompt_func = input
+
+    response = _prompt_func(prompt)
+
     if masking_toggle_str is not None and response == masking_toggle_str:
         return ask_user_for_input(
             _original_prompt,
@@ -292,8 +300,8 @@ def get_app_data_folder(
     >>> get_app_data_folder()  # doctest: +ELLIPSIS
     '.../.config/config2py'
 
-    You can specify a different app name though. 
-    And if you want, you can also specify a callback function to initialize the 
+    You can specify a different app name though.
+    And if you want, you can also specify a callback function to initialize the
     directory.
 
     >>> path = get_app_data_folder('my_app', ensure_exists=True)  # doctest: +SKIP

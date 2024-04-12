@@ -1,6 +1,7 @@
 """
 Base for getting configs from various sources and formats
 """
+
 from collections import ChainMap
 from typing import (
     Callable,
@@ -317,6 +318,15 @@ class FuncBasedGettableContainer:
         else:
             return True
 
+    def __iter__(self):
+        raise TypeError(
+            f"Iteration is NOT ACTUALLY implemented for {type(self).__name__}. "
+            "The reason we still stuck it in the class is because python will "
+            "automatically try to use __getitem__ on 0, 1, ... to iterate over the "
+            "object, and we want to avoid that, since this would result in an obscure "
+            "error message saying that the getter function can't be called on 0"
+        )
+
 
 def gettable_containers(
     sources: Sources,
@@ -353,11 +363,19 @@ KTSaver = Callable[[KT, VT], Any]
 SaveTo = Optional[Union[MutableMapping, KTSaver]]
 
 
+def is_not_empty(val) -> bool:
+    if isinstance(val, str):
+        return val != ''
+    else:
+        return val is not None
+
+
 def ask_user_for_key(
     key=None,
     *,
     prompt_template='Enter a value for {}: ',
     save_to: SaveTo = None,
+    save_condition=is_not_empty,
     user_asker=ask_user_for_input,
     egress: Optional[Callable] = None,
 ):
@@ -372,7 +390,7 @@ def ask_user_for_key(
     val = user_asker(prompt_template.format(key))
     if isinstance(egress, Callable):
         val = egress(key, val)
-    if save_to is not None:
+    if save_to is not None and save_condition(val):
         if hasattr(save_to, '__setitem__'):
             save_to_func = save_to.__setitem__
         save_to_func(key, val)
@@ -397,7 +415,7 @@ def user_gettable(
         contain a placeholder for the key, e.g. ``"Enter a value for {}: "``.
     :param egress: A function to apply to the user's response before returning it.
         This can be used to validate the response, for example.
-    :param user_asker: A function that asks the user for input. It should take a    
+    :param user_asker: A function that asks the user for input. It should take a
         prompt string and return the user's response.
     :param val_is_valid: A function that takes a value and returns a boolean. If it
         returns ``False``, the user will be asked for a new value.
@@ -408,7 +426,7 @@ def user_gettable(
         it.
 
     Example:
-    
+
     >>> s = user_gettable()
     >>> v = s['SOME_KEY']  # doctest: +SKIP
     'SOME_VAL'
@@ -416,8 +434,8 @@ def user_gettable(
     This will trigger a prompt for the user to enter the value of ``SOME_KEY``.
     When they do (say they entered 'SOME_VAL') it will return that value.
 
-    And if you specify a save_to store (usually a persistent MutableMapping made with 
-    the ``dol`` package) then it will save the value to that store for future use. 
+    And if you specify a save_to store (usually a persistent MutableMapping made with
+    the ``dol`` package) then it will save the value to that store for future use.
 
     >>> d = dict(some='store')
     >>> s = user_gettable(save_to=d)
