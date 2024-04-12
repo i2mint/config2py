@@ -87,6 +87,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Base for getting configs from various sources and formats</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">ChainMap</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Callable</span><span class="p">,</span>
@@ -409,7 +410,16 @@
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span></div>
+            <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Iteration is NOT ACTUALLY implemented for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="s2">&quot;The reason we still stuck it in the class is because python will &quot;</span>
+            <span class="s2">&quot;automatically try to use __getitem__ on 0, 1, ... to iterate over the &quot;</span>
+            <span class="s2">&quot;object, and we want to avoid that, since this would result in an obscure &quot;</span>
+            <span class="s2">&quot;error message saying that the getter function can&#39;t be called on 0&quot;</span>
+        <span class="p">)</span></div>
 
 
 
@@ -454,11 +464,19 @@
 <span class="n">SaveTo</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">MutableMapping</span><span class="p">,</span> <span class="n">KTSaver</span><span class="p">]]</span>
 
 
+<span class="k">def</span> <span class="nf">is_not_empty</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">val</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+
 <span class="k">def</span> <span class="nf">ask_user_for_key</span><span class="p">(</span>
     <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">prompt_template</span><span class="o">=</span><span class="s1">&#39;Enter a value for </span><span class="si">{}</span><span class="s1">: &#39;</span><span class="p">,</span>
     <span class="n">save_to</span><span class="p">:</span> <span class="n">SaveTo</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">save_condition</span><span class="o">=</span><span class="n">is_not_empty</span><span class="p">,</span>
     <span class="n">user_asker</span><span class="o">=</span><span class="n">ask_user_for_input</span><span class="p">,</span>
     <span class="n">egress</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
@@ -473,7 +491,7 @@
     <span class="n">val</span> <span class="o">=</span> <span class="n">user_asker</span><span class="p">(</span><span class="n">prompt_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">egress</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
         <span class="n">val</span> <span class="o">=</span> <span class="n">egress</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">save_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">save_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">save_condition</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">save_to</span><span class="p">,</span> <span class="s1">&#39;__setitem__&#39;</span><span class="p">):</span>
             <span class="n">save_to_func</span> <span class="o">=</span> <span class="n">save_to</span><span class="o">.</span><span class="fm">__setitem__</span>
         <span class="n">save_to_func</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
@@ -500,7 +518,7 @@
 <span class="sd">        contain a placeholder for the key, e.g. ``&quot;Enter a value for {}: &quot;``.</span>
 <span class="sd">    :param egress: A function to apply to the user&#39;s response before returning it.</span>
 <span class="sd">        This can be used to validate the response, for example.</span>
-<span class="sd">    :param user_asker: A function that asks the user for input. It should take a    </span>
+<span class="sd">    :param user_asker: A function that asks the user for input. It should take a</span>
 <span class="sd">        prompt string and return the user&#39;s response.</span>
 <span class="sd">    :param val_is_valid: A function that takes a value and returns a boolean. If it</span>
 <span class="sd">        returns ``False``, the user will be asked for a new value.</span>
@@ -511,7 +529,7 @@
 <span class="sd">        it.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">    </span>
+
 <span class="sd">    &gt;&gt;&gt; s = user_gettable()</span>
 <span class="sd">    &gt;&gt;&gt; v = s[&#39;SOME_KEY&#39;]  # doctest: +SKIP</span>
 <span class="sd">    &#39;SOME_VAL&#39;</span>
@@ -519,8 +537,8 @@
 <span class="sd">    This will trigger a prompt for the user to enter the value of ``SOME_KEY``.</span>
 <span class="sd">    When they do (say they entered &#39;SOME_VAL&#39;) it will return that value.</span>
 
-<span class="sd">    And if you specify a save_to store (usually a persistent MutableMapping made with </span>
-<span class="sd">    the ``dol`` package) then it will save the value to that store for future use. </span>
+<span class="sd">    And if you specify a save_to store (usually a persistent MutableMapping made with</span>
+<span class="sd">    the ``dol`` package) then it will save the value to that store for future use.</span>
 
 <span class="sd">    &gt;&gt;&gt; d = dict(some=&#39;store&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; s = user_gettable(save_to=d)</span>
