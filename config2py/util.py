@@ -403,7 +403,7 @@ def is_repl():
     return False
 
 
-is_repl.repl_conditions: Set[Callable] = _repl_conditions
+is_repl.repl_conditions: Set[Callable] = _repl_conditions  # type: ignore
 
 
 def _value_node_is_instance_of(
