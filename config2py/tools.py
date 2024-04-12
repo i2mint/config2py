@@ -27,7 +27,7 @@ def get_configs_local_store(
         If it's a file, it's assumed to be an ini or cfg file.
         If it's a string, it's assumed to be an app name, from which to create a folder
     """
-    if os.path.isdir(config_src):
+    if config_src != 'oa' and os.path.isdir(config_src):
         return TextFiles(config_src)
     elif os.path.isfile(config_src):
         # TODO: Not tested
