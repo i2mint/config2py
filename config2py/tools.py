@@ -28,15 +28,17 @@ def get_configs_local_store(
         If it's a string, it's assumed to be an app name, from which to create a folder
     """
     if os.path.isdir(config_src):
-        if os.path.sep not in config_src:
-            raise ValueError(
-                f"There's a directory named {config_src}, so I'm not sure if you want "
-                f" me to make an 'app' folder or not. Please specify "
-                f"{config_src + os.path.sep} if you want to use it as a folder. "
-                f"If you want to make an 'app' folder for {config_src}, then call the "
-                f"get_configs_local_store function from a directory that doesn't "
-                "contain a {config_src} folder."
-            )
+        # TODO: This was a quick fix to avoid unknowingly making directories in the
+        #   wrong place. Broke stuff so leaving this for later.
+        # if os.path.sep not in config_src:
+        #     raise ValueError(
+        #         f"There's a directory named {config_src}, so I'm not sure if you want "
+        #         f" me to make an 'app' folder or not. Please specify "
+        #         f"{config_src + os.path.sep} if you want to use it as a folder. "
+        #         f"If you want to make an 'app' folder for {config_src}, then call the "
+        #         f"get_configs_local_store function from a directory that doesn't "
+        #         "contain a {config_src} folder."
+        #     )
         return TextFiles(config_src)
     elif os.path.isfile(config_src):
         # TODO: Not tested
