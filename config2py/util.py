@@ -182,6 +182,8 @@ def process_path(
     ensure_endswith_slash=False,
     ensure_does_not_end_with_slash=False,
     expanduser=True,
+    expandvars=True,
+    abspath=True,
     rootdir: str = '',
 ) -> str:
     """
@@ -194,6 +196,9 @@ def process_path(
         ensure_endswith_slash (bool): Whether to ensure the path ends with a slash.
         ensure_does_not_end_with_slash (bool): Whether to ensure the path does not end with a slash.
         expanduser (bool): Whether to expand the user in the path.
+        expandvars (bool): Whether to expand environment variables in the path.
+        abspath (bool): Whether to convert the path to an absolute path.
+        rootdir (str): The root directory to prepend to the path.
 
     Returns:
         str: The processed path.
@@ -214,6 +219,10 @@ def process_path(
         path = os.path.join(rootdir, path)
     if expanduser:
         path = os.path.expanduser(path)
+    if expandvars:
+        path = os.path.expandvars(path)
+    if abspath:
+        path = os.path.abspath(path)
     if ensure_endswith_slash:
         if not path.endswith('/'):
             path = path + '/'
