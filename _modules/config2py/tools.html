@@ -115,7 +115,7 @@
 <span class="sd">        If it&#39;s a file, it&#39;s assumed to be an ini or cfg file.</span>
 <span class="sd">        If it&#39;s a string, it&#39;s assumed to be an app name, from which to create a folder</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">config_src</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="ow">in</span> <span class="n">config_src</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">config_src</span><span class="p">):</span>
         <span class="c1"># TODO: This was a quick fix to avoid unknowingly making directories in the</span>
         <span class="c1">#   wrong place. Broke stuff so leaving this for later.</span>
         <span class="c1"># if os.path.sep not in config_src:</span>
@@ -167,7 +167,7 @@
 <span class="sd">    default) asks the user for the value and stores it in the central config store.</span>
 
 <span class="sd">    :param configs_src: A specification of the central config store. By default:</span>
-<span class="sd">        If it&#39;s a directory, it&#39;s assumed to be a folder of text files.</span>
+<span class="sd">        If it&#39;s a directory (with at least a slash), it&#39;s assumed to be a folder of text files.</span>
 <span class="sd">        If it&#39;s a file, it&#39;s assumed to be an ini or cfg file.</span>
 <span class="sd">        If it&#39;s a string, it&#39;s assumed to be an app name, from which to create a folder</span>
 <span class="sd">    :param first_look_in_env_vars: Whether to look in environment variables first</span>

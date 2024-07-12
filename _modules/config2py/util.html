@@ -285,6 +285,8 @@
     <span class="n">ensure_endswith_slash</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">ensure_does_not_end_with_slash</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">expanduser</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">expandvars</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">abspath</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">rootdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -297,12 +299,15 @@
 <span class="sd">        ensure_endswith_slash (bool): Whether to ensure the path ends with a slash.</span>
 <span class="sd">        ensure_does_not_end_with_slash (bool): Whether to ensure the path does not end with a slash.</span>
 <span class="sd">        expanduser (bool): Whether to expand the user in the path.</span>
+<span class="sd">        expandvars (bool): Whether to expand environment variables in the path.</span>
+<span class="sd">        abspath (bool): Whether to convert the path to an absolute path.</span>
+<span class="sd">        rootdir (str): The root directory to prepend to the path.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: The processed path.</span>
 
-<span class="sd">    &gt;&gt;&gt; process_path(&#39;a&#39;, &#39;b&#39;, &#39;c&#39;)</span>
-<span class="sd">    &#39;a/b/c&#39;</span>
+<span class="sd">    &gt;&gt;&gt; process_path(&#39;a&#39;, &#39;b&#39;, &#39;c&#39;)  # doctest: +ELLIPSIS</span>
+<span class="sd">    &#39;...a/b/c&#39;</span>
 <span class="sd">    &gt;&gt;&gt; from functools import partial</span>
 <span class="sd">    &gt;&gt;&gt; process_path(&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, rootdir=&#39;/root/dir/&#39;, ensure_endswith_slash=True)</span>
 <span class="sd">    &#39;/root/dir/a/b/c/&#39;</span>
@@ -317,6 +322,10 @@
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">expanduser</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">expandvars</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">abspath</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ensure_endswith_slash</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
