@@ -27,7 +27,7 @@ def get_configs_local_store(
         If it's a file, it's assumed to be an ini or cfg file.
         If it's a string, it's assumed to be an app name, from which to create a folder
     """
-    if os.path.isdir(config_src):
+    if os.path.sep in config_src and os.path.isdir(config_src):
         # TODO: This was a quick fix to avoid unknowingly making directories in the
         #   wrong place. Broke stuff so leaving this for later.
         # if os.path.sep not in config_src:
@@ -76,7 +76,7 @@ def simple_config_getter(
     default) asks the user for the value and stores it in the central config store.
 
     :param configs_src: A specification of the central config store. By default:
-        If it's a directory, it's assumed to be a folder of text files.
+        If it's a directory (with at least a slash), it's assumed to be a folder of text files.
         If it's a file, it's assumed to be an ini or cfg file.
         If it's a string, it's assumed to be an app name, from which to create a folder
     :param first_look_in_env_vars: Whether to look in environment variables first
