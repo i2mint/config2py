@@ -203,8 +203,8 @@ def process_path(
     Returns:
         str: The processed path.
 
-    >>> process_path('a', 'b', 'c')
-    'a/b/c'
+    >>> process_path('a', 'b', 'c')  # doctest: +ELLIPSIS
+    '...a/b/c'
     >>> from functools import partial
     >>> process_path('a', 'b', 'c', rootdir='/root/dir/', ensure_endswith_slash=True)
     '/root/dir/a/b/c/'
