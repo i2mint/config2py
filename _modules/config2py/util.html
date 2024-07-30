@@ -54,7 +54,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests.html">config2py.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/util.html">config2py.tests.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_util.html">config2py.tests.test_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tools.html">config2py.tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/util.html">config2py.util</a></li>
 </ul>
@@ -93,8 +94,16 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">import</span> <span class="nn">getpass</span>
 
+<span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">mk_sentinel</span>  <span class="c1"># TODO: Only i2 dependency. Consider replacing.</span>
+
+<span class="c1"># def mk_sentinel(name):  # TODO: Only i2 dependency. Here&#39;s replacement, but not picklable</span>
+<span class="c1">#     return type(name, (), {&#39;__repr__&#39;: lambda self: name})()</span>
+
 <span class="n">DFLT_APP_NAME</span> <span class="o">=</span> <span class="s1">&#39;config2py&#39;</span>
 <span class="n">DFLT_MASKING_INPUT</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">not_found</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;not_found&#39;</span><span class="p">)</span>
+<span class="n">no_default</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s1">&#39;no_default&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="always_true">
@@ -126,7 +135,7 @@
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.ask_user_for_input">[docs]</a>
 <span class="k">def</span> <span class="nf">ask_user_for_input</span><span class="p">(</span>
     <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">mask_input</span><span class="o">=</span><span class="n">DFLT_MASKING_INPUT</span><span class="p">,</span>
     <span class="n">masking_toggle_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -154,7 +163,7 @@
             <span class="sa">f</span><span class="s2">&quot;    (Input masking is </span><span class="si">{</span><span class="s1">&#39;ENABLED&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">mask_input</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;DISABLED&#39;</span><span class="si">}</span><span class="s2">. &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;Enter &#39;</span><span class="si">{</span><span class="n">masking_toggle_str</span><span class="si">}</span><span class="s2">&#39; (without quotes) to toggle input masking)</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="n">default</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">default</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;&#39;</span><span class="p">}:</span>
         <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39; [</span><span class="si">{</span><span class="n">default</span><span class="si">}</span><span class="s1">]: &#39;</span>
     <span class="k">if</span> <span class="n">mask_input</span><span class="p">:</span>
         <span class="n">_prompt_func</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span>
