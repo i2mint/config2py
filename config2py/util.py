@@ -7,8 +7,16 @@ from pathlib import Path
 from typing import Optional, Union, Any, Callable, Set, Iterable
 import getpass
 
+from i2 import mk_sentinel  # TODO: Only i2 dependency. Consider replacing.
+
+# def mk_sentinel(name):  # TODO: Only i2 dependency. Here's replacement, but not picklable
+#     return type(name, (), {'__repr__': lambda self: name})()
+
 DFLT_APP_NAME = 'config2py'
 DFLT_MASKING_INPUT = False
+
+not_found = mk_sentinel('not_found')
+no_default = mk_sentinel('no_default')
 
 
 def always_true(x: Any) -> bool:
@@ -29,7 +37,7 @@ def is_not_empty(x: Any) -> bool:
 # TODO: Make this into an open-closed mini-framework
 def ask_user_for_input(
     prompt: str,
-    default: str = None,
+    default: str = '',
     *,
     mask_input=DFLT_MASKING_INPUT,
     masking_toggle_str: str = None,
@@ -57,7 +65,7 @@ def ask_user_for_input(
             f"    (Input masking is {'ENABLED' if mask_input else 'DISABLED'}. "
             f"Enter '{masking_toggle_str}' (without quotes) to toggle input masking)\n"
         )
-    if default:
+    if default not in {''}:
         prompt = prompt + f' [{default}]: '
     if mask_input:
         _prompt_func = getpass.getpass

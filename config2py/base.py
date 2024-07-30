@@ -19,13 +19,9 @@ from typing import (
 )
 from dataclasses import dataclass
 from functools import lru_cache, partial
-from i2 import mk_sentinel  # TODO: Only i2 dependency. Consider replacing.
 
-from config2py.util import always_true, ask_user_for_input
+from config2py.util import always_true, ask_user_for_input, no_default, not_found
 from config2py.errors import ConfigNotFound
-
-# def mk_sentinel(name):  # TODO: Only i2 dependency. Here's replacement, but not picklable
-#     return type(name, (), {'__repr__': lambda self: name})()
 
 Exceptions = Tuple[Type[Exception], ...]
 
@@ -95,9 +91,6 @@ GetConfigEgress = Callable[[KT, VT], VT]
 #     )
 # openai.api_key = _api_key
 
-config_not_found = mk_sentinel('config_not_found')
-no_default = mk_sentinel('no_default')
-
 
 def is_not_none_nor_empty(x):
     if isinstance(x, str):
@@ -111,8 +104,8 @@ def get_config(
     sources: Sources = None,
     *,
     default: VT = no_default,
-    egress: GetConfigEgress = None,
-    val_is_valid: Callable[[VT], bool] = always_true,
+    egress: Optional[GetConfigEgress] = None,
+    val_is_valid: Optional[Callable[[VT], bool]] = always_true,
     config_not_found_exceptions: Exceptions = (Exception,),
 ):
     """Get a config value from a list of sources
@@ -215,8 +208,8 @@ def get_config(
         get_config_.sources = sources
         return get_config_
     chain_map = sources_chainmap(sources, val_is_valid, config_not_found_exceptions)
-    value = chain_map.get(key, config_not_found)
-    if value is config_not_found:
+    value = chain_map.get(key, not_found)
+    if value is not_found:
         if default is no_default:
             raise ConfigNotFound(f'Could not find config for key: {key}')
         else:
@@ -290,12 +283,16 @@ class FuncBasedGettableContainer:
     getter: Callable[[KT], VT]
     val_is_valid: Callable[[VT], bool] = always_true
     config_not_found_exceptions: Exceptions = (Exception,)
+    cache_getter = False
 
     def __post_init__(self):
-        # Note: The only purpose of the cache is to avoid calling the getter function
-        # twice when doing a ``in`` check before doing a ``[]`` lookup, for instance,
-        # in a``collections.ChainMap``.
-        self.getter = lru_cache(maxsize=1)(self.getter)
+        if self.cache_getter:
+            # Note: The only purpose of the cache is to avoid calling the getter function
+            # twice when doing a ``in`` check before doing a ``[]`` lookup, for instance,
+            # in a``collections.ChainMap``.
+            # But this caching can lead to unexpected behavior if the getter function
+            # has side effects, or if the value it returns changes over time.
+            self.getter = lru_cache(maxsize=1)(self.getter)
 
     def __getitem__(self, k: KT) -> VT:
         try:
@@ -384,6 +381,7 @@ def ask_user_for_key(
             ask_user_for_key,
             prompt_template=prompt_template,
             save_to=save_to,
+            save_condition=save_condition,
             user_asker=user_asker,
             egress=egress,
         )
@@ -403,7 +401,7 @@ def user_gettable(
     prompt_template='Enter a value for {}: ',
     egress: Optional[Callable] = None,
     user_asker=ask_user_for_input,
-    val_is_valid: Callable[[VT], bool] = always_true,
+    val_is_valid: Callable[[VT], bool] = is_not_empty,
     config_not_found_exceptions: Exceptions = (Exception,),
 ):
     """

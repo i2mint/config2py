@@ -3,9 +3,11 @@
 import os
 from unittest.mock import patch
 
+import tempfile
 import pytest
 
 from config2py.tools import simple_config_getter, source_config_params
+from config2py.tests.utils_for_testing import user_input_patch
 
 
 @pytest.fixture
@@ -39,6 +41,47 @@ def test_simple_config_getter(mock_config_store_factory):
     # TODO: Make this test work
     # Test that config_getter.configs is set correctly
     # assert config_getter.configs is mock_config_store
+
+
+from functools import partial
+
+def test_simple_config_getter_with_user_input(monkeypatch):
+    user_inputs = partial(user_input_patch, monkeypatch)
+    local_config_dir = tempfile.mkdtemp()
+
+    # Note, at the time of writing this, the default is ask_user_if_key_not_found=None,
+    # which has the effect of NOT asking the user for a config value if we're not in
+    # a REPL (interactive mode). Therefore, the test worked in the notebook, but not here.
+    # So now, we're forcing ask_user_if_key_not_found=True
+    my_get_config = simple_config_getter(
+        local_config_dir, ask_user_if_key_not_found=True
+    )
+    config_name = 'SOME_CONFIG_NAME'
+
+    # make sure config_name not in environment or local_config_dir
+    assert config_name not in os.environ
+    assert config_name not in os.listdir(local_config_dir)
+
+    # since config_name doesn't exist, the following attempt to get this config
+    # should try to get it from the user
+
+    # Use monkeypatch to replace the input function with the mock_input function
+    user_inputs('')  # user enters nothing
+    val = my_get_config(config_name, default='default_value')
+
+    # This the user didn't enter anything, the default value should be returned:
+    assert val == 'default_value'
+
+    # Still no config_name in the local_config_dir
+    assert config_name not in os.listdir(local_config_dir)
+
+    user_inputs('user_value')  # user enters user_value
+    val = my_get_config(config_name, default='default_value')
+    # Now the user entered a value, so that value should be returned:
+    assert val == 'user_value'
+
+    # And now there's a config_name in the local_config_dir
+    assert config_name in os.listdir(local_config_dir)
 
 
 def test_source_config_params():
