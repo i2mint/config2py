@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Optional, Union, Any, Callable, Set, Iterable
 import getpass
 
+from dol import process_path
+
 from i2 import mk_sentinel  # TODO: Only i2 dependency. Consider replacing.
 
 # def mk_sentinel(name):  # TODO: Only i2 dependency. Here's replacement, but not picklable
@@ -183,65 +185,66 @@ DFLT_APP_DATA_FOLDER = os.getenv(
 )
 
 
-def process_path(
-    *path: Iterable[str],
-    ensure_dir_exists=False,
-    assert_exists=False,
-    ensure_endswith_slash=False,
-    ensure_does_not_end_with_slash=False,
-    expanduser=True,
-    expandvars=True,
-    abspath=True,
-    rootdir: str = '',
-) -> str:
+def create_directories(dirpath, max_dirs_to_make=None):
     """
-    Process a path string, ensuring it exists, and optionally expanding user.
+    Create directories up to a specified limit.
 
-    Args:
-        path (Iterable[str]): The path to process. Can be multiple components of a path.
-        ensure_dir_exists (bool): Whether to ensure the path exists.
-        assert_exists (bool): Whether to assert that the path exists.
-        ensure_endswith_slash (bool): Whether to ensure the path ends with a slash.
-        ensure_does_not_end_with_slash (bool): Whether to ensure the path does not end with a slash.
-        expanduser (bool): Whether to expand the user in the path.
-        expandvars (bool): Whether to expand environment variables in the path.
-        abspath (bool): Whether to convert the path to an absolute path.
-        rootdir (str): The root directory to prepend to the path.
+    Parameters:
+    dirpath (str): The directory path to create.
+    max_dirs_to_make (int, optional): The maximum number of directories to create. If None, there's no limit.
 
     Returns:
-        str: The processed path.
+    bool: True if the directory was created successfully, False otherwise.
 
-    >>> process_path('a', 'b', 'c')  # doctest: +ELLIPSIS
-    '...a/b/c'
-    >>> from functools import partial
-    >>> process_path('a', 'b', 'c', rootdir='/root/dir/', ensure_endswith_slash=True)
-    '/root/dir/a/b/c/'
+    Raises:
+    ValueError: If max_dirs_to_make is negative.
 
+    Examples:
+    >>> import tempfile, shutil
+    >>> temp_dir = tempfile.mkdtemp()
+    >>> target_dir = os.path.join(temp_dir, 'a', 'b', 'c')
+    >>> create_directories(target_dir, max_dirs_to_make=2)
+    False
+    >>> create_directories(target_dir, max_dirs_to_make=3)
+    True
+    >>> os.path.isdir(target_dir)
+    True
+    >>> shutil.rmtree(temp_dir)  # Cleanup
+
+    >>> temp_dir = tempfile.mkdtemp()
+    >>> target_dir = os.path.join(temp_dir, 'a', 'b', 'c', 'd')
+    >>> create_directories(target_dir)
+    True
+    >>> os.path.isdir(target_dir)
+    True
+    >>> shutil.rmtree(temp_dir)  # Cleanup
     """
-    path = os.path.join(*path)
-    if ensure_endswith_slash and ensure_does_not_end_with_slash:
-        raise ValueError(
-            'Cannot ensure both ends with slash and does not end with slash.'
-        )
-    if rootdir:
-        path = os.path.join(rootdir, path)
-    if expanduser:
-        path = os.path.expanduser(path)
-    if expandvars:
-        path = os.path.expandvars(path)
-    if abspath:
-        path = os.path.abspath(path)
-    if ensure_endswith_slash:
-        if not path.endswith('/'):
-            path = path + '/'
-    if ensure_does_not_end_with_slash:
-        if path.endswith('/'):
-            path = path[:-1]
-    if ensure_dir_exists:
-        os.makedirs(path, exist_ok=True)
-    if assert_exists:
-        assert os.path.exists(path), f'Path does not exist: {path}'
-    return path
+    if max_dirs_to_make is not None and max_dirs_to_make < 0:
+        raise ValueError("max_dirs_to_make must be non-negative or None")
+
+    if os.path.exists(dirpath):
+        return True
+
+    if max_dirs_to_make is None:
+        os.makedirs(dirpath, exist_ok=True)
+        return True
+
+    # Calculate the number of directories to create
+    dirs_to_make = []
+    current_path = dirpath
+
+    while not os.path.exists(current_path):
+        dirs_to_make.append(current_path)
+        current_path, _ = os.path.split(current_path)
+
+    if len(dirs_to_make) > max_dirs_to_make:
+        return False
+
+    # Create directories from the top level down
+    for dir_to_make in reversed(dirs_to_make):
+        os.mkdir(dir_to_make)
+
+    return True
 
 
 # Note: First possible i2 dependency -- vendoring for now
