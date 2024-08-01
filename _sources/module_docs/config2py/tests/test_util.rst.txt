@@ -1,4 +1,0 @@
-config2py.tests.test_util
-=========================
-.. automodule:: config2py.tests.test_util
-   :members:
