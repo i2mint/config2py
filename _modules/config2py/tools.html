@@ -1,27 +1,25 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>config2py.tools &mdash; config2py 0.1.27 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=dc233e31"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=dc233e31"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -86,26 +84,27 @@
   <h1>Source code for config2py.tools</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Various tools&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">dol</span> <span class="kn">import</span> <span class="n">Pipe</span><span class="p">,</span> <span class="n">TextFiles</span><span class="p">,</span> <span class="n">resolve_path</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">Sig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipe</span><span class="p">,</span> <span class="n">TextFiles</span><span class="p">,</span> <span class="n">resolve_path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span>
 
-<span class="kn">from</span> <span class="nn">config2py.util</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config2py.util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">envvar</span><span class="p">,</span>
     <span class="n">get_configs_folder_for_app</span><span class="p">,</span>
     <span class="n">DFLT_CONFIG_FOLDER</span><span class="p">,</span>
     <span class="n">is_repl</span><span class="p">,</span>
     <span class="n">DFLT_CONFIGS_NAME</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">config2py.base</span> <span class="kn">import</span> <span class="n">get_config</span><span class="p">,</span> <span class="n">user_gettable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config2py.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_config</span><span class="p">,</span> <span class="n">user_gettable</span>
 
 
 <span class="c1"># TODO: Make it into an open-closed plug-in using routing</span>
 <div class="viewcode-block" id="get_configs_local_store">
 <a class="viewcode-back" href="../../module_docs/config2py/tools.html#config2py.tools.get_configs_local_store">[docs]</a>
-<span class="k">def</span> <span class="nf">get_configs_local_store</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_configs_local_store</span><span class="p">(</span>
     <span class="n">config_src</span><span class="o">=</span><span class="n">DFLT_CONFIG_FOLDER</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">configs_name</span><span class="o">=</span><span class="n">DFLT_CONFIGS_NAME</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the local store of configs.</span>
@@ -133,7 +132,7 @@
         <span class="c1"># TODO: Make this open-closed plug-in via routing argument</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">config_src</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;.ini&#39;</span><span class="p">,</span> <span class="s1">&#39;.cfg&#39;</span><span class="p">}:</span>
-            <span class="kn">from</span> <span class="nn">config2py.s_configparser</span> <span class="kn">import</span> <span class="n">ConfigStore</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.s_configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigStore</span>
 
             <span class="k">return</span> <span class="n">ConfigStore</span><span class="p">(</span><span class="n">config_src</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_src</span><span class="p">:</span>  <span class="c1"># it&#39;s just a string</span>
@@ -151,7 +150,7 @@
 <span class="c1"># TODO: Need tests and demo</span>
 <div class="viewcode-block" id="simple_config_getter">
 <a class="viewcode-back" href="../../module_docs/config2py/tools.html#config2py.tools.simple_config_getter">[docs]</a>
-<span class="k">def</span> <span class="nf">simple_config_getter</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">simple_config_getter</span><span class="p">(</span>
     <span class="n">configs_src</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_CONFIG_FOLDER</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">first_look_in_env_vars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -180,7 +179,7 @@
     <span class="n">central_configs</span> <span class="o">=</span> <span class="n">config_store_factory</span><span class="p">(</span><span class="n">configs_src</span><span class="p">)</span>
     <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">first_look_in_env_vars</span><span class="p">:</span>
-        <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+        <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">envvar</span><span class="p">)</span>
     <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">central_configs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ask_user_if_key_not_found</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># if the user didn&#39;t ask for anythin explicit (True or False), then</span>
@@ -230,7 +229,7 @@
 
 <div class="viewcode-block" id="extract_exports">
 <a class="viewcode-back" href="../../module_docs/config2py/tools.html#config2py.tools.extract_exports">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_exports</span><span class="p">(</span><span class="n">exports</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_exports</span><span class="p">(</span><span class="n">exports</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get a dict of ``{name: value}`` pairs from the ``name=&quot;value&quot; pairs of unix</span>
 <span class="sd">    export lines (that is, lines of the ``export NAME=&quot;VALUE&quot;`` format</span>
 
@@ -264,7 +263,7 @@
 
 <div class="viewcode-block" id="source_config_params">
 <a class="viewcode-back" href="../../module_docs/config2py/tools.html#config2py.tools.source_config_params">[docs]</a>
-<span class="k">def</span> <span class="nf">source_config_params</span><span class="p">(</span><span class="o">*</span><span class="n">config_params</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">source_config_params</span><span class="p">(</span><span class="o">*</span><span class="n">config_params</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator factory that sources config params, based on their names, to a config</span>
 <span class="sd">    getter that will be provided when calling the wrapped function.</span>
 
@@ -304,13 +303,13 @@
 <span class="sd">    As you can see, `d` is sourced as well.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 
         <span class="n">sig</span> <span class="o">=</span> <span class="n">Sig</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
 
         <span class="nd">@sig</span><span class="o">.</span><span class="n">add_params</span><span class="p">([</span><span class="s1">&#39;_config_getter&#39;</span><span class="p">])</span>
-        <span class="k">def</span> <span class="nf">wrapped_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">_config_getter</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">_config_getter</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">sig</span><span class="o">.</span><span class="n">var_keyword_name</span><span class="p">:</span>
                     <span class="k">return</span> <span class="p">{</span>
                         <span class="n">kk</span><span class="p">:</span> <span class="n">_config_getter</span><span class="p">(</span><span class="n">vv</span><span class="p">)</span> <span class="k">if</span> <span class="n">kk</span> <span class="ow">in</span> <span class="n">config_params</span> <span class="k">else</span> <span class="n">vv</span>

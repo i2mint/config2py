@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -5,24 +7,20 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>config2py.base &mdash; config2py 0.1.27 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=dc233e31"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=dc233e31"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -109,7 +107,7 @@ Mapping[KT, TT] interface. It is “partial” in the sense that it only impleme
 This is the standard for <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> types, which enables us to use the
 <code class="docutils literal notranslate"><span class="pre">FuncBasedGettable</span></code> in a <code class="docutils literal notranslate"><span class="pre">collections.ChainMap</span></code> to catch the error and move on
 to the next source.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">getter</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">getter</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;quux&#39;</span>
 <span class="gp">... </span>    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;green&#39;</span><span class="p">:</span>
@@ -140,7 +138,7 @@ check the value returned by the <code class="docutils literal notranslate"><span
 This is useful, for example, when you have a function that returns a sentinel like
 <code class="docutils literal notranslate"><span class="pre">None</span></code> instead of raising an exception, but you want to treat that as a
 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">getter</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">getter</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;quux&#39;</span>
 <span class="gp">... </span>    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;green&#39;</span><span class="p">:</span>
@@ -215,7 +213,7 @@ expression <code class="docutils literal notranslate"><span class="pre">k</span>
 (A <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code> is anything that can be indexed with brackets: <code class="docutils literal notranslate"><span class="pre">obj[k]</span></code>,
 like <code class="docutils literal notranslate"><span class="pre">dict</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code>, etc..).</p>
 <p>Let’s take two sources: a <code class="docutils literal notranslate"><span class="pre">dict</span></code> and a <code class="docutils literal notranslate"><span class="pre">Callable</span></code>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="s1">&#39;quux&#39;</span>
 <span class="gp">... </span>    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;green&#39;</span><span class="p">:</span>
@@ -273,7 +271,7 @@ value is the one that is returned by <code class="docutils literal notranslate">
 to do some post-processing on the value, or before you return the value, or if you
 want to do some caching.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config_store</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">store_before_returning</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">store_before_returning</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
 <span class="gp">... </span>   <span class="n">config_store</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 <span class="gp">... </span>   <span class="k">return</span> <span class="n">v</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">get_config</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">egress</span><span class="o">=</span><span class="n">store_before_returning</span><span class="p">)</span>

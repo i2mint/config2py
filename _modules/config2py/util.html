@@ -1,27 +1,25 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>config2py.util &mdash; config2py 0.1.27 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=dc233e31"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=dc233e31"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -86,16 +84,17 @@
   <h1>Source code for config2py.util</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utility functions for config2py.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">ast</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Iterable</span>
-<span class="kn">import</span> <span class="nn">getpass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainMap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">getpass</span>
 
-<span class="kn">from</span> <span class="nn">dol</span> <span class="kn">import</span> <span class="n">process_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_path</span>
 
-<span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">mk_sentinel</span>  <span class="c1"># TODO: Only i2 dependency. Consider replacing.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_sentinel</span>  <span class="c1"># TODO: Only i2 dependency. Consider replacing.</span>
 
 <span class="c1"># def mk_sentinel(name):  # TODO: Only i2 dependency. Here&#39;s replacement, but not picklable</span>
 <span class="c1">#     return type(name, (), {&#39;__repr__&#39;: lambda self: name})()</span>
@@ -109,7 +108,7 @@
 
 <div class="viewcode-block" id="always_true">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.always_true">[docs]</a>
-<span class="k">def</span> <span class="nf">always_true</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">always_true</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that just returns True.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">True</span></div>
 
@@ -117,7 +116,7 @@
 
 <div class="viewcode-block" id="identity">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.identity">[docs]</a>
-<span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that just returns its argument.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">x</span></div>
 
@@ -125,16 +124,43 @@
 
 <div class="viewcode-block" id="is_not_empty">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.is_not_empty">[docs]</a>
-<span class="k">def</span> <span class="nf">is_not_empty</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_not_empty</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that returns True if x is not empty.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 
 
 
+<span class="c1"># Note: Why subclassing ChainMap works, but subclassing dict doesn&#39;t.</span>
+<span class="c1"># The `EnvironmentVariables` class inherits from `collections.ChainMap` and wraps</span>
+<span class="c1"># `os.environ`, providing a dynamic view of the environment variables without exposing</span>
+<span class="c1"># sensitive data. Unlike a regular `dict` copy, which creates a static snapshot,</span>
+<span class="c1"># `ChainMap` maintains a live reference to `os.environ`, so any changes to the</span>
+<span class="c1"># environment—whether through `os.environ[&#39;KEY&#39;] = &#39;value&#39;` or external updates—are</span>
+<span class="c1"># immediately reflected in `EnvironmentVariables`. Overriding `__repr__` ensures that</span>
+<span class="c1"># printing the object (e.g., in a REPL or log) hides the actual contents,</span>
+<span class="c1"># preserving confidentiality while retaining full read/write functionality.</span>
+<div class="viewcode-block" id="EnvironmentVariables">
+<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.EnvironmentVariables">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvironmentVariables</span><span class="p">(</span><span class="n">ChainMap</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to wrap environment variables without revealing sensitive information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;EnvironmentVariables&#39;</span></div>
+
+
+
+<span class="n">envvar</span> <span class="o">=</span> <span class="n">EnvironmentVariables</span><span class="p">()</span>
+
+
 <span class="c1"># TODO: Make this into an open-closed mini-framework</span>
 <div class="viewcode-block" id="ask_user_for_input">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.ask_user_for_input">[docs]</a>
-<span class="k">def</span> <span class="nf">ask_user_for_input</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ask_user_for_input</span><span class="p">(</span>
     <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -188,7 +214,7 @@
 <span class="c1"># Note: Could be made more efficient, but this is good enough (for now)</span>
 <div class="viewcode-block" id="extract_variable_declarations">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.extract_variable_declarations">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_variable_declarations</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_variable_declarations</span><span class="p">(</span>
     <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expand</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -270,7 +296,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_system_default_for_app_data_folder</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_system_default_for_app_data_folder</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the system default for the app data folder.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span><span class="p">:</span>
         <span class="c1"># Windows</span>
@@ -288,7 +314,7 @@
 
 <div class="viewcode-block" id="create_directories">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.create_directories">[docs]</a>
-<span class="k">def</span> <span class="nf">create_directories</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">max_dirs_to_make</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_directories</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">max_dirs_to_make</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create directories up to a specified limit.</span>
 
@@ -354,7 +380,7 @@
 <span class="c1"># Note: First possible i2 dependency -- vendoring for now</span>
 <div class="viewcode-block" id="get_app_data_rootdir">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.get_app_data_rootdir">[docs]</a>
-<span class="k">def</span> <span class="nf">get_app_data_rootdir</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_app_data_rootdir</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the full path of a directory suitable for storing application-specific data.</span>
 
@@ -385,7 +411,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_default_folder_setup</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_default_folder_setup</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create the given directory if it doesn&#39;t exist and initialize it</span>
 <span class="sd">    with a hidden file for identification.</span>
@@ -406,7 +432,7 @@
 
 <div class="viewcode-block" id="get_app_data_folder">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.get_app_data_folder">[docs]</a>
-<span class="k">def</span> <span class="nf">get_app_data_folder</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_app_data_folder</span><span class="p">(</span>
     <span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_APP_NAME</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">setup_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">_default_folder_setup</span><span class="p">,</span>
@@ -463,7 +489,7 @@
 <span class="c1"># TODO: is &quot;get&quot; the right word, since it makes the folder too?</span>
 <div class="viewcode-block" id="get_configs_folder_for_app">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.get_configs_folder_for_app">[docs]</a>
-<span class="k">def</span> <span class="nf">get_configs_folder_for_app</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_configs_folder_for_app</span><span class="p">(</span>
     <span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_APP_NAME</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">configs_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_CONFIGS_NAME</span><span class="p">,</span>
@@ -496,14 +522,14 @@
 <span class="n">DFLT_CONFIG_FOLDER</span> <span class="o">=</span> <span class="n">get_configs_folder_for_app</span><span class="p">()</span>
 
 
-<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 
-<span class="k">def</span> <span class="nf">_get_ipython_in_globals</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_ipython_in_globals</span><span class="p">():</span>
     <span class="k">return</span> <span class="s1">&#39;get_ipython&#39;</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">_main_does_not_have_file_attribute</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_main_does_not_have_file_attribute</span><span class="p">():</span>
     <span class="k">return</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;__main__&#39;</span><span class="p">],</span> <span class="s1">&#39;__file__&#39;</span><span class="p">)</span>
 
 
@@ -512,7 +538,7 @@
 
 <div class="viewcode-block" id="is_repl">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.is_repl">[docs]</a>
-<span class="k">def</span> <span class="nf">is_repl</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_repl</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determines if the Python interpreter is running in REPL.</span>
 
@@ -542,7 +568,7 @@
 <span class="n">is_repl</span><span class="o">.</span><span class="n">repl_conditions</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_repl_conditions</span>  <span class="c1"># type: ignore</span>
 
 
-<span class="k">def</span> <span class="nf">_value_node_is_instance_of</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_value_node_is_instance_of</span><span class="p">(</span>
     <span class="n">node_value</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">Constant</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">List</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Tuple</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Dict</span><span class="p">)</span>
 <span class="p">):</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_value</span><span class="p">,</span> <span class="n">classes</span><span class="p">)</span>
@@ -550,7 +576,7 @@
 
 <div class="viewcode-block" id="parse_assignments_from_py_source">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.parse_assignments_from_py_source">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_assignments_from_py_source</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_assignments_from_py_source</span><span class="p">(</span>
     <span class="n">source_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name_filt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">value_filt</span><span class="o">=</span><span class="n">_value_node_is_instance_of</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse assignments from python source code.</span>
