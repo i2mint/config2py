@@ -3,6 +3,7 @@
 import re
 import os
 import ast
+from collections import ChainMap
 from pathlib import Path
 from typing import Optional, Union, Any, Callable, Set, Iterable
 import getpass
@@ -34,6 +35,30 @@ def identity(x: Any) -> Any:
 def is_not_empty(x: Any) -> bool:
     """Function that returns True if x is not empty."""
     return bool(x)
+
+
+# Note: Why subclassing ChainMap works, but subclassing dict doesn't.
+# The `EnvironmentVariables` class inherits from `collections.ChainMap` and wraps
+# `os.environ`, providing a dynamic view of the environment variables without exposing
+# sensitive data. Unlike a regular `dict` copy, which creates a static snapshot,
+# `ChainMap` maintains a live reference to `os.environ`, so any changes to the
+# environment—whether through `os.environ['KEY'] = 'value'` or external updates—are
+# immediately reflected in `EnvironmentVariables`. Overriding `__repr__` ensures that
+# printing the object (e.g., in a REPL or log) hides the actual contents,
+# preserving confidentiality while retaining full read/write functionality.
+class EnvironmentVariables(ChainMap):
+    """
+    Class to wrap environment variables without revealing sensitive information.
+    """
+
+    def __init__(self):
+        super().__init__(os.environ)
+
+    def __repr__(self):
+        return 'EnvironmentVariables'
+
+
+envvar = EnvironmentVariables()
 
 
 # TODO: Make this into an open-closed mini-framework

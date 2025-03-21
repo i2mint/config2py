@@ -13,6 +13,7 @@ from config2py.tools import (
 )
 from config2py.base import get_config, user_gettable, sources_chainmap
 from config2py.util import (
+    envvar,  # os.environ, but with dict display override to hide secrets
     ask_user_for_input,
     get_app_data_folder,
     get_configs_folder_for_app,

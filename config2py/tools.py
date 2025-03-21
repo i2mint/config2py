@@ -8,6 +8,7 @@ import os
 from i2 import Sig
 
 from config2py.util import (
+    envvar,
     get_configs_folder_for_app,
     DFLT_CONFIG_FOLDER,
     is_repl,
@@ -89,7 +90,7 @@ def simple_config_getter(
     central_configs = config_store_factory(configs_src)
     sources = []
     if first_look_in_env_vars:
-        sources.append(os.environ)
+        sources.append(envvar)
     sources.append(central_configs)
     if ask_user_if_key_not_found is None:
         # if the user didn't ask for anythin explicit (True or False), then
