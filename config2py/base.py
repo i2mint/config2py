@@ -94,7 +94,7 @@ GetConfigEgress = Callable[[KT, VT], VT]
 
 def is_not_none_nor_empty(x):
     if isinstance(x, str):
-        return x != ''
+        return x != ""
     else:
         return x is not None
 
@@ -211,7 +211,7 @@ def get_config(
     value = chain_map.get(key, not_found)
     if value is not_found:
         if default is no_default:
-            raise ConfigNotFound(f'Could not find config for key: {key}')
+            raise ConfigNotFound(f"Could not find config for key: {key}")
         else:
             value = default
     if egress is not None:
@@ -299,11 +299,11 @@ class FuncBasedGettableContainer:
             v = self.getter(k)
         except self.config_not_found_exceptions as e:
             raise KeyError(
-                f'There was an exception when computing key: {k} with the function '
-                f'{self.getter}. The exception was: {e}'
+                f"There was an exception when computing key: {k} with the function "
+                f"{self.getter}. The exception was: {e}"
             )
         if not self.val_is_valid(v):
-            raise KeyError(f'Value for key {k} is not valid: {v}')
+            raise KeyError(f"Value for key {k} is not valid: {v}")
         return v
 
     # TODO: Is this used to indicate that the getter couldn't find a key.
@@ -342,7 +342,7 @@ def gettable_containers(
             )
         else:
             raise AssertionError(
-                f'Source must be a Gettable or a Callable, not {type(src)}'
+                f"Source must be a Gettable or a Callable, not {type(src)}"
             )
 
 
@@ -362,7 +362,7 @@ SaveTo = Optional[Union[MutableMapping, KTSaver]]
 
 def is_not_empty(val) -> bool:
     if isinstance(val, str):
-        return val != ''
+        return val != ""
     else:
         return val is not None
 
@@ -370,7 +370,7 @@ def is_not_empty(val) -> bool:
 def ask_user_for_key(
     key=None,
     *,
-    prompt_template='Enter a value for {}: ',
+    prompt_template="Enter a value for {}: ",
     save_to: SaveTo = None,
     save_condition=is_not_empty,
     user_asker=ask_user_for_input,
@@ -389,7 +389,7 @@ def ask_user_for_key(
     if isinstance(egress, Callable):
         val = egress(key, val)
     if save_to is not None and save_condition(val):
-        if hasattr(save_to, '__setitem__'):
+        if hasattr(save_to, "__setitem__"):
             save_to_func = save_to.__setitem__
         save_to_func(key, val)
     return val
@@ -398,7 +398,7 @@ def ask_user_for_key(
 def user_gettable(
     save_to: SaveTo = None,
     *,
-    prompt_template='Enter a value for {}: ',
+    prompt_template="Enter a value for {}: ",
     egress: Optional[Callable] = None,
     user_asker=ask_user_for_input,
     val_is_valid: Callable[[VT], bool] = is_not_empty,

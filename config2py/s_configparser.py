@@ -1,6 +1,7 @@
 """
 Data Object Layer for configparser standard lib.
 """
+
 from configparser import ConfigParser
 from configparser import BasicInterpolation, ExtendedInterpolation
 from functools import wraps
@@ -10,7 +11,7 @@ from dol import Store
 
 # from py2store.signatures import Sig
 
-_test_config_str = '''[Simple Values]
+_test_config_str = """[Simple Values]
 key=value
 spaces in keys=allowed
 spaces in values=allowed as well
@@ -51,7 +52,7 @@ empty string value here =
             deeper than the first line
             of a value
         # Did I mention we can indent comments, too?
-'''
+"""
 
 
 def persist_after_operation(method_func):
@@ -87,7 +88,7 @@ def super_and_persist(super_cls, method_name):
 
 
 ConfigParserStore = Store.wrap(ConfigParser)
-ConfigParserStore.__name__ = 'ConfigParserStore'
+ConfigParserStore.__name__ = "ConfigParserStore"
 
 
 # TODO: ConfigParser is already a mapping, but pros/cons of subclassing?
@@ -199,7 +200,8 @@ class ConfigStore(ConfigParserStore):
     >>> ConfigReader(ini_filepath).to_dict()
     {'DEFAULT': {}, 'nothing': {'like': 'that', 'ever': 'happened'}}
 
-        """
+    """
+
     space_around_delimiters = True
     BasicInterpolation = BasicInterpolation
     ExtendedInterpolation = ExtendedInterpolation
@@ -224,24 +226,24 @@ class ConfigStore(ConfigParserStore):
         self._within_context_manager = False
 
         if isinstance(source, str):
-            if '\n' in source:
+            if "\n" in source:
                 self.read_string(source)
-                source_kind = 'string'
+                source_kind = "string"
             else:
                 self.read(source)
-                source_kind = 'filepath'
+                source_kind = "filepath"
         elif isinstance(source, bytes):
             self.read_string(source.decode())
-            source_kind = 'bytes'
+            source_kind = "bytes"
         elif isinstance(source, dict):
             self.read_dict(source)
-            source_kind = 'dict'
-        elif hasattr(source, 'read'):
+            source_kind = "dict"
+        elif hasattr(source, "read"):
             self.read_file(source)
-            source_kind = 'stream'
+            source_kind = "stream"
         else:
             self.read(source)
-            source_kind = 'unknown'
+            source_kind = "unknown"
         self.source = source
         self.source_kind = source_kind
         self.target_kind = target_kind or source_kind
@@ -264,28 +266,28 @@ class ConfigStore(ConfigParserStore):
         Persists means to call
         """
         if not self._within_context_manager:
-            if self.target_kind == 'filepath':
-                with open(self.source, 'w') as fp:
+            if self.target_kind == "filepath":
+                with open(self.source, "w") as fp:
                     return self.write(fp, self.space_around_delimiters)
             else:
-                if self.target_kind == 'stream':
+                if self.target_kind == "stream":
                     target = self.source
                     return self.write(target, self.space_around_delimiters)
-                elif self.target_kind in {'string', 'bytes'}:
+                elif self.target_kind in {"string", "bytes"}:
                     string_target = StringIO()
                     self.write(string_target, self.space_around_delimiters)
                     string_target.seek(0)
                     string_data = string_target.read()
-                    if self.target_kind == 'string':
+                    if self.target_kind == "string":
                         return string_data
-                    elif self.target_kind == 'bytes':
+                    elif self.target_kind == "bytes":
                         return string_data.encode()
                     else:
-                        raise ValueError(f'Unknown target_kind: {self.target_kind}')
-                elif self.target_kind == 'dict':
+                        raise ValueError(f"Unknown target_kind: {self.target_kind}")
+                elif self.target_kind == "dict":
                     return self.to_dict()
                 else:
-                    raise ValueError(f'Unknown target_kind: {self.target_kind}')
+                    raise ValueError(f"Unknown target_kind: {self.target_kind}")
 
     def __enter__(self):
         self._within_context_manager = True
@@ -360,13 +362,13 @@ class ConfigReader(ConfigStore):
     """
 
     def persist(self):
-        raise NotImplementedError('persist disabled for ConfigReader')
+        raise NotImplementedError("persist disabled for ConfigReader")
 
     def __setitem__(self, k, v):
-        raise NotImplementedError('__setitem__ disabled for ConfigReader')
+        raise NotImplementedError("__setitem__ disabled for ConfigReader")
 
     def __delitem__(self, k):
-        raise NotImplementedError('__delitem__ disabled for ConfigReader')
+        raise NotImplementedError("__delitem__ disabled for ConfigReader")
 
 
 # TODO: Need to wrap SectionProxy to make this work, since the obj and data here are
@@ -404,11 +406,11 @@ def postprocess_ini_section_items(items: Union[Mapping, Iterable]) -> Generator:
     {'name': 'aspyre', 'keywords': ['documentation', 'packaging', 'publishing']}
 
     """
-    splitter_re = re.compile('[\n\r\t]+')
+    splitter_re = re.compile("[\n\r\t]+")
     if isinstance(items, Mapping):
         items = items.items()
     for k, v in items:
-        if v.startswith('\n'):
+        if v.startswith("\n"):
             v = splitter_re.split(v[1:])
             v = [vv.strip() for vv in v if vv.strip()]
         yield k, v
@@ -433,5 +435,5 @@ def preprocess_ini_section_items(items: Union[Mapping, Iterable]) -> Generator:
         items = items.items()
     for k, v in items:
         if isinstance(v, list):
-            v = '\n\t' + '\n\t'.join(v)
+            v = "\n\t" + "\n\t".join(v)
         yield k, v
