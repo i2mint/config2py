@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.s_configparser &mdash; config2py 0.1.27 documentation</title>
+  <title>config2py.s_configparser &mdash; config2py 0.1.37 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=dc233e31"></script>
+      <script src="../../_static/documentation_options.js?v=b8ecee75"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -85,6 +85,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Data Object Layer for configparser standard lib.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigParser</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicInterpolation</span><span class="p">,</span> <span class="n">ExtendedInterpolation</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
@@ -94,48 +95,48 @@
 
 <span class="c1"># from py2store.signatures import Sig</span>
 
-<span class="n">_test_config_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;[Simple Values]</span>
-<span class="s1">key=value</span>
-<span class="s1">spaces in keys=allowed</span>
-<span class="s1">spaces in values=allowed as well</span>
-<span class="s1">spaces around the delimiter = obviously</span>
-<span class="s1">you can also use : to delimit keys from values</span>
+<span class="n">_test_config_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;[Simple Values]</span>
+<span class="s2">key=value</span>
+<span class="s2">spaces in keys=allowed</span>
+<span class="s2">spaces in values=allowed as well</span>
+<span class="s2">spaces around the delimiter = obviously</span>
+<span class="s2">you can also use : to delimit keys from values</span>
 
-<span class="s1">[All Values Are Strings]</span>
-<span class="s1">values like this: 1000000</span>
-<span class="s1">or this: 3.14159265359</span>
-<span class="s1">are they treated as numbers? : no</span>
-<span class="s1">integers, floats and booleans are held as: strings</span>
-<span class="s1">can use the API to get converted values directly: true</span>
+<span class="s2">[All Values Are Strings]</span>
+<span class="s2">values like this: 1000000</span>
+<span class="s2">or this: 3.14159265359</span>
+<span class="s2">are they treated as numbers? : no</span>
+<span class="s2">integers, floats and booleans are held as: strings</span>
+<span class="s2">can use the API to get converted values directly: true</span>
 
-<span class="s1">[Multiline Values]</span>
-<span class="s1">chorus: I&#39;m a lumberjack, and I&#39;m okay</span>
-<span class="s1">    I sleep all night and I work all day</span>
+<span class="s2">[Multiline Values]</span>
+<span class="s2">chorus: I&#39;m a lumberjack, and I&#39;m okay</span>
+<span class="s2">    I sleep all night and I work all day</span>
 
-<span class="s1">[No Values]</span>
-<span class="s1">key_without_value</span>
-<span class="s1">empty string value here =</span>
+<span class="s2">[No Values]</span>
+<span class="s2">key_without_value</span>
+<span class="s2">empty string value here =</span>
 
-<span class="s1">[You can use comments]</span>
-<span class="s1"># like this</span>
-<span class="s1">; or this</span>
+<span class="s2">[You can use comments]</span>
+<span class="s2"># like this</span>
+<span class="s2">; or this</span>
 
-<span class="s1"># By default only in an empty line.</span>
-<span class="s1"># Inline comments can be harmful because they prevent users</span>
-<span class="s1"># from using the delimiting characters as parts of values.</span>
-<span class="s1"># That being said, this can be customized.</span>
+<span class="s2"># By default only in an empty line.</span>
+<span class="s2"># Inline comments can be harmful because they prevent users</span>
+<span class="s2"># from using the delimiting characters as parts of values.</span>
+<span class="s2"># That being said, this can be customized.</span>
 
-<span class="s1">    [Sections Can Be Indented]</span>
-<span class="s1">        can_values_be_as_well = True</span>
-<span class="s1">        does_that_mean_anything_special = False</span>
-<span class="s1">        purpose = formatting for readability</span>
-<span class="s1">        multiline_values = are</span>
-<span class="s1">            handled just fine as</span>
-<span class="s1">            long as they are indented</span>
-<span class="s1">            deeper than the first line</span>
-<span class="s1">            of a value</span>
-<span class="s1">        # Did I mention we can indent comments, too?</span>
-<span class="s1">&#39;&#39;&#39;</span>
+<span class="s2">    [Sections Can Be Indented]</span>
+<span class="s2">        can_values_be_as_well = True</span>
+<span class="s2">        does_that_mean_anything_special = False</span>
+<span class="s2">        purpose = formatting for readability</span>
+<span class="s2">        multiline_values = are</span>
+<span class="s2">            handled just fine as</span>
+<span class="s2">            long as they are indented</span>
+<span class="s2">            deeper than the first line</span>
+<span class="s2">            of a value</span>
+<span class="s2">        # Did I mention we can indent comments, too?</span>
+<span class="s2">&quot;&quot;&quot;</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">persist_after_operation</span><span class="p">(</span><span class="n">method_func</span><span class="p">):</span>
@@ -174,7 +175,7 @@
 
 
 <span class="n">ConfigParserStore</span> <span class="o">=</span> <span class="n">Store</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">ConfigParser</span><span class="p">)</span>
-<span class="n">ConfigParserStore</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s1">&#39;ConfigParserStore&#39;</span>
+<span class="n">ConfigParserStore</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s2">&quot;ConfigParserStore&quot;</span>
 
 
 <span class="c1"># TODO: ConfigParser is already a mapping, but pros/cons of subclassing?</span>
@@ -288,7 +289,8 @@
 <span class="sd">    &gt;&gt;&gt; ConfigReader(ini_filepath).to_dict()</span>
 <span class="sd">    {&#39;DEFAULT&#39;: {}, &#39;nothing&#39;: {&#39;like&#39;: &#39;that&#39;, &#39;ever&#39;: &#39;happened&#39;}}</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">space_around_delimiters</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">BasicInterpolation</span> <span class="o">=</span> <span class="n">BasicInterpolation</span>
     <span class="n">ExtendedInterpolation</span> <span class="o">=</span> <span class="n">ExtendedInterpolation</span>
@@ -313,24 +315,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_within_context_manager</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">if</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">read_string</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-                <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span>
+                <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-                <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;filepath&#39;</span>
+                <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;filepath&quot;</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_string</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
-            <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;bytes&#39;</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;bytes&quot;</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_dict</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-            <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span>
-        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;read&#39;</span><span class="p">):</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">&quot;read&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-            <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;stream&#39;</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;stream&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-            <span class="n">source_kind</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_kind</span> <span class="o">=</span> <span class="n">source_kind</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">=</span> <span class="n">target_kind</span> <span class="ow">or</span> <span class="n">source_kind</span>
@@ -358,28 +360,28 @@
 <span class="sd">        Persists means to call</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_within_context_manager</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s1">&#39;filepath&#39;</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">&quot;filepath&quot;</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s1">&#39;stream&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">&quot;stream&quot;</span><span class="p">:</span>
                     <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;bytes&#39;</span><span class="p">}:</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;bytes&quot;</span><span class="p">}:</span>
                     <span class="n">string_target</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string_target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
                     <span class="n">string_target</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                     <span class="n">string_data</span> <span class="o">=</span> <span class="n">string_target</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span>
                         <span class="k">return</span> <span class="n">string_data</span>
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s1">&#39;bytes&#39;</span><span class="p">:</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">&quot;bytes&quot;</span><span class="p">:</span>
                         <span class="k">return</span> <span class="n">string_data</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -460,14 +462,14 @@
 <div class="viewcode-block" id="ConfigReader.persist">
 <a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigReader.persist">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;persist disabled for ConfigReader&#39;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;persist disabled for ConfigReader&quot;</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;__setitem__ disabled for ConfigReader&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;__setitem__ disabled for ConfigReader&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;__delitem__ disabled for ConfigReader&#39;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;__delitem__ disabled for ConfigReader&quot;</span><span class="p">)</span></div>
 
 
 
@@ -508,11 +510,11 @@
 <span class="sd">    {&#39;name&#39;: &#39;aspyre&#39;, &#39;keywords&#39;: [&#39;documentation&#39;, &#39;packaging&#39;, &#39;publishing&#39;]}</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">splitter_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;[</span><span class="se">\n\r\t</span><span class="s1">]+&#39;</span><span class="p">)</span>
+    <span class="n">splitter_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;[</span><span class="se">\n\r\t</span><span class="s2">]+&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
             <span class="n">v</span> <span class="o">=</span> <span class="n">splitter_re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
             <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">vv</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">vv</span> <span class="ow">in</span> <span class="n">v</span> <span class="k">if</span> <span class="n">vv</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
         <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span></div>
@@ -540,7 +542,7 @@
         <span class="n">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span></div>
 
 </pre></div>
