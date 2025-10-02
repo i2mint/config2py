@@ -275,7 +275,7 @@ def create_directories(dirpath, max_dirs_to_make=None):
 
 
 # Note: First possible i2 dependency -- vendoring for now
-def get_app_rootdir(*, ensure_dir_exists=True) -> str:
+def get_app_rootdir(*, ensure_exists=True) -> str:
     """
     Returns the full path of a directory suitable for storing application-specific data.
 
@@ -291,10 +291,10 @@ def get_app_rootdir(*, ensure_dir_exists=True) -> str:
     >>> get_app_rootdir()  # doctest: +SKIP
     '/Users/.../.config'
 
-    If ``ensure_dir_exists`` is ``True`` (the default), the folder will be created if
+    If ``ensure_exists`` is ``True`` (the default), the folder will be created if
     it doesn't exist.
 
-    >>> get_app_rootdir(ensure_dir_exists=True)  # doctest: +SKIP
+    >>> get_app_rootdir(ensure_exists=True)  # doctest: +SKIP
     '/Users/.../.config'
 
     Note: The default app data folder is the system default for the current operating
@@ -303,7 +303,7 @@ def get_app_rootdir(*, ensure_dir_exists=True) -> str:
     to use.
 
     """
-    return process_path(DFLT_APP_DATA_FOLDER, ensure_dir_exists=ensure_dir_exists)
+    return process_path(DFLT_APP_DATA_FOLDER, ensure_dir_exists=ensure_exists)
 
 
 # renaming get_app_data_rootdir to get_app_rootdir
