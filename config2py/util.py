@@ -5,7 +5,7 @@ import os
 import ast
 from collections import ChainMap
 from pathlib import Path
-from typing import Optional, Union, Any, Callable, Set, Iterable
+from typing import Optional, Union, Any, Callable, Set, Literal, Iterable
 import getpass
 
 from dol import process_path
@@ -17,6 +17,8 @@ from i2 import mk_sentinel  # TODO: Only i2 dependency. Consider replacing.
 
 DFLT_APP_NAME = "config2py"
 DFLT_MASKING_INPUT = False
+
+AppFolderKind = Literal["data", "config", "cache"]
 
 not_found = mk_sentinel("not_found")
 no_default = mk_sentinel("no_default")
@@ -273,7 +275,7 @@ def create_directories(dirpath, max_dirs_to_make=None):
 
 
 # Note: First possible i2 dependency -- vendoring for now
-def get_app_data_rootdir(*, ensure_exists=False) -> str:
+def get_app_rootdir(*, ensure_dir_exists=True) -> str:
     """
     Returns the full path of a directory suitable for storing application-specific data.
 
@@ -286,12 +288,13 @@ def get_app_data_rootdir(*, ensure_exists=False) -> str:
 
     See https://github.com/i2mint/i2mint/issues/1.
 
-    >>> get_app_data_rootdir()  # doctest: +SKIP
+    >>> get_app_rootdir()  # doctest: +SKIP
     '/Users/.../.config'
 
-    If ``ensure_exists`` is ``True``, the folder will be created if it doesn't exist.
+    If ``ensure_dir_exists`` is ``True`` (the default), the folder will be created if
+    it doesn't exist.
 
-    >>> get_app_data_rootdir(ensure_exists=True)  # doctest: +SKIP
+    >>> get_app_rootdir(ensure_dir_exists=True)  # doctest: +SKIP
     '/Users/.../.config'
 
     Note: The default app data folder is the system default for the current operating
@@ -300,7 +303,11 @@ def get_app_data_rootdir(*, ensure_exists=False) -> str:
     to use.
 
     """
-    return process_path(DFLT_APP_DATA_FOLDER, ensure_dir_exists=True)
+    return process_path(DFLT_APP_DATA_FOLDER, ensure_dir_exists=ensure_dir_exists)
+
+
+# renaming get_app_data_rootdir to get_app_rootdir
+_legacy_app_data_rootdir = get_app_rootdir  # backwards compatibility alias
 
 
 def _default_folder_setup(directory_path: str) -> None:
@@ -322,11 +329,15 @@ def _default_folder_setup(directory_path: str) -> None:
         (Path(directory_path) / ".config2py").write_text("Created by config2py.")
 
 
+DFLT_APP_FOLDER_KIND: AppFolderKind = "config"
+
+
 def get_app_data_folder(
     app_name: str = DFLT_APP_NAME,
     *,
     setup_callback: Callable[[str], None] = _default_folder_setup,
     ensure_exists: bool = False,
+    folder_kind: AppFolderKind = DFLT_APP_FOLDER_KIND,
 ) -> str:
     """
     Retrieve or create the app data directory specific to the given app name.
@@ -361,9 +372,7 @@ def get_app_data_folder(
     '/Users/.../.config/another/app/and/subfolder'
 
     """
-    app_data_path = os.path.join(
-        get_app_data_rootdir(ensure_exists=ensure_exists), app_name
-    )
+    app_data_path = os.path.join(get_app_rootdir(ensure_exists=ensure_exists), app_name)
     app_data_folder_did_not_exist = not os.path.isdir(app_data_path)
     process_path(app_data_path, ensure_dir_exists=True)
 
