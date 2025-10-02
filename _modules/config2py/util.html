@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.util &mdash; config2py 0.1.37 documentation</title>
+  <title>config2py.util &mdash; config2py 0.1.38 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=b8ecee75"></script>
+      <script src="../../_static/documentation_options.js?v=50f64db7"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -89,7 +89,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainMap</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">getpass</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_path</span>
@@ -101,6 +101,8 @@
 
 <span class="n">DFLT_APP_NAME</span> <span class="o">=</span> <span class="s2">&quot;config2py&quot;</span>
 <span class="n">DFLT_MASKING_INPUT</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="n">AppFolderKind</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">]</span>
 
 <span class="n">not_found</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s2">&quot;not_found&quot;</span><span class="p">)</span>
 <span class="n">no_default</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s2">&quot;no_default&quot;</span><span class="p">)</span>
@@ -378,9 +380,9 @@
 
 
 <span class="c1"># Note: First possible i2 dependency -- vendoring for now</span>
-<div class="viewcode-block" id="get_app_data_rootdir">
-<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.get_app_data_rootdir">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_app_data_rootdir</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="get_app_rootdir">
+<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.get_app_rootdir">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_app_rootdir</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the full path of a directory suitable for storing application-specific data.</span>
 
@@ -393,12 +395,13 @@
 
 <span class="sd">    See https://github.com/i2mint/i2mint/issues/1.</span>
 
-<span class="sd">    &gt;&gt;&gt; get_app_data_rootdir()  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; get_app_rootdir()  # doctest: +SKIP</span>
 <span class="sd">    &#39;/Users/.../.config&#39;</span>
 
-<span class="sd">    If ``ensure_exists`` is ``True``, the folder will be created if it doesn&#39;t exist.</span>
+<span class="sd">    If ``ensure_exists`` is ``True`` (the default), the folder will be created if</span>
+<span class="sd">    it doesn&#39;t exist.</span>
 
-<span class="sd">    &gt;&gt;&gt; get_app_data_rootdir(ensure_exists=True)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; get_app_rootdir(ensure_exists=True)  # doctest: +SKIP</span>
 <span class="sd">    &#39;/Users/.../.config&#39;</span>
 
 <span class="sd">    Note: The default app data folder is the system default for the current operating</span>
@@ -407,8 +410,12 @@
 <span class="sd">    to use.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">process_path</span><span class="p">(</span><span class="n">DFLT_APP_DATA_FOLDER</span><span class="p">,</span> <span class="n">ensure_dir_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">process_path</span><span class="p">(</span><span class="n">DFLT_APP_DATA_FOLDER</span><span class="p">,</span> <span class="n">ensure_dir_exists</span><span class="o">=</span><span class="n">ensure_exists</span><span class="p">)</span></div>
 
+
+
+<span class="c1"># renaming get_app_data_rootdir to get_app_rootdir</span>
+<span class="n">_legacy_app_data_rootdir</span> <span class="o">=</span> <span class="n">get_app_rootdir</span>  <span class="c1"># backwards compatibility alias</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_default_folder_setup</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -430,6 +437,9 @@
         <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory_path</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;.config2py&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;Created by config2py.&quot;</span><span class="p">)</span>
 
 
+<span class="n">DFLT_APP_FOLDER_KIND</span><span class="p">:</span> <span class="n">AppFolderKind</span> <span class="o">=</span> <span class="s2">&quot;config&quot;</span>
+
+
 <div class="viewcode-block" id="get_app_data_folder">
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.get_app_data_folder">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_app_data_folder</span><span class="p">(</span>
@@ -437,6 +447,7 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">setup_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">_default_folder_setup</span><span class="p">,</span>
     <span class="n">ensure_exists</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">folder_kind</span><span class="p">:</span> <span class="n">AppFolderKind</span> <span class="o">=</span> <span class="n">DFLT_APP_FOLDER_KIND</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Retrieve or create the app data directory specific to the given app name.</span>
@@ -471,9 +482,7 @@
 <span class="sd">    &#39;/Users/.../.config/another/app/and/subfolder&#39;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">app_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-        <span class="n">get_app_data_rootdir</span><span class="p">(</span><span class="n">ensure_exists</span><span class="o">=</span><span class="n">ensure_exists</span><span class="p">),</span> <span class="n">app_name</span>
-    <span class="p">)</span>
+    <span class="n">app_data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_app_rootdir</span><span class="p">(</span><span class="n">ensure_exists</span><span class="o">=</span><span class="n">ensure_exists</span><span class="p">),</span> <span class="n">app_name</span><span class="p">)</span>
     <span class="n">app_data_folder_did_not_exist</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">app_data_path</span><span class="p">)</span>
     <span class="n">process_path</span><span class="p">(</span><span class="n">app_data_path</span><span class="p">,</span> <span class="n">ensure_dir_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 

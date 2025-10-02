@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.util &mdash; config2py 0.1.37 documentation</title>
+  <title>config2py.util &mdash; config2py 0.1.38 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=b8ecee75"></script>
+      <script src="../../_static/documentation_options.js?v=50f64db7"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -64,7 +64,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.extract_variable_declarations"><code class="docutils literal notranslate"><span class="pre">extract_variable_declarations()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_app_data_directory"><code class="docutils literal notranslate"><span class="pre">get_app_data_directory()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_app_data_folder"><code class="docutils literal notranslate"><span class="pre">get_app_data_folder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_app_data_rootdir"><code class="docutils literal notranslate"><span class="pre">get_app_data_rootdir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_app_rootdir"><code class="docutils literal notranslate"><span class="pre">get_app_rootdir()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_configs_directory_for_app"><code class="docutils literal notranslate"><span class="pre">get_configs_directory_for_app()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_configs_folder_for_app"><code class="docutils literal notranslate"><span class="pre">get_configs_folder_for_app()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
@@ -230,7 +230,7 @@ expand dictionary.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.util.get_app_data_directory">
-<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">app_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'config2py',</span> <span class="pre">*,</span> <span class="pre">setup_callback:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">None]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;,</span> <span class="pre">ensure_exists:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#config2py.util.get_app_data_directory" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">app_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'config2py',</span> <span class="pre">*,</span> <span class="pre">setup_callback:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">None]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;,</span> <span class="pre">ensure_exists:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">folder_kind:</span> <span class="pre">~typing.Literal['data',</span> <span class="pre">'config',</span> <span class="pre">'cache']</span> <span class="pre">=</span> <span class="pre">'config'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#config2py.util.get_app_data_directory" title="Link to this definition"></a></dt>
 <dd><p>Retrieve or create the app data directory specific to the given app name.</p>
 <p>Args:
 - app_name (str): Name of the app for which the data directory is needed.
@@ -267,7 +267,7 @@ directory.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.util.get_app_data_folder">
-<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">app_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'config2py',</span> <span class="pre">*,</span> <span class="pre">setup_callback:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">None]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;,</span> <span class="pre">ensure_exists:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#get_app_data_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.get_app_data_folder" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">app_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'config2py',</span> <span class="pre">*,</span> <span class="pre">setup_callback:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">None]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;,</span> <span class="pre">ensure_exists:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">folder_kind:</span> <span class="pre">~typing.Literal['data',</span> <span class="pre">'config',</span> <span class="pre">'cache']</span> <span class="pre">=</span> <span class="pre">'config'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#get_app_data_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.get_app_data_folder" title="Link to this definition"></a></dt>
 <dd><p>Retrieve or create the app data directory specific to the given app name.</p>
 <p>Args:
 - app_name (str): Name of the app for which the data directory is needed.
@@ -303,8 +303,8 @@ directory.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="config2py.util.get_app_data_rootdir">
-<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_rootdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#get_app_data_rootdir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.get_app_data_rootdir" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="config2py.util.get_app_rootdir">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_rootdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#get_app_rootdir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.get_app_rootdir" title="Link to this definition"></a></dt>
 <dd><p>Returns the full path of a directory suitable for storing application-specific data.</p>
 <p>On Windows, this is typically %APPDATA%.
 On macOS, this is typically ~/.config.
@@ -318,12 +318,13 @@ On Linux, this is typically ~/.config.</p>
 </dd>
 </dl>
 <p>See <a class="reference external" href="https://github.com/i2mint/i2mint/issues/1">https://github.com/i2mint/i2mint/issues/1</a>.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_data_rootdir</span><span class="p">()</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_rootdir</span><span class="p">()</span>  
 <span class="go">&#39;/Users/.../.config&#39;</span>
 </pre></div>
 </div>
-<p>If <code class="docutils literal notranslate"><span class="pre">ensure_exists</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the folder will be created if it doesn’t exist.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_data_rootdir</span><span class="p">(</span><span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
+<p>If <code class="docutils literal notranslate"><span class="pre">ensure_exists</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> (the default), the folder will be created if
+it doesn’t exist.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_rootdir</span><span class="p">(</span><span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
 <span class="go">&#39;/Users/.../.config&#39;</span>
 </pre></div>
 </div>
