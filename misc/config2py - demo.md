@@ -13,7 +13,7 @@ Let's start with an extremely convenient, no questions asked, object.
 
 What `config2py.config_getter(key)` will do is:
 * search for `key` in your environment variables, and if not found...
-* ... search for it in a `config2py` directory (automatically made) of the standard "app data" folder of your system (`~/.config` for linus/mac, `$APPDATA` for windows), and if not found...
+* ... search for it in a `config2py` directory (automatically made) of the standard config folder of your system (following XDG standards on Unix/Linux/macOS: `~/.config`, `%APPDATA%` on Windows), and if not found...
 * ... ask the user to enter the value that key should have, and then put it in the `config2py` directory so it's persisted.
 
 <img width="341" alt="image" src="https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617">
@@ -79,7 +79,7 @@ if '_TEST_NON_EXISTING_KEY_' in config_getter.configs:
 ```
 
 Where **is** this configs store actually stored? 
-Well, you will get to chose, but by default it's in a `config2py` directory (automatically made) of the standard "app data" folder of your system (`~/.config` for linux/mac, `$APPDATA` for windows).
+Well, you will get to chose, but by default it's in a `config2py` directory (automatically made) of the standard config folder of your system (following XDG standards on Unix/Linux/macOS: `~/.config`, `%APPDATA%` on Windows).
 
 This tool allows you to:
 * not have to set up any special configs stuff (unless you want/need to)
@@ -164,7 +164,9 @@ user again.
 * `get_config`: Get a config value from a list of sources. See more below.
 * `user_gettable`: Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
 * `ask_user_for_input`: Ask the user for input, optionally masking, validating and transforming the input.
-* `get_app_config_folder`: Returns the full path of a directory suitable for storing application-specific data for a given app name.
+* `get_app_folder`: Returns the full path of a directory suitable for storing application-specific data for a given app name and folder kind (config, data, cache, state, runtime).
+* `get_app_config_folder`: Specialized version of `get_app_folder` for configuration files.
+* `get_app_data_folder`: Specialized version of `get_app_folder` for application data.
 * `get_configs_local_store`: Get a local store (mapping interface of local files) of configs for a given app or package name
 * `configs`: A default local store (mapping interface of local files) for configs.
 

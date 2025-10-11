@@ -1,10 +1,14 @@
-"""Utility functions for config2py."""
+"""
+Utility functions for config2py.
+
+"""
 
 import re
 import os
 import ast
 from collections import ChainMap, namedtuple
 from pathlib import Path
+from functools import partial
 from typing import Optional, Union, Any, Callable, Set, Literal, get_args
 from types import SimpleNamespace
 import getpass
@@ -340,7 +344,16 @@ def get_app_rootdir(
     - 'runtime': %TEMP%
 
     Args:
-        folder_kind: Type of folder ('config', 'data', 'cache', 'state', or 'runtime')
+        folder_kind (str): The kind of folder to get. One of 'config', 'data', 'cache', 'state', 'runtime'.
+            Defaults to 'config'.
+            Here are concise explanations for each folder kind:
+            **config**: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
+            **data**: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
+            **cache**: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
+            **state**: Application state and logs that persist between sessions but aren't critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn't be auto-deleted.
+            **runtime**: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
+            **TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.
+
         ensure_exists: Whether to create the directory if it doesn't exist
 
     Returns:
@@ -355,6 +368,7 @@ def get_app_rootdir(
     - If neither is set, uses platform defaults
 
     Examples:
+
         >>> get_app_rootdir('config')  # doctest: +SKIP
         '/Users/.../.config'
         >>> get_app_rootdir('data')  # doctest: +SKIP
@@ -395,7 +409,7 @@ def _default_folder_setup(directory_path: str) -> None:
         (Path(directory_path) / ".config2py").write_text("Created by config2py.")
 
 
-def get_app_config_folder(
+def get_app_folder(
     app_name: str = DFLT_APP_NAME,
     *,
     setup_callback: Callable[[str], None] = _default_folder_setup,
@@ -403,45 +417,49 @@ def get_app_config_folder(
     folder_kind: AppFolderKind = DFLT_APP_FOLDER_KIND,
 ) -> str:
     """
-    Retrieve or create the app data directory specific to the given app name and folder kind.
+    Retrieve or create the app directory specific to the given app name and folder kind.
 
     The folder kind determines where the app's files are stored:
-    - 'config': For configuration/settings files
-    - 'data': For essential user data, databases, sessions
-    - 'cache': For temporary/regeneratable data
+    Here are concise explanations for each folder kind:
+        **config**: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
+        **data**: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
+        **cache**: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
+        **state**: Application state and logs that persist between sessions but aren't critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn't be auto-deleted.
+        **runtime**: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
+        **TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.
 
     Args:
-        app_name: Name of the app for which the data directory is needed.
+        app_name: Name of the app for which the directory is needed.
         setup_callback: A callback function to initialize the directory.
                        Default is _default_folder_setup.
         ensure_exists: Whether to ensure the directory exists.
-        folder_kind: Type of folder ('config', 'data', or 'cache').
+        folder_kind: Type of folder ('config', 'data', 'cache', 'state', or 'runtime').
                     Default is 'config' for backward compatibility.
 
     Returns:
-        str: Path to the app data directory.
+        str: Path to the app directory.
 
     By default, the app will be "config2py" and folder_kind will be "config":
 
-    >>> get_app_config_folder()  # doctest: +ELLIPSIS
+    >>> get_app_folder()  # doctest: +ELLIPSIS
     '.../.config/config2py'
 
     You can specify a different app name and folder kind:
 
-    >>> get_app_config_folder('my_app', folder_kind='data')  # doctest: +SKIP
+    >>> get_app_folder('my_app', folder_kind='data')  # doctest: +SKIP
     '/Users/.../.local/share/my_app'
-    >>> get_app_config_folder('my_app', folder_kind='cache')  # doctest: +SKIP
+    >>> get_app_folder('my_app', folder_kind='cache')  # doctest: +SKIP
     '/Users/.../.cache/my_app'
 
     You can also specify a path relative to the app root directory:
 
-    >>> get_app_config_folder('another/app/subfolder', folder_kind='data')  # doctest: +SKIP
+    >>> get_app_folder('another/app/subfolder', folder_kind='data')  # doctest: +SKIP
     '/Users/.../.local/share/another/app/subfolder'
 
     If ensure_exists is True, the directory will be created and initialized
     with the setup_callback:
 
-    >>> path = get_app_config_folder('my_app', ensure_exists=True)  # doctest: +SKIP
+    >>> path = get_app_folder('my_app', ensure_exists=True)  # doctest: +SKIP
     >>> os.path.exists(path)  # doctest: +SKIP
     True
     """
@@ -456,10 +474,14 @@ def get_app_config_folder(
     return app_data_path
 
 
+get_app_config_folder = partial(get_app_folder, folder_kind="config")
+get_app_data_folder = partial(get_app_folder, folder_kind="data")
+
 DFLT_CONFIGS_NAME = "configs"
 
 
 # TODO: is "get" the right word, since it makes the folder too?
+# TODO: Merge get_configs_folder_for_app and get_app_config_folder
 def get_configs_folder_for_app(
     app_name: str = DFLT_APP_NAME,
     *,

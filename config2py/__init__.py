@@ -16,6 +16,8 @@ from config2py.util import (
     envvar,  # os.environ, but with dict display override to hide secrets
     ask_user_for_input,
     get_app_config_folder,
+    get_app_data_folder,
+    get_app_folder,
     get_configs_folder_for_app,
     is_repl,
     parse_assignments_from_py_source,

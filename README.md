@@ -97,7 +97,7 @@ In fact, `simple_config_getter` is a function to make configuration getters that
 
 <img width="341" alt="image" src="https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617">
 
-But where you can control what the central store (by default "Local App Data Files" store) is, and whether to first search in environment variables or not, and whether to ask the user for the value, if not found before, or not. 
+But where you can control what the central store (by default a local configuration files store) is, and whether to first search in environment variables or not, and whether to ask the user for the value, if not found before, or not. 
 
 ```python
 from config2py import simple_config_getter, get_configs_local_store
@@ -117,7 +117,7 @@ print(*str(Sig(simple_config_getter)).split(','), sep='\n')
 `ask_user_if_key_not_found` specifies whether to ask the user if a configuration key is not found. The default is `None`, which will result in checking if you're running in an interactive environment or not. 
 When you use `config2py` in production though, you should definitely specify `ask_user_if_key_not_found=False` to make that choice explicit.
 
-The `configs_src` default is automatically set to be the `config2py/configs` folder of your systems's "App Data" folder (also configurable via a `CONFIG2PY_APP_DATA_FOLDER` environment variable). 
+The `configs_src` default is automatically set to be the `config2py/configs` folder of your system's config directory (following XDG standards on Unix/Linux/macOS). You can override this with environment variables like `CONFIG2PY_CONFIG_DIR`, `CONFIG2PY_DATA_DIR`, etc., or the standard XDG variables. 
 
 Your central store will be `config_store_factory(configs_src)`, and since you can also specify `config_store_factory`, you have total control over the store.
 
@@ -202,7 +202,9 @@ user again.
 * `get_config`: Get a config value from a list of sources. See more below.
 * `user_gettable`: Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
 * `ask_user_for_input`: Ask the user for input, optionally masking, validating and transforming the input.
-* `get_app_config_folder`: Returns the full path of a directory suitable for storing application-specific data for a given app name.
+* `get_app_folder`: Returns the full path of a directory suitable for storing application-specific data for a given app name and folder kind (config, data, cache, state, runtime).
+* `get_app_config_folder`: Specialized version of `get_app_folder` for configuration files.
+* `get_app_data_folder`: Specialized version of `get_app_folder` for application data.
 * `get_configs_local_store`: Get a local store (mapping interface of local files) of configs for a given app or package name
 * `configs`: A default store instance for configs, defaulting to a local store under a default configuration local directory.
 
