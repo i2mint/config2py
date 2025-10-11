@@ -257,29 +257,29 @@ def create_directories(dirpath, max_dirs_to_make=None):
     return True
 
 
-FolderSpec = namedtuple('FolderSpec', ['env_var', 'default_path'])
+FolderSpec = namedtuple("FolderSpec", ["env_var", "default_path"])
 
-if os.name == 'nt':
+if os.name == "nt":
     APP_FOLDER_STANDARDS = dict(
-        config=FolderSpec('APPDATA', os.getenv('APPDATA', '')),
-        data=FolderSpec('LOCALAPPDATA', os.getenv('LOCALAPPDATA', '')),
+        config=FolderSpec("APPDATA", os.getenv("APPDATA", "")),
+        data=FolderSpec("LOCALAPPDATA", os.getenv("LOCALAPPDATA", "")),
         cache=FolderSpec(
-            'LOCALAPPDATA', os.path.join(os.getenv('LOCALAPPDATA', ''), 'Temp')
+            "LOCALAPPDATA", os.path.join(os.getenv("LOCALAPPDATA", ""), "Temp")
         ),
-        state=FolderSpec('LOCALAPPDATA', os.getenv('LOCALAPPDATA', '')),
-        runtime=FolderSpec('TEMP', os.getenv('TEMP', '')),
+        state=FolderSpec("LOCALAPPDATA", os.getenv("LOCALAPPDATA", "")),
+        runtime=FolderSpec("TEMP", os.getenv("TEMP", "")),
     )
 else:
     APP_FOLDER_STANDARDS = dict(
-        config=FolderSpec('XDG_CONFIG_HOME', '~/.config'),
-        data=FolderSpec('XDG_DATA_HOME', '~/.local/share'),
-        cache=FolderSpec('XDG_CACHE_HOME', '~/.cache'),
-        state=FolderSpec('XDG_STATE_HOME', '~/.local/state'),
-        runtime=FolderSpec('XDG_RUNTIME_DIR', '/tmp'),
+        config=FolderSpec("XDG_CONFIG_HOME", "~/.config"),
+        data=FolderSpec("XDG_DATA_HOME", "~/.local/share"),
+        cache=FolderSpec("XDG_CACHE_HOME", "~/.cache"),
+        state=FolderSpec("XDG_STATE_HOME", "~/.local/state"),
+        runtime=FolderSpec("XDG_RUNTIME_DIR", "/tmp"),
     )
 
 
-AppFolderKind = Literal['config', 'data', 'cache', 'state', 'runtime']
+AppFolderKind = Literal["config", "data", "cache", "state", "runtime"]
 
 # Verify AppFolderKind matches _APP_FOLDER_STANDARDS_DICT keys
 # Note: This is due to the fact that static type checkers can't verify
@@ -310,11 +310,11 @@ def system_default_for_app_data_folder(
     return os.path.expanduser(os.getenv(env_var, default))
 
 
-DFLT_CONFIG_FOLDER = system_default_for_app_data_folder('config')
-DFLT_DATA_FOLDER = system_default_for_app_data_folder('data')
-DFLT_CACHE_FOLDER = system_default_for_app_data_folder('cache')
-DFLT_STATE_FOLDER = system_default_for_app_data_folder('state')
-DFLT_RUNTIME_FOLDER = system_default_for_app_data_folder('runtime')
+DFLT_CONFIG_FOLDER = system_default_for_app_data_folder("config")
+DFLT_DATA_FOLDER = system_default_for_app_data_folder("data")
+DFLT_CACHE_FOLDER = system_default_for_app_data_folder("cache")
+DFLT_STATE_FOLDER = system_default_for_app_data_folder("state")
+DFLT_RUNTIME_FOLDER = system_default_for_app_data_folder("runtime")
 
 
 def get_app_rootdir(
