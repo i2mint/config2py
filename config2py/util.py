@@ -3,9 +3,10 @@
 import re
 import os
 import ast
-from collections import ChainMap
+from collections import ChainMap, namedtuple
 from pathlib import Path
-from typing import Optional, Union, Any, Callable, Set, Literal, Iterable
+from typing import Optional, Union, Any, Callable, Set, Literal, get_args
+from types import SimpleNamespace
 import getpass
 
 from dol import process_path
@@ -17,8 +18,6 @@ from i2 import mk_sentinel  # TODO: Only i2 dependency. Consider replacing.
 
 DFLT_APP_NAME = "config2py"
 DFLT_MASKING_INPUT = False
-
-AppFolderKind = Literal["data", "config", "cache"]
 
 not_found = mk_sentinel("not_found")
 no_default = mk_sentinel("no_default")
@@ -196,22 +195,6 @@ def extract_variable_declarations(
     return env_vars
 
 
-def _system_default_for_app_data_folder():
-    """Get the system default for the app data folder."""
-    if os.name == "nt":
-        # Windows
-        app_data_folder = os.getenv("APPDATA")
-    else:
-        # macOS and Linux/Unix
-        app_data_folder = os.path.expanduser("~/.config")
-    return app_data_folder
-
-
-DFLT_APP_DATA_FOLDER = os.getenv(
-    "CONFIG2PY_APP_DATA_FOLDER", _system_default_for_app_data_folder()
-)
-
-
 def create_directories(dirpath, max_dirs_to_make=None):
     """
     Create directories up to a specified limit.
@@ -274,36 +257,119 @@ def create_directories(dirpath, max_dirs_to_make=None):
     return True
 
 
-# Note: First possible i2 dependency -- vendoring for now
-def get_app_rootdir(*, ensure_exists=True) -> str:
-    """
-    Returns the full path of a directory suitable for storing application-specific data.
+FolderSpec = namedtuple('FolderSpec', ['env_var', 'default_path'])
 
-    On Windows, this is typically %APPDATA%.
-    On macOS, this is typically ~/.config.
-    On Linux, this is typically ~/.config.
+if os.name == 'nt':
+    APP_FOLDER_STANDARDS = dict(
+        config=FolderSpec('APPDATA', os.getenv('APPDATA', '')),
+        data=FolderSpec('LOCALAPPDATA', os.getenv('LOCALAPPDATA', '')),
+        cache=FolderSpec(
+            'LOCALAPPDATA', os.path.join(os.getenv('LOCALAPPDATA', ''), 'Temp')
+        ),
+        state=FolderSpec('LOCALAPPDATA', os.getenv('LOCALAPPDATA', '')),
+        runtime=FolderSpec('TEMP', os.getenv('TEMP', '')),
+    )
+else:
+    APP_FOLDER_STANDARDS = dict(
+        config=FolderSpec('XDG_CONFIG_HOME', '~/.config'),
+        data=FolderSpec('XDG_DATA_HOME', '~/.local/share'),
+        cache=FolderSpec('XDG_CACHE_HOME', '~/.cache'),
+        state=FolderSpec('XDG_STATE_HOME', '~/.local/state'),
+        runtime=FolderSpec('XDG_RUNTIME_DIR', '/tmp'),
+    )
+
+
+AppFolderKind = Literal['config', 'data', 'cache', 'state', 'runtime']
+
+# Verify AppFolderKind matches _APP_FOLDER_STANDARDS_DICT keys
+# Note: This is due to the fact that static type checkers can't verify
+# that the keys of _APP_FOLDER_STANDARDS_DICT match the Literal values.
+# This breaks SSOT, but here we at least validate alignment at runtime.
+_literal_kinds = get_args(AppFolderKind)
+assert set(_literal_kinds) == set(APP_FOLDER_STANDARDS.keys()), (
+    f"AppFolderKind Literal {_literal_kinds} doesn't match "
+    f"APP_FOLDER_STANDARDS keys {tuple(APP_FOLDER_STANDARDS.keys())}"
+)
+
+config2py_env_var = SimpleNamespace(
+    **{k: f"CONFIG2PY_{k.upper()}_DIR" for k in APP_FOLDER_STANDARDS}
+)
+
+
+DFLT_APP_FOLDER_KIND: AppFolderKind = "config"  # type: ignore (for <3.11)
+
+
+def system_default_for_app_data_folder(
+    folder_kind: AppFolderKind = DFLT_APP_FOLDER_KIND,  # type: ignore (for <3.11)
+) -> str:
+    """Get the system default for the app data folder."""
+    # Platform-specific specs: (env_var, default_path)
+
+    # Same logic for both platforms: check env var, then use default
+    env_var, default = APP_FOLDER_STANDARDS[folder_kind]
+    return os.path.expanduser(os.getenv(env_var, default))
+
+
+DFLT_CONFIG_FOLDER = system_default_for_app_data_folder('config')
+DFLT_DATA_FOLDER = system_default_for_app_data_folder('data')
+DFLT_CACHE_FOLDER = system_default_for_app_data_folder('cache')
+DFLT_STATE_FOLDER = system_default_for_app_data_folder('state')
+DFLT_RUNTIME_FOLDER = system_default_for_app_data_folder('runtime')
+
+
+def get_app_rootdir(
+    folder_kind: AppFolderKind = DFLT_APP_FOLDER_KIND,  # type: ignore (for <3.11)
+    *,
+    ensure_exists: bool = True,
+) -> str:
+    """
+    Returns the root directory for a specific folder kind.
+
+    The folder kind determines which standard directory is returned:
+    - 'config': Configuration files (XDG_CONFIG_HOME, default ~/.config)
+    - 'data': Application data (XDG_DATA_HOME, default ~/.local/share)
+    - 'cache': Temporary/cache files (XDG_CACHE_HOME, default ~/.cache)
+    - 'state': State data/logs (XDG_STATE_HOME, default ~/.local/state)
+    - 'runtime': Runtime files (XDG_RUNTIME_DIR, default /tmp)
+
+    On Windows:
+    - 'config': %APPDATA%
+    - 'data': %LOCALAPPDATA%
+    - 'cache': %LOCALAPPDATA%\\Temp
+    - 'state': %LOCALAPPDATA%
+    - 'runtime': %TEMP%
+
+    Args:
+        folder_kind: Type of folder ('config', 'data', 'cache', 'state', or 'runtime')
+        ensure_exists: Whether to create the directory if it doesn't exist
 
     Returns:
-        str: The full path of the app data folder.
+        str: The full path of the app root folder for the specified kind.
 
-    See https://github.com/i2mint/i2mint/issues/1.
+    Note: The default root folder follows XDG Base Directory standards on Unix/Linux/macOS.
+    You can override this by setting environment variables:
+    - CONFIG2PY_CONFIG_FOLDER, CONFIG2PY_DATA_FOLDER, CONFIG2PY_CACHE_FOLDER, etc.
+      (highest priority, overrides everything)
+    - XDG_CONFIG_HOME, XDG_DATA_HOME, XDG_CACHE_HOME, etc.
+      (standard XDG override)
+    - If neither is set, uses platform defaults
 
-    >>> get_app_rootdir()  # doctest: +SKIP
-    '/Users/.../.config'
-
-    If ``ensure_exists`` is ``True`` (the default), the folder will be created if
-    it doesn't exist.
-
-    >>> get_app_rootdir(ensure_exists=True)  # doctest: +SKIP
-    '/Users/.../.config'
-
-    Note: The default app data folder is the system default for the current operating
-    system. If you want to override this, you can do so by setting the
-    CONFIG2PY_APP_DATA_FOLDER environment variable to the path of the folder you want
-    to use.
-
+    Examples:
+        >>> get_app_rootdir('config')  # doctest: +SKIP
+        '/Users/.../.config'
+        >>> get_app_rootdir('data')  # doctest: +SKIP
+        '/Users/.../.local/share'
+        >>> get_app_rootdir('cache')  # doctest: +SKIP
+        '/Users/.../.cache'
     """
-    return process_path(DFLT_APP_DATA_FOLDER, ensure_dir_exists=ensure_exists)
+    folderpath = os.getenv(
+        getattr(config2py_env_var, folder_kind),  # Check config2py custom env var first
+        system_default_for_app_data_folder(
+            folder_kind
+        ),  # ... if not, use system default
+    )
+
+    return process_path(folderpath, ensure_dir_exists=ensure_exists)
 
 
 # renaming get_app_data_rootdir to get_app_rootdir
@@ -329,9 +395,6 @@ def _default_folder_setup(directory_path: str) -> None:
         (Path(directory_path) / ".config2py").write_text("Created by config2py.")
 
 
-DFLT_APP_FOLDER_KIND: AppFolderKind = "config"
-
-
 def get_app_data_folder(
     app_name: str = DFLT_APP_NAME,
     *,
@@ -340,41 +403,53 @@ def get_app_data_folder(
     folder_kind: AppFolderKind = DFLT_APP_FOLDER_KIND,
 ) -> str:
     """
-    Retrieve or create the app data directory specific to the given app name.
+    Retrieve or create the app data directory specific to the given app name and folder kind.
+
+    The folder kind determines where the app's files are stored:
+    - 'config': For configuration/settings files
+    - 'data': For essential user data, databases, sessions
+    - 'cache': For temporary/regeneratable data
 
     Args:
-    - app_name (str): Name of the app for which the data directory is needed.
-    - setup_callback (Callable[[str], None]): A callback function to initialize the directory.
-                                              Default is _default_folder_setup.
-    - ensure_exists (bool): Whether to ensure the directory exists.
+        app_name: Name of the app for which the data directory is needed.
+        setup_callback: A callback function to initialize the directory.
+                       Default is _default_folder_setup.
+        ensure_exists: Whether to ensure the directory exists.
+        folder_kind: Type of folder ('config', 'data', or 'cache').
+                    Default is 'config' for backward compatibility.
 
     Returns:
-    - str: Path to the app data directory.
+        str: Path to the app data directory.
 
-    By default, the app will be "config2py":
+    By default, the app will be "config2py" and folder_kind will be "config":
 
     >>> get_app_data_folder()  # doctest: +ELLIPSIS
     '.../.config/config2py'
 
-    You can specify a different app name though.
-    And if you want, you can also specify a callback function to initialize the
-    directory.
+    You can specify a different app name and folder kind:
+
+    >>> get_app_data_folder('my_app', folder_kind='data')  # doctest: +SKIP
+    '/Users/.../.local/share/my_app'
+    >>> get_app_data_folder('my_app', folder_kind='cache')  # doctest: +SKIP
+    '/Users/.../.cache/my_app'
+
+    You can also specify a path relative to the app root directory:
+
+    >>> get_app_data_folder('another/app/subfolder', folder_kind='data')  # doctest: +SKIP
+    '/Users/.../.local/share/another/app/subfolder'
+
+    If ensure_exists is True, the directory will be created and initialized
+    with the setup_callback:
 
     >>> path = get_app_data_folder('my_app', ensure_exists=True)  # doctest: +SKIP
-    >>> path  # doctest: +SKIP
-    '/Users/.../.config/my_app'
     >>> os.path.exists(path)  # doctest: +SKIP
-
-    You can also specify a path relative to the app data root directory
-    (on linux/mac systems, this is typically ~/.config)
-
-    >>> get_app_data_folder('another/app/and/subfolder')  # doctest: +SKIP
-    '/Users/.../.config/another/app/and/subfolder'
-
+    True
     """
-    app_data_path = os.path.join(get_app_rootdir(ensure_exists=ensure_exists), app_name)
+    app_data_path = os.path.join(
+        get_app_rootdir(folder_kind, ensure_exists=ensure_exists), app_name
+    )
     app_data_folder_did_not_exist = not os.path.isdir(app_data_path)
-    process_path(app_data_path, ensure_dir_exists=True)
+    # process_path(app_data_path, ensure_dir_exists=True)
 
     if app_data_folder_did_not_exist:
         setup_callback(app_data_path)
