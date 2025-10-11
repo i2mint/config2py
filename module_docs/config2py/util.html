@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.util &mdash; config2py 0.1.39 documentation</title>
+  <title>config2py.util &mdash; config2py 0.1.40 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=f48ec9ae"></script>
+      <script src="../../_static/documentation_options.js?v=967b4925"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -67,8 +67,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.ask_user_for_input"><code class="docutils literal notranslate"><span class="pre">ask_user_for_input()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.create_directories"><code class="docutils literal notranslate"><span class="pre">create_directories()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.extract_variable_declarations"><code class="docutils literal notranslate"><span class="pre">extract_variable_declarations()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_app_config_folder"><code class="docutils literal notranslate"><span class="pre">get_app_config_folder()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_app_data_directory"><code class="docutils literal notranslate"><span class="pre">get_app_data_directory()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_app_data_folder"><code class="docutils literal notranslate"><span class="pre">get_app_data_folder()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_app_rootdir"><code class="docutils literal notranslate"><span class="pre">get_app_rootdir()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_configs_directory_for_app"><code class="docutils literal notranslate"><span class="pre">get_configs_directory_for_app()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_configs_folder_for_app"><code class="docutils literal notranslate"><span class="pre">get_configs_folder_for_app()</span></code></a></li>
@@ -252,6 +252,58 @@ expand dictionary.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.get_app_config_folder">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_config_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">app_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'config2py',</span> <span class="pre">*,</span> <span class="pre">setup_callback:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">None]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;,</span> <span class="pre">ensure_exists:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">folder_kind:</span> <span class="pre">~typing.Literal['config',</span> <span class="pre">'data',</span> <span class="pre">'cache',</span> <span class="pre">'state',</span> <span class="pre">'runtime']</span> <span class="pre">=</span> <span class="pre">'config'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#get_app_config_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.get_app_config_folder" title="Link to this definition"></a></dt>
+<dd><p>Retrieve or create the app data directory specific to the given app name and folder kind.</p>
+<p>The folder kind determines where the app’s files are stored:
+- ‘config’: For configuration/settings files
+- ‘data’: For essential user data, databases, sessions
+- ‘cache’: For temporary/regeneratable data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_name</strong> – Name of the app for which the data directory is needed.</p></li>
+<li><p><strong>setup_callback</strong> – A callback function to initialize the directory.
+Default is _default_folder_setup.</p></li>
+<li><p><strong>ensure_exists</strong> – Whether to ensure the directory exists.</p></li>
+<li><p><strong>folder_kind</strong> – Type of folder (‘config’, ‘data’, or ‘cache’).
+Default is ‘config’ for backward compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the app data directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p>By default, the app will be “config2py” and folder_kind will be “config”:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_config_folder</span><span class="p">()</span>  
+<span class="go">&#39;.../.config/config2py&#39;</span>
+</pre></div>
+</div>
+<p>You can specify a different app name and folder kind:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_config_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>  
+<span class="go">&#39;/Users/.../.local/share/my_app&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_config_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;cache&#39;</span><span class="p">)</span>  
+<span class="go">&#39;/Users/.../.cache/my_app&#39;</span>
+</pre></div>
+</div>
+<p>You can also specify a path relative to the app root directory:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_config_folder</span><span class="p">(</span><span class="s1">&#39;another/app/subfolder&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>  
+<span class="go">&#39;/Users/.../.local/share/another/app/subfolder&#39;</span>
+</pre></div>
+</div>
+<p>If ensure_exists is True, the directory will be created and initialized
+with the setup_callback:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">get_app_config_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>  
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="config2py.util.get_app_data_directory">
 <span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">app_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'config2py',</span> <span class="pre">*,</span> <span class="pre">setup_callback:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">None]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;,</span> <span class="pre">ensure_exists:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">folder_kind:</span> <span class="pre">~typing.Literal['config',</span> <span class="pre">'data',</span> <span class="pre">'cache',</span> <span class="pre">'state',</span> <span class="pre">'runtime']</span> <span class="pre">=</span> <span class="pre">'config'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#config2py.util.get_app_data_directory" title="Link to this definition"></a></dt>
 <dd><p>Retrieve or create the app data directory specific to the given app name and folder kind.</p>
@@ -278,77 +330,25 @@ Default is ‘config’ for backward compatibility.</p></li>
 </dd>
 </dl>
 <p>By default, the app will be “config2py” and folder_kind will be “config”:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_data_folder</span><span class="p">()</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_config_folder</span><span class="p">()</span>  
 <span class="go">&#39;.../.config/config2py&#39;</span>
 </pre></div>
 </div>
 <p>You can specify a different app name and folder kind:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_data_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_config_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>  
 <span class="go">&#39;/Users/.../.local/share/my_app&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_data_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;cache&#39;</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_config_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;cache&#39;</span><span class="p">)</span>  
 <span class="go">&#39;/Users/.../.cache/my_app&#39;</span>
 </pre></div>
 </div>
 <p>You can also specify a path relative to the app root directory:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_data_folder</span><span class="p">(</span><span class="s1">&#39;another/app/subfolder&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_config_folder</span><span class="p">(</span><span class="s1">&#39;another/app/subfolder&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>  
 <span class="go">&#39;/Users/.../.local/share/another/app/subfolder&#39;</span>
 </pre></div>
 </div>
 <p>If ensure_exists is True, the directory will be created and initialized
 with the setup_callback:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">get_app_data_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
-<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>  
-<span class="go">True</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="config2py.util.get_app_data_folder">
-<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">app_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'config2py',</span> <span class="pre">*,</span> <span class="pre">setup_callback:</span> <span class="pre">~typing.Callable[[str],</span> <span class="pre">None]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;,</span> <span class="pre">ensure_exists:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">folder_kind:</span> <span class="pre">~typing.Literal['config',</span> <span class="pre">'data',</span> <span class="pre">'cache',</span> <span class="pre">'state',</span> <span class="pre">'runtime']</span> <span class="pre">=</span> <span class="pre">'config'</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#get_app_data_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.get_app_data_folder" title="Link to this definition"></a></dt>
-<dd><p>Retrieve or create the app data directory specific to the given app name and folder kind.</p>
-<p>The folder kind determines where the app’s files are stored:
-- ‘config’: For configuration/settings files
-- ‘data’: For essential user data, databases, sessions
-- ‘cache’: For temporary/regeneratable data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>app_name</strong> – Name of the app for which the data directory is needed.</p></li>
-<li><p><strong>setup_callback</strong> – A callback function to initialize the directory.
-Default is _default_folder_setup.</p></li>
-<li><p><strong>ensure_exists</strong> – Whether to ensure the directory exists.</p></li>
-<li><p><strong>folder_kind</strong> – Type of folder (‘config’, ‘data’, or ‘cache’).
-Default is ‘config’ for backward compatibility.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Path to the app data directory.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-<p>By default, the app will be “config2py” and folder_kind will be “config”:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_data_folder</span><span class="p">()</span>  
-<span class="go">&#39;.../.config/config2py&#39;</span>
-</pre></div>
-</div>
-<p>You can specify a different app name and folder kind:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_data_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>  
-<span class="go">&#39;/Users/.../.local/share/my_app&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_data_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;cache&#39;</span><span class="p">)</span>  
-<span class="go">&#39;/Users/.../.cache/my_app&#39;</span>
-</pre></div>
-</div>
-<p>You can also specify a path relative to the app root directory:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_data_folder</span><span class="p">(</span><span class="s1">&#39;another/app/subfolder&#39;</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>  
-<span class="go">&#39;/Users/.../.local/share/another/app/subfolder&#39;</span>
-</pre></div>
-</div>
-<p>If ensure_exists is True, the directory will be created and initialized
-with the setup_callback:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">get_app_data_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">get_app_config_folder</span><span class="p">(</span><span class="s1">&#39;my_app&#39;</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  
 <span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>  
 <span class="go">True</span>
 </pre></div>

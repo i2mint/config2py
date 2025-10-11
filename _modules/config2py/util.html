@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.util &mdash; config2py 0.1.39 documentation</title>
+  <title>config2py.util &mdash; config2py 0.1.40 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=f48ec9ae"></script>
+      <script src="../../_static/documentation_options.js?v=967b4925"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -362,29 +362,29 @@
 
 
 
-<span class="n">FolderSpec</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;FolderSpec&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;env_var&#39;</span><span class="p">,</span> <span class="s1">&#39;default_path&#39;</span><span class="p">])</span>
+<span class="n">FolderSpec</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;FolderSpec&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;env_var&quot;</span><span class="p">,</span> <span class="s2">&quot;default_path&quot;</span><span class="p">])</span>
 
-<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;nt&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
     <span class="n">APP_FOLDER_STANDARDS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">config</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s1">&#39;APPDATA&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;APPDATA&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s1">&#39;LOCALAPPDATA&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;LOCALAPPDATA&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;APPDATA&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;APPDATA&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)),</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)),</span>
         <span class="n">cache</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span>
-            <span class="s1">&#39;LOCALAPPDATA&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;LOCALAPPDATA&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="s1">&#39;Temp&#39;</span><span class="p">)</span>
+            <span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="s2">&quot;Temp&quot;</span><span class="p">)</span>
         <span class="p">),</span>
-        <span class="n">state</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s1">&#39;LOCALAPPDATA&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;LOCALAPPDATA&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
-        <span class="n">runtime</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s1">&#39;TEMP&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;TEMP&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
+        <span class="n">state</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)),</span>
+        <span class="n">runtime</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;TEMP&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;TEMP&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)),</span>
     <span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">APP_FOLDER_STANDARDS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">config</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s1">&#39;XDG_CONFIG_HOME&#39;</span><span class="p">,</span> <span class="s1">&#39;~/.config&#39;</span><span class="p">),</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s1">&#39;XDG_DATA_HOME&#39;</span><span class="p">,</span> <span class="s1">&#39;~/.local/share&#39;</span><span class="p">),</span>
-        <span class="n">cache</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s1">&#39;XDG_CACHE_HOME&#39;</span><span class="p">,</span> <span class="s1">&#39;~/.cache&#39;</span><span class="p">),</span>
-        <span class="n">state</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s1">&#39;XDG_STATE_HOME&#39;</span><span class="p">,</span> <span class="s1">&#39;~/.local/state&#39;</span><span class="p">),</span>
-        <span class="n">runtime</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s1">&#39;XDG_RUNTIME_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">),</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;XDG_CONFIG_HOME&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.config&quot;</span><span class="p">),</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;XDG_DATA_HOME&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.local/share&quot;</span><span class="p">),</span>
+        <span class="n">cache</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;XDG_CACHE_HOME&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.cache&quot;</span><span class="p">),</span>
+        <span class="n">state</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;XDG_STATE_HOME&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.local/state&quot;</span><span class="p">),</span>
+        <span class="n">runtime</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;XDG_RUNTIME_DIR&quot;</span><span class="p">,</span> <span class="s2">&quot;/tmp&quot;</span><span class="p">),</span>
     <span class="p">)</span>
 
 
-<span class="n">AppFolderKind</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;runtime&#39;</span><span class="p">]</span>
+<span class="n">AppFolderKind</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;runtime&quot;</span><span class="p">]</span>
 
 <span class="c1"># Verify AppFolderKind matches _APP_FOLDER_STANDARDS_DICT keys</span>
 <span class="c1"># Note: This is due to the fact that static type checkers can&#39;t verify</span>
@@ -418,11 +418,11 @@
 
 
 
-<span class="n">DFLT_CONFIG_FOLDER</span> <span class="o">=</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span>
-<span class="n">DFLT_DATA_FOLDER</span> <span class="o">=</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
-<span class="n">DFLT_CACHE_FOLDER</span> <span class="o">=</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="s1">&#39;cache&#39;</span><span class="p">)</span>
-<span class="n">DFLT_STATE_FOLDER</span> <span class="o">=</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span>
-<span class="n">DFLT_RUNTIME_FOLDER</span> <span class="o">=</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="s1">&#39;runtime&#39;</span><span class="p">)</span>
+<span class="n">DFLT_CONFIG_FOLDER</span> <span class="o">=</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">)</span>
+<span class="n">DFLT_DATA_FOLDER</span> <span class="o">=</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">DFLT_CACHE_FOLDER</span> <span class="o">=</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="s2">&quot;cache&quot;</span><span class="p">)</span>
+<span class="n">DFLT_STATE_FOLDER</span> <span class="o">=</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="s2">&quot;state&quot;</span><span class="p">)</span>
+<span class="n">DFLT_RUNTIME_FOLDER</span> <span class="o">=</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="s2">&quot;runtime&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_app_rootdir">
@@ -506,9 +506,9 @@
         <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory_path</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;.config2py&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;Created by config2py.&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="get_app_data_folder">
-<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.get_app_data_folder">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_app_data_folder</span><span class="p">(</span>
+<div class="viewcode-block" id="get_app_config_folder">
+<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.get_app_config_folder">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_app_config_folder</span><span class="p">(</span>
     <span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DFLT_APP_NAME</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">setup_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">_default_folder_setup</span><span class="p">,</span>
@@ -536,25 +536,25 @@
 
 <span class="sd">    By default, the app will be &quot;config2py&quot; and folder_kind will be &quot;config&quot;:</span>
 
-<span class="sd">    &gt;&gt;&gt; get_app_data_folder()  # doctest: +ELLIPSIS</span>
+<span class="sd">    &gt;&gt;&gt; get_app_config_folder()  # doctest: +ELLIPSIS</span>
 <span class="sd">    &#39;.../.config/config2py&#39;</span>
 
 <span class="sd">    You can specify a different app name and folder kind:</span>
 
-<span class="sd">    &gt;&gt;&gt; get_app_data_folder(&#39;my_app&#39;, folder_kind=&#39;data&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; get_app_config_folder(&#39;my_app&#39;, folder_kind=&#39;data&#39;)  # doctest: +SKIP</span>
 <span class="sd">    &#39;/Users/.../.local/share/my_app&#39;</span>
-<span class="sd">    &gt;&gt;&gt; get_app_data_folder(&#39;my_app&#39;, folder_kind=&#39;cache&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; get_app_config_folder(&#39;my_app&#39;, folder_kind=&#39;cache&#39;)  # doctest: +SKIP</span>
 <span class="sd">    &#39;/Users/.../.cache/my_app&#39;</span>
 
 <span class="sd">    You can also specify a path relative to the app root directory:</span>
 
-<span class="sd">    &gt;&gt;&gt; get_app_data_folder(&#39;another/app/subfolder&#39;, folder_kind=&#39;data&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; get_app_config_folder(&#39;another/app/subfolder&#39;, folder_kind=&#39;data&#39;)  # doctest: +SKIP</span>
 <span class="sd">    &#39;/Users/.../.local/share/another/app/subfolder&#39;</span>
 
 <span class="sd">    If ensure_exists is True, the directory will be created and initialized</span>
 <span class="sd">    with the setup_callback:</span>
 
-<span class="sd">    &gt;&gt;&gt; path = get_app_data_folder(&#39;my_app&#39;, ensure_exists=True)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; path = get_app_config_folder(&#39;my_app&#39;, ensure_exists=True)  # doctest: +SKIP</span>
 <span class="sd">    &gt;&gt;&gt; os.path.exists(path)  # doctest: +SKIP</span>
 <span class="sd">    True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -594,14 +594,14 @@
 <span class="sd">    - config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.</span>
 <span class="sd">                                                         Default is _default_folder_setup.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">app_dir</span> <span class="o">=</span> <span class="n">get_app_data_folder</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">setup_callback</span><span class="o">=</span><span class="n">app_dir_setup_callback</span><span class="p">)</span>
+    <span class="n">app_dir</span> <span class="o">=</span> <span class="n">get_app_config_folder</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">setup_callback</span><span class="o">=</span><span class="n">app_dir_setup_callback</span><span class="p">)</span>
     <span class="n">configs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app_dir</span><span class="p">,</span> <span class="n">configs_name</span><span class="p">)</span>
     <span class="n">config_dir_setup_callback</span><span class="p">(</span><span class="n">configs_dir</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">configs_dir</span></div>
 
 
 
-<span class="n">get_app_data_directory</span> <span class="o">=</span> <span class="n">get_app_data_folder</span>  <span class="c1"># backwards compatibility alias</span>
+<span class="n">get_app_data_directory</span> <span class="o">=</span> <span class="n">get_app_config_folder</span>  <span class="c1"># backwards compatibility alias</span>
 <span class="n">get_configs_directory_for_app</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">get_configs_folder_for_app</span>  <span class="c1"># backwards compatibility alias</span>
 <span class="p">)</span>
