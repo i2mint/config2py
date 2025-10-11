@@ -395,7 +395,7 @@ def _default_folder_setup(directory_path: str) -> None:
         (Path(directory_path) / ".config2py").write_text("Created by config2py.")
 
 
-def get_app_data_folder(
+def get_app_config_folder(
     app_name: str = DFLT_APP_NAME,
     *,
     setup_callback: Callable[[str], None] = _default_folder_setup,
@@ -423,25 +423,25 @@ def get_app_data_folder(
 
     By default, the app will be "config2py" and folder_kind will be "config":
 
-    >>> get_app_data_folder()  # doctest: +ELLIPSIS
+    >>> get_app_config_folder()  # doctest: +ELLIPSIS
     '.../.config/config2py'
 
     You can specify a different app name and folder kind:
 
-    >>> get_app_data_folder('my_app', folder_kind='data')  # doctest: +SKIP
+    >>> get_app_config_folder('my_app', folder_kind='data')  # doctest: +SKIP
     '/Users/.../.local/share/my_app'
-    >>> get_app_data_folder('my_app', folder_kind='cache')  # doctest: +SKIP
+    >>> get_app_config_folder('my_app', folder_kind='cache')  # doctest: +SKIP
     '/Users/.../.cache/my_app'
 
     You can also specify a path relative to the app root directory:
 
-    >>> get_app_data_folder('another/app/subfolder', folder_kind='data')  # doctest: +SKIP
+    >>> get_app_config_folder('another/app/subfolder', folder_kind='data')  # doctest: +SKIP
     '/Users/.../.local/share/another/app/subfolder'
 
     If ensure_exists is True, the directory will be created and initialized
     with the setup_callback:
 
-    >>> path = get_app_data_folder('my_app', ensure_exists=True)  # doctest: +SKIP
+    >>> path = get_app_config_folder('my_app', ensure_exists=True)  # doctest: +SKIP
     >>> os.path.exists(path)  # doctest: +SKIP
     True
     """
@@ -478,13 +478,13 @@ def get_configs_folder_for_app(
     - config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.
                                                          Default is _default_folder_setup.
     """
-    app_dir = get_app_data_folder(app_name, setup_callback=app_dir_setup_callback)
+    app_dir = get_app_config_folder(app_name, setup_callback=app_dir_setup_callback)
     configs_dir = os.path.join(app_dir, configs_name)
     config_dir_setup_callback(configs_dir)
     return configs_dir
 
 
-get_app_data_directory = get_app_data_folder  # backwards compatibility alias
+get_app_data_directory = get_app_config_folder  # backwards compatibility alias
 get_configs_directory_for_app = (
     get_configs_folder_for_app  # backwards compatibility alias
 )
