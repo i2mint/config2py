@@ -9,7 +9,8 @@ import ast
 from collections import ChainMap, namedtuple
 from pathlib import Path
 from functools import partial
-from typing import Optional, Union, Any, Callable, Set, Literal, get_args
+from typing import Optional, Union, Any, Set, Literal, get_args
+from collections.abc import Callable
 from types import SimpleNamespace
 import getpass
 
@@ -119,7 +120,7 @@ def ask_user_for_input(
 
 # Note: Could be made more efficient, but this is good enough (for now)
 def extract_variable_declarations(
-    string: str, expand: Optional[Union[dict, bool]] = None
+    string: str, expand: dict | bool | None = None
 ) -> dict:
     """
     Reads the contents of a config file, extracting Unix-style environment variable
@@ -554,7 +555,7 @@ def is_repl():
     return False
 
 
-is_repl.repl_conditions: Set[Callable] = _repl_conditions  # type: ignore
+is_repl.repl_conditions: set[Callable] = _repl_conditions  # type: ignore
 
 
 def _value_node_is_instance_of(

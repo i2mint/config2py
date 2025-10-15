@@ -4,26 +4,24 @@ Base for getting configs from various sources and formats
 
 from collections import ChainMap
 from typing import (
-    Callable,
     Type,
     Tuple,
     KT,
     VT,
     Any,
-    Iterable,
     Protocol,
     Union,
     runtime_checkable,
     Optional,
-    MutableMapping,
 )
+from collections.abc import Callable, Iterable, MutableMapping
 from dataclasses import dataclass
 from functools import lru_cache, partial
 
 from config2py.util import always_true, ask_user_for_input, no_default, not_found
 from config2py.errors import ConfigNotFound
 
-Exceptions = Tuple[Type[Exception], ...]
+Exceptions = tuple[type[Exception], ...]
 
 
 @runtime_checkable
@@ -104,8 +102,8 @@ def get_config(
     sources: Sources = None,
     *,
     default: VT = no_default,
-    egress: Optional[GetConfigEgress] = None,
-    val_is_valid: Optional[Callable[[VT], bool]] = always_true,
+    egress: GetConfigEgress | None = None,
+    val_is_valid: Callable[[VT], bool] | None = always_true,
     config_not_found_exceptions: Exceptions = (Exception,),
 ):
     """Get a config value from a list of sources
@@ -374,7 +372,7 @@ def ask_user_for_key(
     save_to: SaveTo = None,
     save_condition=is_not_empty,
     user_asker=ask_user_for_input,
-    egress: Optional[Callable] = None,
+    egress: Callable | None = None,
 ):
     if key is None:
         return partial(
@@ -399,7 +397,7 @@ def user_gettable(
     save_to: SaveTo = None,
     *,
     prompt_template="Enter a value for {}: ",
-    egress: Optional[Callable] = None,
+    egress: Callable | None = None,
     user_asker=ask_user_for_input,
     val_is_valid: Callable[[VT], bool] = is_not_empty,
     config_not_found_exceptions: Exceptions = (Exception,),

@@ -1,6 +1,6 @@
 """Various tools"""
 
-from typing import Callable
+from collections.abc import Callable
 from pathlib import Path
 import re
 from dol import Pipe, TextFiles, resolve_path

@@ -299,11 +299,11 @@ class ConfigStore(ConfigParserStore):
 
     @persist_after_operation
     def __setitem__(self, k, v):
-        super(ConfigStore, self).__setitem__(k, v)
+        super().__setitem__(k, v)
 
     @persist_after_operation
     def __delitem__(self, k):
-        super(ConfigStore, self).__delitem__(k)
+        super().__delitem__(k)
 
     # __setitem__ = super_and_persist(ConfigParser, '__setitem__')
     # __delitem__ = super_and_persist(ConfigParser, '__delitem__')
@@ -388,13 +388,14 @@ class ConfigReader(ConfigStore):
 #             return super()._obj_of_data(data)
 
 
-from typing import Mapping, Iterable, Generator, Union
+from typing import Union
+from collections.abc import Mapping, Iterable, Generator
 import re
 
 
 # TODO: postprocess_ini_section_items and preprocess_ini_section_items: Add comma separated possibility?
 # TODO: Find out if configparse has an option to do this processing alreadys
-def postprocess_ini_section_items(items: Union[Mapping, Iterable]) -> Generator:
+def postprocess_ini_section_items(items: Mapping | Iterable) -> Generator:
     r"""Transform newline-separated string values into actual list of strings (assuming that intent)
 
     >>> section_from_ini = {
@@ -417,7 +418,7 @@ def postprocess_ini_section_items(items: Union[Mapping, Iterable]) -> Generator:
 
 
 # TODO: Find out if configparse has an option to do this processing alreadys
-def preprocess_ini_section_items(items: Union[Mapping, Iterable]) -> Generator:
+def preprocess_ini_section_items(items: Mapping | Iterable) -> Generator:
     """Transform list values into newline-separated strings, in view of writing the value to a ini formatted section
     >>> section = {
     ...     'name': 'aspyre',
