@@ -467,11 +467,10 @@ def get_app_folder(
     app_data_path = os.path.join(
         get_app_rootdir(folder_kind, ensure_exists=ensure_exists), app_name
     )
-    app_data_folder_did_not_exist = not os.path.isdir(app_data_path)
-    # process_path(app_data_path, ensure_dir_exists=True)
+    app_data_folder_does_not_exist = not os.path.isdir(app_data_path)
 
-    if app_data_folder_did_not_exist:
-        setup_callback(app_data_path)
+    if app_data_folder_does_not_exist and ensure_exists:
+        setup_callback(app_data_path, ensure_exists=ensure_exists)
     return app_data_path
 
 
