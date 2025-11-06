@@ -403,7 +403,7 @@ def _default_folder_setup(directory_path: str) -> None:
     This is the default setup callback for directories managed by config2py.
     """
     if not os.path.isdir(directory_path):
-        os.mkdir(directory_path)
+        os.makedirs(directory_path, exist_ok=True)
         # Add a hidden file to annotate the directory as one managed by config2py.
         # This helps distinguish it from directories created by other programs
         # (this can be useful to avoid conflicts).
