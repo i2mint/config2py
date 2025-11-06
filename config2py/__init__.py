@@ -23,3 +23,4 @@ from config2py.util import (
     parse_assignments_from_py_source,
     process_path,
 )
+from config2py.sync_store import SyncStore, FileStore, JsonStore, register_extension

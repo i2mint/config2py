@@ -197,6 +197,80 @@ It will return the value that the user entered last time, without prompting the
 user again.
 
 
+## SyncStore: Auto-Syncing Key-Value Stores
+
+### Overview
+
+`SyncStore` provides MutableMapping interfaces that automatically persist changes to backing storage. Changes sync immediately by default, or can be deferred using a context manager for efficient batch operations.
+
+### Basic Usage
+
+```python
+from config2py.sync_store import FileStore, JsonStore
+
+# Auto-detected from .json extension
+config = FileStore('config.json')
+config['api_key'] = 'secret'  # Syncs immediately
+
+# Batch operations (deferred sync)
+with config:
+    config['a'] = 1
+    config['b'] = 2
+    config['c'] = 3
+    # Syncs once on exit
+```
+
+### Nested Sections
+
+```python
+# Work with specific section via key_path
+db_config = FileStore('config.json', key_path='database')
+db_config['host'] = 'localhost'  # Only affects database section
+
+# Dotted notation for deep nesting
+items = FileStore('config.json', key_path='app.settings.items')
+items['item1'] = 'value'
+```
+
+### Supported Formats
+
+Auto-detected by extension:
+- `.json` - JSON (stdlib)
+- `.ini`, `.cfg` - INI files (stdlib)
+- `.yaml`, `.yml` - YAML (if PyYAML installed)
+- `.toml` - TOML (if tomli/tomllib installed)
+
+Register custom formats:
+```python
+from sync_store import register_extension
+
+register_extension('.custom', my_loader, my_dumper)
+store = FileStore('data.custom')
+```
+
+### Custom Backing Storage
+
+```python
+from config2py.sync_store import SyncStore
+
+# Any backing storage via loader/dumper
+def my_loader():
+    return fetch_from_database()
+
+def my_dumper(data):
+    save_to_database(data)
+
+store = SyncStore(my_loader, my_dumper)
+store['key'] = 'value'  # Calls my_dumper
+```
+
+### Key Classes
+
+- **`SyncStore`** - Base class with loader/dumper functions
+- **`FileStore`** - File-based with extension detection and key_path
+- **`JsonStore`** - Explicit JSON with sensible defaults
+
+
 # A few notable tools you can import from config2py
 
 * `get_config`: Get a config value from a list of sources. See more below.
@@ -327,7 +401,3 @@ s['SOME_KEY']
 
 More on that another day...
 
-
-```python
-
-```
