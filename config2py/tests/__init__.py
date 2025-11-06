@@ -1,4 +1,5 @@
 """Init for config2py tests."""
+
 import sys
 
 try:

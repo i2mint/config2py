@@ -34,11 +34,11 @@ import json
 from functools import reduce
 
 __all__ = [
-    'SyncStore',
-    'FileStore',
-    'JsonStore',
-    'register_extension',
-    'get_format_handlers',
+    "SyncStore",
+    "FileStore",
+    "JsonStore",
+    "register_extension",
+    "get_format_handlers",
 ]
 
 # Note: Independent module. No imports from config2py, dol etc.
@@ -70,7 +70,7 @@ def get_format_handlers(
 
 
 # Register standard formats
-register_extension('.json', json.loads, json.dumps)
+register_extension(".json", json.loads, json.dumps)
 
 # TODO: Use register-if-available pattern (with context managers.. implemented somewhere...)
 
@@ -92,8 +92,8 @@ try:
         parser.write(output)
         return output.getvalue()
 
-    register_extension('.ini', _ini_loader, _ini_dumper)
-    register_extension('.cfg', _ini_loader, _ini_dumper)
+    register_extension(".ini", _ini_loader, _ini_dumper)
+    register_extension(".cfg", _ini_loader, _ini_dumper)
 except ImportError:
     pass
 
@@ -101,8 +101,8 @@ except ImportError:
 try:
     import yaml
 
-    register_extension('.yaml', yaml.safe_load, yaml.dump)
-    register_extension('.yml', yaml.safe_load, yaml.dump)
+    register_extension(".yaml", yaml.safe_load, yaml.dump)
+    register_extension(".yml", yaml.safe_load, yaml.dump)
 except ImportError:
     pass
 
@@ -111,13 +111,13 @@ try:
     import tomllib  # Python 3.11+
     import tomli_w
 
-    register_extension('.toml', tomllib.loads, tomli_w.dumps)
+    register_extension(".toml", tomllib.loads, tomli_w.dumps)
 except ImportError:
     try:
         import tomli
         import tomli_w
 
-        register_extension('.toml', tomli.loads, tomli_w.dumps)
+        register_extension(".toml", tomli.loads, tomli_w.dumps)
     except ImportError:
         pass
 
@@ -133,7 +133,7 @@ def _normalize_key_path(key_path: KeyPath) -> Tuple[str, ...]:
     if key_path is None or key_path == ():
         return ()
     if isinstance(key_path, str):
-        return tuple(key_path.split('.')) if '.' in key_path else (key_path,)
+        return tuple(key_path.split(".")) if "." in key_path else (key_path,)
     return tuple(key_path)
 
 
@@ -307,7 +307,7 @@ class FileStore(SyncStore):
         key_path: KeyPath = None,
         loader: Optional[Callable[[str], dict]] = None,
         dumper: Optional[Callable[[dict], str]] = None,
-        mode: str = 'r',
+        mode: str = "r",
         dump_kwargs: Optional[dict] = None,
         create_file_content: Optional[Callable[[], dict]] = None,
         create_key_path_content: Optional[Callable[[], Any]] = None,
@@ -389,7 +389,7 @@ class FileStore(SyncStore):
             full_data = _set_nested(full_data, self.key_path, section_data)
             content = self._file_dumper(full_data, **self.dump_kwargs)
 
-        write_mode = 'w' if 'b' not in self.mode else 'wb'
+        write_mode = "w" if "b" not in self.mode else "wb"
         with open(self.filepath, write_mode) as f:
             f.write(content)
 
@@ -421,14 +421,14 @@ class JsonStore(FileStore):
         ensure_ascii: bool = False,
         **dump_kwargs,
     ):
-        dump_kwargs.setdefault('indent', indent)
-        dump_kwargs.setdefault('ensure_ascii', ensure_ascii)
+        dump_kwargs.setdefault("indent", indent)
+        dump_kwargs.setdefault("ensure_ascii", ensure_ascii)
 
         super().__init__(
             filepath,
             loader=json.loads,
             dumper=json.dumps,
             key_path=key_path,
-            mode='r',
+            mode="r",
             dump_kwargs=dump_kwargs,
         )

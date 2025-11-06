@@ -1,4 +1,5 @@
 """Utils for testing config2py functionality."""
+
 from functools import partial
 
 
