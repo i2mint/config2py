@@ -72,7 +72,7 @@ def get_format_handlers(
 # Register standard formats
 register_extension('.json', json.loads, json.dumps)
 
-#TODO: Use register-if-available pattern (with context managers.. implemented somewhere...)
+# TODO: Use register-if-available pattern (with context managers.. implemented somewhere...)
 
 # ConfigParser for .ini and .cfg
 try:
@@ -266,21 +266,38 @@ class FileStore(SyncStore):
         dumper: Optional custom dumper (auto-detected from extension if not provided)
         mode: File read mode ('r' for text, 'rb' for binary)
         dump_kwargs: Additional kwargs for dumper
+        create_file_content: Optional factory callable that returns initial dict content
+            for missing files. If None, FileNotFoundError is raised for missing files.
+        create_key_path_content: Optional factory callable that returns initial content
+            for missing key_path. If None, KeyError is raised for missing key paths.
 
     Example:
         >>> import tempfile
+        >>> import os
+        >>>
+        >>> # Basic usage with existing file
         >>> with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
         ...     _ = f.write('{"section": {"key": "value"}}')
         ...     temp_file = f.name
         >>>
-        >>> # Work with nested section
         >>> section = FileStore(temp_file, key_path='section')
         >>> section['key']
         'value'
         >>> section['new'] = 'data'
-        >>>
-        >>> import os
         >>> os.unlink(temp_file)
+        >>>
+        >>> # Auto-create missing file and key_path
+        >>> with tempfile.TemporaryDirectory() as tmpdir:
+        ...     new_file = os.path.join(tmpdir, 'config.json')
+        ...     store = FileStore(
+        ...         new_file,
+        ...         key_path='servers',
+        ...         create_file_content=lambda: {},
+        ...         create_key_path_content=lambda: {}
+        ...     )
+        ...     store['myserver'] = {'command': 'python'}
+        ...     'myserver' in store
+        True
     """
 
     def __init__(
@@ -292,11 +309,15 @@ class FileStore(SyncStore):
         dumper: Optional[Callable[[dict], str]] = None,
         mode: str = 'r',
         dump_kwargs: Optional[dict] = None,
+        create_file_content: Optional[Callable[[], dict]] = None,
+        create_key_path_content: Optional[Callable[[], Any]] = None,
     ):
         self.filepath = Path(filepath).expanduser()
         self.key_path = _normalize_key_path(key_path)
         self.mode = mode
         self.dump_kwargs = dump_kwargs or {}
+        self.create_file_content = create_file_content
+        self.create_key_path_content = create_key_path_content
 
         # Auto-detect format if not provided
         if loader is None or dumper is None:
@@ -318,10 +339,43 @@ class FileStore(SyncStore):
 
     def _load_from_file(self) -> dict:
         """Read and parse file, returning the section specified by key_path."""
-        with open(self.filepath, self.mode) as f:
-            content = f.read()
-        data = self._file_loader(content)
-        return _get_nested(data, self.key_path)
+        # Handle missing file
+        if not self.filepath.exists():
+            if self.create_file_content is None:
+                raise FileNotFoundError(f"File not found: {self.filepath}")
+
+            # Create file with initial content
+            initial_data = self.create_file_content()
+            self.filepath.parent.mkdir(parents=True, exist_ok=True)
+            content = self._file_dumper(initial_data, **self.dump_kwargs)
+            write_mode = 'w' if 'b' not in self.mode else 'wb'
+            with open(self.filepath, write_mode) as f:
+                f.write(content)
+            data = initial_data
+        else:
+            # Load existing file
+            with open(self.filepath, self.mode) as f:
+                content = f.read()
+            data = self._file_loader(content)
+
+        # Handle missing key_path
+        try:
+            return _get_nested(data, self.key_path)
+        except (KeyError, TypeError):
+            if self.create_key_path_content is None:
+                raise KeyError(f"Key path not found: {self.key_path}")
+
+            # Create key_path with initial content
+            initial_content = self.create_key_path_content()
+            full_data = _set_nested(data, self.key_path, initial_content)
+
+            # Write back to file
+            content = self._file_dumper(full_data, **self.dump_kwargs)
+            write_mode = 'w' if 'b' not in self.mode else 'wb'
+            with open(self.filepath, write_mode) as f:
+                f.write(content)
+
+            return initial_content
 
     def _dump_to_file(self, section_data: dict) -> None:
         """Write data to file, updating only the section specified by key_path."""
