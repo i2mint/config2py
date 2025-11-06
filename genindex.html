@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; config2py 0.1.41 documentation</title>
+  <title>Index &mdash; config2py 0.1.42 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=3203cd3c"></script>
+      <script src="_static/documentation_options.js?v=05fb4756"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -50,7 +50,9 @@
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/base.html">config2py.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/errors.html">config2py.errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tools.html">config2py.tools</a></li>
@@ -91,9 +93,12 @@
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#J"><strong>J</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
  
@@ -142,6 +147,13 @@
 </li>
       </ul></li>
       <li>
+    config2py.sync_store
+
+      <ul>
+        <li><a href="module_docs/config2py/sync_store.html#module-config2py.sync_store">module</a>
+</li>
+      </ul></li>
+      <li>
     config2py.tests
 
       <ul>
@@ -149,14 +161,21 @@
 </li>
       </ul></li>
       <li>
+    config2py.tests.test_sync_store
+
+      <ul>
+        <li><a href="module_docs/config2py/tests/test_sync_store.html#module-config2py.tests.test_sync_store">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     config2py.tests.utils_for_testing
 
       <ul>
         <li><a href="module_docs/config2py/tests/utils_for_testing.html#module-config2py.tests.utils_for_testing">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     config2py.tools
 
@@ -215,10 +234,14 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="module_docs/config2py/util.html#config2py.util.FolderSpec">FolderSpec (class in config2py.util)</a>
+      <li><a href="module_docs/config2py/sync_store.html#config2py.sync_store.FileStore">FileStore (class in config2py.sync_store)</a>
+</li>
+      <li><a href="module_docs/config2py/sync_store.html#config2py.sync_store.SyncStore.flush">flush() (config2py.sync_store.SyncStore method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/config2py/util.html#config2py.util.FolderSpec">FolderSpec (class in config2py.util)</a>
+</li>
       <li><a href="module_docs/config2py/base.html#config2py.base.FuncBasedGettableContainer">FuncBasedGettableContainer (class in config2py.base)</a>
 </li>
   </ul></td>
@@ -249,6 +272,8 @@
 </li>
       <li><a href="module_docs/config2py/tools.html#config2py.tools.get_configs_local_store">get_configs_local_store() (in module config2py.tools)</a>
 </li>
+      <li><a href="module_docs/config2py/sync_store.html#config2py.sync_store.get_format_handlers">get_format_handlers() (in module config2py.sync_store)</a>
+</li>
       <li><a href="module_docs/config2py/base.html#config2py.base.gettable_containers">gettable_containers() (in module config2py.base)</a>
 </li>
       <li><a href="module_docs/config2py/base.html#config2py.base.GettableContainer">GettableContainer (class in config2py.base)</a>
@@ -270,6 +295,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/config2py/sync_store.html#config2py.sync_store.JsonStore">JsonStore (class in config2py.sync_store)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -285,7 +318,11 @@
 </li>
         <li><a href="module_docs/config2py/s_configparser.html#module-config2py.s_configparser">config2py.s_configparser</a>
 </li>
+        <li><a href="module_docs/config2py/sync_store.html#module-config2py.sync_store">config2py.sync_store</a>
+</li>
         <li><a href="module_docs/config2py/tests.html#module-config2py.tests">config2py.tests</a>
+</li>
+        <li><a href="module_docs/config2py/tests/test_sync_store.html#module-config2py.tests.test_sync_store">config2py.tests.test_sync_store</a>
 </li>
         <li><a href="module_docs/config2py/tests/utils_for_testing.html#module-config2py.tests.utils_for_testing">config2py.tests.utils_for_testing</a>
 </li>
@@ -317,6 +354,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/config2py/sync_store.html#config2py.sync_store.register_extension">register_extension() (in module config2py.sync_store)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -324,13 +369,45 @@
 </li>
       <li><a href="module_docs/config2py/tools.html#config2py.tools.source_config_params">source_config_params() (in module config2py.tools)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/config2py/base.html#config2py.base.sources_chainmap">sources_chainmap() (in module config2py.base)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="module_docs/config2py/s_configparser.html#config2py.s_configparser.super_and_persist">super_and_persist() (in module config2py.s_configparser)</a>
 </li>
+      <li><a href="module_docs/config2py/sync_store.html#config2py.sync_store.SyncStore">SyncStore (class in config2py.sync_store)</a>
+</li>
       <li><a href="module_docs/config2py/util.html#config2py.util.system_default_for_app_data_folder">system_default_for_app_data_folder() (in module config2py.util)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_extension_registry">test_extension_registry() (in module config2py.tests.test_sync_store)</a>
+</li>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_batch_operations">test_file_store_batch_operations() (in module config2py.tests.test_sync_store)</a>
+</li>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_dotted_key_path">test_file_store_dotted_key_path() (in module config2py.tests.test_sync_store)</a>
+</li>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_json">test_file_store_json() (in module config2py.tests.test_sync_store)</a>
+</li>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_key_path">test_file_store_key_path() (in module config2py.tests.test_sync_store)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_json_store">test_json_store() (in module config2py.tests.test_sync_store)</a>
+</li>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_store_repr">test_store_repr() (in module config2py.tests.test_sync_store)</a>
+</li>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_auto_sync">test_sync_store_auto_sync() (in module config2py.tests.test_sync_store)</a>
+</li>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_basic_operations">test_sync_store_basic_operations() (in module config2py.tests.test_sync_store)</a>
+</li>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_context_manager">test_sync_store_context_manager() (in module config2py.tests.test_sync_store)</a>
+</li>
+      <li><a href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_manual_flush">test_sync_store_manual_flush() (in module config2py.tests.test_sync_store)</a>
 </li>
   </ul></td>
 </tr></table>

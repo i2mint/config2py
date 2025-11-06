@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.tools &mdash; config2py 0.1.41 documentation</title>
+  <title>config2py.tools &mdash; config2py 0.1.42 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3203cd3c"></script>
+      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -53,7 +53,9 @@
 <li class="toctree-l1"><a class="reference internal" href="base.html">config2py.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="errors.html">config2py.errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="s_configparser.html">config2py.s_configparser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">config2py.tools</a><ul>
@@ -135,7 +137,7 @@ If it’s a string, it’s assumed to be an app name, from which to create a fol
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.tools.simple_config_getter">
-<span class="sig-prename descclassname"><span class="pre">config2py.tools.</span></span><span class="sig-name descname"><span class="pre">simple_config_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs_src:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'/home/runner/.config/config2py/configs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_look_in_env_vars:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ask_user_if_key_not_found:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_store_factory:</span> <span class="pre">~typing.Callable</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">get_configs_local_store&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/tools.html#simple_config_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.tools.simple_config_getter" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">config2py.tools.</span></span><span class="sig-name descname"><span class="pre">simple_config_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs_src:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'/home/runner/.config/config2py/configs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_look_in_env_vars:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ask_user_if_key_not_found:</span> <span class="pre">bool</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_store_factory:</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">get_configs_local_store&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/tools.html#simple_config_getter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.tools.simple_config_getter" title="Link to this definition"></a></dt>
 <dd><p>Make a simple config getter from a “central” config source specification.</p>
 <p>The purpose of this function is to implement a common pattern of getting configs:
 One that, by default (but optionally), looks in environment variables first,

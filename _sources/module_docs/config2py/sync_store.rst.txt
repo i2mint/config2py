@@ -1,0 +1,4 @@
+config2py.sync_store
+====================
+.. automodule:: config2py.sync_store
+   :members:

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; config2py 0.1.41 documentation</title>
+  <title>&lt;no title&gt; &mdash; config2py 0.1.42 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=3203cd3c"></script>
+      <script src="_static/documentation_options.js?v=05fb4756"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -51,7 +51,9 @@
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/base.html">config2py.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/errors.html">config2py.errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tools.html">config2py.tools</a></li>
@@ -108,7 +110,29 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/s_configparser.html#config2py.s_configparser.super_and_persist"><code class="docutils literal notranslate"><span class="pre">super_and_persist()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/sync_store.html">config2py.sync_store</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/sync_store.html#config2py.sync_store.FileStore"><code class="docutils literal notranslate"><span class="pre">FileStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/sync_store.html#config2py.sync_store.JsonStore"><code class="docutils literal notranslate"><span class="pre">JsonStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/sync_store.html#config2py.sync_store.SyncStore"><code class="docutils literal notranslate"><span class="pre">SyncStore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/sync_store.html#config2py.sync_store.get_format_handlers"><code class="docutils literal notranslate"><span class="pre">get_format_handlers()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/sync_store.html#config2py.sync_store.register_extension"><code class="docutils literal notranslate"><span class="pre">register_extension()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_extension_registry"><code class="docutils literal notranslate"><span class="pre">test_extension_registry()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_batch_operations"><code class="docutils literal notranslate"><span class="pre">test_file_store_batch_operations()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_dotted_key_path"><code class="docutils literal notranslate"><span class="pre">test_file_store_dotted_key_path()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_json"><code class="docutils literal notranslate"><span class="pre">test_file_store_json()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_key_path"><code class="docutils literal notranslate"><span class="pre">test_file_store_key_path()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_json_store"><code class="docutils literal notranslate"><span class="pre">test_json_store()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_store_repr"><code class="docutils literal notranslate"><span class="pre">test_store_repr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_auto_sync"><code class="docutils literal notranslate"><span class="pre">test_sync_store_auto_sync()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_basic_operations"><code class="docutils literal notranslate"><span class="pre">test_sync_store_basic_operations()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_context_manager"><code class="docutils literal notranslate"><span class="pre">test_sync_store_context_manager()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_manual_flush"><code class="docutils literal notranslate"><span class="pre">test_sync_store_manual_flush()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tools.html">config2py.tools</a><ul>

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.s_configparser &mdash; config2py 0.1.41 documentation</title>
+  <title>config2py.s_configparser &mdash; config2py 0.1.42 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3203cd3c"></script>
+      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -50,7 +50,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/base.html">config2py.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/errors.html">config2py.errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tools.html">config2py.tools</a></li>
@@ -394,11 +396,11 @@
 
     <span class="nd">@persist_after_operation</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ConfigStore</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
     <span class="nd">@persist_after_operation</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ConfigStore</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">k</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">k</span><span class="p">)</span></div>
 
 
     <span class="c1"># __setitem__ = super_and_persist(ConfigParser, &#39;__setitem__&#39;)</span>
@@ -490,7 +492,8 @@
 <span class="c1">#             return super()._obj_of_data(data)</span>
 
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Generator</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
 
@@ -498,7 +501,7 @@
 <span class="c1"># TODO: Find out if configparse has an option to do this processing alreadys</span>
 <div class="viewcode-block" id="postprocess_ini_section_items">
 <a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.postprocess_ini_section_items">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">postprocess_ini_section_items</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">postprocess_ini_section_items</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Transform newline-separated string values into actual list of strings (assuming that intent)</span>
 
 <span class="sd">    &gt;&gt;&gt; section_from_ini = {</span>
@@ -524,7 +527,7 @@
 <span class="c1"># TODO: Find out if configparse has an option to do this processing alreadys</span>
 <div class="viewcode-block" id="preprocess_ini_section_items">
 <a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.preprocess_ini_section_items">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_ini_section_items</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_ini_section_items</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform list values into newline-separated strings, in view of writing the value to a ini formatted section</span>
 <span class="sd">    &gt;&gt;&gt; section = {</span>
 <span class="sd">    ...     &#39;name&#39;: &#39;aspyre&#39;,</span>

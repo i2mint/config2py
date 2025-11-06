@@ -1,0 +1,4 @@
+config2py.tests.test_sync_store
+===============================
+.. automodule:: config2py.tests.test_sync_store
+   :members:
