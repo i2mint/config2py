@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.tests.test_sync_store &mdash; config2py 0.1.42 documentation</title>
+  <title>config2py.tests.test_sync_store &mdash; config2py 0.1.43 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=05fb4756"></script>
+      <script src="../../../_static/documentation_options.js?v=a183c34f"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -114,19 +114,19 @@
     <span class="n">store</span> <span class="o">=</span> <span class="n">SyncStore</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">dumper</span><span class="p">)</span>
 
     <span class="c1"># Set</span>
-    <span class="n">store</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span>
-    <span class="k">assert</span> <span class="n">store</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span>
-    <span class="k">assert</span> <span class="n">data_holder</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span>
+    <span class="n">store</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span>
+    <span class="k">assert</span> <span class="n">store</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span>
+    <span class="k">assert</span> <span class="n">data_holder</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span>
 
     <span class="c1"># Delete</span>
-    <span class="k">del</span> <span class="n">store</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
-    <span class="k">assert</span> <span class="s1">&#39;key&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">store</span>
-    <span class="k">assert</span> <span class="s1">&#39;key&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data_holder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">store</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="s2">&quot;key&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">store</span>
+    <span class="k">assert</span> <span class="s2">&quot;key&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data_holder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># Iteration</span>
-    <span class="n">store</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">store</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">}</span>
+    <span class="n">store</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">store</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">}</span>
 
     <span class="c1"># Length</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">store</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span></div>
@@ -149,13 +149,13 @@
 
     <span class="n">store</span> <span class="o">=</span> <span class="n">SyncStore</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">dumper</span><span class="p">)</span>
 
-    <span class="n">store</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">store</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">assert</span> <span class="n">sync_count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
 
-    <span class="n">store</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">store</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="k">assert</span> <span class="n">sync_count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
 
-    <span class="k">del</span> <span class="n">store</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">store</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
     <span class="k">assert</span> <span class="n">sync_count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span></div>
 
 
@@ -178,13 +178,13 @@
 
     <span class="c1"># Batch operations</span>
     <span class="k">with</span> <span class="n">store</span><span class="p">:</span>
-        <span class="n">store</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">store</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
-        <span class="n">store</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">store</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">store</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">store</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
         <span class="k">assert</span> <span class="n">sync_count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>  <span class="c1"># Not synced yet</span>
 
     <span class="k">assert</span> <span class="n">sync_count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>  <span class="c1"># Synced once on exit</span>
-    <span class="k">assert</span> <span class="n">data_holder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span></div>
+    <span class="k">assert</span> <span class="n">data_holder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span></div>
 
 
 
@@ -205,13 +205,13 @@
     <span class="n">store</span> <span class="o">=</span> <span class="n">SyncStore</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">dumper</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">store</span><span class="p">:</span>
-        <span class="n">store</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">store</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">assert</span> <span class="n">sync_count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
 
         <span class="n">store</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>  <span class="c1"># Manual flush</span>
         <span class="k">assert</span> <span class="n">sync_count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
 
-        <span class="n">store</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">store</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="k">assert</span> <span class="n">sync_count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>  <span class="c1"># Still in context, not auto-synced</span>
 
     <span class="k">assert</span> <span class="n">sync_count</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>  <span class="c1"># Final flush on exit</span></div>
@@ -222,7 +222,7 @@
 <a class="viewcode-back" href="../../../module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_json">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_file_store_json</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test FileStore with JSON file.&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;{&quot;key&quot;: &quot;value&quot;}&#39;</span><span class="p">)</span>
         <span class="n">temp_file</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span>
 
@@ -230,19 +230,19 @@
         <span class="n">store</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span>
 
         <span class="c1"># Read</span>
-        <span class="k">assert</span> <span class="n">store</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span>
+        <span class="k">assert</span> <span class="n">store</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span>
 
         <span class="c1"># Write</span>
-        <span class="n">store</span><span class="p">[</span><span class="s1">&#39;new_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;new_value&#39;</span>
+        <span class="n">store</span><span class="p">[</span><span class="s2">&quot;new_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;new_value&quot;</span>
 
         <span class="c1"># Verify persistence</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;new_key&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;new_value&#39;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;new_key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;new_value&quot;</span>
 
         <span class="c1"># Delete</span>
-        <span class="k">del</span> <span class="n">store</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
-        <span class="k">assert</span> <span class="s1">&#39;key&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">store</span>
+        <span class="k">del</span> <span class="n">store</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="s2">&quot;key&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">store</span>
 
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span></div>
@@ -253,23 +253,23 @@
 <a class="viewcode-back" href="../../../module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_key_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_file_store_key_path</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test FileStore with nested key_path.&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;{&quot;section1&quot;: {&quot;a&quot;: 1}, &quot;section2&quot;: {&quot;b&quot;: 2}}&#39;</span><span class="p">)</span>
         <span class="n">temp_file</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># Work with section1 only</span>
-        <span class="n">section1</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">key_path</span><span class="o">=</span><span class="s1">&#39;section1&#39;</span><span class="p">)</span>
+        <span class="n">section1</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">key_path</span><span class="o">=</span><span class="s2">&quot;section1&quot;</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="n">section1</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="n">section1</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
-        <span class="k">assert</span> <span class="s1">&#39;c&#39;</span> <span class="ow">in</span> <span class="n">section1</span>
+        <span class="k">assert</span> <span class="n">section1</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="n">section1</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="k">assert</span> <span class="s2">&quot;c&quot;</span> <span class="ow">in</span> <span class="n">section1</span>
 
         <span class="c1"># Verify section2 untouched</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;section2&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
-        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;section1&#39;</span><span class="p">][</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;section2&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;section1&quot;</span><span class="p">][</span><span class="s2">&quot;c&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
 
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span></div>
@@ -280,17 +280,17 @@
 <a class="viewcode-back" href="../../../module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_dotted_key_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_file_store_dotted_key_path</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test FileStore with dotted key_path notation.&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;{&quot;a&quot;: {&quot;b&quot;: {&quot;c&quot;: </span><span class="si">{}</span><span class="s1">}}}&#39;</span><span class="p">)</span>
         <span class="n">temp_file</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">nested</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">key_path</span><span class="o">=</span><span class="s1">&#39;a.b.c&#39;</span><span class="p">)</span>
-        <span class="n">nested</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span>
+        <span class="n">nested</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">key_path</span><span class="o">=</span><span class="s2">&quot;a.b.c&quot;</span><span class="p">)</span>
+        <span class="n">nested</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">][</span><span class="s1">&#39;b&#39;</span><span class="p">][</span><span class="s1">&#39;c&#39;</span><span class="p">][</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">][</span><span class="s2">&quot;b&quot;</span><span class="p">][</span><span class="s2">&quot;c&quot;</span><span class="p">][</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span>
 
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span></div>
@@ -301,18 +301,18 @@
 <a class="viewcode-back" href="../../../module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_json_store">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_json_store</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test JsonStore with defaults.&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;{&quot;key&quot;: &quot;value&quot;}&#39;</span><span class="p">)</span>
         <span class="n">temp_file</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">store</span> <span class="o">=</span> <span class="n">JsonStore</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span>
-        <span class="n">store</span><span class="p">[</span><span class="s1">&#39;new&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;data&#39;</span>
+        <span class="n">store</span><span class="p">[</span><span class="s2">&quot;new&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span>
 
         <span class="c1"># Check formatting (indent=2 by default)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="s1">&#39;  &#39;</span> <span class="ow">in</span> <span class="n">content</span>  <span class="c1"># Should have indentation</span>
+        <span class="k">assert</span> <span class="s2">&quot;  &quot;</span> <span class="ow">in</span> <span class="n">content</span>  <span class="c1"># Should have indentation</span>
 
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span></div>
@@ -323,8 +323,8 @@
 <a class="viewcode-back" href="../../../module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_batch_operations">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_file_store_batch_operations</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that batch operations work efficiently.&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">temp_file</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -333,13 +333,13 @@
         <span class="c1"># Batch mode - only one write</span>
         <span class="k">with</span> <span class="n">store</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
-                <span class="n">store</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;key_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="n">store</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;key_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
 
         <span class="c1"># Verify all written</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span>
-        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;key_42&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">42</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;key_42&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">42</span>
 
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span></div>
@@ -353,20 +353,20 @@
 
     <span class="c1"># Register custom format</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">custom_loader</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;loaded&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;loaded&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">custom_dumper</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="n">register_extension</span><span class="p">(</span><span class="s1">&#39;.custom&#39;</span><span class="p">,</span> <span class="n">custom_loader</span><span class="p">,</span> <span class="n">custom_dumper</span><span class="p">)</span>
+    <span class="n">register_extension</span><span class="p">(</span><span class="s2">&quot;.custom&quot;</span><span class="p">,</span> <span class="n">custom_loader</span><span class="p">,</span> <span class="n">custom_dumper</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.custom&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;test content&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.custom&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;test content&quot;</span><span class="p">)</span>
         <span class="n">temp_file</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">store</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">store</span><span class="p">[</span><span class="s1">&#39;loaded&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;test content&#39;</span>
+        <span class="k">assert</span> <span class="n">store</span><span class="p">[</span><span class="s2">&quot;loaded&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;test content&quot;</span>
 
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span></div>
@@ -379,28 +379,28 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test string representations.&quot;&quot;&quot;</span>
     <span class="n">data_holder</span> <span class="o">=</span> <span class="p">[{}]</span>
     <span class="n">store</span> <span class="o">=</span> <span class="n">SyncStore</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">data_holder</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="s1">&#39;SyncStore&#39;</span> <span class="ow">in</span> <span class="nb">repr</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="s2">&quot;SyncStore&quot;</span> <span class="ow">in</span> <span class="nb">repr</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;{&quot;section&quot;: </span><span class="si">{}</span><span class="s1">}&#39;</span><span class="p">)</span>  <span class="c1"># Include section key</span>
         <span class="n">temp_file</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">file_store</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="s1">&#39;FileStore&#39;</span> <span class="ow">in</span> <span class="nb">repr</span><span class="p">(</span><span class="n">file_store</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s2">&quot;FileStore&quot;</span> <span class="ow">in</span> <span class="nb">repr</span><span class="p">(</span><span class="n">file_store</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">temp_file</span> <span class="ow">in</span> <span class="nb">repr</span><span class="p">(</span><span class="n">file_store</span><span class="p">)</span>
 
-        <span class="n">file_store_with_path</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">key_path</span><span class="o">=</span><span class="s1">&#39;section&#39;</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="s1">&#39;key_path&#39;</span> <span class="ow">in</span> <span class="nb">repr</span><span class="p">(</span><span class="n">file_store_with_path</span><span class="p">)</span>
+        <span class="n">file_store_with_path</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="n">key_path</span><span class="o">=</span><span class="s2">&quot;section&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="s2">&quot;key_path&quot;</span> <span class="ow">in</span> <span class="nb">repr</span><span class="p">(</span><span class="n">file_store_with_path</span><span class="p">)</span>
 
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span></div>
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">PYTEST_AVAILABLE</span><span class="p">:</span>
-        <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="s1">&#39;-v&#39;</span><span class="p">])</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">([</span><span class="vm">__file__</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Run tests manually</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running tests without pytest...&quot;</span><span class="p">)</span>

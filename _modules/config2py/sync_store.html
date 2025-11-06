@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.sync_store &mdash; config2py 0.1.42 documentation</title>
+  <title>config2py.sync_store &mdash; config2py 0.1.43 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=05fb4756"></script>
+      <script src="../../_static/documentation_options.js?v=a183c34f"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -120,11 +120,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduce</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;SyncStore&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;FileStore&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;JsonStore&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;register_extension&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;get_format_handlers&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;SyncStore&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FileStore&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;JsonStore&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;register_extension&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_format_handlers&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Note: Independent module. No imports from config2py, dol etc.</span>
@@ -162,9 +162,9 @@
 
 
 <span class="c1"># Register standard formats</span>
-<span class="n">register_extension</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">)</span>
+<span class="n">register_extension</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">)</span>
 
-<span class="c1">#TODO: Use register-if-available pattern (with context managers.. implemented somewhere...)</span>
+<span class="c1"># TODO: Use register-if-available pattern (with context managers.. implemented somewhere...)</span>
 
 <span class="c1"># ConfigParser for .ini and .cfg</span>
 <span class="k">try</span><span class="p">:</span>
@@ -184,8 +184,8 @@
         <span class="n">parser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
 
-    <span class="n">register_extension</span><span class="p">(</span><span class="s1">&#39;.ini&#39;</span><span class="p">,</span> <span class="n">_ini_loader</span><span class="p">,</span> <span class="n">_ini_dumper</span><span class="p">)</span>
-    <span class="n">register_extension</span><span class="p">(</span><span class="s1">&#39;.cfg&#39;</span><span class="p">,</span> <span class="n">_ini_loader</span><span class="p">,</span> <span class="n">_ini_dumper</span><span class="p">)</span>
+    <span class="n">register_extension</span><span class="p">(</span><span class="s2">&quot;.ini&quot;</span><span class="p">,</span> <span class="n">_ini_loader</span><span class="p">,</span> <span class="n">_ini_dumper</span><span class="p">)</span>
+    <span class="n">register_extension</span><span class="p">(</span><span class="s2">&quot;.cfg&quot;</span><span class="p">,</span> <span class="n">_ini_loader</span><span class="p">,</span> <span class="n">_ini_dumper</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
@@ -193,8 +193,8 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 
-    <span class="n">register_extension</span><span class="p">(</span><span class="s1">&#39;.yaml&#39;</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">)</span>
-    <span class="n">register_extension</span><span class="p">(</span><span class="s1">&#39;.yml&#39;</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">)</span>
+    <span class="n">register_extension</span><span class="p">(</span><span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">)</span>
+    <span class="n">register_extension</span><span class="p">(</span><span class="s2">&quot;.yml&quot;</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
 
@@ -203,13 +203,13 @@
     <span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>  <span class="c1"># Python 3.11+</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">tomli_w</span>
 
-    <span class="n">register_extension</span><span class="p">(</span><span class="s1">&#39;.toml&#39;</span><span class="p">,</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">tomli_w</span><span class="o">.</span><span class="n">dumps</span><span class="p">)</span>
+    <span class="n">register_extension</span><span class="p">(</span><span class="s2">&quot;.toml&quot;</span><span class="p">,</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">tomli_w</span><span class="o">.</span><span class="n">dumps</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">tomli</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">tomli_w</span>
 
-        <span class="n">register_extension</span><span class="p">(</span><span class="s1">&#39;.toml&#39;</span><span class="p">,</span> <span class="n">tomli</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">tomli_w</span><span class="o">.</span><span class="n">dumps</span><span class="p">)</span>
+        <span class="n">register_extension</span><span class="p">(</span><span class="s2">&quot;.toml&quot;</span><span class="p">,</span> <span class="n">tomli</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">tomli_w</span><span class="o">.</span><span class="n">dumps</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
         <span class="k">pass</span>
 
@@ -225,7 +225,7 @@
     <span class="k">if</span> <span class="n">key_path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">key_path</span> <span class="o">==</span> <span class="p">():</span>
         <span class="k">return</span> <span class="p">()</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">key_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span> <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">key_path</span> <span class="k">else</span> <span class="p">(</span><span class="n">key_path</span><span class="p">,)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">key_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">key_path</span> <span class="k">else</span> <span class="p">(</span><span class="n">key_path</span><span class="p">,)</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">key_path</span><span class="p">)</span>
 
 
@@ -366,21 +366,38 @@
 <span class="sd">        dumper: Optional custom dumper (auto-detected from extension if not provided)</span>
 <span class="sd">        mode: File read mode (&#39;r&#39; for text, &#39;rb&#39; for binary)</span>
 <span class="sd">        dump_kwargs: Additional kwargs for dumper</span>
+<span class="sd">        create_file_content: Optional factory callable that returns initial dict content</span>
+<span class="sd">            for missing files. If None, FileNotFoundError is raised for missing files.</span>
+<span class="sd">        create_key_path_content: Optional factory callable that returns initial content</span>
+<span class="sd">            for missing key_path. If None, KeyError is raised for missing key paths.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import tempfile</span>
+<span class="sd">        &gt;&gt;&gt; import os</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Basic usage with existing file</span>
 <span class="sd">        &gt;&gt;&gt; with tempfile.NamedTemporaryFile(mode=&#39;w&#39;, suffix=&#39;.json&#39;, delete=False) as f:</span>
 <span class="sd">        ...     _ = f.write(&#39;{&quot;section&quot;: {&quot;key&quot;: &quot;value&quot;}}&#39;)</span>
 <span class="sd">        ...     temp_file = f.name</span>
 <span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # Work with nested section</span>
 <span class="sd">        &gt;&gt;&gt; section = FileStore(temp_file, key_path=&#39;section&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; section[&#39;key&#39;]</span>
 <span class="sd">        &#39;value&#39;</span>
 <span class="sd">        &gt;&gt;&gt; section[&#39;new&#39;] = &#39;data&#39;</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; import os</span>
 <span class="sd">        &gt;&gt;&gt; os.unlink(temp_file)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Auto-create missing file and key_path</span>
+<span class="sd">        &gt;&gt;&gt; with tempfile.TemporaryDirectory() as tmpdir:</span>
+<span class="sd">        ...     new_file = os.path.join(tmpdir, &#39;config.json&#39;)</span>
+<span class="sd">        ...     store = FileStore(</span>
+<span class="sd">        ...         new_file,</span>
+<span class="sd">        ...         key_path=&#39;servers&#39;,</span>
+<span class="sd">        ...         create_file_content=lambda: {},</span>
+<span class="sd">        ...         create_key_path_content=lambda: {}</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ...     store[&#39;myserver&#39;] = {&#39;command&#39;: &#39;python&#39;}</span>
+<span class="sd">        ...     &#39;myserver&#39; in store</span>
+<span class="sd">        True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -390,13 +407,17 @@
         <span class="n">key_path</span><span class="p">:</span> <span class="n">KeyPath</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loader</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dumper</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>
         <span class="n">dump_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">create_file_content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">create_key_path_content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key_path</span> <span class="o">=</span> <span class="n">_normalize_key_path</span><span class="p">(</span><span class="n">key_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span> <span class="o">=</span> <span class="n">dump_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_file_content</span> <span class="o">=</span> <span class="n">create_file_content</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_key_path_content</span> <span class="o">=</span> <span class="n">create_key_path_content</span>
 
         <span class="c1"># Auto-detect format if not provided</span>
         <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dumper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -418,10 +439,43 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and parse file, returning the section specified by key_path.&quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_loader</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">_get_nested</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_path</span><span class="p">)</span>
+        <span class="c1"># Handle missing file</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_file_content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Create file with initial content</span>
+            <span class="n">initial_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_file_content</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dumper</span><span class="p">(</span><span class="n">initial_data</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span><span class="p">)</span>
+            <span class="n">write_mode</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span> <span class="k">if</span> <span class="s1">&#39;b&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s1">&#39;wb&#39;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">initial_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Load existing file</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_loader</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="c1"># Handle missing key_path</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_get_nested</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_key_path_content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Key path not found: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Create key_path with initial content</span>
+            <span class="n">initial_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_key_path_content</span><span class="p">()</span>
+            <span class="n">full_data</span> <span class="o">=</span> <span class="n">_set_nested</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_path</span><span class="p">,</span> <span class="n">initial_content</span><span class="p">)</span>
+
+            <span class="c1"># Write back to file</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dumper</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span><span class="p">)</span>
+            <span class="n">write_mode</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span> <span class="k">if</span> <span class="s1">&#39;b&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s1">&#39;wb&#39;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">initial_content</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_dump_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Write data to file, updating only the section specified by key_path.&quot;&quot;&quot;</span>
@@ -435,7 +489,7 @@
             <span class="n">full_data</span> <span class="o">=</span> <span class="n">_set_nested</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_path</span><span class="p">,</span> <span class="n">section_data</span><span class="p">)</span>
             <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dumper</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span><span class="p">)</span>
 
-        <span class="n">write_mode</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span> <span class="k">if</span> <span class="s1">&#39;b&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s1">&#39;wb&#39;</span>
+        <span class="n">write_mode</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span> <span class="k">if</span> <span class="s2">&quot;b&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s2">&quot;wb&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
 
@@ -470,15 +524,15 @@
         <span class="n">ensure_ascii</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">dump_kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="n">dump_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;indent&#39;</span><span class="p">,</span> <span class="n">indent</span><span class="p">)</span>
-        <span class="n">dump_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;ensure_ascii&#39;</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="p">)</span>
+        <span class="n">dump_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;indent&quot;</span><span class="p">,</span> <span class="n">indent</span><span class="p">)</span>
+        <span class="n">dump_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;ensure_ascii&quot;</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">filepath</span><span class="p">,</span>
             <span class="n">loader</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span>
             <span class="n">dumper</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">,</span>
             <span class="n">key_path</span><span class="o">=</span><span class="n">key_path</span><span class="p">,</span>
-            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
             <span class="n">dump_kwargs</span><span class="o">=</span><span class="n">dump_kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
