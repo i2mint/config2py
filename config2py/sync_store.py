@@ -348,7 +348,7 @@ class FileStore(SyncStore):
             initial_data = self.create_file_content()
             self.filepath.parent.mkdir(parents=True, exist_ok=True)
             content = self._file_dumper(initial_data, **self.dump_kwargs)
-            write_mode = 'w' if 'b' not in self.mode else 'wb'
+            write_mode = "w" if "b" not in self.mode else "wb"
             with open(self.filepath, write_mode) as f:
                 f.write(content)
             data = initial_data
@@ -371,7 +371,7 @@ class FileStore(SyncStore):
 
             # Write back to file
             content = self._file_dumper(full_data, **self.dump_kwargs)
-            write_mode = 'w' if 'b' not in self.mode else 'wb'
+            write_mode = "w" if "b" not in self.mode else "wb"
             with open(self.filepath, write_mode) as f:
                 f.write(content)
 
