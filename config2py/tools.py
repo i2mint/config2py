@@ -209,7 +209,6 @@ def source_config_params(*config_params):
     """
 
     def wrapper(func):
-
         sig = Sig(func)
 
         @sig.add_params(["_config_getter"])

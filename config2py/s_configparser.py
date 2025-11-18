@@ -218,7 +218,6 @@ class ConfigStore(ConfigParserStore):
         target_kind=None,
         **more_config_parser_kwargs,
     ):
-
         super().__init__(
             defaults, dict_type, allow_no_value, **more_config_parser_kwargs
         )
