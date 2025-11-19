@@ -34,6 +34,40 @@ docs = [
     "sphinx>=6.0",
     "sphinx-rtd-theme>=1.0",
 ]
+# Codec extras - optional dependencies for various config formats
+yaml = [
+    "pyyaml>=6.0",
+]
+toml = [
+    "tomli>=2.0.0; python_version < '3.11'",
+    "tomli-w>=1.0.0",
+]
+env = [
+    "python-dotenv>=1.0.0",
+]
+json5 = [
+    "json5>=0.9.0",
+]
+properties = [
+    "jproperties>=2.1.0",
+]
+# Convenience groups
+all-codecs = [
+    "pyyaml>=6.0",
+    "tomli>=2.0.0; python_version < '3.11'",
+    "tomli-w>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "json5>=0.9.0",
+    "jproperties>=2.1.0",
+]
+all = [
+    "pyyaml>=6.0",
+    "tomli>=2.0.0; python_version < '3.11'",
+    "tomli-w>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "json5>=0.9.0",
+    "jproperties>=2.1.0",
+]
 
 [tool.ruff]
 line-length = 88

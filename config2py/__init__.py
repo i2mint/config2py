@@ -24,3 +24,4 @@ from config2py.util import (
     process_path,
 )
 from config2py.sync_store import SyncStore, FileStore, JsonStore, register_extension
+from config2py import codecs  # noqa - Make codecs module available
