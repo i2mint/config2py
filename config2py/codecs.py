@@ -189,7 +189,7 @@ def register_codec(
     Examples:
         >>> def my_encoder(obj): return str(obj).encode()
         >>> def my_decoder(data): return eval(data.decode())
-        >>> register_codec('.custom', encoder=my_encoder, decoder=my_decoder)
+        >>> register_codec('.custom', encoder=my_encoder, decoder=my_decoder, overwrite=True)
     """
     if not extension.startswith('.'):
         extension = f'.{extension}'
@@ -220,7 +220,7 @@ def register_decoder(extension: str, *, overwrite: bool = False):
         Decorator function
 
     Examples:
-        >>> @register_decoder('.custom')
+        >>> @register_decoder('.custom', overwrite=True)
         ... def decode_custom(data: bytes) -> dict:
         ...     return {'data': data.decode()}
     """
@@ -247,7 +247,7 @@ def register_encoder(extension: str, *, overwrite: bool = False):
         Decorator function
 
     Examples:
-        >>> @register_encoder('.custom')
+        >>> @register_encoder('.custom', overwrite=True)
         ... def encode_custom(obj: dict) -> bytes:
         ...     return obj.get('data', '').encode()
     """

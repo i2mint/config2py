@@ -470,7 +470,7 @@ def get_app_folder(
     app_data_folder_does_not_exist = not os.path.isdir(app_data_path)
 
     if app_data_folder_does_not_exist and ensure_exists:
-        setup_callback(app_data_path, ensure_exists=ensure_exists)
+        setup_callback(app_data_path)
     return app_data_path
 
 

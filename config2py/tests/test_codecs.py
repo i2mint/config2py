@@ -249,6 +249,7 @@ class TestCustomCodecRegistration:
             '.custom',
             encoder=custom_encoder,
             decoder=custom_decoder,
+            overwrite=True,
         )
 
         data = "test data"
@@ -332,9 +333,20 @@ class TestConditionalCodecs:
             pytest.skip("TOML codec not available")
 
         data = {'table': {'key': 'value', 'number': 42}}
-        encoded = codecs.encode_by_extension('config.toml', data)
-        decoded = codecs.decode_by_extension('config.toml', encoded)
-        assert decoded == data
+
+        has_encoder = '.toml' in codecs.EXTENSION_TO_ENCODER
+        has_decoder = '.toml' in codecs.EXTENSION_TO_DECODER
+
+        if has_encoder and has_decoder:
+            encoded = codecs.encode_by_extension('config.toml', data)
+            decoded = codecs.decode_by_extension('config.toml', encoded)
+            assert decoded == data
+        elif has_decoder:
+            # tomllib/tomli available for reading but no tomli_w for writing
+            import tomllib
+            toml_bytes = b'[table]\nkey = "value"\nnumber = 42\n'
+            decoded = codecs.decode_by_extension('config.toml', toml_bytes)
+            assert decoded == data
 
     def test_yaml_if_available(self):
         """Test YAML codec if available."""
