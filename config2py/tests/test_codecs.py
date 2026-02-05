@@ -342,8 +342,7 @@ class TestConditionalCodecs:
             decoded = codecs.decode_by_extension('config.toml', encoded)
             assert decoded == data
         elif has_decoder:
-            # tomllib/tomli available for reading but no tomli_w for writing
-            import tomllib
+            # tomllib (3.11+) or tomli available for reading, but no tomli_w for writing
             toml_bytes = b'[table]\nkey = "value"\nnumber = 42\n'
             decoded = codecs.decode_by_extension('config.toml', toml_bytes)
             assert decoded == data
