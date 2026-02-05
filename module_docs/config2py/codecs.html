@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>config2py.codecs &mdash; config2py 0.1.45 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=ce72d79b"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="config2py.errors" href="errors.html" />
+    <link rel="prev" title="config2py.base" href="base.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            config2py
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../config2py.html">config2py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">config2py.base</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">config2py.codecs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.codecs.decode_by_extension"><code class="docutils literal notranslate"><span class="pre">decode_by_extension()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.codecs.encode_by_extension"><code class="docutils literal notranslate"><span class="pre">encode_by_extension()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.codecs.get_codec_info"><code class="docutils literal notranslate"><span class="pre">get_codec_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.codecs.get_extension"><code class="docutils literal notranslate"><span class="pre">get_extension()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.codecs.is_extension_registered"><code class="docutils literal notranslate"><span class="pre">is_extension_registered()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.codecs.list_registered_extensions"><code class="docutils literal notranslate"><span class="pre">list_registered_extensions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.codecs.register_codec"><code class="docutils literal notranslate"><span class="pre">register_codec()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.codecs.register_decoder"><code class="docutils literal notranslate"><span class="pre">register_decoder()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.codecs.register_encoder"><code class="docutils literal notranslate"><span class="pre">register_encoder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="errors.html">config2py.errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="s_configparser.html">config2py.s_configparser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sync_store.html">config2py.sync_store</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_codecs.html">config2py.tests.test_codecs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_tools.html">config2py.tests.test_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">config2py.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">config2py.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">config2py</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">config2py.codecs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/config2py/codecs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-config2py.codecs">
+<span id="config2py-codecs"></span><h1>config2py.codecs<a class="headerlink" href="#module-config2py.codecs" title="Link to this heading"></a></h1>
+<p>Extension-based codec registries for configuration file parsing.</p>
+<p>This module provides a flexible pattern for encoding and decoding configuration files
+based on their file extensions. It includes codecs for bytes &lt;-&gt; JSON-friendly Python types.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Basic usage</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;config2py&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="s1">&#39;1.0&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Encode to bytes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoded</span> <span class="o">=</span> <span class="n">encode_by_extension</span><span class="p">(</span><span class="s1">&#39;config.json&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">encoded</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Decode from bytes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decoded</span> <span class="o">=</span> <span class="n">decode_by_extension</span><span class="p">(</span><span class="s1">&#39;config.json&#39;</span><span class="p">,</span> <span class="n">encoded</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">decoded</span> <span class="o">==</span> <span class="n">data</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Register custom codec</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@register_decoder</span><span class="p">(</span><span class="s1">&#39;.custom&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">decode_custom</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;custom&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()}</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@register_encoder</span><span class="p">(</span><span class="s1">&#39;.custom&#39;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">encode_custom</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The module automatically registers codecs for standard formats (json, toml, ini, etc.)
+and conditionally registers codecs that require third-party libraries (yaml, json5, etc.).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.codecs.decode_by_extension">
+<span class="sig-prename descclassname"><span class="pre">config2py.codecs.</span></span><span class="sig-name descname"><span class="pre">decode_by_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/config2py/codecs.html#decode_by_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.codecs.decode_by_extension" title="Link to this definition"></a></dt>
+<dd><p>Decode data based on key’s extension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – Key or filename with extension</p></li>
+<li><p><strong>data</strong> – Bytes to decode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decoded Python object</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If no decoder registered for extension</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;{&quot;key&quot;: &quot;value&quot;}&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decode_by_extension</span><span class="p">(</span><span class="s1">&#39;config.json&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="go">{&#39;key&#39;: &#39;value&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.codecs.encode_by_extension">
+<span class="sig-prename descclassname"><span class="pre">config2py.codecs.</span></span><span class="sig-name descname"><span class="pre">encode_by_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="reference internal" href="../../_modules/config2py/codecs.html#encode_by_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.codecs.encode_by_extension" title="Link to this definition"></a></dt>
+<dd><p>Encode object based on key’s extension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – Key or filename with extension</p></li>
+<li><p><strong>obj</strong> – Python object to encode</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Encoded bytes</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If no encoder registered for extension</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;value&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoded</span> <span class="o">=</span> <span class="n">encode_by_extension</span><span class="p">(</span><span class="s1">&#39;config.json&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="sa">b</span><span class="s1">&#39;&quot;key&quot;&#39;</span> <span class="ow">in</span> <span class="n">encoded</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.codecs.get_codec_info">
+<span class="sig-prename descclassname"><span class="pre">config2py.codecs.</span></span><span class="sig-name descname"><span class="pre">get_codec_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/config2py/codecs.html#get_codec_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.codecs.get_codec_info" title="Link to this definition"></a></dt>
+<dd><p>Get information about a registered codec.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>extension</strong> – File extension (with or without leading dot)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with codec information</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="n">get_codec_info</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;has_encoder&#39;</span><span class="p">]</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;has_decoder&#39;</span><span class="p">]</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.codecs.get_extension">
+<span class="sig-prename descclassname"><span class="pre">config2py.codecs.</span></span><span class="sig-name descname"><span class="pre">get_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/config2py/codecs.html#get_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.codecs.get_extension" title="Link to this definition"></a></dt>
+<dd><p>Extract extension from a key (filename, path, etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> – A string that may contain a file extension</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Extension without the dot, or empty string if no extension found</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_extension</span><span class="p">(</span><span class="s1">&#39;config.json&#39;</span><span class="p">)</span>
+<span class="go">&#39;json&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_extension</span><span class="p">(</span><span class="s1">&#39;/path/to/data.yaml&#39;</span><span class="p">)</span>
+<span class="go">&#39;yaml&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_extension</span><span class="p">(</span><span class="s1">&#39;no_extension&#39;</span><span class="p">)</span>
+<span class="go">&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_extension</span><span class="p">(</span><span class="s1">&#39;.env&#39;</span><span class="p">)</span>
+<span class="go">&#39;env&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_extension</span><span class="p">(</span><span class="s1">&#39;/path/to/.env&#39;</span><span class="p">)</span>
+<span class="go">&#39;env&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.codecs.is_extension_registered">
+<span class="sig-prename descclassname"><span class="pre">config2py.codecs.</span></span><span class="sig-name descname"><span class="pre">is_extension_registered</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/config2py/codecs.html#is_extension_registered"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.codecs.is_extension_registered" title="Link to this definition"></a></dt>
+<dd><p>Check if an extension has any codec registered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>extension</strong> – File extension (with or without leading dot)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if decoder or encoder is registered</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_extension_registered</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_extension_registered</span><span class="p">(</span><span class="s1">&#39;.nonexistent&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.codecs.list_registered_extensions">
+<span class="sig-prename descclassname"><span class="pre">config2py.codecs.</span></span><span class="sig-name descname"><span class="pre">list_registered_extensions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/config2py/codecs.html#list_registered_extensions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.codecs.list_registered_extensions" title="Link to this definition"></a></dt>
+<dd><p>List all registered extensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sorted list of registered extensions</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extensions</span> <span class="o">=</span> <span class="n">list_registered_extensions</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;.json&#39;</span> <span class="ow">in</span> <span class="n">extensions</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.codecs.register_codec">
+<span class="sig-prename descclassname"><span class="pre">config2py.codecs.</span></span><span class="sig-name descname"><span class="pre">register_codec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/codecs.html#register_codec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.codecs.register_codec" title="Link to this definition"></a></dt>
+<dd><p>Register encoder and/or decoder for an extension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extension</strong> – File extension (with or without leading dot)</p></li>
+<li><p><strong>encoder</strong> – Function to encode objects to bytes</p></li>
+<li><p><strong>decoder</strong> – Function to decode bytes to objects</p></li>
+<li><p><strong>overwrite</strong> – Whether to overwrite existing codec</p></li>
+<li><p><strong>dependency</strong> – Optional package name required for this codec</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If codec already registered and overwrite=False</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">my_encoder</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span> <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">my_decoder</span><span class="p">(</span><span class="n">data</span><span class="p">):</span> <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">register_codec</span><span class="p">(</span><span class="s1">&#39;.custom&#39;</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="n">my_encoder</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">my_decoder</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.codecs.register_decoder">
+<span class="sig-prename descclassname"><span class="pre">config2py.codecs.</span></span><span class="sig-name descname"><span class="pre">register_decoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/codecs.html#register_decoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.codecs.register_decoder" title="Link to this definition"></a></dt>
+<dd><p>Decorator to register a decoder function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extension</strong> – File extension (with or without leading dot)</p></li>
+<li><p><strong>overwrite</strong> – Whether to overwrite existing decoder</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decorator function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@register_decoder</span><span class="p">(</span><span class="s1">&#39;.custom&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">decode_custom</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.codecs.register_encoder">
+<span class="sig-prename descclassname"><span class="pre">config2py.codecs.</span></span><span class="sig-name descname"><span class="pre">register_encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/codecs.html#register_encoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.codecs.register_encoder" title="Link to this definition"></a></dt>
+<dd><p>Decorator to register an encoder function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extension</strong> – File extension (with or without leading dot)</p></li>
+<li><p><strong>overwrite</strong> – Whether to overwrite existing encoder</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decorator function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@register_encoder</span><span class="p">(</span><span class="s1">&#39;.custom&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">encode_custom</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="base.html" class="btn btn-neutral float-left" title="config2py.base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="errors.html" class="btn btn-neutral float-right" title="config2py.errors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

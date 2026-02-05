@@ -6,16 +6,16 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to config2py’s documentation! &mdash; config2py 0.1.44 documentation</title>
+  <title>Welcome to config2py’s documentation! &mdash; config2py 0.1.45 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=6a0a5382"></script>
+      <script src="_static/documentation_options.js?v=ce72d79b"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -50,10 +50,12 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py.html">config2py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/base.html">config2py.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/codecs.html">config2py.codecs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/errors.html">config2py.errors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_codecs.html">config2py.tests.test_codecs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
@@ -100,6 +102,18 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/base.html#config2py.base.user_gettable"><code class="docutils literal notranslate"><span class="pre">user_gettable()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/codecs.html">config2py.codecs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.decode_by_extension"><code class="docutils literal notranslate"><span class="pre">decode_by_extension()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.encode_by_extension"><code class="docutils literal notranslate"><span class="pre">encode_by_extension()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.get_codec_info"><code class="docutils literal notranslate"><span class="pre">get_codec_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.get_extension"><code class="docutils literal notranslate"><span class="pre">get_extension()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.is_extension_registered"><code class="docutils literal notranslate"><span class="pre">is_extension_registered()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.list_registered_extensions"><code class="docutils literal notranslate"><span class="pre">list_registered_extensions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.register_codec"><code class="docutils literal notranslate"><span class="pre">register_codec()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.register_decoder"><code class="docutils literal notranslate"><span class="pre">register_decoder()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.register_encoder"><code class="docutils literal notranslate"><span class="pre">register_encoder()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/errors.html">config2py.errors</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/errors.html#config2py.errors.Config2PyError"><code class="docutils literal notranslate"><span class="pre">Config2PyError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/errors.html#config2py.errors.ConfigNotFound"><code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code></a></li>
@@ -122,6 +136,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_codecs.html">config2py.tests.test_codecs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_extension_registry"><code class="docutils literal notranslate"><span class="pre">test_extension_registry()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_batch_operations"><code class="docutils literal notranslate"><span class="pre">test_file_store_batch_operations()</span></code></a></li>
@@ -176,8 +191,8 @@
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-<p>Release: 0.1.44</p>
-<p>Last change: Nov 18, 2025</p>
+<p>Release: 0.1.45</p>
+<p>Last change: Feb 05, 2026</p>
 </section>
 
 
