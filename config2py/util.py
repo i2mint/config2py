@@ -514,6 +514,132 @@ get_configs_directory_for_app = (
 DFLT_CONFIG_FOLDER = get_configs_folder_for_app()
 
 
+# ---------------------------------------------------------------------------
+# Seed-on-missing and AppData facade
+# ---------------------------------------------------------------------------
+
+
+def ensure_seeded(
+    target: Union[str, Path],
+    package_name: str,
+    seed_subpackage: str,
+    filename: str,
+    *,
+    seed_data_dir: str = "_seed_data",
+) -> Path:
+    """Copy a bundled seed file to *target* if it does not already exist.
+
+    Reads the seed from ``importlib.resources.files(
+    "{package_name}.{seed_data_dir}.{seed_subpackage}") / filename``
+    and writes its bytes to *target*.  If *target* already exists, this is
+    a no-op (user edits are preserved).
+
+    Args:
+        target: Destination path for the seeded file.
+        package_name: Top-level Python package that ships the seed data.
+        seed_subpackage: Subdirectory inside ``_seed_data`` (e.g. ``"resources"``
+            or ``"config"``).
+        filename: Name of the seed file.
+        seed_data_dir: Name of the seed-data directory inside *package_name*
+            (default ``"_seed_data"``).
+
+    Returns:
+        The resolved *target* as a ``Path``.
+
+    Example::
+
+        >>> from config2py import ensure_seeded
+        >>> # ensure_seeded("/tmp/myfile.txt", "mypkg", "resources", "myfile.txt")
+    """
+    target = Path(target)
+    if not target.exists():
+        from importlib.resources import files
+
+        ref = files(f"{package_name}.{seed_data_dir}.{seed_subpackage}") / filename
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(ref.read_bytes())
+    return target
+
+
+class AppData:
+    """Per-user data directory facade for a Python application.
+
+    Binds an application name (and optional Python package name) once and
+    provides convenient access to:
+
+    * **resources** — editable reference data seeded from the package on
+      first access (``~/.local/share/<app>/resources/``).
+    * **config** — user preference files, also seeded on first access
+      (``~/.config/<app>/``).
+    * **artifact directories** — runtime-generated data organised by kind
+      (``~/.local/share/<app>/artifacts/<kind>/``).
+
+    Seed files are read via ``importlib.resources`` from
+    ``<package_name>._seed_data.{resources,config}/``.
+
+    Args:
+        app_name: The application name used for the directory under the
+            XDG root (e.g. ``"accompy"`` → ``~/.local/share/accompy``).
+        package_name: The top-level Python package that contains the
+            ``_seed_data`` directory.  Defaults to *app_name*.
+        seed_data_dir: Name of the seed-data sub-package inside the
+            Python package (default ``"_seed_data"``).
+
+    Example::
+
+        >>> app = AppData("myapp", package_name="myapp")
+        >>> app.app_folder()  # doctest: +SKIP
+        PosixPath('/Users/.../.local/share/myapp')
+    """
+
+    def __init__(
+        self,
+        app_name: str,
+        *,
+        package_name: Optional[str] = None,
+        seed_data_dir: str = "_seed_data",
+    ):
+        self.app_name = app_name
+        self.package_name = package_name or app_name
+        self.seed_data_dir = seed_data_dir
+
+    # -- folder helpers ---------------------------------------------------
+
+    def app_folder(self, *, folder_kind: str = "data") -> Path:
+        """Return the app directory for *folder_kind*, creating it if needed."""
+        return Path(
+            get_app_folder(
+                self.app_name, folder_kind=folder_kind, ensure_exists=True,
+            )
+        )
+
+    # -- seed-on-missing access -------------------------------------------
+
+    def get_resource(self, name: str) -> Path:
+        """Return a user resource path, seeding from package data if missing."""
+        target = self.app_folder(folder_kind="data") / "resources" / name
+        return ensure_seeded(
+            target, self.package_name, "resources", name,
+            seed_data_dir=self.seed_data_dir,
+        )
+
+    def get_config(self, name: str) -> Path:
+        """Return a config file path, seeding from package data if missing."""
+        target = self.app_folder(folder_kind="config") / name
+        return ensure_seeded(
+            target, self.package_name, "config", name,
+            seed_data_dir=self.seed_data_dir,
+        )
+
+    # -- artifact directories ---------------------------------------------
+
+    def get_artifact_dir(self, kind: str) -> Path:
+        """Return (and create) an artifact sub-directory for *kind*."""
+        d = self.app_folder(folder_kind="data") / "artifacts" / kind
+        d.mkdir(parents=True, exist_ok=True)
+        return d
+
+
 import sys
 
 

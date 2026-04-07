@@ -22,6 +22,8 @@ from config2py.util import (
     is_repl,
     parse_assignments_from_py_source,
     process_path,
+    ensure_seeded,
+    AppData,
 )
 from config2py.sync_store import SyncStore, FileStore, JsonStore, register_extension
 from config2py import codecs  # noqa - Make codecs module available
