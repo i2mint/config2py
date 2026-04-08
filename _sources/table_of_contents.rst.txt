@@ -9,6 +9,7 @@
    module_docs/config2py/s_configparser
    module_docs/config2py/sync_store
    module_docs/config2py/tests
+   module_docs/config2py/tests/test_app_data
    module_docs/config2py/tests/test_codecs
    module_docs/config2py/tests/test_sync_store
    module_docs/config2py/tests/test_tools

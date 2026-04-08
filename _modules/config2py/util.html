@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.util &mdash; config2py 0.1.45 documentation</title>
+  <title>config2py.util &mdash; config2py 0.1.46 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=ce72d79b"></script>
+      <script src="../../_static/documentation_options.js?v=f98a5df1"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_app_data.html">config2py.tests.test_app_data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_codecs.html">config2py.tests.test_codecs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
@@ -633,6 +634,150 @@
 <span class="p">)</span>
 
 <span class="n">DFLT_CONFIG_FOLDER</span> <span class="o">=</span> <span class="n">get_configs_folder_for_app</span><span class="p">()</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Seed-on-missing and AppData facade</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="ensure_seeded">
+<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.ensure_seeded">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_seeded</span><span class="p">(</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+    <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">seed_subpackage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">seed_data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_seed_data&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy a bundled seed file to *target* if it does not already exist.</span>
+
+<span class="sd">    Reads the seed from ``importlib.resources.files(</span>
+<span class="sd">    &quot;{package_name}.{seed_data_dir}.{seed_subpackage}&quot;) / filename``</span>
+<span class="sd">    and writes its bytes to *target*.  If *target* already exists, this is</span>
+<span class="sd">    a no-op (user edits are preserved).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target: Destination path for the seeded file.</span>
+<span class="sd">        package_name: Top-level Python package that ships the seed data.</span>
+<span class="sd">        seed_subpackage: Subdirectory inside ``_seed_data`` (e.g. ``&quot;resources&quot;``</span>
+<span class="sd">            or ``&quot;config&quot;``).</span>
+<span class="sd">        filename: Name of the seed file.</span>
+<span class="sd">        seed_data_dir: Name of the seed-data directory inside *package_name*</span>
+<span class="sd">            (default ``&quot;_seed_data&quot;``).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The resolved *target* as a ``Path``.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        &gt;&gt;&gt; from config2py import ensure_seeded</span>
+<span class="sd">        &gt;&gt;&gt; # ensure_seeded(&quot;/tmp/myfile.txt&quot;, &quot;mypkg&quot;, &quot;resources&quot;, &quot;myfile.txt&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">target</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">files</span>
+
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">files</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">seed_data_dir</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">seed_subpackage</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">target</span></div>
+
+
+
+<div class="viewcode-block" id="AppData">
+<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.AppData">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AppData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Per-user data directory facade for a Python application.</span>
+
+<span class="sd">    Binds an application name (and optional Python package name) once and</span>
+<span class="sd">    provides convenient access to:</span>
+
+<span class="sd">    * **resources** — editable reference data seeded from the package on</span>
+<span class="sd">      first access (``~/.local/share/&lt;app&gt;/resources/``).</span>
+<span class="sd">    * **config** — user preference files, also seeded on first access</span>
+<span class="sd">      (``~/.config/&lt;app&gt;/``).</span>
+<span class="sd">    * **artifact directories** — runtime-generated data organised by kind</span>
+<span class="sd">      (``~/.local/share/&lt;app&gt;/artifacts/&lt;kind&gt;/``).</span>
+
+<span class="sd">    Seed files are read via ``importlib.resources`` from</span>
+<span class="sd">    ``&lt;package_name&gt;._seed_data.{resources,config}/``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        app_name: The application name used for the directory under the</span>
+<span class="sd">            XDG root (e.g. ``&quot;my_app&quot;`` → ``~/.local/share/my_app``).</span>
+<span class="sd">        package_name: The top-level Python package that contains the</span>
+<span class="sd">            ``_seed_data`` directory.  Defaults to *app_name*.</span>
+<span class="sd">        seed_data_dir: Name of the seed-data sub-package inside the</span>
+<span class="sd">            Python package (default ``&quot;_seed_data&quot;``).</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        &gt;&gt;&gt; app = AppData(&quot;myapp&quot;, package_name=&quot;myapp&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; app.app_folder()  # doctest: +SKIP</span>
+<span class="sd">        PosixPath(&#39;/Users/.../.local/share/myapp&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">package_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed_data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_seed_data&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app_name</span> <span class="o">=</span> <span class="n">app_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">package_name</span> <span class="o">=</span> <span class="n">package_name</span> <span class="ow">or</span> <span class="n">app_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed_data_dir</span> <span class="o">=</span> <span class="n">seed_data_dir</span>
+
+    <span class="c1"># -- folder helpers ---------------------------------------------------</span>
+
+<div class="viewcode-block" id="AppData.app_folder">
+<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.AppData.app_folder">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">app_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">folder_kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the app directory for *folder_kind*, creating it if needed.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="n">get_app_folder</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">app_name</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="n">folder_kind</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1"># -- seed-on-missing access -------------------------------------------</span>
+
+<div class="viewcode-block" id="AppData.get_resource">
+<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.AppData.get_resource">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a user resource path, seeding from package data if missing.&quot;&quot;&quot;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_folder</span><span class="p">(</span><span class="n">folder_kind</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;resources&quot;</span> <span class="o">/</span> <span class="n">name</span>
+        <span class="k">return</span> <span class="n">ensure_seeded</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_name</span><span class="p">,</span> <span class="s2">&quot;resources&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+            <span class="n">seed_data_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_data_dir</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AppData.get_config">
+<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.AppData.get_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a config file path, seeding from package data if missing.&quot;&quot;&quot;</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_folder</span><span class="p">(</span><span class="n">folder_kind</span><span class="o">=</span><span class="s2">&quot;config&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="n">name</span>
+        <span class="k">return</span> <span class="n">ensure_seeded</span><span class="p">(</span>
+            <span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">package_name</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+            <span class="n">seed_data_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed_data_dir</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1"># -- artifact directories ---------------------------------------------</span>
+
+<div class="viewcode-block" id="AppData.get_artifact_dir">
+<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.AppData.get_artifact_dir">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_artifact_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return (and create) an artifact sub-directory for *kind*.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_folder</span><span class="p">(</span><span class="n">folder_kind</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;artifacts&quot;</span> <span class="o">/</span> <span class="n">kind</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+</div>
+
 
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>

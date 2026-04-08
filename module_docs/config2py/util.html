@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.util &mdash; config2py 0.1.45 documentation</title>
+  <title>config2py.util &mdash; config2py 0.1.46 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=ce72d79b"></script>
+      <script src="../../_static/documentation_options.js?v=f98a5df1"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -55,12 +55,20 @@
 <li class="toctree-l1"><a class="reference internal" href="s_configparser.html">config2py.s_configparser</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">config2py.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_app_data.html">config2py.tests.test_app_data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_codecs.html">config2py.tests.test_codecs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">config2py.tools</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">config2py.util</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.util.AppData"><code class="docutils literal notranslate"><span class="pre">AppData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#config2py.util.AppData.app_folder"><code class="docutils literal notranslate"><span class="pre">AppData.app_folder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#config2py.util.AppData.get_artifact_dir"><code class="docutils literal notranslate"><span class="pre">AppData.get_artifact_dir()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#config2py.util.AppData.get_config"><code class="docutils literal notranslate"><span class="pre">AppData.get_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#config2py.util.AppData.get_resource"><code class="docutils literal notranslate"><span class="pre">AppData.get_resource()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.EnvironmentVariables"><code class="docutils literal notranslate"><span class="pre">EnvironmentVariables</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.FolderSpec"><code class="docutils literal notranslate"><span class="pre">FolderSpec</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#config2py.util.FolderSpec.default_path"><code class="docutils literal notranslate"><span class="pre">FolderSpec.default_path</span></code></a></li>
@@ -70,6 +78,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.always_true"><code class="docutils literal notranslate"><span class="pre">always_true()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.ask_user_for_input"><code class="docutils literal notranslate"><span class="pre">ask_user_for_input()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.create_directories"><code class="docutils literal notranslate"><span class="pre">create_directories()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.util.ensure_seeded"><code class="docutils literal notranslate"><span class="pre">ensure_seeded()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.extract_variable_declarations"><code class="docutils literal notranslate"><span class="pre">extract_variable_declarations()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_app_config_folder"><code class="docutils literal notranslate"><span class="pre">get_app_config_folder()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.get_app_data_directory"><code class="docutils literal notranslate"><span class="pre">get_app_data_directory()</span></code></a></li>
@@ -114,6 +123,66 @@
   <section id="module-config2py.util">
 <span id="config2py-util"></span><h1>config2py.util<a class="headerlink" href="#module-config2py.util" title="Link to this heading"></a></h1>
 <p>Utility functions for config2py.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="config2py.util.AppData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">AppData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">package_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_seed_data'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/util.html#AppData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.AppData" title="Link to this definition"></a></dt>
+<dd><p>Per-user data directory facade for a Python application.</p>
+<p>Binds an application name (and optional Python package name) once and
+provides convenient access to:</p>
+<ul class="simple">
+<li><p><strong>resources</strong> — editable reference data seeded from the package on
+first access (<code class="docutils literal notranslate"><span class="pre">~/.local/share/&lt;app&gt;/resources/</span></code>).</p></li>
+<li><p><strong>config</strong> — user preference files, also seeded on first access
+(<code class="docutils literal notranslate"><span class="pre">~/.config/&lt;app&gt;/</span></code>).</p></li>
+<li><p><strong>artifact directories</strong> — runtime-generated data organised by kind
+(<code class="docutils literal notranslate"><span class="pre">~/.local/share/&lt;app&gt;/artifacts/&lt;kind&gt;/</span></code>).</p></li>
+</ul>
+<p>Seed files are read via <code class="docutils literal notranslate"><span class="pre">importlib.resources</span></code> from
+<code class="docutils literal notranslate"><span class="pre">&lt;package_name&gt;._seed_data.{resources,config}/</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_name</strong> – The application name used for the directory under the
+XDG root (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;my_app&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">~/.local/share/my_app</span></code>).</p></li>
+<li><p><strong>package_name</strong> – The top-level Python package that contains the
+<code class="docutils literal notranslate"><span class="pre">_seed_data</span></code> directory.  Defaults to <em>app_name</em>.</p></li>
+<li><p><strong>seed_data_dir</strong> – Name of the seed-data sub-package inside the
+Python package (default <code class="docutils literal notranslate"><span class="pre">&quot;_seed_data&quot;</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">app</span> <span class="o">=</span> <span class="n">AppData</span><span class="p">(</span><span class="s2">&quot;myapp&quot;</span><span class="p">,</span> <span class="n">package_name</span><span class="o">=</span><span class="s2">&quot;myapp&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">app</span><span class="o">.</span><span class="n">app_folder</span><span class="p">()</span>  
+<span class="go">PosixPath(&#39;/Users/.../.local/share/myapp&#39;)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.util.AppData.app_folder">
+<span class="sig-name descname"><span class="pre">app_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#AppData.app_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.AppData.app_folder" title="Link to this definition"></a></dt>
+<dd><p>Return the app directory for <em>folder_kind</em>, creating it if needed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.util.AppData.get_artifact_dir">
+<span class="sig-name descname"><span class="pre">get_artifact_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#AppData.get_artifact_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.AppData.get_artifact_dir" title="Link to this definition"></a></dt>
+<dd><p>Return (and create) an artifact sub-directory for <em>kind</em>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.util.AppData.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#AppData.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.AppData.get_config" title="Link to this definition"></a></dt>
+<dd><p>Return a config file path, seeding from package data if missing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.util.AppData.get_resource">
+<span class="sig-name descname"><span class="pre">get_resource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#AppData.get_resource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.AppData.get_resource" title="Link to this definition"></a></dt>
+<dd><p>Return a user resource path, seeding from package data if missing.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="config2py.util.EnvironmentVariables">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">EnvironmentVariables</span></span><a class="reference internal" href="../../_modules/config2py/util.html#EnvironmentVariables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.EnvironmentVariables" title="Link to this definition"></a></dt>
@@ -195,6 +264,37 @@ True
 <span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">target_dir</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span>  <span class="c1"># Cleanup</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.ensure_seeded">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">ensure_seeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">package_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_subpackage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_data_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_seed_data'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#ensure_seeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.ensure_seeded" title="Link to this definition"></a></dt>
+<dd><p>Copy a bundled seed file to <em>target</em> if it does not already exist.</p>
+<p>Reads the seed from <code class="docutils literal notranslate"><span class="pre">importlib.resources.files(</span>
+<span class="pre">&quot;{package_name}.{seed_data_dir}.{seed_subpackage}&quot;)</span> <span class="pre">/</span> <span class="pre">filename</span></code>
+and writes its bytes to <em>target</em>.  If <em>target</em> already exists, this is
+a no-op (user edits are preserved).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> – Destination path for the seeded file.</p></li>
+<li><p><strong>package_name</strong> – Top-level Python package that ships the seed data.</p></li>
+<li><p><strong>seed_subpackage</strong> – Subdirectory inside <code class="docutils literal notranslate"><span class="pre">_seed_data</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;resources&quot;</span></code>
+or <code class="docutils literal notranslate"><span class="pre">&quot;config&quot;</span></code>).</p></li>
+<li><p><strong>filename</strong> – Name of the seed file.</p></li>
+<li><p><strong>seed_data_dir</strong> – Name of the seed-data directory inside <em>package_name</em>
+(default <code class="docutils literal notranslate"><span class="pre">&quot;_seed_data&quot;</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The resolved <em>target</em> as a <code class="docutils literal notranslate"><span class="pre">Path</span></code>.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_seeded</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ensure_seeded(&quot;/tmp/myfile.txt&quot;, &quot;mypkg&quot;, &quot;resources&quot;, &quot;myfile.txt&quot;)</span>
 </pre></div>
 </div>
 </dd></dl>
