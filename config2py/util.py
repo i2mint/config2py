@@ -609,7 +609,9 @@ class AppData:
         """Return the app directory for *folder_kind*, creating it if needed."""
         return Path(
             get_app_folder(
-                self.app_name, folder_kind=folder_kind, ensure_exists=True,
+                self.app_name,
+                folder_kind=folder_kind,
+                ensure_exists=True,
             )
         )
 
@@ -619,7 +621,10 @@ class AppData:
         """Return a user resource path, seeding from package data if missing."""
         target = self.app_folder(folder_kind="data") / "resources" / name
         return ensure_seeded(
-            target, self.package_name, "resources", name,
+            target,
+            self.package_name,
+            "resources",
+            name,
             seed_data_dir=self.seed_data_dir,
         )
 
@@ -627,7 +632,10 @@ class AppData:
         """Return a config file path, seeding from package data if missing."""
         target = self.app_folder(folder_kind="config") / name
         return ensure_seeded(
-            target, self.package_name, "config", name,
+            target,
+            self.package_name,
+            "config",
+            name,
             seed_data_dir=self.seed_data_dir,
         )
 
