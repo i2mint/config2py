@@ -209,31 +209,3 @@ class TestAppData:
                 d = app.get_artifact_dir(kind)
                 assert d.is_dir()
                 assert d.name == kind
-
-
-# =============================================================================
-# Integration: AppData with real accompy seed data
-# =============================================================================
-
-
-class TestAppDataWithAccompy:
-    """Verify AppData works with accompy's actual _seed_data package."""
-
-    def test_real_seed_resource(self, tmp_path):
-        with patch.dict(os.environ, {"XDG_DATA_HOME": str(tmp_path)}):
-            app = AppData("accompy")
-            path = app.get_resource("short_styles.txt")
-            assert path.exists()
-            lines = [
-                l.strip() for l in path.read_text().splitlines() if l.strip()
-            ]
-            assert len(lines) > 30
-            assert "jazz club late night" in lines
-
-    def test_real_seed_config(self, tmp_path):
-        with patch.dict(os.environ, {"XDG_CONFIG_HOME": str(tmp_path)}):
-            app = AppData("accompy")
-            path = app.get_config("defaults.json")
-            data = json.loads(path.read_text())
-            assert data["style"] == "swing"
-            assert data["tempo"] == 120

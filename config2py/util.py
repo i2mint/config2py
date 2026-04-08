@@ -579,7 +579,7 @@ class AppData:
 
     Args:
         app_name: The application name used for the directory under the
-            XDG root (e.g. ``"accompy"`` → ``~/.local/share/accompy``).
+            XDG root (e.g. ``"my_app"`` → ``~/.local/share/my_app``).
         package_name: The top-level Python package that contains the
             ``_seed_data`` directory.  Defaults to *app_name*.
         seed_data_dir: Name of the seed-data sub-package inside the
