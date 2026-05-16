@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.base &mdash; config2py 0.1.46 documentation</title>
+  <title>config2py.base &mdash; config2py 0.1.47 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,9 +15,9 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=f98a5df1"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=5df2d9e8"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -105,7 +105,7 @@
 <p>Base for getting configs from various sources and formats</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="config2py.base.FuncBasedGettableContainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">FuncBasedGettableContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">getter:</span> <span class="pre">~collections.abc.Callable[[KT],</span> <span class="pre">VT],</span> <span class="pre">val_is_valid:</span> <span class="pre">~collections.abc.Callable[[VT],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">always_true&gt;,</span> <span class="pre">config_not_found_exceptions:</span> <span class="pre">tuple[type[Exception],</span> <span class="pre">...]</span> <span class="pre">=</span> <span class="pre">(&lt;class</span> <span class="pre">'Exception'&gt;,)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#FuncBasedGettableContainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.base.FuncBasedGettableContainer" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">FuncBasedGettableContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">getter:</span> <span class="pre">~collections.abc.Callable[[KT],</span> <span class="pre">VT],</span> <span class="pre">val_is_valid:</span> <span class="pre">~collections.abc.Callable[[VT],</span> <span class="pre">bool]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">always_true&gt;,</span> <span class="pre">config_not_found_exceptions:</span> <span class="pre">tuple[type[Exception],</span> <span class="pre">...]</span> <span class="pre">=</span> <span class="pre">(&lt;class</span> <span class="pre">'Exception'&gt;,)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#FuncBasedGettableContainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.base.FuncBasedGettableContainer" title="Link to this definition"></a></dt>
 <dd><p>A class that wraps a <code class="docutils literal notranslate"><span class="pre">Callable[[KT],</span> <span class="pre">VT]</span></code> function so it has a (partial)
 Mapping[KT, TT] interface. It is “partial” in the sense that it only implements
 <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>, raise a <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> when a key can’t be computed.
@@ -129,7 +129,7 @@ to the next source.</p>
 <p>Observe below that though the <code class="docutils literal notranslate"><span class="pre">getter</span></code> function raises a <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>, the
 <code class="docutils literal notranslate"><span class="pre">FuncBasedGettableContainer</span></code> raises a <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>, to conform to the
 <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> protocol.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;no_a_key&#39;</span><span class="p">]</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;no_a_key&#39;</span><span class="p">]</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
 <span class="gr">KeyError</span>: <span class="n">&#39;There was an exception ... : &quot;I don&#39;t handle that: no_a_key&quot;&#39;</span>
@@ -169,7 +169,7 @@ This is useful, for example, when you have a function that returns a sentinel li
 
 <dl class="py class">
 <dt class="sig sig-object py" id="config2py.base.GettableContainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">GettableContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#GettableContainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.base.GettableContainer" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">GettableContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#GettableContainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.base.GettableContainer" title="Link to this definition"></a></dt>
 <dd><p><code class="docutils literal notranslate"><span class="pre">Containers</span></code> that are “gettable””.</p>
 <p>By “gettable”, we mean that we can fetch an element from <code class="docutils literal notranslate"><span class="pre">obj</span></code> with brackets:
 <code class="docutils literal notranslate"><span class="pre">obj[k]</span></code>. That is, <code class="docutils literal notranslate"><span class="pre">obj</span></code> has a <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> method.
@@ -212,7 +212,7 @@ expression <code class="docutils literal notranslate"><span class="pre">k</span>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.base.get_config">
-<span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">key:</span> <span class="pre">KT</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">sources:</span> <span class="pre">~collections.abc.Iterable[~config2py.base.GettableContainer</span> <span class="pre">|</span> <span class="pre">~collections.abc.Callable[[KT],</span> <span class="pre">VT]]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">*,</span> <span class="pre">default:</span> <span class="pre">VT</span> <span class="pre">=</span> <span class="pre">Sentinel('no_default'),</span> <span class="pre">egress:</span> <span class="pre">~collections.abc.Callable[[KT,</span> <span class="pre">VT],</span> <span class="pre">VT]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">val_is_valid:</span> <span class="pre">~collections.abc.Callable[[VT],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">always_true&gt;,</span> <span class="pre">config_not_found_exceptions:</span> <span class="pre">tuple[type[Exception],</span> <span class="pre">...]</span> <span class="pre">=</span> <span class="pre">(&lt;class</span> <span class="pre">'Exception'&gt;,)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.base.get_config" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">key:</span> <span class="pre">KT</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">sources:</span> <span class="pre">~collections.abc.Iterable[~config2py.base.GettableContainer</span> <span class="pre">|</span> <span class="pre">~collections.abc.Callable[[KT],</span> <span class="pre">VT]]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">*,</span> <span class="pre">default:</span> <span class="pre">VT</span> <span class="pre">=</span> <span class="pre">Sentinel('no_default'),</span> <span class="pre">egress:</span> <span class="pre">~collections.abc.Callable[[KT,</span> <span class="pre">VT],</span> <span class="pre">VT]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">val_is_valid:</span> <span class="pre">~collections.abc.Callable[[VT],</span> <span class="pre">bool]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">always_true&gt;,</span> <span class="pre">config_not_found_exceptions:</span> <span class="pre">tuple[type[Exception],</span> <span class="pre">...]</span> <span class="pre">=</span> <span class="pre">(&lt;class</span> <span class="pre">'Exception'&gt;,)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.base.get_config" title="Link to this definition"></a></dt>
 <dd><p>Get a config value from a list of sources</p>
 <p>A source can be a function or a <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code>.
 (A <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code> is anything that can be indexed with brackets: <code class="docutils literal notranslate"><span class="pre">obj[k]</span></code>,
@@ -334,7 +334,7 @@ it.</p>
 </dl>
 <p>Example:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">user_gettable</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;SOME_KEY&#39;</span><span class="p">]</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;SOME_KEY&#39;</span><span class="p">]</span>
 <span class="go">&#39;SOME_VAL&#39;</span>
 </pre></div>
 </div>
@@ -344,9 +344,9 @@ When they do (say they entered ‘SOME_VAL’) it will return that value.</p>
 the <code class="docutils literal notranslate"><span class="pre">dol</span></code> package) then it will save the value to that store for future use.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">some</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">user_gettable</span><span class="p">(</span><span class="n">save_to</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;SOME_KEY&#39;</span><span class="p">]</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;SOME_KEY&#39;</span><span class="p">]</span>
 <span class="go">&#39;SOME_VAL&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
 <span class="go">{&#39;some&#39;: &#39;store&#39;, &#39;SOME_KEY&#39;: &#39;SOME_VAL&#39;}</span>
 </pre></div>
 </div>
