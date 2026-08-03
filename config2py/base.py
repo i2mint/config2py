@@ -246,10 +246,21 @@ class FuncBasedGettableContainer:
     ``FuncBasedGettableContainer`` raises a ``KeyError``, to conform to the
     ``Mapping`` protocol.
 
-    >>> gc['no_a_key']  # doctest: +ELLIPSIS +IGNORE_EXCEPTION_DETAIL
+    >>> gc['no_a_key']
     Traceback (most recent call last):
     ...
-    KeyError: 'There was an exception ... : "I don\'t handle that: no_a_key"'
+    KeyError: 'no_a_key'
+
+    The ``KeyError`` message is just the key: neither the upstream exception text nor
+    the rejected value is interpolated into it, since getters commonly wrap credential
+    checks and these errors commonly end up in logs. The upstream exception is still
+    available, through the standard exception chain:
+
+    >>> try:
+    ...     gc['no_a_key']
+    ... except KeyError as e:
+    ...     print(type(e.__cause__).__name__, e.__cause__, sep=': ')
+    RuntimeError: I don't handle that: no_a_key
 
     Note that by default, ``FuncBasedGettableContainer`` will catch all ``Exception``
     exceptions, but you can specify a different set of exceptions to catch.
@@ -274,7 +285,7 @@ class FuncBasedGettableContainer:
     >>> gc['no_a_key']
     Traceback (most recent call last):
     ...
-    KeyError: 'Value for key no_a_key is not valid: None'
+    KeyError: 'no_a_key'
 
     """
 
@@ -296,12 +307,17 @@ class FuncBasedGettableContainer:
         try:
             v = self.getter(k)
         except self.config_not_found_exceptions as e:
-            raise KeyError(
-                f"There was an exception when computing key: {k} with the function "
-                f"{self.getter}. The exception was: {e}"
-            )
+            # Note: The upstream exception text is deliberately NOT interpolated into
+            # the message. Getters here often wrap credential validation, and SDKs
+            # routinely echo the rejected secret back in their exception text
+            # ("authentication failed for token sk-..."). These KeyErrors are caught
+            # and logged by callers, so anything in the message ends up in logs.
+            # The upstream exception remains reachable via ``__cause__``.
+            raise KeyError(k) from e
         if not self.val_is_valid(v):
-            raise KeyError(f"Value for key {k} is not valid: {v}")
+            # Same reasoning: ``v`` is the *rejected* value, which is precisely the
+            # thing that is often a secret (that's why it's being validated).
+            raise KeyError(k)
         return v
 
     # TODO: Is this used to indicate that the getter couldn't find a key.
@@ -358,6 +374,66 @@ KTSaver = Callable[[KT, VT], Any]
 SaveTo = Optional[Union[MutableMapping, KTSaver]]
 
 
+def _resolve_saver(save_to: SaveTo) -> Optional[KTSaver]:
+    """Resolve a ``SaveTo`` specification into a ``(key, value)`` saver function.
+
+    This is the single place where the ``SaveTo`` union is interpreted, so every
+    function that accepts a ``save_to`` agrees on what it means.
+
+    ``None`` means "don't save", and is passed through as such:
+
+    >>> _resolve_saver(None) is None
+    True
+
+    Anything with a ``__setitem__`` (any ``MutableMapping``, but also the write-only
+    stores that ``dol`` makes) saves through that ``__setitem__``:
+
+    >>> d = {}
+    >>> save = _resolve_saver(d)
+    >>> save('some_key', 'some_value')
+    >>> d
+    {'some_key': 'some_value'}
+
+    A callable is used as the saver itself:
+
+    >>> saved = []
+    >>> save = _resolve_saver(lambda k, v: saved.append((k, v)))
+    >>> save('some_key', 'some_value')
+    >>> saved
+    [('some_key', 'some_value')]
+
+    Resolution is idempotent, so an already-resolved saver can be passed around
+    (and re-resolved) freely:
+
+    >>> _resolve_saver(save) is save
+    True
+
+    Anything else is an error, named as such instead of failing obscurely (or
+    silently dropping the value) at save time:
+
+    >>> _resolve_saver(42)  # doctest: +ELLIPSIS
+    Traceback (most recent call last):
+    ...
+    TypeError: save_to must be None, a MutableMapping ... Got type: int
+
+    """
+    if save_to is None:
+        return None
+    elif hasattr(save_to, "__setitem__"):
+        # Note: We test for ``__setitem__`` rather than ``isinstance(.., MutableMapping)``
+        # so that write-only stores (which don't implement the full MutableMapping
+        # interface) keep working. Mappings win over callables when an object is both.
+        return save_to.__setitem__
+    elif callable(save_to):
+        return save_to
+    else:
+        raise TypeError(
+            "save_to must be None, a MutableMapping (or anything with a __setitem__), "
+            "or a callable taking (key, value). "
+            f"Got type: {type(save_to).__name__}"
+        )
+
+
 def is_not_empty(val) -> bool:
     if isinstance(val, str):
         return val != ""
@@ -374,11 +450,51 @@ def ask_user_for_key(
     user_asker=ask_user_for_input,
     egress: Callable | None = None,
 ):
+    """Ask the user for the value of ``key``, optionally saving it.
+
+    :param key: The key to ask the user for. If ``None``, a "curried" version of
+        ``ask_user_for_key`` is returned, so you can specify the key later.
+    :param prompt_template: A template string to prompt the user with. It should
+        contain a placeholder for the key, e.g. ``"Enter a value for {}: "``.
+    :param save_to: Where to save the user's response: a ``MutableMapping`` (or
+        anything with a ``__setitem__``), or a ``(key, value)`` saver function.
+        If ``None``, the response is not saved. See ``_resolve_saver``.
+    :param save_condition: A function of the value, deciding whether to save it.
+    :param user_asker: A function that takes a prompt string and returns the user's
+        response.
+    :param egress: A ``(key, value)`` function to apply to the user's response before
+        returning (and saving) it.
+
+    The value can be saved to any ``MutableMapping``:
+
+    >>> store = {}
+    >>> ask_user_for_key('some_key', save_to=store, user_asker=lambda prompt: 'val')
+    'val'
+    >>> store
+    {'some_key': 'val'}
+
+    ... or to a ``(key, value)`` function, when saving isn't a simple write:
+
+    >>> saved = []
+    >>> ask_user_for_key(
+    ...     'some_key',
+    ...     save_to=lambda k, v: saved.append((k, v)),
+    ...     user_asker=lambda prompt: 'val',
+    ... )
+    'val'
+    >>> saved
+    [('some_key', 'val')]
+
+    """
+    # Note: We resolve ``save_to`` up front (and carry the resolved saver into the
+    # curried form) so that an unusable ``save_to`` is reported when it's specified,
+    # not after the user has already typed a value we then can't save.
+    saver = _resolve_saver(save_to)
     if key is None:
         return partial(
             ask_user_for_key,
             prompt_template=prompt_template,
-            save_to=save_to,
+            save_to=saver,
             save_condition=save_condition,
             user_asker=user_asker,
             egress=egress,
@@ -386,10 +502,8 @@ def ask_user_for_key(
     val = user_asker(prompt_template.format(key))
     if isinstance(egress, Callable):
         val = egress(key, val)
-    if save_to is not None and save_condition(val):
-        if hasattr(save_to, "__setitem__"):
-            save_to_func = save_to.__setitem__
-        save_to_func(key, val)
+    if saver is not None and save_condition(val):
+        saver(key, val)
     return val
 
 
@@ -405,8 +519,9 @@ def user_gettable(
     """
     Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
 
-    :param save_to: A ``MutableMapping`` to save the user's response to. If ``None``,
-        the user's response is not saved.
+    :param save_to: Where to save the user's response: a ``MutableMapping`` (or
+        anything with a ``__setitem__``), or a ``(key, value)`` saver function.
+        If ``None``, the user's response is not saved.
     :param prompt_template: A template string to prompt the user with. It should
         contain a placeholder for the key, e.g. ``"Enter a value for {}: "``.
     :param egress: A function to apply to the user's response before returning it.
@@ -439,6 +554,19 @@ def user_gettable(
     'SOME_VAL'
     >>> d  # doctest: +SKIP
     {'some': 'store', 'SOME_KEY': 'SOME_VAL'}
+
+    When saving isn't a simple write (say you need to encrypt, or write to two
+    places), ``save_to`` can be a ``(key, value)`` function instead:
+
+    >>> saved = []
+    >>> s = user_gettable(
+    ...     save_to=lambda k, v: saved.append((k, v)),
+    ...     user_asker=lambda prompt: 'SOME_VAL',
+    ... )
+    >>> s['SOME_KEY']
+    'SOME_VAL'
+    >>> saved
+    [('SOME_KEY', 'SOME_VAL')]
 
     """
     getter = ask_user_for_key(
