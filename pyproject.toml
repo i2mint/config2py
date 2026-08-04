@@ -73,5 +73,12 @@ convention = "google"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-testpaths = ["tests"]
-doctest_optionflags = ["NORMALIZE_WHITESPACE", "ELLIPSIS"]
+# The package dir, not "tests": there is no top-level tests/ directory (tests live
+# in config2py/tests/). Naming a non-existent path made pytest emit
+# PytestConfigWarning and silently fall back to recursive discovery from the CWD.
+testpaths = ["config2py"]
+# Kept in sync with what the wads run-tests-uv CI action passes on the command
+# line (-o doctest_optionflags='ELLIPSIS IGNORE_EXCEPTION_DETAIL'), which
+# overrides this setting. Diverging here means doctests that pass locally can
+# fail in CI (and vice versa) -- notably NORMALIZE_WHITESPACE, which CI does not set.
+doctest_optionflags = ["ELLIPSIS", "IGNORE_EXCEPTION_DETAIL"]

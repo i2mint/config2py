@@ -262,26 +262,67 @@ def create_directories(dirpath, max_dirs_to_make=None):
     return True
 
 
-FolderSpec = namedtuple("FolderSpec", ["env_var", "default_path"])
+#: Declarative description of where a given folder kind lives on a platform.
+#:
+#: ``env_var`` is the platform-standard environment variable that, when set,
+#: names the *root* folder.  ``default_path`` is the root to use when that
+#: variable is absent (``~`` is expanded).  ``subpath`` is a relative path
+#: appended to the root; it exists because some platform standards place a
+#: folder kind *inside* another kind's root rather than under its own variable
+#: (e.g. Windows cache lives at ``%LOCALAPPDATA%\\Temp``).
+FolderSpec = namedtuple(
+    "FolderSpec", ["env_var", "default_path", "subpath"], defaults=("",)
+)
 
-if os.name == "nt":
-    APP_FOLDER_STANDARDS = dict(
-        config=FolderSpec("APPDATA", os.getenv("APPDATA", "")),
-        data=FolderSpec("LOCALAPPDATA", os.getenv("LOCALAPPDATA", "")),
-        cache=FolderSpec(
-            "LOCALAPPDATA", os.path.join(os.getenv("LOCALAPPDATA", ""), "Temp")
-        ),
-        state=FolderSpec("LOCALAPPDATA", os.getenv("LOCALAPPDATA", "")),
-        runtime=FolderSpec("TEMP", os.getenv("TEMP", "")),
-    )
-else:
-    APP_FOLDER_STANDARDS = dict(
+#: Roots of the per-user Windows app folders, used when %APPDATA%/%LOCALAPPDATA%/
+#: %TEMP% are absent (e.g. some service accounts). ``~`` is expanded at resolution
+#: time. These are spelled as Windows literals on purpose: they describe the
+#: Windows convention, so they must not be built with the *running* platform's
+#: separator (that would produce '~/AppData/Roaming' when read from POSIX).
+_WINDOWS_ROAMING_DEFAULT = r"~\AppData\Roaming"
+_WINDOWS_LOCAL_DEFAULT = r"~\AppData\Local"
+_WINDOWS_TEMP_DEFAULT = r"~\AppData\Local\Temp"
+
+
+def app_folder_standards(os_name: str = os.name) -> dict:
+    """Return the ``{folder_kind: FolderSpec}`` table for the given ``os.name``.
+
+    This is the *single* place where config2py branches on the operating
+    system: everything else consumes the returned table.  Exposing it as a
+    function (rather than an ``if`` at import time) keeps the branch testable
+    on any platform -- callers can ask for the table of an OS they are not
+    running on.
+
+    Args:
+        os_name: An ``os.name`` value; ``"nt"`` selects the Windows standards,
+            anything else selects the XDG Base Directory standards.
+
+    >>> app_folder_standards("nt")["cache"]
+    FolderSpec(env_var='LOCALAPPDATA', default_path='~\\\\AppData\\\\Local', subpath='Temp')
+    >>> app_folder_standards("posix")["cache"]
+    FolderSpec(env_var='XDG_CACHE_HOME', default_path='~/.cache', subpath='')
+    """
+    if os_name == "nt":
+        return dict(
+            config=FolderSpec("APPDATA", _WINDOWS_ROAMING_DEFAULT),
+            data=FolderSpec("LOCALAPPDATA", _WINDOWS_LOCAL_DEFAULT),
+            # Note the ``subpath``: %LOCALAPPDATA% is also the *data* root, so
+            # cache must be a sub-folder of it -- otherwise clearing the cache
+            # would wipe the user's data.
+            cache=FolderSpec("LOCALAPPDATA", _WINDOWS_LOCAL_DEFAULT, "Temp"),
+            state=FolderSpec("LOCALAPPDATA", _WINDOWS_LOCAL_DEFAULT),
+            runtime=FolderSpec("TEMP", _WINDOWS_TEMP_DEFAULT),
+        )
+    return dict(
         config=FolderSpec("XDG_CONFIG_HOME", "~/.config"),
         data=FolderSpec("XDG_DATA_HOME", "~/.local/share"),
         cache=FolderSpec("XDG_CACHE_HOME", "~/.cache"),
         state=FolderSpec("XDG_STATE_HOME", "~/.local/state"),
         runtime=FolderSpec("XDG_RUNTIME_DIR", "/tmp"),
     )
+
+
+APP_FOLDER_STANDARDS = app_folder_standards()
 
 
 AppFolderKind = Literal["config", "data", "cache", "state", "runtime"]
@@ -306,13 +347,26 @@ DFLT_APP_FOLDER_KIND: AppFolderKind = "config"  # type: ignore (for <3.11)
 
 def system_default_for_app_data_folder(
     folder_kind: AppFolderKind = DFLT_APP_FOLDER_KIND,  # type: ignore (for <3.11)
+    *,
+    standards: Optional[dict] = None,
 ) -> str:
-    """Get the system default for the app data folder."""
-    # Platform-specific specs: (env_var, default_path)
+    """Get the system default folder for ``folder_kind``.
 
-    # Same logic for both platforms: check env var, then use default
-    env_var, default = APP_FOLDER_STANDARDS[folder_kind]
-    return os.path.expanduser(os.getenv(env_var, default))
+    The root is the value of the platform's standard environment variable for
+    that kind, falling back to the spec's ``default_path``; the spec's
+    ``subpath`` (usually empty) is then appended.
+
+    Args:
+        folder_kind: One of 'config', 'data', 'cache', 'state', 'runtime'.
+        standards: The ``{folder_kind: FolderSpec}`` table to resolve against.
+            Defaults to the running platform's (``APP_FOLDER_STANDARDS``);
+            pass another platform's table to resolve as that platform would.
+    """
+    if standards is None:
+        standards = APP_FOLDER_STANDARDS
+    env_var, default, subpath = standards[folder_kind]
+    root = os.path.expanduser(os.getenv(env_var, default))
+    return os.path.join(root, subpath) if subpath else root
 
 
 DFLT_CONFIG_FOLDER = system_default_for_app_data_folder("config")
@@ -362,10 +416,13 @@ def get_app_rootdir(
 
     Note: The default root folder follows XDG Base Directory standards on Unix/Linux/macOS.
     You can override this by setting environment variables:
-    - CONFIG2PY_CONFIG_FOLDER, CONFIG2PY_DATA_FOLDER, CONFIG2PY_CACHE_FOLDER, etc.
-      (highest priority, overrides everything)
-    - XDG_CONFIG_HOME, XDG_DATA_HOME, XDG_CACHE_HOME, etc.
-      (standard XDG override)
+    - CONFIG2PY_CONFIG_DIR, CONFIG2PY_DATA_DIR, CONFIG2PY_CACHE_DIR, etc.
+      (highest priority, overrides everything, and works on **every** platform --
+      see ``config2py_env_var`` for the full list of names)
+    - The platform's own standard variable: XDG_CONFIG_HOME, XDG_DATA_HOME,
+      XDG_CACHE_HOME, etc. on Unix/Linux/macOS; APPDATA / LOCALAPPDATA / TEMP on
+      Windows. The XDG variables are a POSIX standard and are **not** consulted on
+      Windows -- use the CONFIG2PY_* variables above for platform-neutral overrides.
     - If neither is set, uses platform defaults
 
     Examples:
@@ -440,10 +497,19 @@ def get_app_folder(
     Returns:
         str: Path to the app directory.
 
-    By default, the app will be "config2py" and folder_kind will be "config":
+    By default, the app will be "config2py" and folder_kind will be "config".
+    The exact text of the path is platform-specific (``~/.config/config2py`` under
+    the XDG standards, ``%APPDATA%\\config2py`` on Windows), so we assert the
+    properties that hold everywhere: it is an absolute path named after the app,
+    sitting directly inside the 'config' root directory.
 
-    >>> get_app_folder()  # doctest: +ELLIPSIS
-    '.../.config/config2py'
+    >>> folder = get_app_folder()
+    >>> os.path.isabs(folder)
+    True
+    >>> os.path.basename(folder)
+    'config2py'
+    >>> os.path.dirname(folder) == get_app_rootdir('config')
+    True
 
     You can specify a different app name and folder kind:
 
