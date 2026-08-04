@@ -7,18 +7,42 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from config2py.util import ensure_seeded, AppData
+from config2py.util import ensure_seeded, AppData, config2py_env_var
+
+
+def _redirect_app_root(folder_kind: str, target):
+    """Redirect a config2py app-root folder kind at *target* for the test.
+
+    Uses config2py's own ``CONFIG2PY_<KIND>_DIR`` override, which is honoured on
+    every platform.  The XDG_* variables must NOT be used here: they are a POSIX
+    standard and are ignored on Windows, so tests keyed on them silently write
+    into the real user profile instead of the temp dir.
+    """
+    env_var = getattr(config2py_env_var, folder_kind)
+    return patch.dict(os.environ, {env_var: str(target)})
+
+
+def _same_path(a, b) -> bool:
+    """Compare two paths by identity-on-disk, not by their string spelling.
+
+    ``resolve()`` on both sides normalises the differences that make naive
+    string comparison fail per-platform: macOS ``/var`` -> ``/private/var``
+    symlinks, and Windows 8.3 short names (``RUNNER~1`` -> ``runneradmin``).
+    """
+    return Path(a).resolve() == Path(b).resolve()
 
 
 # ---------------------------------------------------------------------------
 # Helpers — mock importlib.resources for isolated testing
 # ---------------------------------------------------------------------------
 
+
 def _mock_importlib_files(seed_store: dict):
     """Return a mock for importlib.resources.files that reads from *seed_store*.
 
     *seed_store* maps ``(subpackage, filename)`` to ``bytes`` content.
     """
+
     def fake_files(package_path: str):
         # Extract subpackage from e.g. "mypkg._seed_data.resources"
         parts = package_path.split(".")
@@ -36,6 +60,7 @@ def _mock_importlib_files(seed_store: dict):
                 return mock_ref
 
         return FakeTraversable()
+
     return fake_files
 
 
@@ -110,6 +135,7 @@ class TestEnsureSeeded:
     def test_custom_seed_data_dir(self, tmp_path):
         """Ensure the seed_data_dir parameter is used in the package path."""
         calls = []
+
         def fake_files(pkg_path):
             calls.append(pkg_path)
             mock = MagicMock()
@@ -121,7 +147,10 @@ class TestEnsureSeeded:
         target = tmp_path / "file.txt"
         with patch("importlib.resources.files", side_effect=fake_files):
             ensure_seeded(
-                target, "mypkg", "resources", "file.txt",
+                target,
+                "mypkg",
+                "resources",
+                "file.txt",
                 seed_data_dir="my_seeds",
             )
         assert calls[0] == "mypkg.my_seeds.resources"
@@ -145,21 +174,22 @@ class TestAppData:
         assert app.package_name == "my_app"
 
     def test_app_folder_creates_directory(self, tmp_path):
-        with patch.dict(os.environ, {"XDG_DATA_HOME": str(tmp_path)}):
+        with _redirect_app_root("data", tmp_path):
             app = AppData("testapp")
             folder = app.app_folder(folder_kind="data")
             assert folder.is_dir()
             assert folder.name == "testapp"
+            assert _same_path(folder, tmp_path / "testapp")
 
     def test_app_folder_config(self, tmp_path):
-        with patch.dict(os.environ, {"XDG_CONFIG_HOME": str(tmp_path)}):
+        with _redirect_app_root("config", tmp_path):
             app = AppData("testapp")
             folder = app.app_folder(folder_kind="config")
             assert folder.is_dir()
-            assert folder == tmp_path / "testapp"
+            assert _same_path(folder, tmp_path / "testapp")
 
     def test_get_resource_seeds_when_missing(self, tmp_path):
-        with patch.dict(os.environ, {"XDG_DATA_HOME": str(tmp_path)}):
+        with _redirect_app_root("data", tmp_path):
             with patch(
                 "importlib.resources.files",
                 side_effect=_mock_importlib_files(SEED_STORE),
@@ -168,10 +198,12 @@ class TestAppData:
                 path = app.get_resource("hello.txt")
                 assert path.exists()
                 assert path.read_bytes() == b"hello world\nline two\n"
-                assert "resources" in str(path)
+                assert _same_path(
+                    path, tmp_path / "testapp" / "resources" / "hello.txt"
+                )
 
     def test_get_resource_preserves_user_edits(self, tmp_path):
-        with patch.dict(os.environ, {"XDG_DATA_HOME": str(tmp_path)}):
+        with _redirect_app_root("data", tmp_path):
             with patch(
                 "importlib.resources.files",
                 side_effect=_mock_importlib_files(SEED_STORE),
@@ -184,7 +216,7 @@ class TestAppData:
                 assert path2.read_text() == "edited by user"
 
     def test_get_config_seeds_when_missing(self, tmp_path):
-        with patch.dict(os.environ, {"XDG_CONFIG_HOME": str(tmp_path)}):
+        with _redirect_app_root("config", tmp_path):
             with patch(
                 "importlib.resources.files",
                 side_effect=_mock_importlib_files(SEED_STORE),
@@ -194,16 +226,17 @@ class TestAppData:
                 assert path.exists()
                 data = json.loads(path.read_text())
                 assert data["tempo"] == 120
+                assert _same_path(path, tmp_path / "testapp" / "defaults.json")
 
     def test_get_artifact_dir_creates_subdir(self, tmp_path):
-        with patch.dict(os.environ, {"XDG_DATA_HOME": str(tmp_path)}):
+        with _redirect_app_root("data", tmp_path):
             app = AppData("testapp")
             midi_dir = app.get_artifact_dir("midi")
             assert midi_dir.is_dir()
-            assert midi_dir == tmp_path / "testapp" / "artifacts" / "midi"
+            assert _same_path(midi_dir, tmp_path / "testapp" / "artifacts" / "midi")
 
     def test_get_artifact_dir_multiple_kinds(self, tmp_path):
-        with patch.dict(os.environ, {"XDG_DATA_HOME": str(tmp_path)}):
+        with _redirect_app_root("data", tmp_path):
             app = AppData("testapp")
             for kind in ("midi", "audio", "exports"):
                 d = app.get_artifact_dir(kind)

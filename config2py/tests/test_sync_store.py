@@ -270,7 +270,14 @@ def test_store_repr():
     try:
         file_store = FileStore(temp_file)
         assert "FileStore" in repr(file_store)
-        assert temp_file in repr(file_store)
+        # The repr embeds ``repr(self.filepath)``, and pathlib's repr always
+        # spells the path with forward slashes (``PurePath.__repr__`` uses
+        # ``as_posix()``) -- so on Windows it never contains the native
+        # backslash form of ``temp_file``. Assert the *identity* of the path the
+        # store is bound to, plus the separator-free filename in the repr,
+        # rather than comparing separator-laden strings.
+        assert file_store.filepath == Path(temp_file)
+        assert Path(temp_file).name in repr(file_store)
 
         file_store_with_path = FileStore(temp_file, key_path="section")
         assert "key_path" in repr(file_store_with_path)
