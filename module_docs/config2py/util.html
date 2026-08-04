@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.util &mdash; config2py 0.1.48 documentation</title>
+  <title>config2py.util &mdash; config2py 0.1.49 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=b5e87a2a"></script>
+      <script src="../../_static/documentation_options.js?v=1190fe33"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -56,7 +56,9 @@
 <li class="toctree-l1"><a class="reference internal" href="sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">config2py.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_app_data.html">config2py.tests.test_app_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_base.html">config2py.tests.test_base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_codecs.html">config2py.tests.test_codecs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_platform_standards.html">config2py.tests.test_platform_standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
@@ -73,9 +75,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.FolderSpec"><code class="docutils literal notranslate"><span class="pre">FolderSpec</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#config2py.util.FolderSpec.default_path"><code class="docutils literal notranslate"><span class="pre">FolderSpec.default_path</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#config2py.util.FolderSpec.env_var"><code class="docutils literal notranslate"><span class="pre">FolderSpec.env_var</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#config2py.util.FolderSpec.subpath"><code class="docutils literal notranslate"><span class="pre">FolderSpec.subpath</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.always_true"><code class="docutils literal notranslate"><span class="pre">always_true()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.util.app_folder_standards"><code class="docutils literal notranslate"><span class="pre">app_folder_standards()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.ask_user_for_input"><code class="docutils literal notranslate"><span class="pre">ask_user_for_input()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.create_directories"><code class="docutils literal notranslate"><span class="pre">create_directories()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.util.ensure_seeded"><code class="docutils literal notranslate"><span class="pre">ensure_seeded()</span></code></a></li>
@@ -191,8 +195,15 @@ Python package (default <code class="docutils literal notranslate"><span class="
 
 <dl class="py class">
 <dt class="sig sig-object py" id="config2py.util.FolderSpec">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">FolderSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#config2py.util.FolderSpec" title="Link to this definition"></a></dt>
-<dd><dl class="py attribute">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">FolderSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subpath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#config2py.util.FolderSpec" title="Link to this definition"></a></dt>
+<dd><p>Declarative description of where a given folder kind lives on a platform.</p>
+<p><code class="docutils literal notranslate"><span class="pre">env_var</span></code> is the platform-standard environment variable that, when set,
+names the <em>root</em> folder.  <code class="docutils literal notranslate"><span class="pre">default_path</span></code> is the root to use when that
+variable is absent (<code class="docutils literal notranslate"><span class="pre">~</span></code> is expanded).  <code class="docutils literal notranslate"><span class="pre">subpath</span></code> is a relative path
+appended to the root; it exists because some platform standards place a
+folder kind <em>inside</em> another kind’s root rather than under its own variable
+(e.g. Windows cache lives at <code class="docutils literal notranslate"><span class="pre">%LOCALAPPDATA%\\Temp</span></code>).</p>
+<dl class="py attribute">
 <dt class="sig sig-object py" id="config2py.util.FolderSpec.default_path">
 <span class="sig-name descname"><span class="pre">default_path</span></span><a class="headerlink" href="#config2py.util.FolderSpec.default_path" title="Link to this definition"></a></dt>
 <dd><p>Alias for field number 1</p>
@@ -204,12 +215,41 @@ Python package (default <code class="docutils literal notranslate"><span class="
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="config2py.util.FolderSpec.subpath">
+<span class="sig-name descname"><span class="pre">subpath</span></span><a class="headerlink" href="#config2py.util.FolderSpec.subpath" title="Link to this definition"></a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.util.always_true">
 <span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">always_true</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#always_true"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.always_true" title="Link to this definition"></a></dt>
 <dd><p>Function that just returns True.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.app_folder_standards">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">app_folder_standards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">os_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'posix'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#app_folder_standards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.app_folder_standards" title="Link to this definition"></a></dt>
+<dd><p>Return the <code class="docutils literal notranslate"><span class="pre">{folder_kind:</span> <span class="pre">FolderSpec}</span></code> table for the given <code class="docutils literal notranslate"><span class="pre">os.name</span></code>.</p>
+<p>This is the <em>single</em> place where config2py branches on the operating
+system: everything else consumes the returned table.  Exposing it as a
+function (rather than an <code class="docutils literal notranslate"><span class="pre">if</span></code> at import time) keeps the branch testable
+on any platform – callers can ask for the table of an OS they are not
+running on.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>os_name</strong> – An <code class="docutils literal notranslate"><span class="pre">os.name</span></code> value; <code class="docutils literal notranslate"><span class="pre">&quot;nt&quot;</span></code> selects the Windows standards,
+anything else selects the XDG Base Directory standards.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">app_folder_standards</span><span class="p">(</span><span class="s2">&quot;nt&quot;</span><span class="p">)[</span><span class="s2">&quot;cache&quot;</span><span class="p">]</span>
+<span class="go">FolderSpec(env_var=&#39;LOCALAPPDATA&#39;, default_path=&#39;~\\AppData\\Local&#39;, subpath=&#39;Temp&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">app_folder_standards</span><span class="p">(</span><span class="s2">&quot;posix&quot;</span><span class="p">)[</span><span class="s2">&quot;cache&quot;</span><span class="p">]</span>
+<span class="go">FolderSpec(env_var=&#39;XDG_CACHE_HOME&#39;, default_path=&#39;~/.cache&#39;, subpath=&#39;&#39;)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -389,9 +429,18 @@ Default is ‘config’ for backward compatibility.</p></li>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
-<p>By default, the app will be “config2py” and folder_kind will be “config”:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">()</span>
-<span class="go">&#39;.../.config/config2py&#39;</span>
+<p>By default, the app will be “config2py” and folder_kind will be “config”.
+The exact text of the path is platform-specific (<code class="docutils literal notranslate"><span class="pre">~/.config/config2py</span></code> under
+the XDG standards, <code class="docutils literal notranslate"><span class="pre">%APPDATA%\config2py</span></code> on Windows), so we assert the
+properties that hold everywhere: it is an absolute path named after the app,
+sitting directly inside the ‘config’ root directory.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">&#39;config2py&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="o">==</span> <span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 <p>You can specify a different app name and folder kind:</p>
@@ -447,9 +496,18 @@ Default is ‘config’ for backward compatibility.</p></li>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
-<p>By default, the app will be “config2py” and folder_kind will be “config”:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">()</span>
-<span class="go">&#39;.../.config/config2py&#39;</span>
+<p>By default, the app will be “config2py” and folder_kind will be “config”.
+The exact text of the path is platform-specific (<code class="docutils literal notranslate"><span class="pre">~/.config/config2py</span></code> under
+the XDG standards, <code class="docutils literal notranslate"><span class="pre">%APPDATA%\config2py</span></code> on Windows), so we assert the
+properties that hold everywhere: it is an absolute path named after the app,
+sitting directly inside the ‘config’ root directory.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">&#39;config2py&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="o">==</span> <span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 <p>You can specify a different app name and folder kind:</p>
@@ -505,9 +563,18 @@ Default is ‘config’ for backward compatibility.</p></li>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
-<p>By default, the app will be “config2py” and folder_kind will be “config”:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">()</span>
-<span class="go">&#39;.../.config/config2py&#39;</span>
+<p>By default, the app will be “config2py” and folder_kind will be “config”.
+The exact text of the path is platform-specific (<code class="docutils literal notranslate"><span class="pre">~/.config/config2py</span></code> under
+the XDG standards, <code class="docutils literal notranslate"><span class="pre">%APPDATA%\config2py</span></code> on Windows), so we assert the
+properties that hold everywhere: it is an absolute path named after the app,
+sitting directly inside the ‘config’ root directory.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">&#39;config2py&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="o">==</span> <span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 <p>You can specify a different app name and folder kind:</p>
@@ -563,9 +630,18 @@ Default is ‘config’ for backward compatibility.</p></li>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
-<p>By default, the app will be “config2py” and folder_kind will be “config”:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">()</span>
-<span class="go">&#39;.../.config/config2py&#39;</span>
+<p>By default, the app will be “config2py” and folder_kind will be “config”.
+The exact text of the path is platform-specific (<code class="docutils literal notranslate"><span class="pre">~/.config/config2py</span></code> under
+the XDG standards, <code class="docutils literal notranslate"><span class="pre">%APPDATA%\config2py</span></code> on Windows), so we assert the
+properties that hold everywhere: it is an absolute path named after the app,
+sitting directly inside the ‘config’ root directory.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">&#39;config2py&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="o">==</span> <span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 <p>You can specify a different app name and folder kind:</p>
@@ -629,13 +705,16 @@ Here are concise explanations for each folder kind:
 </dl>
 <p>Note: The default root folder follows XDG Base Directory standards on Unix/Linux/macOS.
 You can override this by setting environment variables:
-- CONFIG2PY_CONFIG_FOLDER, CONFIG2PY_DATA_FOLDER, CONFIG2PY_CACHE_FOLDER, etc.</p>
+- CONFIG2PY_CONFIG_DIR, CONFIG2PY_DATA_DIR, CONFIG2PY_CACHE_DIR, etc.</p>
 <blockquote>
-<div><p>(highest priority, overrides everything)</p>
+<div><p>(highest priority, overrides everything, and works on <strong>every</strong> platform –
+see <code class="docutils literal notranslate"><span class="pre">config2py_env_var</span></code> for the full list of names)</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>XDG_CONFIG_HOME, XDG_DATA_HOME, XDG_CACHE_HOME, etc.
-(standard XDG override)</p></li>
+<li><p>The platform’s own standard variable: XDG_CONFIG_HOME, XDG_DATA_HOME,
+XDG_CACHE_HOME, etc. on Unix/Linux/macOS; APPDATA / LOCALAPPDATA / TEMP on
+Windows. The XDG variables are a POSIX standard and are <strong>not</strong> consulted on
+Windows – use the CONFIG2PY_* variables above for platform-neutral overrides.</p></li>
 <li><p>If neither is set, uses platform defaults</p></li>
 </ul>
 <p class="rubric">Examples</p>
@@ -746,8 +825,21 @@ This set can be modified to modify the behavior of <code class="docutils literal
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.util.system_default_for_app_data_folder">
-<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">system_default_for_app_data_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'config'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'data'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cache'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'state'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'runtime'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'config'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#system_default_for_app_data_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.system_default_for_app_data_folder" title="Link to this definition"></a></dt>
-<dd><p>Get the system default for the app data folder.</p>
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">system_default_for_app_data_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'config'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'data'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'cache'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'state'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'runtime'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'config'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">standards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/config2py/util.html#system_default_for_app_data_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.system_default_for_app_data_folder" title="Link to this definition"></a></dt>
+<dd><p>Get the system default folder for <code class="docutils literal notranslate"><span class="pre">folder_kind</span></code>.</p>
+<p>The root is the value of the platform’s standard environment variable for
+that kind, falling back to the spec’s <code class="docutils literal notranslate"><span class="pre">default_path</span></code>; the spec’s
+<code class="docutils literal notranslate"><span class="pre">subpath</span></code> (usually empty) is then appended.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder_kind</strong> – One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.</p></li>
+<li><p><strong>standards</strong> – The <code class="docutils literal notranslate"><span class="pre">{folder_kind:</span> <span class="pre">FolderSpec}</span></code> table to resolve against.
+Defaults to the running platform’s (<code class="docutils literal notranslate"><span class="pre">APP_FOLDER_STANDARDS</span></code>);
+pass another platform’s table to resolve as that platform would.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

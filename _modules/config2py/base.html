@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.base &mdash; config2py 0.1.48 documentation</title>
+  <title>config2py.base &mdash; config2py 0.1.49 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=b5e87a2a"></script>
+      <script src="../../_static/documentation_options.js?v=1190fe33"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -54,7 +54,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests.html">config2py.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_app_data.html">config2py.tests.test_app_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_base.html">config2py.tests.test_base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_codecs.html">config2py.tests.test_codecs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_platform_standards.html">config2py.tests.test_platform_standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
@@ -343,10 +345,21 @@
 <span class="sd">    ``FuncBasedGettableContainer`` raises a ``KeyError``, to conform to the</span>
 <span class="sd">    ``Mapping`` protocol.</span>
 
-<span class="sd">    &gt;&gt;&gt; gc[&#39;no_a_key&#39;]  # doctest: +ELLIPSIS +IGNORE_EXCEPTION_DETAIL</span>
+<span class="sd">    &gt;&gt;&gt; gc[&#39;no_a_key&#39;]</span>
 <span class="sd">    Traceback (most recent call last):</span>
 <span class="sd">    ...</span>
-<span class="sd">    KeyError: &#39;There was an exception ... : &quot;I don\&#39;t handle that: no_a_key&quot;&#39;</span>
+<span class="sd">    KeyError: &#39;no_a_key&#39;</span>
+
+<span class="sd">    The ``KeyError`` message is just the key: neither the upstream exception text nor</span>
+<span class="sd">    the rejected value is interpolated into it, since getters commonly wrap credential</span>
+<span class="sd">    checks and these errors commonly end up in logs. The upstream exception is still</span>
+<span class="sd">    available, through the standard exception chain:</span>
+
+<span class="sd">    &gt;&gt;&gt; try:</span>
+<span class="sd">    ...     gc[&#39;no_a_key&#39;]</span>
+<span class="sd">    ... except KeyError as e:</span>
+<span class="sd">    ...     print(type(e.__cause__).__name__, e.__cause__, sep=&#39;: &#39;)</span>
+<span class="sd">    RuntimeError: I don&#39;t handle that: no_a_key</span>
 
 <span class="sd">    Note that by default, ``FuncBasedGettableContainer`` will catch all ``Exception``</span>
 <span class="sd">    exceptions, but you can specify a different set of exceptions to catch.</span>
@@ -371,7 +384,7 @@
 <span class="sd">    &gt;&gt;&gt; gc[&#39;no_a_key&#39;]</span>
 <span class="sd">    Traceback (most recent call last):</span>
 <span class="sd">    ...</span>
-<span class="sd">    KeyError: &#39;Value for key no_a_key is not valid: None&#39;</span>
+<span class="sd">    KeyError: &#39;no_a_key&#39;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -393,12 +406,17 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getter</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_not_found_exceptions</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;There was an exception when computing key: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> with the function &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">getter</span><span class="si">}</span><span class="s2">. The exception was: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+            <span class="c1"># Note: The upstream exception text is deliberately NOT interpolated into</span>
+            <span class="c1"># the message. Getters here often wrap credential validation, and SDKs</span>
+            <span class="c1"># routinely echo the rejected secret back in their exception text</span>
+            <span class="c1"># (&quot;authentication failed for token sk-...&quot;). These KeyErrors are caught</span>
+            <span class="c1"># and logged by callers, so anything in the message ends up in logs.</span>
+            <span class="c1"># The upstream exception remains reachable via ``__cause__``.</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_is_valid</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value for key </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is not valid: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Same reasoning: ``v`` is the *rejected* value, which is precisely the</span>
+            <span class="c1"># thing that is often a secret (that&#39;s why it&#39;s being validated).</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">v</span>
 
     <span class="c1"># TODO: Is this used to indicate that the getter couldn&#39;t find a key.</span>
@@ -462,6 +480,66 @@
 <span class="n">SaveTo</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">MutableMapping</span><span class="p">,</span> <span class="n">KTSaver</span><span class="p">]]</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_saver</span><span class="p">(</span><span class="n">save_to</span><span class="p">:</span> <span class="n">SaveTo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">KTSaver</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve a ``SaveTo`` specification into a ``(key, value)`` saver function.</span>
+
+<span class="sd">    This is the single place where the ``SaveTo`` union is interpreted, so every</span>
+<span class="sd">    function that accepts a ``save_to`` agrees on what it means.</span>
+
+<span class="sd">    ``None`` means &quot;don&#39;t save&quot;, and is passed through as such:</span>
+
+<span class="sd">    &gt;&gt;&gt; _resolve_saver(None) is None</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Anything with a ``__setitem__`` (any ``MutableMapping``, but also the write-only</span>
+<span class="sd">    stores that ``dol`` makes) saves through that ``__setitem__``:</span>
+
+<span class="sd">    &gt;&gt;&gt; d = {}</span>
+<span class="sd">    &gt;&gt;&gt; save = _resolve_saver(d)</span>
+<span class="sd">    &gt;&gt;&gt; save(&#39;some_key&#39;, &#39;some_value&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; d</span>
+<span class="sd">    {&#39;some_key&#39;: &#39;some_value&#39;}</span>
+
+<span class="sd">    A callable is used as the saver itself:</span>
+
+<span class="sd">    &gt;&gt;&gt; saved = []</span>
+<span class="sd">    &gt;&gt;&gt; save = _resolve_saver(lambda k, v: saved.append((k, v)))</span>
+<span class="sd">    &gt;&gt;&gt; save(&#39;some_key&#39;, &#39;some_value&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; saved</span>
+<span class="sd">    [(&#39;some_key&#39;, &#39;some_value&#39;)]</span>
+
+<span class="sd">    Resolution is idempotent, so an already-resolved saver can be passed around</span>
+<span class="sd">    (and re-resolved) freely:</span>
+
+<span class="sd">    &gt;&gt;&gt; _resolve_saver(save) is save</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Anything else is an error, named as such instead of failing obscurely (or</span>
+<span class="sd">    silently dropping the value) at save time:</span>
+
+<span class="sd">    &gt;&gt;&gt; _resolve_saver(42)  # doctest: +ELLIPSIS</span>
+<span class="sd">    Traceback (most recent call last):</span>
+<span class="sd">    ...</span>
+<span class="sd">    TypeError: save_to must be None, a MutableMapping ... Got type: int</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">save_to</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">save_to</span><span class="p">,</span> <span class="s2">&quot;__setitem__&quot;</span><span class="p">):</span>
+        <span class="c1"># Note: We test for ``__setitem__`` rather than ``isinstance(.., MutableMapping)``</span>
+        <span class="c1"># so that write-only stores (which don&#39;t implement the full MutableMapping</span>
+        <span class="c1"># interface) keep working. Mappings win over callables when an object is both.</span>
+        <span class="k">return</span> <span class="n">save_to</span><span class="o">.</span><span class="fm">__setitem__</span>
+    <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">save_to</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">save_to</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">&quot;save_to must be None, a MutableMapping (or anything with a __setitem__), &quot;</span>
+            <span class="s2">&quot;or a callable taking (key, value). &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Got type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">save_to</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">is_not_empty</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">val</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>
@@ -469,6 +547,8 @@
         <span class="k">return</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
 
+<div class="viewcode-block" id="ask_user_for_key">
+<a class="viewcode-back" href="../../module_docs/config2py/base.html#config2py.base.ask_user_for_key">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">ask_user_for_key</span><span class="p">(</span>
     <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -478,11 +558,51 @@
     <span class="n">user_asker</span><span class="o">=</span><span class="n">ask_user_for_input</span><span class="p">,</span>
     <span class="n">egress</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ask the user for the value of ``key``, optionally saving it.</span>
+
+<span class="sd">    :param key: The key to ask the user for. If ``None``, a &quot;curried&quot; version of</span>
+<span class="sd">        ``ask_user_for_key`` is returned, so you can specify the key later.</span>
+<span class="sd">    :param prompt_template: A template string to prompt the user with. It should</span>
+<span class="sd">        contain a placeholder for the key, e.g. ``&quot;Enter a value for {}: &quot;``.</span>
+<span class="sd">    :param save_to: Where to save the user&#39;s response: a ``MutableMapping`` (or</span>
+<span class="sd">        anything with a ``__setitem__``), or a ``(key, value)`` saver function.</span>
+<span class="sd">        If ``None``, the response is not saved. See ``_resolve_saver``.</span>
+<span class="sd">    :param save_condition: A function of the value, deciding whether to save it.</span>
+<span class="sd">    :param user_asker: A function that takes a prompt string and returns the user&#39;s</span>
+<span class="sd">        response.</span>
+<span class="sd">    :param egress: A ``(key, value)`` function to apply to the user&#39;s response before</span>
+<span class="sd">        returning (and saving) it.</span>
+
+<span class="sd">    The value can be saved to any ``MutableMapping``:</span>
+
+<span class="sd">    &gt;&gt;&gt; store = {}</span>
+<span class="sd">    &gt;&gt;&gt; ask_user_for_key(&#39;some_key&#39;, save_to=store, user_asker=lambda prompt: &#39;val&#39;)</span>
+<span class="sd">    &#39;val&#39;</span>
+<span class="sd">    &gt;&gt;&gt; store</span>
+<span class="sd">    {&#39;some_key&#39;: &#39;val&#39;}</span>
+
+<span class="sd">    ... or to a ``(key, value)`` function, when saving isn&#39;t a simple write:</span>
+
+<span class="sd">    &gt;&gt;&gt; saved = []</span>
+<span class="sd">    &gt;&gt;&gt; ask_user_for_key(</span>
+<span class="sd">    ...     &#39;some_key&#39;,</span>
+<span class="sd">    ...     save_to=lambda k, v: saved.append((k, v)),</span>
+<span class="sd">    ...     user_asker=lambda prompt: &#39;val&#39;,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &#39;val&#39;</span>
+<span class="sd">    &gt;&gt;&gt; saved</span>
+<span class="sd">    [(&#39;some_key&#39;, &#39;val&#39;)]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Note: We resolve ``save_to`` up front (and carry the resolved saver into the</span>
+    <span class="c1"># curried form) so that an unusable ``save_to`` is reported when it&#39;s specified,</span>
+    <span class="c1"># not after the user has already typed a value we then can&#39;t save.</span>
+    <span class="n">saver</span> <span class="o">=</span> <span class="n">_resolve_saver</span><span class="p">(</span><span class="n">save_to</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span>
             <span class="n">ask_user_for_key</span><span class="p">,</span>
             <span class="n">prompt_template</span><span class="o">=</span><span class="n">prompt_template</span><span class="p">,</span>
-            <span class="n">save_to</span><span class="o">=</span><span class="n">save_to</span><span class="p">,</span>
+            <span class="n">save_to</span><span class="o">=</span><span class="n">saver</span><span class="p">,</span>
             <span class="n">save_condition</span><span class="o">=</span><span class="n">save_condition</span><span class="p">,</span>
             <span class="n">user_asker</span><span class="o">=</span><span class="n">user_asker</span><span class="p">,</span>
             <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">,</span>
@@ -490,11 +610,10 @@
     <span class="n">val</span> <span class="o">=</span> <span class="n">user_asker</span><span class="p">(</span><span class="n">prompt_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">egress</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
         <span class="n">val</span> <span class="o">=</span> <span class="n">egress</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">save_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">save_condition</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">save_to</span><span class="p">,</span> <span class="s2">&quot;__setitem__&quot;</span><span class="p">):</span>
-            <span class="n">save_to_func</span> <span class="o">=</span> <span class="n">save_to</span><span class="o">.</span><span class="fm">__setitem__</span>
-        <span class="n">save_to_func</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">val</span>
+    <span class="k">if</span> <span class="n">saver</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">save_condition</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="n">saver</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">val</span></div>
+
 
 
 <div class="viewcode-block" id="user_gettable">
@@ -511,8 +630,9 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a ``GettableContainer`` that asks the user for a value, optionally saving it.</span>
 
-<span class="sd">    :param save_to: A ``MutableMapping`` to save the user&#39;s response to. If ``None``,</span>
-<span class="sd">        the user&#39;s response is not saved.</span>
+<span class="sd">    :param save_to: Where to save the user&#39;s response: a ``MutableMapping`` (or</span>
+<span class="sd">        anything with a ``__setitem__``), or a ``(key, value)`` saver function.</span>
+<span class="sd">        If ``None``, the user&#39;s response is not saved.</span>
 <span class="sd">    :param prompt_template: A template string to prompt the user with. It should</span>
 <span class="sd">        contain a placeholder for the key, e.g. ``&quot;Enter a value for {}: &quot;``.</span>
 <span class="sd">    :param egress: A function to apply to the user&#39;s response before returning it.</span>
@@ -545,6 +665,19 @@
 <span class="sd">    &#39;SOME_VAL&#39;</span>
 <span class="sd">    &gt;&gt;&gt; d  # doctest: +SKIP</span>
 <span class="sd">    {&#39;some&#39;: &#39;store&#39;, &#39;SOME_KEY&#39;: &#39;SOME_VAL&#39;}</span>
+
+<span class="sd">    When saving isn&#39;t a simple write (say you need to encrypt, or write to two</span>
+<span class="sd">    places), ``save_to`` can be a ``(key, value)`` function instead:</span>
+
+<span class="sd">    &gt;&gt;&gt; saved = []</span>
+<span class="sd">    &gt;&gt;&gt; s = user_gettable(</span>
+<span class="sd">    ...     save_to=lambda k, v: saved.append((k, v)),</span>
+<span class="sd">    ...     user_asker=lambda prompt: &#39;SOME_VAL&#39;,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; s[&#39;SOME_KEY&#39;]</span>
+<span class="sd">    &#39;SOME_VAL&#39;</span>
+<span class="sd">    &gt;&gt;&gt; saved</span>
+<span class="sd">    [(&#39;SOME_KEY&#39;, &#39;SOME_VAL&#39;)]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">getter</span> <span class="o">=</span> <span class="n">ask_user_for_key</span><span class="p">(</span>

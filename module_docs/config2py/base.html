@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.base &mdash; config2py 0.1.48 documentation</title>
+  <title>config2py.base &mdash; config2py 0.1.49 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=b5e87a2a"></script>
+      <script src="../../_static/documentation_options.js?v=1190fe33"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -56,6 +56,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.base.GettableContainer"><code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config2py.base.ask_user_for_key"><code class="docutils literal notranslate"><span class="pre">ask_user_for_key()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.base.get_config"><code class="docutils literal notranslate"><span class="pre">get_config()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.base.gettable_containers"><code class="docutils literal notranslate"><span class="pre">gettable_containers()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config2py.base.sources_chainmap"><code class="docutils literal notranslate"><span class="pre">sources_chainmap()</span></code></a></li>
@@ -68,7 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests.html">config2py.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_app_data.html">config2py.tests.test_app_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_base.html">config2py.tests.test_base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_codecs.html">config2py.tests.test_codecs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_platform_standards.html">config2py.tests.test_platform_standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
@@ -132,7 +135,18 @@ to the next source.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;no_a_key&#39;</span><span class="p">]</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
-<span class="gr">KeyError</span>: <span class="n">&#39;There was an exception ... : &quot;I don&#39;t handle that: no_a_key&quot;&#39;</span>
+<span class="gr">KeyError</span>: <span class="n">&#39;no_a_key&#39;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> message is just the key: neither the upstream exception text nor
+the rejected value is interpolated into it, since getters commonly wrap credential
+checks and these errors commonly end up in logs. The upstream exception is still
+available, through the standard exception chain:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">gc</span><span class="p">[</span><span class="s1">&#39;no_a_key&#39;</span><span class="p">]</span>
+<span class="gp">... </span><span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">__cause__</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">__cause__</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;: &#39;</span><span class="p">)</span>
+<span class="go">RuntimeError: I don&#39;t handle that: no_a_key</span>
 </pre></div>
 </div>
 <p>Note that by default, <code class="docutils literal notranslate"><span class="pre">FuncBasedGettableContainer</span></code> will catch all <code class="docutils literal notranslate"><span class="pre">Exception</span></code>
@@ -156,7 +170,7 @@ This is useful, for example, when you have a function that returns a sentinel li
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="p">[</span><span class="s1">&#39;no_a_key&#39;</span><span class="p">]</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
-<span class="gr">KeyError</span>: <span class="n">&#39;Value for key no_a_key is not valid: None&#39;</span>
+<span class="gr">KeyError</span>: <span class="n">&#39;no_a_key&#39;</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -206,6 +220,50 @@ expression <code class="docutils literal notranslate"><span class="pre">k</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
 <span class="gr">TypeError</span>: <span class="n">&#39;set&#39; object is not subscriptable</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.base.ask_user_for_key">
+<span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">ask_user_for_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">key=None,</span> <span class="pre">*,</span> <span class="pre">prompt_template='Enter</span> <span class="pre">a</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">{}:</span> <span class="pre">',</span> <span class="pre">save_to:</span> <span class="pre">~collections.abc.MutableMapping</span> <span class="pre">|</span> <span class="pre">~collections.abc.Callable[[KT,</span> <span class="pre">VT],</span> <span class="pre">~typing.Any]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">save_condition=&lt;function</span> <span class="pre">is_not_empty&gt;,</span> <span class="pre">user_asker=&lt;function</span> <span class="pre">ask_user_for_input&gt;,</span> <span class="pre">egress:</span> <span class="pre">~collections.abc.Callable</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/config2py/base.html#ask_user_for_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.base.ask_user_for_key" title="Link to this definition"></a></dt>
+<dd><p>Ask the user for the value of <code class="docutils literal notranslate"><span class="pre">key</span></code>, optionally saving it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – The key to ask the user for. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a “curried” version of
+<code class="docutils literal notranslate"><span class="pre">ask_user_for_key</span></code> is returned, so you can specify the key later.</p></li>
+<li><p><strong>prompt_template</strong> – A template string to prompt the user with. It should
+contain a placeholder for the key, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;Enter</span> <span class="pre">a</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">{}:</span> <span class="pre">&quot;</span></code>.</p></li>
+<li><p><strong>save_to</strong> – Where to save the user’s response: a <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> (or
+anything with a <code class="docutils literal notranslate"><span class="pre">__setitem__</span></code>), or a <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> saver function.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the response is not saved. See <code class="docutils literal notranslate"><span class="pre">_resolve_saver</span></code>.</p></li>
+<li><p><strong>save_condition</strong> – A function of the value, deciding whether to save it.</p></li>
+<li><p><strong>user_asker</strong> – A function that takes a prompt string and returns the user’s
+response.</p></li>
+<li><p><strong>egress</strong> – A <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> function to apply to the user’s response before
+returning (and saving) it.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The value can be saved to any <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ask_user_for_key</span><span class="p">(</span><span class="s1">&#39;some_key&#39;</span><span class="p">,</span> <span class="n">save_to</span><span class="o">=</span><span class="n">store</span><span class="p">,</span> <span class="n">user_asker</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prompt</span><span class="p">:</span> <span class="s1">&#39;val&#39;</span><span class="p">)</span>
+<span class="go">&#39;val&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span>
+<span class="go">{&#39;some_key&#39;: &#39;val&#39;}</span>
+</pre></div>
+</div>
+<p>… or to a <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> function, when saving isn’t a simple write:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">saved</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ask_user_for_key</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s1">&#39;some_key&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">save_to</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">saved</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="n">user_asker</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prompt</span><span class="p">:</span> <span class="s1">&#39;val&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">&#39;val&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">saved</span>
+<span class="go">[(&#39;some_key&#39;, &#39;val&#39;)]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -312,8 +370,9 @@ sorts of data sources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>save_to</strong> – A <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> to save the user’s response to. If <code class="docutils literal notranslate"><span class="pre">None</span></code>,
-the user’s response is not saved.</p></li>
+<li><p><strong>save_to</strong> – Where to save the user’s response: a <code class="docutils literal notranslate"><span class="pre">MutableMapping</span></code> (or
+anything with a <code class="docutils literal notranslate"><span class="pre">__setitem__</span></code>), or a <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> saver function.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the user’s response is not saved.</p></li>
 <li><p><strong>prompt_template</strong> – A template string to prompt the user with. It should
 contain a placeholder for the key, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;Enter</span> <span class="pre">a</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">{}:</span> <span class="pre">&quot;</span></code>.</p></li>
 <li><p><strong>egress</strong> – A function to apply to the user’s response before returning it.
@@ -348,6 +407,19 @@ the <code class="docutils literal notranslate"><span class="pre">dol</span></cod
 <span class="go">&#39;SOME_VAL&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
 <span class="go">{&#39;some&#39;: &#39;store&#39;, &#39;SOME_KEY&#39;: &#39;SOME_VAL&#39;}</span>
+</pre></div>
+</div>
+<p>When saving isn’t a simple write (say you need to encrypt, or write to two
+places), <code class="docutils literal notranslate"><span class="pre">save_to</span></code> can be a <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> function instead:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">saved</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">user_gettable</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">save_to</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">saved</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="n">user_asker</span><span class="o">=</span><span class="k">lambda</span> <span class="n">prompt</span><span class="p">:</span> <span class="s1">&#39;SOME_VAL&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;SOME_KEY&#39;</span><span class="p">]</span>
+<span class="go">&#39;SOME_VAL&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">saved</span>
+<span class="go">[(&#39;SOME_KEY&#39;, &#39;SOME_VAL&#39;)]</span>
 </pre></div>
 </div>
 </dd></dl>

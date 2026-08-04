@@ -10,7 +10,9 @@
    module_docs/config2py/sync_store
    module_docs/config2py/tests
    module_docs/config2py/tests/test_app_data
+   module_docs/config2py/tests/test_base
    module_docs/config2py/tests/test_codecs
+   module_docs/config2py/tests/test_platform_standards
    module_docs/config2py/tests/test_sync_store
    module_docs/config2py/tests/test_tools
    module_docs/config2py/tests/utils_for_testing

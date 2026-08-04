@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.util &mdash; config2py 0.1.48 documentation</title>
+  <title>config2py.util &mdash; config2py 0.1.49 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=b5e87a2a"></script>
+      <script src="../../_static/documentation_options.js?v=1190fe33"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -54,7 +54,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/sync_store.html">config2py.sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests.html">config2py.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_app_data.html">config2py.tests.test_app_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_base.html">config2py.tests.test_base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_codecs.html">config2py.tests.test_codecs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_platform_standards.html">config2py.tests.test_platform_standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
@@ -372,26 +374,70 @@
 
 
 
-<span class="n">FolderSpec</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;FolderSpec&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;env_var&quot;</span><span class="p">,</span> <span class="s2">&quot;default_path&quot;</span><span class="p">])</span>
+<span class="c1">#: Declarative description of where a given folder kind lives on a platform.</span>
+<span class="c1">#:</span>
+<span class="c1">#: ``env_var`` is the platform-standard environment variable that, when set,</span>
+<span class="c1">#: names the *root* folder.  ``default_path`` is the root to use when that</span>
+<span class="c1">#: variable is absent (``~`` is expanded).  ``subpath`` is a relative path</span>
+<span class="c1">#: appended to the root; it exists because some platform standards place a</span>
+<span class="c1">#: folder kind *inside* another kind&#39;s root rather than under its own variable</span>
+<span class="c1">#: (e.g. Windows cache lives at ``%LOCALAPPDATA%\\Temp``).</span>
+<span class="n">FolderSpec</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;FolderSpec&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;env_var&quot;</span><span class="p">,</span> <span class="s2">&quot;default_path&quot;</span><span class="p">,</span> <span class="s2">&quot;subpath&quot;</span><span class="p">],</span> <span class="n">defaults</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,)</span>
+<span class="p">)</span>
 
-<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
-    <span class="n">APP_FOLDER_STANDARDS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">config</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;APPDATA&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;APPDATA&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)),</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)),</span>
-        <span class="n">cache</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span>
-            <span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="s2">&quot;Temp&quot;</span><span class="p">)</span>
-        <span class="p">),</span>
-        <span class="n">state</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)),</span>
-        <span class="n">runtime</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;TEMP&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;TEMP&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)),</span>
-    <span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">APP_FOLDER_STANDARDS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+<span class="c1">#: Roots of the per-user Windows app folders, used when %APPDATA%/%LOCALAPPDATA%/</span>
+<span class="c1">#: %TEMP% are absent (e.g. some service accounts). ``~`` is expanded at resolution</span>
+<span class="c1">#: time. These are spelled as Windows literals on purpose: they describe the</span>
+<span class="c1">#: Windows convention, so they must not be built with the *running* platform&#39;s</span>
+<span class="c1">#: separator (that would produce &#39;~/AppData/Roaming&#39; when read from POSIX).</span>
+<span class="n">_WINDOWS_ROAMING_DEFAULT</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;~\AppData\Roaming&quot;</span>
+<span class="n">_WINDOWS_LOCAL_DEFAULT</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;~\AppData\Local&quot;</span>
+<span class="n">_WINDOWS_TEMP_DEFAULT</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;~\AppData\Local\Temp&quot;</span>
+
+
+<div class="viewcode-block" id="app_folder_standards">
+<a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.app_folder_standards">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">app_folder_standards</span><span class="p">(</span><span class="n">os_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the ``{folder_kind: FolderSpec}`` table for the given ``os.name``.</span>
+
+<span class="sd">    This is the *single* place where config2py branches on the operating</span>
+<span class="sd">    system: everything else consumes the returned table.  Exposing it as a</span>
+<span class="sd">    function (rather than an ``if`` at import time) keeps the branch testable</span>
+<span class="sd">    on any platform -- callers can ask for the table of an OS they are not</span>
+<span class="sd">    running on.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        os_name: An ``os.name`` value; ``&quot;nt&quot;`` selects the Windows standards,</span>
+<span class="sd">            anything else selects the XDG Base Directory standards.</span>
+
+<span class="sd">    &gt;&gt;&gt; app_folder_standards(&quot;nt&quot;)[&quot;cache&quot;]</span>
+<span class="sd">    FolderSpec(env_var=&#39;LOCALAPPDATA&#39;, default_path=&#39;~\\\\AppData\\\\Local&#39;, subpath=&#39;Temp&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; app_folder_standards(&quot;posix&quot;)[&quot;cache&quot;]</span>
+<span class="sd">    FolderSpec(env_var=&#39;XDG_CACHE_HOME&#39;, default_path=&#39;~/.cache&#39;, subpath=&#39;&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os_name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">config</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;APPDATA&quot;</span><span class="p">,</span> <span class="n">_WINDOWS_ROAMING_DEFAULT</span><span class="p">),</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="n">_WINDOWS_LOCAL_DEFAULT</span><span class="p">),</span>
+            <span class="c1"># Note the ``subpath``: %LOCALAPPDATA% is also the *data* root, so</span>
+            <span class="c1"># cache must be a sub-folder of it -- otherwise clearing the cache</span>
+            <span class="c1"># would wipe the user&#39;s data.</span>
+            <span class="n">cache</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="n">_WINDOWS_LOCAL_DEFAULT</span><span class="p">,</span> <span class="s2">&quot;Temp&quot;</span><span class="p">),</span>
+            <span class="n">state</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;LOCALAPPDATA&quot;</span><span class="p">,</span> <span class="n">_WINDOWS_LOCAL_DEFAULT</span><span class="p">),</span>
+            <span class="n">runtime</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;TEMP&quot;</span><span class="p">,</span> <span class="n">_WINDOWS_TEMP_DEFAULT</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;XDG_CONFIG_HOME&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.config&quot;</span><span class="p">),</span>
         <span class="n">data</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;XDG_DATA_HOME&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.local/share&quot;</span><span class="p">),</span>
         <span class="n">cache</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;XDG_CACHE_HOME&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.cache&quot;</span><span class="p">),</span>
         <span class="n">state</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;XDG_STATE_HOME&quot;</span><span class="p">,</span> <span class="s2">&quot;~/.local/state&quot;</span><span class="p">),</span>
         <span class="n">runtime</span><span class="o">=</span><span class="n">FolderSpec</span><span class="p">(</span><span class="s2">&quot;XDG_RUNTIME_DIR&quot;</span><span class="p">,</span> <span class="s2">&quot;/tmp&quot;</span><span class="p">),</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="n">APP_FOLDER_STANDARDS</span> <span class="o">=</span> <span class="n">app_folder_standards</span><span class="p">()</span>
 
 
 <span class="n">AppFolderKind</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;runtime&quot;</span><span class="p">]</span>
@@ -418,13 +464,26 @@
 <a class="viewcode-back" href="../../module_docs/config2py/util.html#config2py.util.system_default_for_app_data_folder">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">system_default_for_app_data_folder</span><span class="p">(</span>
     <span class="n">folder_kind</span><span class="p">:</span> <span class="n">AppFolderKind</span> <span class="o">=</span> <span class="n">DFLT_APP_FOLDER_KIND</span><span class="p">,</span>  <span class="c1"># type: ignore (for &lt;3.11)</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">standards</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the system default for the app data folder.&quot;&quot;&quot;</span>
-    <span class="c1"># Platform-specific specs: (env_var, default_path)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the system default folder for ``folder_kind``.</span>
 
-    <span class="c1"># Same logic for both platforms: check env var, then use default</span>
-    <span class="n">env_var</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">APP_FOLDER_STANDARDS</span><span class="p">[</span><span class="n">folder_kind</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">env_var</span><span class="p">,</span> <span class="n">default</span><span class="p">))</span></div>
+<span class="sd">    The root is the value of the platform&#39;s standard environment variable for</span>
+<span class="sd">    that kind, falling back to the spec&#39;s ``default_path``; the spec&#39;s</span>
+<span class="sd">    ``subpath`` (usually empty) is then appended.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder_kind: One of &#39;config&#39;, &#39;data&#39;, &#39;cache&#39;, &#39;state&#39;, &#39;runtime&#39;.</span>
+<span class="sd">        standards: The ``{folder_kind: FolderSpec}`` table to resolve against.</span>
+<span class="sd">            Defaults to the running platform&#39;s (``APP_FOLDER_STANDARDS``);</span>
+<span class="sd">            pass another platform&#39;s table to resolve as that platform would.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">standards</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">standards</span> <span class="o">=</span> <span class="n">APP_FOLDER_STANDARDS</span>
+    <span class="n">env_var</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">subpath</span> <span class="o">=</span> <span class="n">standards</span><span class="p">[</span><span class="n">folder_kind</span><span class="p">]</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">env_var</span><span class="p">,</span> <span class="n">default</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">subpath</span><span class="p">)</span> <span class="k">if</span> <span class="n">subpath</span> <span class="k">else</span> <span class="n">root</span></div>
 
 
 
@@ -477,10 +536,13 @@
 
 <span class="sd">    Note: The default root folder follows XDG Base Directory standards on Unix/Linux/macOS.</span>
 <span class="sd">    You can override this by setting environment variables:</span>
-<span class="sd">    - CONFIG2PY_CONFIG_FOLDER, CONFIG2PY_DATA_FOLDER, CONFIG2PY_CACHE_FOLDER, etc.</span>
-<span class="sd">      (highest priority, overrides everything)</span>
-<span class="sd">    - XDG_CONFIG_HOME, XDG_DATA_HOME, XDG_CACHE_HOME, etc.</span>
-<span class="sd">      (standard XDG override)</span>
+<span class="sd">    - CONFIG2PY_CONFIG_DIR, CONFIG2PY_DATA_DIR, CONFIG2PY_CACHE_DIR, etc.</span>
+<span class="sd">      (highest priority, overrides everything, and works on **every** platform --</span>
+<span class="sd">      see ``config2py_env_var`` for the full list of names)</span>
+<span class="sd">    - The platform&#39;s own standard variable: XDG_CONFIG_HOME, XDG_DATA_HOME,</span>
+<span class="sd">      XDG_CACHE_HOME, etc. on Unix/Linux/macOS; APPDATA / LOCALAPPDATA / TEMP on</span>
+<span class="sd">      Windows. The XDG variables are a POSIX standard and are **not** consulted on</span>
+<span class="sd">      Windows -- use the CONFIG2PY_* variables above for platform-neutral overrides.</span>
 <span class="sd">    - If neither is set, uses platform defaults</span>
 
 <span class="sd">    Examples:</span>
@@ -558,10 +620,19 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        str: Path to the app directory.</span>
 
-<span class="sd">    By default, the app will be &quot;config2py&quot; and folder_kind will be &quot;config&quot;:</span>
+<span class="sd">    By default, the app will be &quot;config2py&quot; and folder_kind will be &quot;config&quot;.</span>
+<span class="sd">    The exact text of the path is platform-specific (``~/.config/config2py`` under</span>
+<span class="sd">    the XDG standards, ``%APPDATA%\\config2py`` on Windows), so we assert the</span>
+<span class="sd">    properties that hold everywhere: it is an absolute path named after the app,</span>
+<span class="sd">    sitting directly inside the &#39;config&#39; root directory.</span>
 
-<span class="sd">    &gt;&gt;&gt; get_app_folder()  # doctest: +ELLIPSIS</span>
-<span class="sd">    &#39;.../.config/config2py&#39;</span>
+<span class="sd">    &gt;&gt;&gt; folder = get_app_folder()</span>
+<span class="sd">    &gt;&gt;&gt; os.path.isabs(folder)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; os.path.basename(folder)</span>
+<span class="sd">    &#39;config2py&#39;</span>
+<span class="sd">    &gt;&gt;&gt; os.path.dirname(folder) == get_app_rootdir(&#39;config&#39;)</span>
+<span class="sd">    True</span>
 
 <span class="sd">    You can specify a different app name and folder kind:</span>
 
