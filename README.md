@@ -27,7 +27,7 @@ What `config2py.config_getter(key)` will do is:
 _Note: The "... ask the user to enter the value..." will be activated only when in an interactive environment (python console, jupyter notebook, etc.), as decided by the `config2py.is_repl()` function_
 
 ```python
-config_getter('HOME')  # if you are using Linux/MacOS
+config_getter("HOME")  # if you are using Linux/MacOS
 # config_getter('USERPROFILE')  # if you are using Windows
 ```
 
@@ -39,7 +39,7 @@ But see what happens if you ask for a key that is not an environment variable:
 
 
 ```python
-my_config_val = config_getter('_TEST_NON_EXISTING_KEY_')  # triggers a user input dialog
+my_config_val = config_getter("_TEST_NON_EXISTING_KEY_")  # triggers a user input dialog
 # ... I enter 'my config value' in the dialog, and then...
 ```
 
@@ -56,7 +56,9 @@ But if I do that again (even on a different day, somewhere else (on my same comp
 
 
 ```python
-my_config_val = config_getter('_TEST_NON_EXISTING_KEY_')  # does not trigger input dialog
+my_config_val = config_getter(
+    "_TEST_NON_EXISTING_KEY_"
+)  # does not trigger input dialog
 my_config_val
 ```
 
@@ -70,8 +72,8 @@ like list the keys (with `list(.)`), get values for a key (with `.[key]`), ask f
 
 
 ```python
-if '_TEST_NON_EXISTING_KEY_' in config_getter.configs:
-    del config_getter.configs['_TEST_NON_EXISTING_KEY_']
+if "_TEST_NON_EXISTING_KEY_" in config_getter.configs:
+    del config_getter.configs["_TEST_NON_EXISTING_KEY_"]
 ```
 
 This tool allows you to:
@@ -103,7 +105,7 @@ But where you can control what the central store (by default a local configurati
 from config2py import simple_config_getter, get_configs_local_store
 from i2 import Sig
 
-print(*str(Sig(simple_config_getter)).split(','), sep='\n')
+print(*str(Sig(simple_config_getter)).split(","), sep="\n")
 ```
 
     (configs_src: str = '.../.config/config2py/configs'
@@ -137,7 +139,7 @@ configs = config_store_factory(configs_src)
 source = [
     os.environ,  # search in environment variables first
     configs,  # then search in configs
-    user_gettable(configs)  # if not found, ask the user and store in 
+    user_gettable(configs),  # if not found, ask the user and store in
 ]
 config_getter = get_config(sources=source)
 ```
@@ -153,15 +155,19 @@ from config2py import get_config, user_gettable
 from dol import TextFiles
 import os
 
-my_configs = TextFiles('~/.my_configs/')  # Note, to run this, you'd need to have such a directory!
+my_configs = TextFiles(
+    "~/.my_configs/"
+)  # Note, to run this, you'd need to have such a directory!
 # (But you can also use my_configs = dict() if you want.)
-config_getter = get_config(sources=[locals(), os.environ, my_configs, user_gettable(my_configs)])
+config_getter = get_config(
+    sources=[locals(), os.environ, my_configs, user_gettable(my_configs)]
+)
 ```
 
 Now let's see what happens when we do:
 
 ```python
-config_getter('SOME_CONFIG_KEY')
+config_getter("SOME_CONFIG_KEY")
 ```
 
 Well, it will first look in `locals()`, which is a dictionary containing local variables
@@ -182,7 +188,7 @@ If you've used `TextFiles`, look in the folder to see that there's a new file.
 Either way, if you do:
 
 ```python
-my_configs['SOME_CONFIG_KEY']
+my_configs["SOME_CONFIG_KEY"]
 ```
 
 You'll now see the value the user entered.
@@ -190,7 +196,7 @@ You'll now see the value the user entered.
 This means what? This means that the next time you try to get the config:
 
 ```python
-config_getter('SOME_CONFIG_KEY')
+config_getter("SOME_CONFIG_KEY")
 ```
 
 It will return the value that the user entered last time, without prompting the 
@@ -209,14 +215,14 @@ user again.
 from config2py.sync_store import FileStore, JsonStore
 
 # Auto-detected from .json extension
-config = FileStore('config.json')
-config['api_key'] = 'secret'  # Syncs immediately
+config = FileStore("config.json")
+config["api_key"] = "secret"  # Syncs immediately
 
 # Batch operations (deferred sync)
 with config:
-    config['a'] = 1
-    config['b'] = 2
-    config['c'] = 3
+    config["a"] = 1
+    config["b"] = 2
+    config["c"] = 3
     # Syncs once on exit
 ```
 
@@ -224,12 +230,12 @@ with config:
 
 ```python
 # Work with specific section via key_path
-db_config = FileStore('config.json', key_path='database')
-db_config['host'] = 'localhost'  # Only affects database section
+db_config = FileStore("config.json", key_path="database")
+db_config["host"] = "localhost"  # Only affects database section
 
 # Dotted notation for deep nesting
-items = FileStore('config.json', key_path='app.settings.items')
-items['item1'] = 'value'
+items = FileStore("config.json", key_path="app.settings.items")
+items["item1"] = "value"
 ```
 
 ### Supported Formats
@@ -244,8 +250,8 @@ Register custom formats:
 ```python
 from sync_store import register_extension
 
-register_extension('.custom', my_loader, my_dumper)
-store = FileStore('data.custom')
+register_extension(".custom", my_loader, my_dumper)
+store = FileStore("data.custom")
 ```
 
 ### Custom Backing Storage
@@ -253,15 +259,18 @@ store = FileStore('data.custom')
 ```python
 from config2py.sync_store import SyncStore
 
+
 # Any backing storage via loader/dumper
 def my_loader():
     return fetch_from_database()
 
+
 def my_dumper(data):
     save_to_database(data)
 
+
 store = SyncStore(my_loader, my_dumper)
-store['key'] = 'value'  # Calls my_dumper
+store["key"] = "value"  # Calls my_dumper
 ```
 
 ### Key Classes
@@ -388,15 +397,15 @@ It's a way for you to specify that the system should ask the user for a key, and
 from config2py.base import user_gettable
 
 s = user_gettable()
-s['SOME_KEY'] 
+s["SOME_KEY"]
 # will trigger a prompt for the user to enter the value of SOME_KEY
 # ... and when they do (say they entered 'SOME_VAL') it will return that value
 
 # And if you specify a save_to store (usually a persistent MutableMapping made with the dol package)
 # then it will save the value to that store for future use
-d = dict(some='store')
+d = dict(some="store")
 s = user_gettable(save_to=d)
-s['SOME_KEY'] 
+s["SOME_KEY"]
 ```
 
 More on that another day...
