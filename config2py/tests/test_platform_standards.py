@@ -15,6 +15,7 @@ import pytest
 from config2py.util import (
     APP_FOLDER_STANDARDS,
     AppFolderKind,
+    FolderSpec,
     app_folder_standards,
     config2py_env_var,
     get_app_rootdir,
@@ -34,12 +35,52 @@ WINDOWS_ENV = {
     "TEMP": r"C:\Users\someone\AppData\Local\Temp",
 }
 
+#: The two platform tables, spelled out exactly as ``get_app_rootdir``'s docstring
+#: promises them, as ``{os_name: {folder_kind: (env_var, default_path, subpath)}}``.
+#:
+#: Every other test here checks *structural* properties -- non-empty, no
+#: collisions, right variable family -- which a silently-retargeted default would
+#: still satisfy. This is the one place the literals themselves are pinned, so
+#: that changing where config2py puts a user's files is necessarily a deliberate,
+#: visible edit to both the table and this expectation.
+DOCUMENTED_STANDARDS = {
+    "posix": {
+        "config": ("XDG_CONFIG_HOME", "~/.config", ""),
+        "data": ("XDG_DATA_HOME", "~/.local/share", ""),
+        "cache": ("XDG_CACHE_HOME", "~/.cache", ""),
+        "state": ("XDG_STATE_HOME", "~/.local/state", ""),
+        "runtime": ("XDG_RUNTIME_DIR", "/tmp", ""),
+    },
+    "nt": {
+        "config": ("APPDATA", r"~\AppData\Roaming", ""),
+        "data": ("LOCALAPPDATA", r"~\AppData\Local", ""),
+        "cache": ("LOCALAPPDATA", r"~\AppData\Local", "Temp"),
+        "state": ("LOCALAPPDATA", r"~\AppData\Local", ""),
+        "runtime": ("TEMP", r"~\AppData\Local\Temp", ""),
+    },
+}
+
 
 @pytest.mark.parametrize("os_name", OS_NAMES)
 def test_every_kind_is_specified_on_every_platform(os_name):
     """Both platform tables cover exactly the kinds the type allows."""
     standards = app_folder_standards(os_name)
     assert set(standards) == set(get_args(AppFolderKind))
+
+
+@pytest.mark.parametrize("os_name", OS_NAMES)
+def test_tables_match_the_documented_standards(os_name):
+    """The tables hold the exact roots the documentation advertises.
+
+    Where a user's config, data, cache, state and runtime files land is public
+    API: dependents and end users rely on those paths. Pinning the literals
+    means a change of location cannot slip in as a side effect of an unrelated
+    edit -- it has to be written down here too.
+    """
+    expected = {
+        kind: FolderSpec(*spec) for kind, spec in DOCUMENTED_STANDARDS[os_name].items()
+    }
+    assert app_folder_standards(os_name) == expected
 
 
 @pytest.mark.parametrize("os_name", OS_NAMES)
