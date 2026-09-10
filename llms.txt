@@ -12,11 +12,7 @@
 - [config2py.codecs](_autosummary/config2py.codecs.html.md): Extension-based codec registries for configuration file parsing.
 - [config2py.errors](_autosummary/config2py.errors.html.md): Error classes for config2py.
 - [config2py.s_configparser](_autosummary/config2py.s_configparser.html.md): Data Object Layer for configparser standard lib.
-- [config2py.scrap](_autosummary/config2py.scrap.html.md): Page content
 - [config2py.sync_store](_autosummary/config2py.sync_store.html.md): Synchronized key-value stores with automatic persistence.
-- [config2py.tests](_autosummary/config2py.tests.html.md): Init for config2py tests.
-- [config2py.tests.test_sync_store](_autosummary/config2py.tests.test_sync_store.html.md): Tests for sync_store module.
-- [config2py.tests.utils_for_testing](_autosummary/config2py.tests.utils_for_testing.html.md): Utils for testing config2py functionality.
 - [config2py.tools](_autosummary/config2py.tools.html.md): Various tools
 - [config2py.util](_autosummary/config2py.util.html.md): Utility functions for config2py.
 

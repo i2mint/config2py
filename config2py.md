@@ -1079,9 +1079,7 @@ Tools to read and write configurations from various sources and formats
 | [`codecs`](_autosummary/config2py.codecs.html.md#module-config2py.codecs)                 | Extension-based codec registries for configuration file parsing. |
 | [`errors`](_autosummary/config2py.errors.html.md#module-config2py.errors)                 | Error classes for config2py.                                     |
 | [`s_configparser`](_autosummary/config2py.s_configparser.html.md#module-config2py.s_configparser) | Data Object Layer for configparser standard lib.                 |
-| [`scrap`](_autosummary/config2py.scrap.html.md#module-config2py.scrap)                   |                                                                  |
 | [`sync_store`](_autosummary/config2py.sync_store.html.md#module-config2py.sync_store)         | Synchronized key-value stores with automatic persistence.        |
-| [`tests`](_autosummary/config2py.tests.html.md#module-config2py.tests)                   | Init for config2py tests.                                        |
 | [`tools`](_autosummary/config2py.tools.html.md#module-config2py.tools)                   | Various tools                                                    |
 | [`util`](_autosummary/config2py.util.html.md#module-config2py.util)                     | Utility functions for config2py.                                 |
 
@@ -1387,11 +1385,6 @@ I thought I needed to wrap more method this way, but as it turns out, I might no
 so I prefer open code.
 
 
-# _autosummary/config2py.scrap.html.md
-
-# config2py.scrap
-
-
 # _autosummary/config2py.sync_store.html.md
 
 # config2py.sync_store
@@ -1558,97 +1551,6 @@ Register loader/dumper for a file extension.
 
 * **Return type:**
   [`None`](https://docs.python.org/3/library/constants.html#None)
-
-
-# _autosummary/config2py.tests.html.md
-
-# config2py.tests
-
-Init for config2py tests.
-
-### Modules
-
-| [`test_sync_store`](_autosummary/config2py.tests.test_sync_store.html.md#module-config2py.tests.test_sync_store)     | Tests for sync_store module.               |
-|-------------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| [`utils_for_testing`](_autosummary/config2py.tests.utils_for_testing.html.md#module-config2py.tests.utils_for_testing) | Utils for testing config2py functionality. |
-
-
-# _autosummary/config2py.tests.test_sync_store.html.md
-
-# config2py.tests.test_sync_store
-
-Tests for sync_store module.
-
-### Functions
-
-| [`test_extension_registry`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_extension_registry)()          | Test custom extension registration.           |
-|-------------------------------------------------------------------------------------|-----------------------------------------------|
-| [`test_file_store_batch_operations`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_file_store_batch_operations)() | Test that batch operations work efficiently.  |
-| [`test_file_store_dotted_key_path`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_file_store_dotted_key_path)()  | Test FileStore with dotted key_path notation. |
-| [`test_file_store_json`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_file_store_json)()             | Test FileStore with JSON file.                |
-| [`test_file_store_key_path`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_file_store_key_path)()         | Test FileStore with nested key_path.          |
-| [`test_json_store`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_json_store)()                  | Test JsonStore with defaults.                 |
-| [`test_store_repr`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_store_repr)()                  | Test string representations.                  |
-| [`test_sync_store_auto_sync`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_sync_store_auto_sync)()        | Test that changes auto-sync by default.       |
-| [`test_sync_store_basic_operations`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_sync_store_basic_operations)() | Test basic MutableMapping operations.         |
-| [`test_sync_store_context_manager`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_sync_store_context_manager)()  | Test deferred sync with context manager.      |
-| [`test_sync_store_manual_flush`](_autosummary/config2py.tests.test_sync_store.html.md#config2py.tests.test_sync_store.test_sync_store_manual_flush)()     | Test manual flush() call.                     |
-
-### config2py.tests.test_sync_store.test_extension_registry()
-
-Test custom extension registration.
-
-### config2py.tests.test_sync_store.test_file_store_batch_operations()
-
-Test that batch operations work efficiently.
-
-### config2py.tests.test_sync_store.test_file_store_dotted_key_path()
-
-Test FileStore with dotted key_path notation.
-
-### config2py.tests.test_sync_store.test_file_store_json()
-
-Test FileStore with JSON file.
-
-### config2py.tests.test_sync_store.test_file_store_key_path()
-
-Test FileStore with nested key_path.
-
-### config2py.tests.test_sync_store.test_json_store()
-
-Test JsonStore with defaults.
-
-### config2py.tests.test_sync_store.test_store_repr()
-
-Test string representations.
-
-### config2py.tests.test_sync_store.test_sync_store_auto_sync()
-
-Test that changes auto-sync by default.
-
-### config2py.tests.test_sync_store.test_sync_store_basic_operations()
-
-Test basic MutableMapping operations.
-
-### config2py.tests.test_sync_store.test_sync_store_context_manager()
-
-Test deferred sync with context manager.
-
-### config2py.tests.test_sync_store.test_sync_store_manual_flush()
-
-Test manual flush() call.
-
-
-# _autosummary/config2py.tests.utils_for_testing.html.md
-
-# config2py.tests.utils_for_testing
-
-Utils for testing config2py functionality.
-
-### Functions
-
-| `user_input_patch`(monkeypatch, user_input_string)   |    |
-|------------------------------------------------------|----|
 
 
 # _autosummary/config2py.tools.html.md

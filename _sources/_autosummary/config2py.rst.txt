@@ -14,8 +14,6 @@
    codecs
    errors
    s_configparser
-   scrap
    sync_store
-   tests
    tools
    util
