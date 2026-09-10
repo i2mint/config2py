@@ -1,0 +1,796 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="alternate" type="text/markdown" href="config2py.s_configparser.html.md">
+<link rel="describedby" href="../llms.txt" type="text/markdown">
+    <title>config2py.s_configparser &#8212; config2py</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/epythet.css?v=54f41860" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../_static/documentation_options.js?v=f2b49961"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/config2py.s_configparser';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="config2py.scrap" href="config2py.scrap.html" />
+    <link rel="prev" title="config2py.errors" href="config2py.errors.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.50" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">config2py</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/config2py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/config2py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="config2py.html">config2py</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="config2py.base.html">config2py.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.codecs.html">config2py.codecs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.errors.html">config2py.errors</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">config2py.s_configparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.scrap.html">config2py.scrap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.sync_store.html">config2py.sync_store</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="config2py.tests.html">config2py.tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="config2py.tests.test_sync_store.html">config2py.tests.test_sync_store</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config2py.tests.utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.tools.html">config2py.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.util.html">config2py.util</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="config2py.html" class="nav-link">config2py</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">config2py.s_configparser</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-config2py.s_configparser">
+<span id="config2py-s-configparser"></span><h1>config2py.s_configparser<a class="headerlink" href="#module-config2py.s_configparser" title="Link to this heading">#</a></h1>
+<p>Data Object Layer for configparser standard lib.</p>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">persist_after_operation</span></code>(method_func)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.s_configparser.postprocess_ini_section_items" title="config2py.s_configparser.postprocess_ini_section_items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess_ini_section_items</span></code></a>(items)</p></td>
+<td><p>Transform newline-separated string values into actual list of strings (assuming that intent)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.s_configparser.preprocess_ini_section_items" title="config2py.s_configparser.preprocess_ini_section_items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preprocess_ini_section_items</span></code></a>(items)</p></td>
+<td><p>Transform list values into newline-separated strings, in view of writing the value to a ini formatted section</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.s_configparser.super_and_persist" title="config2py.s_configparser.super_and_persist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">super_and_persist</span></code></a>(super_cls, method_name)</p></td>
+<td><p>To be able to do this:</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.s_configparser.ConfigReader" title="config2py.s_configparser.ConfigReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigReader</span></code></a>([defaults, dict_type, ...])</p></td>
+<td><p>A KvReader to read config files</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.s_configparser.ConfigStore" title="config2py.s_configparser.ConfigStore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigStore</span></code></a>([defaults, dict_type, ...])</p></td>
+<td><p>Persister (read, write, delete) for ini configs.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="config2py.s_configparser.ConfigReader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.s_configparser.</span></span><span class="sig-name descname"><span class="pre">ConfigReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'dict'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_no_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('='</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_prefixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('#'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">';')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inline_comment_prefixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_lines_in_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DEFAULT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#ConfigReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.s_configparser.ConfigReader" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#config2py.s_configparser.ConfigStore" title="config2py.s_configparser.ConfigStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigStore</span></code></a></p>
+<p>A KvReader to read config files</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py.s_configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigReader</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># from a (pretend) file</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span><span class="p">,</span> <span class="n">StringIO</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">file_content_bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">'''</span>
+<span class="gp">... </span><span class="s1">[Paths]</span>
+<span class="gp">... </span><span class="s1">home_dir: /Users</span>
+<span class="gp">... </span><span class="s1">my_dir: </span><span class="si">%(home_dir)s</span><span class="s1">/lumberjack</span>
+<span class="gp">... </span><span class="s1">my_pictures: </span><span class="si">%(my_dir)s</span><span class="s1">/Pictures</span>
+<span class="gp">...</span>
+<span class="gp">... </span><span class="s1">[Escape]</span>
+<span class="gp">... </span><span class="s1">gain: 80</span><span class="si">%%</span><span class="s1">  # use a </span><span class="si">%%</span><span class="s1"> to escape the </span><span class="si">% s</span><span class="s1">ign (</span><span class="si">% i</span><span class="s1">s the only character that needs to be escaped)'''</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">(</span><span class="n">file_content_bytes</span><span class="p">)</span>  <span class="c1"># get configs from the bytes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">['DEFAULT', 'Paths', 'Escape']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">######## From a (pretend) file (pointer) ########</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Usually, you write your configs in a file and give ConfigReader the filepath, or open file pointer...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pretend_file_pointer</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">file_content_bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">(</span><span class="n">pretend_file_pointer</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">['DEFAULT', 'Paths', 'Escape']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="p">[</span><span class="s1">'Paths'</span><span class="p">]</span>  <span class="c1"># gives you a configparser.Section object</span>
+<span class="go">&lt;Section: Paths&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># A configparser.Section is a mapping. Let's see the keys</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">'Paths'</span><span class="p">])</span>
+<span class="go">['home_dir', 'my_dir', 'my_pictures']</span>
+</pre></div>
+</div>
+<p># &gt;&gt;&gt; # here’s a quick way to see both keys and values. Note how the home_dir interpolation was performed!
+# &gt;&gt;&gt; dict(c[‘Paths’])
+# {‘home_dir’: ‘/Users’, ‘my_dir’: ‘/Users/lumberjack’, ‘my_pictures’: ‘/Users/lumberjack/Pictures’}</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">######## Get configs from a dict ########</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'section1'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'key1'</span><span class="p">:</span> <span class="s1">'value1'</span><span class="p">},</span>
+<span class="gp">... </span>               <span class="s1">'section2'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'keyA'</span><span class="p">:</span> <span class="s1">'valueA'</span><span class="p">,</span> <span class="s1">'keyB'</span><span class="p">:</span> <span class="s1">'valueB'</span><span class="p">},</span>
+<span class="gp">... </span>               <span class="s1">'section3'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'foo'</span><span class="p">:</span> <span class="s1">'x'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">:</span> <span class="s1">'y'</span><span class="p">,</span><span class="s1">'baz'</span><span class="p">:</span> <span class="s1">'z'</span><span class="p">}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">(</span><span class="n">config_dict</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">'DEFAULT'</span><span class="p">,</span> <span class="s1">'section1'</span><span class="p">,</span> <span class="s1">'section2'</span><span class="p">,</span> <span class="s1">'section3'</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">'section3'</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">,</span> <span class="s1">'baz'</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">######## Get configs from a string ########</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py.s_configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">_test_config_str</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">(</span><span class="n">_test_config_str</span><span class="p">,</span> <span class="n">allow_no_value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">['DEFAULT', 'Simple Values', 'All Values Are Strings', 'Multiline Values', 'No Values', 'You can use comments', 'Sections Can Be Indented']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">'Simple Values'</span><span class="p">])</span>
+<span class="go">['key', 'spaces in keys', 'spaces in values', 'spaces around the delimiter', 'you can also use']</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.s_configparser.ConfigReader.persist">
+<span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#ConfigReader.persist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.s_configparser.ConfigReader.persist" title="Link to this definition">#</a></dt>
+<dd><p>Persists the data (if not in a context manager).
+Persists means to call</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="config2py.s_configparser.ConfigStore">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.s_configparser.</span></span><span class="sig-name descname"><span class="pre">ConfigStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'dict'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_no_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('='</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_prefixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('#'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">';')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inline_comment_prefixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_lines_in_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DEFAULT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#ConfigStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.s_configparser.ConfigStore" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Store</span></code></p>
+<p>Persister (read, write, delete) for ini configs.</p>
+<p>You can read ini formated configurations with ConfigStore (though if you want to
+just read, you should use ConfigReader instead – since ConfigReader disables
+write and delete operations.</p>
+<p>See ConfigReader for more examples of how to use ConfigStore.
+We’ll mainly focus on write and delete operations here.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py.s_configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigStore</span><span class="p">,</span> <span class="n">ConfigReader</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">temp_dir_path</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span><span class="o">.</span><span class="n">name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">temp_dir_path</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">temp_dir_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ini_filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir_path</span><span class="p">,</span> <span class="s1">'config_store_test.ini'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span>  <span class="c1"># File doesn't exist</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">ConfigStore</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>  <span class="c1"># There's always a default (by default empty)</span>
+<span class="go">['DEFAULT']</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span>  <span class="c1"># But the file still doesn't exist (the DEFAULT is virtual)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Now let's make a config</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">'nothing'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'special'</span><span class="p">:</span> <span class="s1">'about'</span><span class="p">,</span> <span class="s1">'number'</span><span class="p">:</span> <span class="mi">42</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="go">['DEFAULT', 'nothing']</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span>  <span class="c1"># But NOW the file exists (ConfigStore will automatically write to file)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">'add'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'more'</span><span class="p">:</span> <span class="s1">'sections'</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="go">['DEFAULT', 'nothing', 'add']</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># and yes, that config can now be read</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config_reader</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">config_reader</span><span class="p">)</span>
+<span class="go">['DEFAULT', 'nothing', 'add']</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config_reader</span><span class="p">[</span><span class="s1">'nothing'</span><span class="p">]</span>
+<span class="go">&lt;Section: nothing&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">config_reader</span><span class="p">[</span><span class="s1">'nothing'</span><span class="p">])</span>  <span class="c1"># note that 42 is now a string (that's the ini format for you!)</span>
+<span class="go">{'special': 'about', 'number': '42'}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">config_reader</span><span class="p">[</span><span class="s1">'DEFAULT'</span><span class="p">])</span>  <span class="c1"># and DEFAULT is empty</span>
+<span class="go">{}</span>
+</pre></div>
+</div>
+<p>You can delete sections</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">s</span><span class="p">[</span><span class="s1">'add'</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>But you’ll need to refresh your reader to see the effect.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">config_reader</span><span class="p">)</span>
+<span class="go">['DEFAULT', 'nothing', 'add']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config_reader</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">config_reader</span><span class="p">)</span>
+<span class="go">['DEFAULT', 'nothing']</span>
+</pre></div>
+</div>
+<p>You can use <code class="code docutils literal notranslate"><span class="pre">update</span></code> to write several sections at the same time.
+Note that existing sections will be completely overwritten.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">'nothing'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'like'</span><span class="p">:</span> <span class="s1">'you'</span><span class="p">},</span> <span class="s1">'new_section'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'a'</span><span class="p">:</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">:</span> <span class="s1">'d'</span><span class="p">}})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ConfigReader</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{'DEFAULT': {}, 'nothing': {'like': 'you'}, 'new_section': {'a': 'b', 'c': 'd'}}</span>
+</pre></div>
+</div>
+<p><strong>Warning: On the other hand, updating a section will not persist the updates</strong></p>
+<p>Updates are automatically persisted at the top level, as shown in the example above.
+This means you can change a section entirely, but partial updates of a section
+will not be persisted.</p>
+<p>You’ll see the updated section in the store.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="p">[</span><span class="s1">'nothing'</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">'something'</span><span class="p">:</span> <span class="s1">'else'</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s1">'nothing'</span><span class="p">])</span>
+<span class="go">{'like': 'you', 'something': 'else'}</span>
+</pre></div>
+</div>
+<p>But it’s not automatically persisted</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">ConfigReader</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)[</span><span class="s1">'nothing'</span><span class="p">])</span>
+<span class="go">{'like': 'you'}</span>
+</pre></div>
+</div>
+<p>… unless you ask for it explicitly</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">persist</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">ConfigReader</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)[</span><span class="s1">'nothing'</span><span class="p">])</span>
+<span class="go">{'like': 'you', 'something': 'else'}</span>
+</pre></div>
+</div>
+<p class="rubric">TODO: Could make section updates auto-persistent by wrapping configparser.SectionProxy</p>
+<p>For your convenience, the ConfigStore is also a context manager, that will,
+you guessed, persist stuff when (and only when) you exit it.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ConfigReader</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{'DEFAULT': {}, 'nothing': {'like': 'you', 'something': 'else'}, 'new_section': {'a': 'b', 'c': 'd'}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ConfigStore</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">del</span> <span class="n">s</span><span class="p">[</span><span class="s1">'new_section'</span><span class="p">]</span>  <span class="c1"># that's usually immediately persisted. This time, it'll wait to be</span>
+<span class="gp">... </span>    <span class="k">del</span> <span class="n">s</span><span class="p">[</span><span class="s1">'nothing'</span><span class="p">][</span><span class="s1">'something'</span><span class="p">]</span>  <span class="c1"># delete the something field of nothing section</span>
+<span class="gp">... </span>    <span class="n">s</span><span class="p">[</span><span class="s1">'nothing'</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">'like'</span><span class="p">:</span> <span class="s1">'that'</span><span class="p">,</span> <span class="s1">'ever'</span><span class="p">:</span> <span class="s1">'happened'</span><span class="p">})</span>  <span class="c1"># update 'like' config and add an 'ever' one</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ConfigReader</span><span class="p">(</span><span class="n">ini_filepath</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="go">{'DEFAULT': {}, 'nothing': {'like': 'that', 'ever': 'happened'}}</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="config2py.s_configparser.ConfigStore.BasicInterpolation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">BasicInterpolation</span></span><a class="headerlink" href="#config2py.s_configparser.ConfigStore.BasicInterpolation" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Interpolation</span></code></p>
+<p>Interpolation as implemented in the classic ConfigParser.</p>
+<p>The option values can contain format strings which refer to other values in
+the same section, or values in the special default section.</p>
+<p>For example:</p>
+<blockquote>
+<div><p>something: %(dir)s/whatever</p>
+</div></blockquote>
+<p>would resolve the “%(dir)s” to the value of dir.  All reference
+expansions are done late, on demand. If a user needs to use a bare % in
+a configuration file, she can escape it by writing %%. Other % usage
+is considered a user error and raises <code class="code docutils literal notranslate"><span class="pre">InterpolationSyntaxError</span></code>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="config2py.s_configparser.ConfigStore.ExtendedInterpolation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ExtendedInterpolation</span></span><a class="headerlink" href="#config2py.s_configparser.ConfigStore.ExtendedInterpolation" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Interpolation</span></code></p>
+<p>Advanced variant of interpolation, supports the syntax used by
+<code class="code docutils literal notranslate"><span class="pre">zc.buildout</span></code>. Enables interpolation between sections.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.s_configparser.ConfigStore.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#ConfigStore.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.s_configparser.ConfigStore.get" title="Link to this definition">#</a></dt>
+<dd><p>Needed because the Store.get didn’t catch the NoSectionError</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.s_configparser.ConfigStore.persist">
+<span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#ConfigStore.persist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.s_configparser.ConfigStore.persist" title="Link to this definition">#</a></dt>
+<dd><p>Persists the data (if not in a context manager).
+Persists means to call</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.s_configparser.postprocess_ini_section_items">
+<span class="sig-prename descclassname"><span class="pre">config2py.s_configparser.</span></span><span class="sig-name descname"><span class="pre">postprocess_ini_section_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#postprocess_ini_section_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.s_configparser.postprocess_ini_section_items" title="Link to this definition">#</a></dt>
+<dd><p>Transform newline-separated string values into actual list of strings (assuming that intent)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">section_from_ini</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">'name'</span><span class="p">:</span> <span class="s1">'aspyre'</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">'keywords'</span><span class="p">:</span> <span class="s1">'</span><span class="se">\n\t</span><span class="s1">documentation</span><span class="se">\n\t</span><span class="s1">packaging</span><span class="se">\n\t</span><span class="s1">publishing'</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">section_for_python</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">postprocess_ini_section_items</span><span class="p">(</span><span class="n">section_from_ini</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">section_for_python</span>
+<span class="go">{'name': 'aspyre', 'keywords': ['documentation', 'packaging', 'publishing']}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.s_configparser.preprocess_ini_section_items">
+<span class="sig-prename descclassname"><span class="pre">config2py.s_configparser.</span></span><span class="sig-name descname"><span class="pre">preprocess_ini_section_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#preprocess_ini_section_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.s_configparser.preprocess_ini_section_items" title="Link to this definition">#</a></dt>
+<dd><p>Transform list values into newline-separated strings, in view of writing the value to a ini formatted section</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">section</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s1">'name'</span><span class="p">:</span> <span class="s1">'aspyre'</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">'keywords'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'documentation'</span><span class="p">,</span> <span class="s1">'packaging'</span><span class="p">,</span> <span class="s1">'publishing'</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">for_ini</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">preprocess_ini_section_items</span><span class="p">(</span><span class="n">section</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">'keywords ='</span> <span class="o">+</span> <span class="n">for_ini</span><span class="p">[</span><span class="s1">'keywords'</span><span class="p">])</span>
+<span class="go">keywords =</span>
+<span class="go">    documentation</span>
+<span class="go">    packaging</span>
+<span class="go">    publishing</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.s_configparser.super_and_persist">
+<span class="sig-prename descclassname"><span class="pre">config2py.s_configparser.</span></span><span class="sig-name descname"><span class="pre">super_and_persist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">super_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#super_and_persist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.s_configparser.super_and_persist" title="Link to this definition">#</a></dt>
+<dd><p>To be able to do this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>__setitem__ = super_and_persist(ConfigParser, '__setitem__')
+__delitem__ = super_and_persist(ConfigParser, '__delitem__')
+</pre></div>
+</div>
+<p>in your class definition block.</p>
+<p>I thought I needed to wrap more method this way, but as it turns out, I might not,
+so I prefer open code.</p>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="config2py.errors.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">config2py.errors</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="config2py.scrap.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">config2py.scrap</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.s_configparser.ConfigReader"><code class="docutils literal notranslate"><span class="pre">ConfigReader</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.s_configparser.ConfigReader.persist"><code class="docutils literal notranslate"><span class="pre">ConfigReader.persist()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.s_configparser.ConfigStore"><code class="docutils literal notranslate"><span class="pre">ConfigStore</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.s_configparser.ConfigStore.BasicInterpolation"><code class="docutils literal notranslate"><span class="pre">ConfigStore.BasicInterpolation</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.s_configparser.ConfigStore.ExtendedInterpolation"><code class="docutils literal notranslate"><span class="pre">ConfigStore.ExtendedInterpolation</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.s_configparser.ConfigStore.get"><code class="docutils literal notranslate"><span class="pre">ConfigStore.get()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.s_configparser.ConfigStore.persist"><code class="docutils literal notranslate"><span class="pre">ConfigStore.persist()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.s_configparser.postprocess_ini_section_items"><code class="docutils literal notranslate"><span class="pre">postprocess_ini_section_items()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.s_configparser.preprocess_ini_section_items"><code class="docutils literal notranslate"><span class="pre">preprocess_ini_section_items()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.s_configparser.super_and_persist"><code class="docutils literal notranslate"><span class="pre">super_and_persist()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/_autosummary/config2py.s_configparser.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

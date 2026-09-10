@@ -1,0 +1,12 @@
+config2py.tests.utils\_for\_testing
+===================================
+
+.. automodule:: config2py.tests.utils_for_testing
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      user_input_patch
+   

@@ -1,0 +1,6 @@
+config2py.scrap
+===============
+
+.. automodule:: config2py.scrap
+
+   

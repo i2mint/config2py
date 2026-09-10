@@ -1,0 +1,1370 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="alternate" type="text/markdown" href="config2py.util.html.md">
+<link rel="describedby" href="../llms.txt" type="text/markdown">
+    <title>config2py.util &#8212; config2py</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/epythet.css?v=54f41860" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../_static/documentation_options.js?v=f2b49961"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=fd10adb8"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/config2py.util';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="config2py.tools" href="config2py.tools.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.50" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">config2py</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/config2py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/config2py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="config2py.html">config2py</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="config2py.base.html">config2py.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.codecs.html">config2py.codecs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.errors.html">config2py.errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.s_configparser.html">config2py.s_configparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.scrap.html">config2py.scrap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.sync_store.html">config2py.sync_store</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="config2py.tests.html">config2py.tests</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="config2py.tests.test_sync_store.html">config2py.tests.test_sync_store</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config2py.tests.utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.tools.html">config2py.tools</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">config2py.util</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="config2py.html" class="nav-link">config2py</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">config2py.util</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-config2py.util">
+<span id="config2py-util"></span><h1>config2py.util<a class="headerlink" href="#module-config2py.util" title="Link to this heading">#</a></h1>
+<p>Utility functions for config2py.</p>
+<p class="rubric">Module Attributes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.FolderSpec" title="config2py.util.FolderSpec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FolderSpec</span></code></a>(env_var, default_path, subpath)</p></td>
+<td><p>Declarative description of where a given folder kind lives on a platform.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.always_true" title="config2py.util.always_true"><code class="xref py py-obj docutils literal notranslate"><span class="pre">always_true</span></code></a>(x)</p></td>
+<td><p>Function that just returns True.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.app_folder_standards" title="config2py.util.app_folder_standards"><code class="xref py py-obj docutils literal notranslate"><span class="pre">app_folder_standards</span></code></a>([os_name])</p></td>
+<td><p>Return the <code class="docutils literal notranslate"><span class="pre">{folder_kind:</span> <span class="pre">FolderSpec}</span></code> table for the given <code class="docutils literal notranslate"><span class="pre">os.name</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.ask_user_for_input" title="config2py.util.ask_user_for_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ask_user_for_input</span></code></a>(prompt[, default, ...])</p></td>
+<td><p>Ask the user for input, optionally masking, validating and transforming the input.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.create_directories" title="config2py.util.create_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_directories</span></code></a>(dirpath[, max_dirs_to_make])</p></td>
+<td><p>Create directories up to a specified limit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.ensure_seeded" title="config2py.util.ensure_seeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_seeded</span></code></a>(target, package_name, ...[, ...])</p></td>
+<td><p>Copy a bundled seed file to <em>target</em> if it does not already exist.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.extract_variable_declarations" title="config2py.util.extract_variable_declarations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_variable_declarations</span></code></a>(string[, expand])</p></td>
+<td><p>Reads the contents of a config file, extracting Unix-style environment variable declarations of the form <code class="code docutils literal notranslate"><span class="pre">export</span> <span class="pre">{NAME}={value}</span></code>, returning a dictionary of <code class="code docutils literal notranslate"><span class="pre">{NAME:</span> <span class="pre">value,</span> <span class="pre">...}</span></code> pairs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.get_app_folder" title="config2py.util.get_app_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_app_folder</span></code></a>([app_name, setup_callback, ...])</p></td>
+<td><p>Retrieve or create the app directory specific to the given app name and folder kind.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.get_app_rootdir" title="config2py.util.get_app_rootdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_app_rootdir</span></code></a>([folder_kind, ensure_exists])</p></td>
+<td><p>Returns the root directory for a specific folder kind.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.get_configs_directory_for_app" title="config2py.util.get_configs_directory_for_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_directory_for_app</span></code></a>([app_name, ...])</p></td>
+<td><p>Retrieve or create the configs directory specific to the given app name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.get_configs_folder_for_app" title="config2py.util.get_configs_folder_for_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_folder_for_app</span></code></a>([app_name, ...])</p></td>
+<td><p>Retrieve or create the configs directory specific to the given app name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.identity" title="config2py.util.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(x)</p></td>
+<td><p>Function that just returns its argument.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.is_not_empty" title="config2py.util.is_not_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_not_empty</span></code></a>(x)</p></td>
+<td><p>Function that returns True if x is not empty.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.is_repl" title="config2py.util.is_repl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_repl</span></code></a>()</p></td>
+<td><p>Determines if the Python interpreter is running in REPL.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.parse_assignments_from_py_source" title="config2py.util.parse_assignments_from_py_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_assignments_from_py_source</span></code></a>(source_code, *)</p></td>
+<td><p>Parse assignments from python source code.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.system_default_for_app_data_folder" title="config2py.util.system_default_for_app_data_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">system_default_for_app_data_folder</span></code></a>([...])</p></td>
+<td><p>Get the system default folder for <code class="docutils literal notranslate"><span class="pre">folder_kind</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.AppData" title="config2py.util.AppData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AppData</span></code></a>(app_name, *[, package_name, ...])</p></td>
+<td><p>Per-user data directory facade for a Python application.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.EnvironmentVariables" title="config2py.util.EnvironmentVariables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EnvironmentVariables</span></code></a>()</p></td>
+<td><p>Class to wrap environment variables without revealing sensitive information.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.FolderSpec" title="config2py.util.FolderSpec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FolderSpec</span></code></a>(env_var, default_path, subpath)</p></td>
+<td><p>Declarative description of where a given folder kind lives on a platform.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="config2py.util.AppData">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">AppData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">package_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_seed_data'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#AppData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.AppData" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Per-user data directory facade for a Python application.</p>
+<p>Binds an application name (and optional Python package name) once and
+provides convenient access to:</p>
+<ul class="simple">
+<li><p><strong>resources</strong> — editable reference data seeded from the package on
+first access (<code class="docutils literal notranslate"><span class="pre">~/.local/share/&lt;app&gt;/resources/</span></code>).</p></li>
+<li><p><strong>config</strong> — user preference files, also seeded on first access
+(<code class="docutils literal notranslate"><span class="pre">~/.config/&lt;app&gt;/</span></code>).</p></li>
+<li><p><strong>artifact directories</strong> — runtime-generated data organised by kind
+(<code class="docutils literal notranslate"><span class="pre">~/.local/share/&lt;app&gt;/artifacts/&lt;kind&gt;/</span></code>).</p></li>
+</ul>
+<p>Seed files are read via <code class="docutils literal notranslate"><span class="pre">importlib.resources</span></code> from
+<code class="docutils literal notranslate"><span class="pre">&lt;package_name&gt;._seed_data.{resources,config}/</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The application name used for the directory under the
+XDG root (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;my_app&quot;</span></code> → <code class="docutils literal notranslate"><span class="pre">~/.local/share/my_app</span></code>).</p></li>
+<li><p><strong>package_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – The top-level Python package that contains the
+<code class="docutils literal notranslate"><span class="pre">_seed_data</span></code> directory.  Defaults to <em>app_name</em>.</p></li>
+<li><p><strong>seed_data_dir</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the seed-data sub-package inside the
+Python package (default <code class="docutils literal notranslate"><span class="pre">&quot;_seed_data&quot;</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">app</span> <span class="o">=</span> <span class="n">AppData</span><span class="p">(</span><span class="s2">"myapp"</span><span class="p">,</span> <span class="n">package_name</span><span class="o">=</span><span class="s2">"myapp"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">app</span><span class="o">.</span><span class="n">app_folder</span><span class="p">()</span>
+<span class="go">PosixPath('/Users/.../.local/share/myapp')</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.util.AppData.app_folder">
+<span class="sig-name descname"><span class="pre">app_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#AppData.app_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.AppData.app_folder" title="Link to this definition">#</a></dt>
+<dd><p>Return the app directory for <em>folder_kind</em>, creating it if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.util.AppData.get_artifact_dir">
+<span class="sig-name descname"><span class="pre">get_artifact_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#AppData.get_artifact_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.AppData.get_artifact_dir" title="Link to this definition">#</a></dt>
+<dd><p>Return (and create) an artifact sub-directory for <em>kind</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.util.AppData.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#AppData.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.AppData.get_config" title="Link to this definition">#</a></dt>
+<dd><p>Return a config file path, seeding from package data if missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="config2py.util.AppData.get_resource">
+<span class="sig-name descname"><span class="pre">get_resource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#AppData.get_resource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.AppData.get_resource" title="Link to this definition">#</a></dt>
+<dd><p>Return a user resource path, seeding from package data if missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="config2py.util.EnvironmentVariables">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">EnvironmentVariables</span></span><a class="reference internal" href="../_modules/config2py/util.html#EnvironmentVariables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.EnvironmentVariables" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.ChainMap" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChainMap</span></code></a></p>
+<p>Class to wrap environment variables without revealing sensitive information.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="config2py.util.FolderSpec">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">FolderSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subpath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#config2py.util.FolderSpec" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<p>Declarative description of where a given folder kind lives on a platform.</p>
+<p><code class="docutils literal notranslate"><span class="pre">env_var</span></code> is the platform-standard environment variable that, when set,
+names the <em>root</em> folder.  <code class="docutils literal notranslate"><span class="pre">default_path</span></code> is the root to use when that
+variable is absent (<code class="docutils literal notranslate"><span class="pre">~</span></code> is expanded).  <code class="docutils literal notranslate"><span class="pre">subpath</span></code> is a relative path
+appended to the root; it exists because some platform standards place a
+folder kind <em>inside</em> another kind’s root rather than under its own variable
+(e.g. Windows cache lives at <code class="docutils literal notranslate"><span class="pre">%LOCALAPPDATA%\\Temp</span></code>).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="config2py.util.FolderSpec.default_path">
+<span class="sig-name descname"><span class="pre">default_path</span></span><a class="headerlink" href="#config2py.util.FolderSpec.default_path" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="config2py.util.FolderSpec.env_var">
+<span class="sig-name descname"><span class="pre">env_var</span></span><a class="headerlink" href="#config2py.util.FolderSpec.env_var" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="config2py.util.FolderSpec.subpath">
+<span class="sig-name descname"><span class="pre">subpath</span></span><a class="headerlink" href="#config2py.util.FolderSpec.subpath" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.always_true">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">always_true</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#always_true"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.always_true" title="Link to this definition">#</a></dt>
+<dd><p>Function that just returns True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.app_folder_standards">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">app_folder_standards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">os_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'posix'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#app_folder_standards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.app_folder_standards" title="Link to this definition">#</a></dt>
+<dd><p>Return the <code class="docutils literal notranslate"><span class="pre">{folder_kind:</span> <span class="pre">FolderSpec}</span></code> table for the given <code class="docutils literal notranslate"><span class="pre">os.name</span></code>.</p>
+<p>This is the <em>single</em> place where config2py branches on the operating
+system: everything else consumes the returned table.  Exposing it as a
+function (rather than an <code class="docutils literal notranslate"><span class="pre">if</span></code> at import time) keeps the branch testable
+on any platform – callers can ask for the table of an OS they are not
+running on.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>os_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – An <code class="docutils literal notranslate"><span class="pre">os.name</span></code> value; <code class="docutils literal notranslate"><span class="pre">&quot;nt&quot;</span></code> selects the Windows standards,
+anything else selects the XDG Base Directory standards.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">app_folder_standards</span><span class="p">(</span><span class="s2">"nt"</span><span class="p">)[</span><span class="s2">"cache"</span><span class="p">]</span>
+<span class="go">FolderSpec(env_var='LOCALAPPDATA', default_path='~\\AppData\\Local', subpath='Temp')</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">app_folder_standards</span><span class="p">(</span><span class="s2">"posix"</span><span class="p">)[</span><span class="s2">"cache"</span><span class="p">]</span>
+<span class="go">FolderSpec(env_var='XDG_CACHE_HOME', default_path='~/.cache', subpath='')</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.ask_user_for_input">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">ask_user_for_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masking_toggle_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">identity&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#ask_user_for_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.ask_user_for_input" title="Link to this definition">#</a></dt>
+<dd><p>Ask the user for input, optionally masking, validating and transforming the input.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Prompt to display to the user</p></li>
+<li><p><strong>default</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Default value to return if the user enters nothing</p></li>
+<li><p><strong>mask_input</strong> – Whether to mask the user’s input</p></li>
+<li><p><strong>masking_toggle_str</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – String to toggle input masking. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, no toggle
+is available. If not <code class="docutils literal notranslate"><span class="pre">None</span></code> (a common choice is the empty string)
+the user can enter this string to toggle input masking.</p></li>
+<li><p><strong>egress</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a></span>) – Function to apply to the user’s response before returning it.
+This can be used to validate the response, for example.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The user’s response (or the default value if the user entered nothing)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.create_directories">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">create_directories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dirs_to_make</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#create_directories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.create_directories" title="Link to this definition">#</a></dt>
+<dd><p>Create directories up to a specified limit.</p>
+<p class="rubric">Parameters</p>
+<p>dirpath (str): The directory path to create.
+max_dirs_to_make (int, optional): The maximum number of directories to create. If None, there’s no limit.</p>
+<p class="rubric">Returns</p>
+<p>bool: True if the directory was created successfully, False otherwise.</p>
+<p class="rubric">Raises</p>
+<p>ValueError: If max_dirs_to_make is negative.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">temp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">create_directories</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">max_dirs_to_make</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">create_directories</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="n">max_dirs_to_make</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">target_dir</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span>  <span class="c1"># Cleanup</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">temp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">,</span> <span class="s1">'b'</span><span class="p">,</span> <span class="s1">'c'</span><span class="p">,</span> <span class="s1">'d'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">create_directories</span><span class="p">(</span><span class="n">target_dir</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">target_dir</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span>  <span class="c1"># Cleanup</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.ensure_seeded">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">ensure_seeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">package_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_subpackage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_seed_data'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#ensure_seeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.ensure_seeded" title="Link to this definition">#</a></dt>
+<dd><p>Copy a bundled seed file to <em>target</em> if it does not already exist.</p>
+<p>Reads the seed from <code class="docutils literal notranslate"><span class="pre">importlib.resources.files(</span>
+<span class="pre">&quot;{package_name}.{seed_data_dir}.{seed_subpackage}&quot;)</span> <span class="pre">/</span> <span class="pre">filename</span></code>
+and writes its bytes to <em>target</em>.  If <em>target</em> already exists, this is
+a no-op (user edits are preserved).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>]</span>) – Destination path for the seeded file.</p></li>
+<li><p><strong>package_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Top-level Python package that ships the seed data.</p></li>
+<li><p><strong>seed_subpackage</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Subdirectory inside <code class="docutils literal notranslate"><span class="pre">_seed_data</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;resources&quot;</span></code>
+or <code class="docutils literal notranslate"><span class="pre">&quot;config&quot;</span></code>).</p></li>
+<li><p><strong>filename</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the seed file.</p></li>
+<li><p><strong>seed_data_dir</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the seed-data directory inside <em>package_name</em>
+(default <code class="docutils literal notranslate"><span class="pre">&quot;_seed_data&quot;</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The resolved <em>target</em> as a <code class="docutils literal notranslate"><span class="pre">Path</span></code>.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_seeded</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ensure_seeded("/tmp/myfile.txt", "mypkg", "resources", "myfile.txt")</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.extract_variable_declarations">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">extract_variable_declarations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#extract_variable_declarations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.extract_variable_declarations" title="Link to this definition">#</a></dt>
+<dd><p>Reads the contents of a config file, extracting Unix-style environment variable
+declarations of the form
+<code class="code docutils literal notranslate"><span class="pre">export</span> <span class="pre">{NAME}={value}</span></code>, returning a dictionary of <code class="code docutils literal notranslate"><span class="pre">{NAME:</span> <span class="pre">value,</span> <span class="pre">...}</span></code> pairs.</p>
+<p>See issue for more info and applications:
+<a class="github reference external" href="https://github.com/i2mint/config2py/issues/2">i2mint/config2py#2</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – String to extract variable declarations from</p></li>
+<li><p><strong>expand</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – An optional dictionary of variable names and values to use to
+expand variables that are referenced (i.e. <code class="docutils literal notranslate"><span class="pre">$NAME</span></code> is a reference to <code class="docutils literal notranslate"><span class="pre">NAME</span></code>
+variable) in the values of config variables.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code>, <code class="docutils literal notranslate"><span class="pre">expand</span></code> is replaced with an empty dictionary, which means we
+want to expand variables recursively, but we have no references to seed the
+expansion with. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, <code class="docutils literal notranslate"><span class="pre">expand</span></code> is replaced with <code class="docutils literal notranslate"><span class="pre">None</span></code>, indicating
+that we don’t want to expand any variables.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary of variable names and values.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="s1">'export ENVIRONMENT="dev"</span><span class="se">\n</span><span class="s1">export PORT=8080</span><span class="se">\n</span><span class="s1">export DEBUG=true'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">extract_variable_declarations</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="go">{'ENVIRONMENT': 'dev', 'PORT': '8080', 'DEBUG': 'true'}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="s1">'export PATH="$PATH:/usr/local/bin"</span><span class="se">\n</span><span class="s1">export EDITOR="nano"'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">extract_variable_declarations</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="go">{'PATH': '$PATH:/usr/local/bin', 'EDITOR': 'nano'}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">expand</span></code> argument can be used to expand variables in the values of other.</p>
+<p>Let’s add a reference to the <code class="docutils literal notranslate"><span class="pre">PATH</span></code> variable in the <code class="docutils literal notranslate"><span class="pre">EDITOR</span></code> variable:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="s1">'export PATH="$PATH:/usr/local/bin"</span><span class="se">\n</span><span class="s1">export EDITOR="nano $PATH"'</span>
+</pre></div>
+</div>
+<p>If you specify a value for <code class="docutils literal notranslate"><span class="pre">PATH</span></code> in the <code class="docutils literal notranslate"><span class="pre">expand</span></code> argument, you’ll see it
+reflected in the <code class="docutils literal notranslate"><span class="pre">PATH</span></code> variable (self reference) and the <code class="docutils literal notranslate"><span class="pre">EDITOR</span></code> variable.
+(Note if you changed the order of <code class="docutils literal notranslate"><span class="pre">PATH</span></code> and <code class="docutils literal notranslate"><span class="pre">EDITOR</span></code> in the <code class="docutils literal notranslate"><span class="pre">config</span></code>,
+you wouldn’t get the same thing though.)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extract_variable_declarations</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="p">{</span><span class="s1">'PATH'</span><span class="p">:</span> <span class="s1">'/root'</span><span class="p">})</span>
+<span class="go">{'PATH': '/root:/usr/local/bin', 'EDITOR': 'nano /root:/usr/local/bin'}</span>
+</pre></div>
+</div>
+<p>If you specify <code class="docutils literal notranslate"><span class="pre">expand={}</span></code>, the first <code class="docutils literal notranslate"><span class="pre">PATH</span></code> variable will not be expanded,
+since PATH is not in the expand dictionary. But the second <code class="docutils literal notranslate"><span class="pre">PATH</span></code> variable,
+referenced in the definition of <code class="docutils literal notranslate"><span class="pre">EDITOR</span></code> will be expanded, since it is in the
+expand dictionary.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extract_variable_declarations</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="p">{})</span>
+<span class="go">{'PATH': '$PATH:/usr/local/bin', 'EDITOR': 'nano $PATH:/usr/local/bin'}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.get_app_config_folder">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_config_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config2py'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#config2py.util.get_app_config_folder" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve or create the app directory specific to the given app name and folder kind.</p>
+<p>The folder kind determines where the app’s files are stored:
+Here are concise explanations for each folder kind:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">config</span><span class="o">**</span><span class="p">:</span> <span class="n">User</span> <span class="n">preferences</span> <span class="ow">and</span> <span class="n">settings</span> <span class="n">files</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">API</span> <span class="n">keys</span><span class="p">,</span> <span class="n">theme</span> <span class="n">preferences</span><span class="p">,</span> <span class="n">editor</span> <span class="n">settings</span><span class="p">)</span><span class="o">.</span> <span class="n">Files</span> <span class="n">users</span> <span class="n">might</span> <span class="n">edit</span> <span class="n">manually</span> <span class="ow">or</span> <span class="n">that</span> <span class="n">define</span> <span class="n">how</span> <span class="n">the</span> <span class="n">app</span> <span class="n">behaves</span><span class="o">.</span>
+<span class="o">**</span><span class="n">data</span><span class="o">**</span><span class="p">:</span> <span class="n">Essential</span> <span class="n">user</span><span class="o">-</span><span class="n">created</span> <span class="n">content</span> <span class="ow">and</span> <span class="n">application</span> <span class="n">state</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">databases</span><span class="p">,</span> <span class="n">saved</span> <span class="n">games</span><span class="p">,</span> <span class="n">user</span> <span class="n">documents</span><span class="p">,</span> <span class="n">session</span> <span class="n">files</span><span class="p">)</span><span class="o">.</span> <span class="n">Data</span> <span class="n">that</span> <span class="n">should</span> <span class="n">be</span> <span class="n">backed</span> <span class="n">up</span> <span class="ow">and</span> <span class="n">persists</span> <span class="n">across</span> <span class="n">updates</span><span class="o">.</span>
+<span class="o">**</span><span class="n">cache</span><span class="o">**</span><span class="p">:</span> <span class="n">Temporary</span><span class="p">,</span> <span class="n">regeneratable</span> <span class="n">files</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">downloaded</span> <span class="n">images</span><span class="p">,</span> <span class="n">compiled</span> <span class="n">assets</span><span class="p">,</span> <span class="n">web</span> <span class="n">cache</span><span class="p">)</span><span class="o">.</span> <span class="n">Can</span> <span class="n">be</span> <span class="n">safely</span> <span class="n">deleted</span> <span class="n">to</span> <span class="n">free</span> <span class="n">space</span> <span class="n">without</span> <span class="n">losing</span> <span class="n">user</span> <span class="n">work</span><span class="o">.</span>
+<span class="o">**</span><span class="n">state</span><span class="o">**</span><span class="p">:</span> <span class="n">Application</span> <span class="n">state</span> <span class="ow">and</span> <span class="n">logs</span> <span class="n">that</span> <span class="n">persist</span> <span class="n">between</span> <span class="n">sessions</span> <span class="n">but</span> <span class="n">aren</span><span class="s1">'t critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn'</span><span class="n">t</span> <span class="n">be</span> <span class="n">auto</span><span class="o">-</span><span class="n">deleted</span><span class="o">.</span>
+<span class="o">**</span><span class="n">runtime</span><span class="o">**</span><span class="p">:</span> <span class="n">Temporary</span> <span class="n">runtime</span> <span class="n">files</span> <span class="n">that</span> <span class="n">only</span> <span class="n">exist</span> <span class="k">while</span> <span class="n">the</span> <span class="n">app</span> <span class="n">runs</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">PID</span> <span class="n">files</span><span class="p">,</span> <span class="n">Unix</span> <span class="n">sockets</span><span class="p">,</span> <span class="n">lock</span> <span class="n">files</span><span class="p">,</span> <span class="n">named</span> <span class="n">pipes</span><span class="p">)</span><span class="o">.</span> <span class="n">Typically</span> <span class="n">cleared</span> <span class="n">on</span> <span class="n">logout</span><span class="o">/</span><span class="n">reboot</span><span class="o">.</span>
+<span class="o">**</span><span class="n">TL</span><span class="p">;</span><span class="n">DR</span><span class="o">**</span><span class="p">:</span> <span class="n">config</span> <span class="o">=</span> <span class="n">settings</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">user</span> <span class="n">files</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">disposable</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">logs</span><span class="o">/</span><span class="n">history</span><span class="p">,</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">process</span> <span class="n">files</span><span class="o">.</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_name</strong> – Name of the app for which the directory is needed.</p></li>
+<li><p><strong>setup_callback</strong> – A callback function to initialize the directory.
+Default is _default_folder_setup.</p></li>
+<li><p><strong>ensure_exists</strong> – Whether to ensure the directory exists.</p></li>
+<li><p><strong>folder_kind</strong> – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+Default is ‘config’ for backward compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the app directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a></p>
+</dd>
+</dl>
+<p>By default, the app will be “config2py” and folder_kind will be “config”.
+The exact text of the path is platform-specific (<code class="docutils literal notranslate"><span class="pre">~/.config/config2py</span></code> under
+the XDG standards, <code class="docutils literal notranslate"><span class="pre">%APPDATA%\config2py</span></code> on Windows), so we assert the
+properties that hold everywhere: it is an absolute path named after the app,
+sitting directly inside the ‘config’ root directory.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">'config2py'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="o">==</span> <span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">'config'</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>You can specify a different app name and folder kind:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span>
+<span class="go">'/Users/.../.local/share/my_app'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'cache'</span><span class="p">)</span>
+<span class="go">'/Users/.../.cache/my_app'</span>
+</pre></div>
+</div>
+<p>You can also specify a path relative to the app root directory:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'another/app/subfolder'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span>
+<span class="go">'/Users/.../.local/share/another/app/subfolder'</span>
+</pre></div>
+</div>
+<p>If ensure_exists is True, the directory will be created and initialized
+with the setup_callback:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.get_app_data_directory">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config2py'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#config2py.util.get_app_data_directory" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve or create the app directory specific to the given app name and folder kind.</p>
+<p>The folder kind determines where the app’s files are stored:
+Here are concise explanations for each folder kind:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">config</span><span class="o">**</span><span class="p">:</span> <span class="n">User</span> <span class="n">preferences</span> <span class="ow">and</span> <span class="n">settings</span> <span class="n">files</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">API</span> <span class="n">keys</span><span class="p">,</span> <span class="n">theme</span> <span class="n">preferences</span><span class="p">,</span> <span class="n">editor</span> <span class="n">settings</span><span class="p">)</span><span class="o">.</span> <span class="n">Files</span> <span class="n">users</span> <span class="n">might</span> <span class="n">edit</span> <span class="n">manually</span> <span class="ow">or</span> <span class="n">that</span> <span class="n">define</span> <span class="n">how</span> <span class="n">the</span> <span class="n">app</span> <span class="n">behaves</span><span class="o">.</span>
+<span class="o">**</span><span class="n">data</span><span class="o">**</span><span class="p">:</span> <span class="n">Essential</span> <span class="n">user</span><span class="o">-</span><span class="n">created</span> <span class="n">content</span> <span class="ow">and</span> <span class="n">application</span> <span class="n">state</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">databases</span><span class="p">,</span> <span class="n">saved</span> <span class="n">games</span><span class="p">,</span> <span class="n">user</span> <span class="n">documents</span><span class="p">,</span> <span class="n">session</span> <span class="n">files</span><span class="p">)</span><span class="o">.</span> <span class="n">Data</span> <span class="n">that</span> <span class="n">should</span> <span class="n">be</span> <span class="n">backed</span> <span class="n">up</span> <span class="ow">and</span> <span class="n">persists</span> <span class="n">across</span> <span class="n">updates</span><span class="o">.</span>
+<span class="o">**</span><span class="n">cache</span><span class="o">**</span><span class="p">:</span> <span class="n">Temporary</span><span class="p">,</span> <span class="n">regeneratable</span> <span class="n">files</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">downloaded</span> <span class="n">images</span><span class="p">,</span> <span class="n">compiled</span> <span class="n">assets</span><span class="p">,</span> <span class="n">web</span> <span class="n">cache</span><span class="p">)</span><span class="o">.</span> <span class="n">Can</span> <span class="n">be</span> <span class="n">safely</span> <span class="n">deleted</span> <span class="n">to</span> <span class="n">free</span> <span class="n">space</span> <span class="n">without</span> <span class="n">losing</span> <span class="n">user</span> <span class="n">work</span><span class="o">.</span>
+<span class="o">**</span><span class="n">state</span><span class="o">**</span><span class="p">:</span> <span class="n">Application</span> <span class="n">state</span> <span class="ow">and</span> <span class="n">logs</span> <span class="n">that</span> <span class="n">persist</span> <span class="n">between</span> <span class="n">sessions</span> <span class="n">but</span> <span class="n">aren</span><span class="s1">'t critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn'</span><span class="n">t</span> <span class="n">be</span> <span class="n">auto</span><span class="o">-</span><span class="n">deleted</span><span class="o">.</span>
+<span class="o">**</span><span class="n">runtime</span><span class="o">**</span><span class="p">:</span> <span class="n">Temporary</span> <span class="n">runtime</span> <span class="n">files</span> <span class="n">that</span> <span class="n">only</span> <span class="n">exist</span> <span class="k">while</span> <span class="n">the</span> <span class="n">app</span> <span class="n">runs</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">PID</span> <span class="n">files</span><span class="p">,</span> <span class="n">Unix</span> <span class="n">sockets</span><span class="p">,</span> <span class="n">lock</span> <span class="n">files</span><span class="p">,</span> <span class="n">named</span> <span class="n">pipes</span><span class="p">)</span><span class="o">.</span> <span class="n">Typically</span> <span class="n">cleared</span> <span class="n">on</span> <span class="n">logout</span><span class="o">/</span><span class="n">reboot</span><span class="o">.</span>
+<span class="o">**</span><span class="n">TL</span><span class="p">;</span><span class="n">DR</span><span class="o">**</span><span class="p">:</span> <span class="n">config</span> <span class="o">=</span> <span class="n">settings</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">user</span> <span class="n">files</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">disposable</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">logs</span><span class="o">/</span><span class="n">history</span><span class="p">,</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">process</span> <span class="n">files</span><span class="o">.</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_name</strong> – Name of the app for which the directory is needed.</p></li>
+<li><p><strong>setup_callback</strong> – A callback function to initialize the directory.
+Default is _default_folder_setup.</p></li>
+<li><p><strong>ensure_exists</strong> – Whether to ensure the directory exists.</p></li>
+<li><p><strong>folder_kind</strong> – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+Default is ‘config’ for backward compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the app directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a></p>
+</dd>
+</dl>
+<p>By default, the app will be “config2py” and folder_kind will be “config”.
+The exact text of the path is platform-specific (<code class="docutils literal notranslate"><span class="pre">~/.config/config2py</span></code> under
+the XDG standards, <code class="docutils literal notranslate"><span class="pre">%APPDATA%\config2py</span></code> on Windows), so we assert the
+properties that hold everywhere: it is an absolute path named after the app,
+sitting directly inside the ‘config’ root directory.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">'config2py'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="o">==</span> <span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">'config'</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>You can specify a different app name and folder kind:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span>
+<span class="go">'/Users/.../.local/share/my_app'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'cache'</span><span class="p">)</span>
+<span class="go">'/Users/.../.cache/my_app'</span>
+</pre></div>
+</div>
+<p>You can also specify a path relative to the app root directory:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'another/app/subfolder'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span>
+<span class="go">'/Users/.../.local/share/another/app/subfolder'</span>
+</pre></div>
+</div>
+<p>If ensure_exists is True, the directory will be created and initialized
+with the setup_callback:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.get_app_data_folder">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_data_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config2py'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#config2py.util.get_app_data_folder" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve or create the app directory specific to the given app name and folder kind.</p>
+<p>The folder kind determines where the app’s files are stored:
+Here are concise explanations for each folder kind:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">config</span><span class="o">**</span><span class="p">:</span> <span class="n">User</span> <span class="n">preferences</span> <span class="ow">and</span> <span class="n">settings</span> <span class="n">files</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">API</span> <span class="n">keys</span><span class="p">,</span> <span class="n">theme</span> <span class="n">preferences</span><span class="p">,</span> <span class="n">editor</span> <span class="n">settings</span><span class="p">)</span><span class="o">.</span> <span class="n">Files</span> <span class="n">users</span> <span class="n">might</span> <span class="n">edit</span> <span class="n">manually</span> <span class="ow">or</span> <span class="n">that</span> <span class="n">define</span> <span class="n">how</span> <span class="n">the</span> <span class="n">app</span> <span class="n">behaves</span><span class="o">.</span>
+<span class="o">**</span><span class="n">data</span><span class="o">**</span><span class="p">:</span> <span class="n">Essential</span> <span class="n">user</span><span class="o">-</span><span class="n">created</span> <span class="n">content</span> <span class="ow">and</span> <span class="n">application</span> <span class="n">state</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">databases</span><span class="p">,</span> <span class="n">saved</span> <span class="n">games</span><span class="p">,</span> <span class="n">user</span> <span class="n">documents</span><span class="p">,</span> <span class="n">session</span> <span class="n">files</span><span class="p">)</span><span class="o">.</span> <span class="n">Data</span> <span class="n">that</span> <span class="n">should</span> <span class="n">be</span> <span class="n">backed</span> <span class="n">up</span> <span class="ow">and</span> <span class="n">persists</span> <span class="n">across</span> <span class="n">updates</span><span class="o">.</span>
+<span class="o">**</span><span class="n">cache</span><span class="o">**</span><span class="p">:</span> <span class="n">Temporary</span><span class="p">,</span> <span class="n">regeneratable</span> <span class="n">files</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">downloaded</span> <span class="n">images</span><span class="p">,</span> <span class="n">compiled</span> <span class="n">assets</span><span class="p">,</span> <span class="n">web</span> <span class="n">cache</span><span class="p">)</span><span class="o">.</span> <span class="n">Can</span> <span class="n">be</span> <span class="n">safely</span> <span class="n">deleted</span> <span class="n">to</span> <span class="n">free</span> <span class="n">space</span> <span class="n">without</span> <span class="n">losing</span> <span class="n">user</span> <span class="n">work</span><span class="o">.</span>
+<span class="o">**</span><span class="n">state</span><span class="o">**</span><span class="p">:</span> <span class="n">Application</span> <span class="n">state</span> <span class="ow">and</span> <span class="n">logs</span> <span class="n">that</span> <span class="n">persist</span> <span class="n">between</span> <span class="n">sessions</span> <span class="n">but</span> <span class="n">aren</span><span class="s1">'t critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn'</span><span class="n">t</span> <span class="n">be</span> <span class="n">auto</span><span class="o">-</span><span class="n">deleted</span><span class="o">.</span>
+<span class="o">**</span><span class="n">runtime</span><span class="o">**</span><span class="p">:</span> <span class="n">Temporary</span> <span class="n">runtime</span> <span class="n">files</span> <span class="n">that</span> <span class="n">only</span> <span class="n">exist</span> <span class="k">while</span> <span class="n">the</span> <span class="n">app</span> <span class="n">runs</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">PID</span> <span class="n">files</span><span class="p">,</span> <span class="n">Unix</span> <span class="n">sockets</span><span class="p">,</span> <span class="n">lock</span> <span class="n">files</span><span class="p">,</span> <span class="n">named</span> <span class="n">pipes</span><span class="p">)</span><span class="o">.</span> <span class="n">Typically</span> <span class="n">cleared</span> <span class="n">on</span> <span class="n">logout</span><span class="o">/</span><span class="n">reboot</span><span class="o">.</span>
+<span class="o">**</span><span class="n">TL</span><span class="p">;</span><span class="n">DR</span><span class="o">**</span><span class="p">:</span> <span class="n">config</span> <span class="o">=</span> <span class="n">settings</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">user</span> <span class="n">files</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">disposable</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">logs</span><span class="o">/</span><span class="n">history</span><span class="p">,</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">process</span> <span class="n">files</span><span class="o">.</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_name</strong> – Name of the app for which the directory is needed.</p></li>
+<li><p><strong>setup_callback</strong> – A callback function to initialize the directory.
+Default is _default_folder_setup.</p></li>
+<li><p><strong>ensure_exists</strong> – Whether to ensure the directory exists.</p></li>
+<li><p><strong>folder_kind</strong> – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+Default is ‘config’ for backward compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the app directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a></p>
+</dd>
+</dl>
+<p>By default, the app will be “config2py” and folder_kind will be “config”.
+The exact text of the path is platform-specific (<code class="docutils literal notranslate"><span class="pre">~/.config/config2py</span></code> under
+the XDG standards, <code class="docutils literal notranslate"><span class="pre">%APPDATA%\config2py</span></code> on Windows), so we assert the
+properties that hold everywhere: it is an absolute path named after the app,
+sitting directly inside the ‘config’ root directory.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">'config2py'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="o">==</span> <span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">'config'</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>You can specify a different app name and folder kind:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span>
+<span class="go">'/Users/.../.local/share/my_app'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'cache'</span><span class="p">)</span>
+<span class="go">'/Users/.../.cache/my_app'</span>
+</pre></div>
+</div>
+<p>You can also specify a path relative to the app root directory:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'another/app/subfolder'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span>
+<span class="go">'/Users/.../.local/share/another/app/subfolder'</span>
+</pre></div>
+</div>
+<p>If ensure_exists is True, the directory will be created and initialized
+with the setup_callback:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.get_app_folder">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config2py'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#get_app_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.get_app_folder" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve or create the app directory specific to the given app name and folder kind.</p>
+<p>The folder kind determines where the app’s files are stored:
+Here are concise explanations for each folder kind:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">config</span><span class="o">**</span><span class="p">:</span> <span class="n">User</span> <span class="n">preferences</span> <span class="ow">and</span> <span class="n">settings</span> <span class="n">files</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">API</span> <span class="n">keys</span><span class="p">,</span> <span class="n">theme</span> <span class="n">preferences</span><span class="p">,</span> <span class="n">editor</span> <span class="n">settings</span><span class="p">)</span><span class="o">.</span> <span class="n">Files</span> <span class="n">users</span> <span class="n">might</span> <span class="n">edit</span> <span class="n">manually</span> <span class="ow">or</span> <span class="n">that</span> <span class="n">define</span> <span class="n">how</span> <span class="n">the</span> <span class="n">app</span> <span class="n">behaves</span><span class="o">.</span>
+<span class="o">**</span><span class="n">data</span><span class="o">**</span><span class="p">:</span> <span class="n">Essential</span> <span class="n">user</span><span class="o">-</span><span class="n">created</span> <span class="n">content</span> <span class="ow">and</span> <span class="n">application</span> <span class="n">state</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">databases</span><span class="p">,</span> <span class="n">saved</span> <span class="n">games</span><span class="p">,</span> <span class="n">user</span> <span class="n">documents</span><span class="p">,</span> <span class="n">session</span> <span class="n">files</span><span class="p">)</span><span class="o">.</span> <span class="n">Data</span> <span class="n">that</span> <span class="n">should</span> <span class="n">be</span> <span class="n">backed</span> <span class="n">up</span> <span class="ow">and</span> <span class="n">persists</span> <span class="n">across</span> <span class="n">updates</span><span class="o">.</span>
+<span class="o">**</span><span class="n">cache</span><span class="o">**</span><span class="p">:</span> <span class="n">Temporary</span><span class="p">,</span> <span class="n">regeneratable</span> <span class="n">files</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">downloaded</span> <span class="n">images</span><span class="p">,</span> <span class="n">compiled</span> <span class="n">assets</span><span class="p">,</span> <span class="n">web</span> <span class="n">cache</span><span class="p">)</span><span class="o">.</span> <span class="n">Can</span> <span class="n">be</span> <span class="n">safely</span> <span class="n">deleted</span> <span class="n">to</span> <span class="n">free</span> <span class="n">space</span> <span class="n">without</span> <span class="n">losing</span> <span class="n">user</span> <span class="n">work</span><span class="o">.</span>
+<span class="o">**</span><span class="n">state</span><span class="o">**</span><span class="p">:</span> <span class="n">Application</span> <span class="n">state</span> <span class="ow">and</span> <span class="n">logs</span> <span class="n">that</span> <span class="n">persist</span> <span class="n">between</span> <span class="n">sessions</span> <span class="n">but</span> <span class="n">aren</span><span class="s1">'t critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn'</span><span class="n">t</span> <span class="n">be</span> <span class="n">auto</span><span class="o">-</span><span class="n">deleted</span><span class="o">.</span>
+<span class="o">**</span><span class="n">runtime</span><span class="o">**</span><span class="p">:</span> <span class="n">Temporary</span> <span class="n">runtime</span> <span class="n">files</span> <span class="n">that</span> <span class="n">only</span> <span class="n">exist</span> <span class="k">while</span> <span class="n">the</span> <span class="n">app</span> <span class="n">runs</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">,</span> <span class="n">PID</span> <span class="n">files</span><span class="p">,</span> <span class="n">Unix</span> <span class="n">sockets</span><span class="p">,</span> <span class="n">lock</span> <span class="n">files</span><span class="p">,</span> <span class="n">named</span> <span class="n">pipes</span><span class="p">)</span><span class="o">.</span> <span class="n">Typically</span> <span class="n">cleared</span> <span class="n">on</span> <span class="n">logout</span><span class="o">/</span><span class="n">reboot</span><span class="o">.</span>
+<span class="o">**</span><span class="n">TL</span><span class="p">;</span><span class="n">DR</span><span class="o">**</span><span class="p">:</span> <span class="n">config</span> <span class="o">=</span> <span class="n">settings</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">user</span> <span class="n">files</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">disposable</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">logs</span><span class="o">/</span><span class="n">history</span><span class="p">,</span> <span class="n">runtime</span> <span class="o">=</span> <span class="n">process</span> <span class="n">files</span><span class="o">.</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the app for which the directory is needed.</p></li>
+<li><p><strong>setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – A callback function to initialize the directory.
+Default is _default_folder_setup.</p></li>
+<li><p><strong>ensure_exists</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to ensure the directory exists.</p></li>
+<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'config'</span></code>, <code class="docutils literal notranslate"><span class="pre">'data'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cache'</span></code>, <code class="docutils literal notranslate"><span class="pre">'state'</span></code>, <code class="docutils literal notranslate"><span class="pre">'runtime'</span></code>]</span>) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+Default is ‘config’ for backward compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the app directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+<p>By default, the app will be “config2py” and folder_kind will be “config”.
+The exact text of the path is platform-specific (<code class="docutils literal notranslate"><span class="pre">~/.config/config2py</span></code> under
+the XDG standards, <code class="docutils literal notranslate"><span class="pre">%APPDATA%\config2py</span></code> on Windows), so we assert the
+properties that hold everywhere: it is an absolute path named after the app,
+sitting directly inside the ‘config’ root directory.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="go">'config2py'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="o">==</span> <span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">'config'</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>You can specify a different app name and folder kind:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span>
+<span class="go">'/Users/.../.local/share/my_app'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'cache'</span><span class="p">)</span>
+<span class="go">'/Users/.../.cache/my_app'</span>
+</pre></div>
+</div>
+<p>You can also specify a path relative to the app root directory:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'another/app/subfolder'</span><span class="p">,</span> <span class="n">folder_kind</span><span class="o">=</span><span class="s1">'data'</span><span class="p">)</span>
+<span class="go">'/Users/.../.local/share/another/app/subfolder'</span>
+</pre></div>
+</div>
+<p>If ensure_exists is True, the directory will be created and initialized
+with the setup_callback:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">get_app_folder</span><span class="p">(</span><span class="s1">'my_app'</span><span class="p">,</span> <span class="n">ensure_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.get_app_rootdir">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_app_rootdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#get_app_rootdir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.get_app_rootdir" title="Link to this definition">#</a></dt>
+<dd><p>Returns the root directory for a specific folder kind.</p>
+<p>The folder kind determines which standard directory is returned:</p>
+<ul class="simple">
+<li><p>‘config’: Configuration files (XDG_CONFIG_HOME, default ~/.config)</p></li>
+<li><p>‘data’: Application data (XDG_DATA_HOME, default ~/.local/share)</p></li>
+<li><p>‘cache’: Temporary/cache files (XDG_CACHE_HOME, default ~/.cache)</p></li>
+<li><p>‘state’: State data/logs (XDG_STATE_HOME, default ~/.local/state)</p></li>
+<li><p>‘runtime’: Runtime files (XDG_RUNTIME_DIR, default /tmp)</p></li>
+</ul>
+<p>On Windows:</p>
+<ul class="simple">
+<li><p>‘config’: %APPDATA%</p></li>
+<li><p>‘data’: %LOCALAPPDATA%</p></li>
+<li><p>‘cache’: %LOCALAPPDATA%Temp</p></li>
+<li><p>‘state’: %LOCALAPPDATA%</p></li>
+<li><p>‘runtime’: %TEMP%</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'config'</span></code>, <code class="docutils literal notranslate"><span class="pre">'data'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cache'</span></code>, <code class="docutils literal notranslate"><span class="pre">'state'</span></code>, <code class="docutils literal notranslate"><span class="pre">'runtime'</span></code>]</span>) – The kind of folder to get. One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.
+Defaults to ‘config’.
+Here are concise explanations for each folder kind:
+<strong>config</strong>: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
+<strong>data</strong>: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
+<strong>cache</strong>: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
+<strong>state</strong>: Application state and logs that persist between sessions but aren’t critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn’t be auto-deleted.
+<strong>runtime</strong>: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
+<strong>TL;DR</strong>: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.</p></li>
+<li><p><strong>ensure_exists</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to create the directory if it doesn’t exist</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The full path of the app root folder for the specified kind.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<blockquote>
+<div><p>The default root folder follows XDG Base Directory standards on Unix/Linux/macOS.
+You can override this by setting environment variables:</p>
+<ul class="simple">
+<li><p>CONFIG2PY_CONFIG_DIR, CONFIG2PY_DATA_DIR, CONFIG2PY_CACHE_DIR, etc.</p></li>
+</ul>
+</div></blockquote>
+<p>(highest priority, overrides everything, and works on <strong>every</strong> platform –
+see <code class="docutils literal notranslate"><span class="pre">config2py_env_var</span></code> for the full list of names)</p>
+</div>
+<ul class="simple">
+<li><p>The platform’s own standard variable: XDG_CONFIG_HOME, XDG_DATA_HOME,
+XDG_CACHE_HOME, etc. on Unix/Linux/macOS; APPDATA / LOCALAPPDATA / TEMP on
+Windows. The XDG variables are a POSIX standard and are <strong>not</strong> consulted on
+Windows – use the CONFIG2PY_* variables above for platform-neutral overrides.</p></li>
+<li><p>If neither is set, uses platform defaults</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">'config'</span><span class="p">)</span>
+<span class="go">'/Users/.../.config'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)</span>
+<span class="go">'/Users/.../.local/share'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_app_rootdir</span><span class="p">(</span><span class="s1">'cache'</span><span class="p">)</span>
+<span class="go">'/Users/.../.cache'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.get_configs_directory_for_app">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_configs_directory_for_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config2py'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configs_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'configs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_dir_setup_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dir_setup_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#config2py.util.get_configs_directory_for_app" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve or create the configs directory specific to the given app name.</p>
+<p class="rubric">Args</p>
+<ul class="simple">
+<li><p>app_name (str): Name of the app for which the configs directory is needed.</p></li>
+<li><p>configs_name (str): Name of the configs directory.</p></li>
+<li><dl class="simple">
+<dt>app_dir_setup_callback (Callable[[str], None]): A callback function to initialize the app directory.</dt><dd><p>Default is _default_folder_setup.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.</dt><dd><p>Default is _default_folder_setup.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.get_configs_folder_for_app">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">get_configs_folder_for_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config2py'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configs_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'configs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_dir_setup_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dir_setup_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_default_folder_setup&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#get_configs_folder_for_app"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.get_configs_folder_for_app" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve or create the configs directory specific to the given app name.</p>
+<p class="rubric">Args</p>
+<ul class="simple">
+<li><p>app_name (str): Name of the app for which the configs directory is needed.</p></li>
+<li><p>configs_name (str): Name of the configs directory.</p></li>
+<li><dl class="simple">
+<dt>app_dir_setup_callback (Callable[[str], None]): A callback function to initialize the app directory.</dt><dd><p>Default is _default_folder_setup.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.</dt><dd><p>Default is _default_folder_setup.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.identity">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#identity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.identity" title="Link to this definition">#</a></dt>
+<dd><p>Function that just returns its argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.is_not_empty">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">is_not_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#is_not_empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.is_not_empty" title="Link to this definition">#</a></dt>
+<dd><p>Function that returns True if x is not empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.is_repl">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">is_repl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#is_repl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.is_repl" title="Link to this definition">#</a></dt>
+<dd><p>Determines if the Python interpreter is running in REPL.</p>
+<p>To test: If you put it in a module.py, do a print of it in the module, and do
+<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">module.py</span></code> it should print False.
+If you do <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-i</span> <span class="pre">module.py</span></code>, or call it from a python console or jupyter
+notebook, it should return <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>repl_conditions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – <p>A list of functions that return True if the interpreter
+is running in a REPL, False otherwise.
+By default, this is a list of two functions that check if:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">get_ipython</span></code> is in globals</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__main__</span></code> does not have a <code class="docutils literal notranslate"><span class="pre">__file__</span></code> attribute</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if running in a REPL, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a></p>
+</dd>
+</dl>
+<p>is_repl.repl_conditions is a set of functions that return True if the interpreter.
+This set can be modified to modify the behavior of <code class="docutils literal notranslate"><span class="pre">is_repl</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.parse_assignments_from_py_source">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">parse_assignments_from_py_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_filt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_filt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_value_node_is_instance_of&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#parse_assignments_from_py_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.parse_assignments_from_py_source" title="Link to this definition">#</a></dt>
+<dd><p>Parse assignments from python source code.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source_code</span> <span class="o">=</span> <span class="s1">'''a = 1</span>
+<span class="gp">... </span><span class="s1">b = 'hello'</span>
+<span class="gp">... </span><span class="s1">c = [1, 2, 3]</span>
+<span class="gp">... </span><span class="s1">def func():</span>
+<span class="gp">... </span><span class="s1">    d = 4</span>
+<span class="gp">... </span><span class="s1">'''</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dict</span><span class="p">(</span><span class="n">parse_assignments_from_py_source</span><span class="p">(</span><span class="n">source_code</span><span class="p">))</span>
+<span class="go">{'a': 1, 'b': 'hello', 'c': [1, 2, 3], 'd': 4}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.system_default_for_app_data_folder">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">system_default_for_app_data_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">standards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#system_default_for_app_data_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.system_default_for_app_data_folder" title="Link to this definition">#</a></dt>
+<dd><p>Get the system default folder for <code class="docutils literal notranslate"><span class="pre">folder_kind</span></code>.</p>
+<p>The root is the value of the platform’s standard environment variable for
+that kind, falling back to the spec’s <code class="docutils literal notranslate"><span class="pre">default_path</span></code>; the spec’s
+<code class="docutils literal notranslate"><span class="pre">subpath</span></code> (usually empty) is then appended.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'config'</span></code>, <code class="docutils literal notranslate"><span class="pre">'data'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cache'</span></code>, <code class="docutils literal notranslate"><span class="pre">'state'</span></code>, <code class="docutils literal notranslate"><span class="pre">'runtime'</span></code>]</span>) – One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.</p></li>
+<li><p><strong>standards</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>]</span>) – The <code class="docutils literal notranslate"><span class="pre">{folder_kind:</span> <span class="pre">FolderSpec}</span></code> table to resolve against.
+Defaults to the running platform’s (<code class="docutils literal notranslate"><span class="pre">APP_FOLDER_STANDARDS</span></code>);
+pass another platform’s table to resolve as that platform would.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="config2py.tools.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">config2py.tools</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.AppData"><code class="docutils literal notranslate"><span class="pre">AppData</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.AppData.app_folder"><code class="docutils literal notranslate"><span class="pre">AppData.app_folder()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.AppData.get_artifact_dir"><code class="docutils literal notranslate"><span class="pre">AppData.get_artifact_dir()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.AppData.get_config"><code class="docutils literal notranslate"><span class="pre">AppData.get_config()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.AppData.get_resource"><code class="docutils literal notranslate"><span class="pre">AppData.get_resource()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.EnvironmentVariables"><code class="docutils literal notranslate"><span class="pre">EnvironmentVariables</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.FolderSpec"><code class="docutils literal notranslate"><span class="pre">FolderSpec</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.FolderSpec.default_path"><code class="docutils literal notranslate"><span class="pre">FolderSpec.default_path</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.FolderSpec.env_var"><code class="docutils literal notranslate"><span class="pre">FolderSpec.env_var</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.FolderSpec.subpath"><code class="docutils literal notranslate"><span class="pre">FolderSpec.subpath</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.always_true"><code class="docutils literal notranslate"><span class="pre">always_true()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.app_folder_standards"><code class="docutils literal notranslate"><span class="pre">app_folder_standards()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.ask_user_for_input"><code class="docutils literal notranslate"><span class="pre">ask_user_for_input()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.create_directories"><code class="docutils literal notranslate"><span class="pre">create_directories()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.ensure_seeded"><code class="docutils literal notranslate"><span class="pre">ensure_seeded()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.extract_variable_declarations"><code class="docutils literal notranslate"><span class="pre">extract_variable_declarations()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.get_app_config_folder"><code class="docutils literal notranslate"><span class="pre">get_app_config_folder()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.get_app_data_directory"><code class="docutils literal notranslate"><span class="pre">get_app_data_directory()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.get_app_data_folder"><code class="docutils literal notranslate"><span class="pre">get_app_data_folder()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.get_app_folder"><code class="docutils literal notranslate"><span class="pre">get_app_folder()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.get_app_rootdir"><code class="docutils literal notranslate"><span class="pre">get_app_rootdir()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.get_configs_directory_for_app"><code class="docutils literal notranslate"><span class="pre">get_configs_directory_for_app()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.get_configs_folder_for_app"><code class="docutils literal notranslate"><span class="pre">get_configs_folder_for_app()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.is_not_empty"><code class="docutils literal notranslate"><span class="pre">is_not_empty()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.is_repl"><code class="docutils literal notranslate"><span class="pre">is_repl()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.parse_assignments_from_py_source"><code class="docutils literal notranslate"><span class="pre">parse_assignments_from_py_source()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.system_default_for_app_data_folder"><code class="docutils literal notranslate"><span class="pre">system_default_for_app_data_folder()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/_autosummary/config2py.util.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,97 +1,705 @@
 
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>config2py.s_configparser &mdash; config2py 0.1.49 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="alternate" type="text/markdown" href="s_configparser.html.md">
+<link rel="describedby" href="../../llms.txt" type="text/markdown">
+    <title>config2py.s_configparser &#8212; config2py</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/epythet.css?v=54f41860" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="../../_static/documentation_options.js?v=f2b49961"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/config2py/s_configparser';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.50" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
 
   
-      <script src="../../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=1190fe33"></script>
-      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
-      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
-</head>
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="../../index.html" class="icon icon-home">
-            config2py
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py.html">config2py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/base.html">config2py.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/codecs.html">config2py.codecs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/errors.html">config2py.errors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/sync_store.html">config2py.sync_store</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests.html">config2py.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_app_data.html">config2py.tests.test_app_data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_base.html">config2py.tests.test_base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_codecs.html">config2py.tests.test_codecs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_platform_standards.html">config2py.tests.test_platform_standards</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/tools.html">config2py.tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../module_docs/config2py/util.html">config2py.util</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">config2py</a>
-      </nav>
+  
+    
+  
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">config2py.s_configparser</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">config2py</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API reference
+  </a>
+</li>
+
   </ul>
-  <hr/>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/config2py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/config2py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">config2py.s_configparser</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
   <h1>Source code for config2py.s_configparser</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Data Object Layer for configparser standard lib.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigParser</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicInterpolation</span><span class="p">,</span> <span class="n">ExtendedInterpolation</span>
@@ -102,7 +710,7 @@
 
 <span class="c1"># from py2store.signatures import Sig</span>
 
-<span class="n">_test_config_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;[Simple Values]</span>
+<span class="n">_test_config_str</span> <span class="o">=</span> <span class="s2">"""[Simple Values]</span>
 <span class="s2">key=value</span>
 <span class="s2">spaces in keys=allowed</span>
 <span class="s2">spaces in values=allowed as well</span>
@@ -117,7 +725,7 @@
 <span class="s2">can use the API to get converted values directly: true</span>
 
 <span class="s2">[Multiline Values]</span>
-<span class="s2">chorus: I&#39;m a lumberjack, and I&#39;m okay</span>
+<span class="s2">chorus: I'm a lumberjack, and I'm okay</span>
 <span class="s2">    I sleep all night and I work all day</span>
 
 <span class="s2">[No Values]</span>
@@ -143,7 +751,7 @@
 <span class="s2">            deeper than the first line</span>
 <span class="s2">            of a value</span>
 <span class="s2">        # Did I mention we can indent comments, too?</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">persist_after_operation</span><span class="p">(</span><span class="n">method_func</span><span class="p">):</span>
@@ -157,19 +765,19 @@
 
 
 <div class="viewcode-block" id="super_and_persist">
-<a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.super_and_persist">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.s_configparser.super_and_persist">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">super_and_persist</span><span class="p">(</span><span class="n">super_cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    To be able to do this:</span>
 <span class="sd">    ```</span>
-<span class="sd">    __setitem__ = super_and_persist(ConfigParser, &#39;__setitem__&#39;)</span>
-<span class="sd">    __delitem__ = super_and_persist(ConfigParser, &#39;__delitem__&#39;)</span>
+<span class="sd">    __setitem__ = super_and_persist(ConfigParser, '__setitem__')</span>
+<span class="sd">    __delitem__ = super_and_persist(ConfigParser, '__delitem__')</span>
 <span class="sd">    ```</span>
 <span class="sd">    in your class definition block.</span>
 
 <span class="sd">    I thought I needed to wrap more method this way, but as it turns out, I might not,</span>
 <span class="sd">    so I prefer open code.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nd">@persist_after_operation</span>
     <span class="nd">@wraps</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">super_cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">))</span>
@@ -182,25 +790,25 @@
 
 
 <span class="n">ConfigParserStore</span> <span class="o">=</span> <span class="n">Store</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">ConfigParser</span><span class="p">)</span>
-<span class="n">ConfigParserStore</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s2">&quot;ConfigParserStore&quot;</span>
+<span class="n">ConfigParserStore</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s2">"ConfigParserStore"</span>
 
 
 <span class="c1"># TODO: ConfigParser is already a mapping, but pros/cons of subclassing?</span>
-<span class="c1">#   For instance, it has it&#39;s get method already, but it is not consistent with the get of collections.abc.Mapping</span>
+<span class="c1">#   For instance, it has it's get method already, but it is not consistent with the get of collections.abc.Mapping</span>
 <span class="c1"># TODO: Extend to a KvPersister (include __setitem__ and __delitem__)</span>
 <span class="c1">#   Relevant methods: add_section, write, remove_section. Need to decide on auto-persistence.</span>
 <span class="c1">#   In fact, the reader is already a writer (from ConfigParser), but need to manage persistence.</span>
 <div class="viewcode-block" id="ConfigStore">
-<a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigStore">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.s_configparser.ConfigStore">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConfigStore</span><span class="p">(</span><span class="n">ConfigParserStore</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Persister (read, write, delete) for ini configs.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Persister (read, write, delete) for ini configs.</span>
 
 <span class="sd">    You can read ini formated configurations with ConfigStore (though if you want to</span>
 <span class="sd">    just read, you should use ConfigReader instead -- since ConfigReader disables</span>
 <span class="sd">    write and delete operations.</span>
 
 <span class="sd">    See ConfigReader for more examples of how to use ConfigStore.</span>
-<span class="sd">    We&#39;ll mainly focus on write and delete operations here.</span>
+<span class="sd">    We'll mainly focus on write and delete operations here.</span>
 
 <span class="sd">    &gt;&gt;&gt; import os</span>
 <span class="sd">    &gt;&gt;&gt; from config2py.s_configparser import ConfigStore, ConfigReader</span>
@@ -208,59 +816,59 @@
 <span class="sd">    &gt;&gt;&gt; temp_dir_path = tempfile.TemporaryDirectory().name</span>
 <span class="sd">    &gt;&gt;&gt; if not os.path.exists(temp_dir_path):</span>
 <span class="sd">    ...     os.makedirs(temp_dir_path)</span>
-<span class="sd">    &gt;&gt;&gt; ini_filepath = os.path.join(temp_dir_path, &#39;config_store_test.ini&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; ini_filepath = os.path.join(temp_dir_path, 'config_store_test.ini')</span>
 <span class="sd">    &gt;&gt;&gt; if os.path.isfile(ini_filepath):</span>
 <span class="sd">    ...     os.remove(ini_filepath)</span>
 <span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; os.path.isfile(ini_filepath)  # File doesn&#39;t exist</span>
+<span class="sd">    &gt;&gt;&gt; os.path.isfile(ini_filepath)  # File doesn't exist</span>
 <span class="sd">    False</span>
 <span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; s = ConfigStore(ini_filepath)</span>
-<span class="sd">    &gt;&gt;&gt; list(s)  # There&#39;s always a default (by default empty)</span>
-<span class="sd">    [&#39;DEFAULT&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; list(s)  # There's always a default (by default empty)</span>
+<span class="sd">    ['DEFAULT']</span>
 <span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; os.path.isfile(ini_filepath)  # But the file still doesn&#39;t exist (the DEFAULT is virtual)</span>
+<span class="sd">    &gt;&gt;&gt; os.path.isfile(ini_filepath)  # But the file still doesn't exist (the DEFAULT is virtual)</span>
 <span class="sd">    False</span>
 <span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; # Now let&#39;s make a config</span>
-<span class="sd">    &gt;&gt;&gt; s[&#39;nothing&#39;] = {&#39;special&#39;: &#39;about&#39;, &#39;number&#39;: 42}</span>
+<span class="sd">    &gt;&gt;&gt; # Now let's make a config</span>
+<span class="sd">    &gt;&gt;&gt; s['nothing'] = {'special': 'about', 'number': 42}</span>
 <span class="sd">    &gt;&gt;&gt; list(s)</span>
-<span class="sd">    [&#39;DEFAULT&#39;, &#39;nothing&#39;]</span>
+<span class="sd">    ['DEFAULT', 'nothing']</span>
 <span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; os.path.isfile(ini_filepath)  # But NOW the file exists (ConfigStore will automatically write to file)</span>
 <span class="sd">    True</span>
-<span class="sd">    &gt;&gt;&gt; s[&#39;add&#39;] = {&#39;more&#39;: &#39;sections&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; s['add'] = {'more': 'sections'}</span>
 <span class="sd">    &gt;&gt;&gt; list(s)</span>
-<span class="sd">    [&#39;DEFAULT&#39;, &#39;nothing&#39;, &#39;add&#39;]</span>
+<span class="sd">    ['DEFAULT', 'nothing', 'add']</span>
 
 <span class="sd">    &gt;&gt;&gt; # and yes, that config can now be read</span>
 <span class="sd">    &gt;&gt;&gt; config_reader = ConfigReader(ini_filepath)</span>
 <span class="sd">    &gt;&gt;&gt; list(config_reader)</span>
-<span class="sd">    [&#39;DEFAULT&#39;, &#39;nothing&#39;, &#39;add&#39;]</span>
+<span class="sd">    ['DEFAULT', 'nothing', 'add']</span>
 <span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; config_reader[&#39;nothing&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; config_reader['nothing']</span>
 <span class="sd">    &lt;Section: nothing&gt;</span>
 <span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; dict(config_reader[&#39;nothing&#39;])  # note that 42 is now a string (that&#39;s the ini format for you!)</span>
-<span class="sd">    {&#39;special&#39;: &#39;about&#39;, &#39;number&#39;: &#39;42&#39;}</span>
-<span class="sd">    &gt;&gt;&gt; dict(config_reader[&#39;DEFAULT&#39;])  # and DEFAULT is empty</span>
+<span class="sd">    &gt;&gt;&gt; dict(config_reader['nothing'])  # note that 42 is now a string (that's the ini format for you!)</span>
+<span class="sd">    {'special': 'about', 'number': '42'}</span>
+<span class="sd">    &gt;&gt;&gt; dict(config_reader['DEFAULT'])  # and DEFAULT is empty</span>
 <span class="sd">    {}</span>
 
 <span class="sd">    You can delete sections</span>
-<span class="sd">    &gt;&gt;&gt; del s[&#39;add&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; del s['add']</span>
 
-<span class="sd">    But you&#39;ll need to refresh your reader to see the effect.</span>
+<span class="sd">    But you'll need to refresh your reader to see the effect.</span>
 <span class="sd">    &gt;&gt;&gt; list(config_reader)</span>
-<span class="sd">    [&#39;DEFAULT&#39;, &#39;nothing&#39;, &#39;add&#39;]</span>
+<span class="sd">    ['DEFAULT', 'nothing', 'add']</span>
 <span class="sd">    &gt;&gt;&gt; config_reader = ConfigReader(ini_filepath)</span>
 <span class="sd">    &gt;&gt;&gt; list(config_reader)</span>
-<span class="sd">    [&#39;DEFAULT&#39;, &#39;nothing&#39;]</span>
+<span class="sd">    ['DEFAULT', 'nothing']</span>
 
 <span class="sd">    You can use `update` to write several sections at the same time.</span>
 <span class="sd">    Note that existing sections will be completely overwritten.</span>
-<span class="sd">    &gt;&gt;&gt; s.update({&#39;nothing&#39;: {&#39;like&#39;: &#39;you&#39;}, &#39;new_section&#39;: {&#39;a&#39;: &#39;b&#39;, &#39;c&#39;: &#39;d&#39;}})</span>
+<span class="sd">    &gt;&gt;&gt; s.update({'nothing': {'like': 'you'}, 'new_section': {'a': 'b', 'c': 'd'}})</span>
 <span class="sd">    &gt;&gt;&gt; ConfigReader(ini_filepath).to_dict()</span>
-<span class="sd">    {&#39;DEFAULT&#39;: {}, &#39;nothing&#39;: {&#39;like&#39;: &#39;you&#39;}, &#39;new_section&#39;: {&#39;a&#39;: &#39;b&#39;, &#39;c&#39;: &#39;d&#39;}}</span>
+<span class="sd">    {'DEFAULT': {}, 'nothing': {'like': 'you'}, 'new_section': {'a': 'b', 'c': 'd'}}</span>
 
 <span class="sd">    **Warning: On the other hand, updating a section will not persist the updates**</span>
 
@@ -268,19 +876,19 @@
 <span class="sd">    This means you can change a section entirely, but partial updates of a section</span>
 <span class="sd">    will not be persisted.</span>
 
-<span class="sd">    You&#39;ll see the updated section in the store.</span>
-<span class="sd">    &gt;&gt;&gt; s[&#39;nothing&#39;].update({&#39;something&#39;: &#39;else&#39;})</span>
-<span class="sd">    &gt;&gt;&gt; dict(s[&#39;nothing&#39;])</span>
-<span class="sd">    {&#39;like&#39;: &#39;you&#39;, &#39;something&#39;: &#39;else&#39;}</span>
+<span class="sd">    You'll see the updated section in the store.</span>
+<span class="sd">    &gt;&gt;&gt; s['nothing'].update({'something': 'else'})</span>
+<span class="sd">    &gt;&gt;&gt; dict(s['nothing'])</span>
+<span class="sd">    {'like': 'you', 'something': 'else'}</span>
 
-<span class="sd">    But it&#39;s not automatically persisted</span>
-<span class="sd">    &gt;&gt;&gt; dict(ConfigReader(ini_filepath)[&#39;nothing&#39;])</span>
-<span class="sd">    {&#39;like&#39;: &#39;you&#39;}</span>
+<span class="sd">    But it's not automatically persisted</span>
+<span class="sd">    &gt;&gt;&gt; dict(ConfigReader(ini_filepath)['nothing'])</span>
+<span class="sd">    {'like': 'you'}</span>
 
 <span class="sd">    ... unless you ask for it explicitly</span>
 <span class="sd">    &gt;&gt;&gt; s.persist()</span>
-<span class="sd">    &gt;&gt;&gt; dict(ConfigReader(ini_filepath)[&#39;nothing&#39;])</span>
-<span class="sd">    {&#39;like&#39;: &#39;you&#39;, &#39;something&#39;: &#39;else&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; dict(ConfigReader(ini_filepath)['nothing'])</span>
+<span class="sd">    {'like': 'you', 'something': 'else'}</span>
 
 <span class="sd">    # TODO: Could make section updates auto-persistent by wrapping configparser.SectionProxy</span>
 
@@ -288,22 +896,22 @@
 <span class="sd">    you guessed, persist stuff when (and only when) you exit it.</span>
 
 <span class="sd">    &gt;&gt;&gt; ConfigReader(ini_filepath).to_dict()</span>
-<span class="sd">    {&#39;DEFAULT&#39;: {}, &#39;nothing&#39;: {&#39;like&#39;: &#39;you&#39;, &#39;something&#39;: &#39;else&#39;}, &#39;new_section&#39;: {&#39;a&#39;: &#39;b&#39;, &#39;c&#39;: &#39;d&#39;}}</span>
+<span class="sd">    {'DEFAULT': {}, 'nothing': {'like': 'you', 'something': 'else'}, 'new_section': {'a': 'b', 'c': 'd'}}</span>
 <span class="sd">    &gt;&gt;&gt; with ConfigStore(ini_filepath) as s:</span>
-<span class="sd">    ...     del s[&#39;new_section&#39;]  # that&#39;s usually immediately persisted. This time, it&#39;ll wait to be</span>
-<span class="sd">    ...     del s[&#39;nothing&#39;][&#39;something&#39;]  # delete the something field of nothing section</span>
-<span class="sd">    ...     s[&#39;nothing&#39;].update({&#39;like&#39;: &#39;that&#39;, &#39;ever&#39;: &#39;happened&#39;})  # update &#39;like&#39; config and add an &#39;ever&#39; one</span>
+<span class="sd">    ...     del s['new_section']  # that's usually immediately persisted. This time, it'll wait to be</span>
+<span class="sd">    ...     del s['nothing']['something']  # delete the something field of nothing section</span>
+<span class="sd">    ...     s['nothing'].update({'like': 'that', 'ever': 'happened'})  # update 'like' config and add an 'ever' one</span>
 <span class="sd">    &gt;&gt;&gt; ConfigReader(ini_filepath).to_dict()</span>
-<span class="sd">    {&#39;DEFAULT&#39;: {}, &#39;nothing&#39;: {&#39;like&#39;: &#39;that&#39;, &#39;ever&#39;: &#39;happened&#39;}}</span>
+<span class="sd">    {'DEFAULT': {}, 'nothing': {'like': 'that', 'ever': 'happened'}}</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">space_around_delimiters</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">BasicInterpolation</span> <span class="o">=</span> <span class="n">BasicInterpolation</span>
     <span class="n">ExtendedInterpolation</span> <span class="o">=</span> <span class="n">ExtendedInterpolation</span>
     <span class="n">source_kind</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1"># @Sig.from_objs([&#39;source&#39;, ConfigParser.__init__, (&#39;target_kind&#39;, None)])  # need to add source and target_kind</span>
+    <span class="c1"># @Sig.from_objs(['source', ConfigParser.__init__, ('target_kind', None)])  # need to add source and target_kind</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">source</span><span class="p">,</span>
@@ -321,24 +929,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_within_context_manager</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">if</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">read_string</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-                <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span>
+                <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">"string"</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-                <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;filepath&quot;</span>
+                <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">"filepath"</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_string</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
-            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;bytes&quot;</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">"bytes"</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_dict</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span>
-        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">&quot;read&quot;</span><span class="p">):</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">"dict"</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">"read"</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;stream&quot;</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">"stream"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+            <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">"unknown"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_kind</span> <span class="o">=</span> <span class="n">source_kind</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">=</span> <span class="n">target_kind</span> <span class="ow">or</span> <span class="n">source_kind</span>
@@ -350,9 +958,9 @@
         <span class="p">}</span>
 
 <div class="viewcode-block" id="ConfigStore.get">
-<a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigStore.get">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.s_configparser.ConfigStore.get">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Needed because the Store.get didn&#39;t catch the NoSectionError&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Needed because the Store.get didn't catch the NoSectionError"""</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -360,34 +968,34 @@
 
 
 <div class="viewcode-block" id="ConfigStore.persist">
-<a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigStore.persist">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.s_configparser.ConfigStore.persist">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Persists the data (if not in a context manager).</span>
+<span class="w">        </span><span class="sd">"""Persists the data (if not in a context manager).</span>
 <span class="sd">        Persists means to call</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_within_context_manager</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">&quot;filepath&quot;</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">"filepath"</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">&quot;stream&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">"stream"</span><span class="p">:</span>
                     <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;bytes&quot;</span><span class="p">}:</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"string"</span><span class="p">,</span> <span class="s2">"bytes"</span><span class="p">}:</span>
                     <span class="n">string_target</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">string_target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
                     <span class="n">string_target</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                     <span class="n">string_data</span> <span class="o">=</span> <span class="n">string_target</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">"string"</span><span class="p">:</span>
                         <span class="k">return</span> <span class="n">string_data</span>
-                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">&quot;bytes&quot;</span><span class="p">:</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">"bytes"</span><span class="p">:</span>
                         <span class="k">return</span> <span class="n">string_data</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">"dict"</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -407,91 +1015,91 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">k</span><span class="p">)</span></div>
 
 
-    <span class="c1"># __setitem__ = super_and_persist(ConfigParser, &#39;__setitem__&#39;)</span>
-    <span class="c1"># __delitem__ = super_and_persist(ConfigParser, &#39;__delitem__&#39;)</span>
+    <span class="c1"># __setitem__ = super_and_persist(ConfigParser, '__setitem__')</span>
+    <span class="c1"># __delitem__ = super_and_persist(ConfigParser, '__delitem__')</span>
 
 
 <div class="viewcode-block" id="ConfigReader">
-<a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigReader">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.s_configparser.ConfigReader">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConfigReader</span><span class="p">(</span><span class="n">ConfigStore</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A KvReader to read config files</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""A KvReader to read config files</span>
 <span class="sd">    &gt;&gt;&gt; from config2py.s_configparser import ConfigReader</span>
 <span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; # from a (pretend) file</span>
 <span class="sd">    &gt;&gt;&gt; from io import BytesIO, StringIO</span>
-<span class="sd">    &gt;&gt;&gt; file_content_bytes = b&#39;&#39;&#39;</span>
+<span class="sd">    &gt;&gt;&gt; file_content_bytes = b'''</span>
 <span class="sd">    ... [Paths]</span>
 <span class="sd">    ... home_dir: /Users</span>
 <span class="sd">    ... my_dir: %(home_dir)s/lumberjack</span>
 <span class="sd">    ... my_pictures: %(my_dir)s/Pictures</span>
 <span class="sd">    ...</span>
 <span class="sd">    ... [Escape]</span>
-<span class="sd">    ... gain: 80%%  # use a %% to escape the % sign (% is the only character that needs to be escaped)&#39;&#39;&#39;</span>
+<span class="sd">    ... gain: 80%%  # use a %% to escape the % sign (% is the only character that needs to be escaped)'''</span>
 <span class="sd">    &gt;&gt;&gt; c = ConfigReader(file_content_bytes)  # get configs from the bytes</span>
 <span class="sd">    &gt;&gt;&gt; list(c)</span>
-<span class="sd">    [&#39;DEFAULT&#39;, &#39;Paths&#39;, &#39;Escape&#39;]</span>
+<span class="sd">    ['DEFAULT', 'Paths', 'Escape']</span>
 <span class="sd">    &gt;&gt;&gt; ######## From a (pretend) file (pointer) ########</span>
 <span class="sd">    &gt;&gt;&gt; # Usually, you write your configs in a file and give ConfigReader the filepath, or open file pointer...</span>
 <span class="sd">    &gt;&gt;&gt; pretend_file_pointer = StringIO(file_content_bytes.decode())</span>
 <span class="sd">    &gt;&gt;&gt; c = ConfigReader(pretend_file_pointer)</span>
 <span class="sd">    &gt;&gt;&gt; list(c)</span>
-<span class="sd">    [&#39;DEFAULT&#39;, &#39;Paths&#39;, &#39;Escape&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; c[&#39;Paths&#39;]  # gives you a configparser.Section object</span>
+<span class="sd">    ['DEFAULT', 'Paths', 'Escape']</span>
+<span class="sd">    &gt;&gt;&gt; c['Paths']  # gives you a configparser.Section object</span>
 <span class="sd">    &lt;Section: Paths&gt;</span>
-<span class="sd">    &gt;&gt;&gt; # A configparser.Section is a mapping. Let&#39;s see the keys</span>
-<span class="sd">    &gt;&gt;&gt; list(c[&#39;Paths&#39;])</span>
-<span class="sd">    [&#39;home_dir&#39;, &#39;my_dir&#39;, &#39;my_pictures&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; # A configparser.Section is a mapping. Let's see the keys</span>
+<span class="sd">    &gt;&gt;&gt; list(c['Paths'])</span>
+<span class="sd">    ['home_dir', 'my_dir', 'my_pictures']</span>
 
-<span class="sd">    # &gt;&gt;&gt; # here&#39;s a quick way to see both keys and values. Note how the home_dir interpolation was performed!</span>
-<span class="sd">    # &gt;&gt;&gt; dict(c[&#39;Paths&#39;])</span>
-<span class="sd">    # {&#39;home_dir&#39;: &#39;/Users&#39;, &#39;my_dir&#39;: &#39;/Users/lumberjack&#39;, &#39;my_pictures&#39;: &#39;/Users/lumberjack/Pictures&#39;}</span>
+<span class="sd">    # &gt;&gt;&gt; # here's a quick way to see both keys and values. Note how the home_dir interpolation was performed!</span>
+<span class="sd">    # &gt;&gt;&gt; dict(c['Paths'])</span>
+<span class="sd">    # {'home_dir': '/Users', 'my_dir': '/Users/lumberjack', 'my_pictures': '/Users/lumberjack/Pictures'}</span>
 
 <span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; ######## Get configs from a dict ########</span>
-<span class="sd">    &gt;&gt;&gt; config_dict = {&#39;section1&#39;: {&#39;key1&#39;: &#39;value1&#39;},</span>
-<span class="sd">    ...                &#39;section2&#39;: {&#39;keyA&#39;: &#39;valueA&#39;, &#39;keyB&#39;: &#39;valueB&#39;},</span>
-<span class="sd">    ...                &#39;section3&#39;: {&#39;foo&#39;: &#39;x&#39;, &#39;bar&#39;: &#39;y&#39;,&#39;baz&#39;: &#39;z&#39;}}</span>
+<span class="sd">    &gt;&gt;&gt; config_dict = {'section1': {'key1': 'value1'},</span>
+<span class="sd">    ...                'section2': {'keyA': 'valueA', 'keyB': 'valueB'},</span>
+<span class="sd">    ...                'section3': {'foo': 'x', 'bar': 'y','baz': 'z'}}</span>
 <span class="sd">    &gt;&gt;&gt; c = ConfigReader(config_dict)</span>
 <span class="sd">    &gt;&gt;&gt;</span>
-<span class="sd">    &gt;&gt;&gt; assert list(c) == [&#39;DEFAULT&#39;, &#39;section1&#39;, &#39;section2&#39;, &#39;section3&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; assert list(c[&#39;section3&#39;]) == [&#39;foo&#39;, &#39;bar&#39;, &#39;baz&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; assert list(c) == ['DEFAULT', 'section1', 'section2', 'section3']</span>
+<span class="sd">    &gt;&gt;&gt; assert list(c['section3']) == ['foo', 'bar', 'baz']</span>
 <span class="sd">    &gt;&gt;&gt;</span>
 <span class="sd">    &gt;&gt;&gt; ######## Get configs from a string ########</span>
 <span class="sd">    &gt;&gt;&gt; from config2py.s_configparser import _test_config_str</span>
 <span class="sd">    &gt;&gt;&gt; c = ConfigReader(_test_config_str, allow_no_value=True)</span>
 <span class="sd">    &gt;&gt;&gt; list(c)</span>
-<span class="sd">    [&#39;DEFAULT&#39;, &#39;Simple Values&#39;, &#39;All Values Are Strings&#39;, &#39;Multiline Values&#39;, &#39;No Values&#39;, &#39;You can use comments&#39;, &#39;Sections Can Be Indented&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; list(c[&#39;Simple Values&#39;])</span>
-<span class="sd">    [&#39;key&#39;, &#39;spaces in keys&#39;, &#39;spaces in values&#39;, &#39;spaces around the delimiter&#39;, &#39;you can also use&#39;]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    ['DEFAULT', 'Simple Values', 'All Values Are Strings', 'Multiline Values', 'No Values', 'You can use comments', 'Sections Can Be Indented']</span>
+<span class="sd">    &gt;&gt;&gt; list(c['Simple Values'])</span>
+<span class="sd">    ['key', 'spaces in keys', 'spaces in values', 'spaces around the delimiter', 'you can also use']</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="ConfigReader.persist">
-<a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigReader.persist">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.s_configparser.ConfigReader.persist">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;persist disabled for ConfigReader&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"persist disabled for ConfigReader"</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;__setitem__ disabled for ConfigReader&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"__setitem__ disabled for ConfigReader"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;__delitem__ disabled for ConfigReader&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"__delitem__ disabled for ConfigReader"</span><span class="p">)</span></div>
 
 
 
 <span class="c1"># TODO: Need to wrap SectionProxy to make this work, since the obj and data here are</span>
 <span class="c1">#   those at a second level down.</span>
-<span class="c1">#   That is, when you do s[&#39;section&#39;][&#39;key&#39;] = obj, _data_of_obj gets activated on s, not s[&#39;section&#39;] as desired</span>
+<span class="c1">#   That is, when you do s['section']['key'] = obj, _data_of_obj gets activated on s, not s['section'] as desired</span>
 <span class="c1"># class ConfigStoreWithLists(ConfigStore):</span>
 <span class="c1">#     def _data_of_obj(self, obj):</span>
 <span class="c1">#         if isinstance(obj, list):</span>
-<span class="c1">#             return &#39;\n&#39;.join(obj)</span>
+<span class="c1">#             return '\n'.join(obj)</span>
 <span class="c1">#         else:</span>
 <span class="c1">#             return super()._data_of_obj(obj)</span>
 <span class="c1">#</span>
 <span class="c1">#     def _obj_of_data(self, data):</span>
-<span class="c1">#         if data.startswith(&#39;\n&#39;):</span>
-<span class="c1">#             return data.split(&#39;\n&#39;)</span>
+<span class="c1">#         if data.startswith('\n'):</span>
+<span class="c1">#             return data.split('\n')</span>
 <span class="c1">#         else:</span>
 <span class="c1">#             return super()._obj_of_data(data)</span>
 
@@ -504,24 +1112,24 @@
 <span class="c1"># TODO: postprocess_ini_section_items and preprocess_ini_section_items: Add comma separated possibility?</span>
 <span class="c1"># TODO: Find out if configparse has an option to do this processing alreadys</span>
 <div class="viewcode-block" id="postprocess_ini_section_items">
-<a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.postprocess_ini_section_items">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.s_configparser.postprocess_ini_section_items">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">postprocess_ini_section_items</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Transform newline-separated string values into actual list of strings (assuming that intent)</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Transform newline-separated string values into actual list of strings (assuming that intent)</span>
 
 <span class="sd">    &gt;&gt;&gt; section_from_ini = {</span>
-<span class="sd">    ...     &#39;name&#39;: &#39;aspyre&#39;,</span>
-<span class="sd">    ...     &#39;keywords&#39;: &#39;\n\tdocumentation\n\tpackaging\n\tpublishing&#39;</span>
+<span class="sd">    ...     'name': 'aspyre',</span>
+<span class="sd">    ...     'keywords': '\n\tdocumentation\n\tpackaging\n\tpublishing'</span>
 <span class="sd">    ... }</span>
 <span class="sd">    &gt;&gt;&gt; section_for_python = dict(postprocess_ini_section_items(section_from_ini))</span>
 <span class="sd">    &gt;&gt;&gt; section_for_python</span>
-<span class="sd">    {&#39;name&#39;: &#39;aspyre&#39;, &#39;keywords&#39;: [&#39;documentation&#39;, &#39;packaging&#39;, &#39;publishing&#39;]}</span>
+<span class="sd">    {'name': 'aspyre', 'keywords': ['documentation', 'packaging', 'publishing']}</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">splitter_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;[</span><span class="se">\n\r\t</span><span class="s2">]+&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">splitter_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">"[</span><span class="se">\n\r\t</span><span class="s2">]+"</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
             <span class="n">v</span> <span class="o">=</span> <span class="n">splitter_re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
             <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">vv</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">vv</span> <span class="ow">in</span> <span class="n">v</span> <span class="k">if</span> <span class="n">vv</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
         <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span></div>
@@ -530,55 +1138,77 @@
 
 <span class="c1"># TODO: Find out if configparse has an option to do this processing alreadys</span>
 <div class="viewcode-block" id="preprocess_ini_section_items">
-<a class="viewcode-back" href="../../module_docs/config2py/s_configparser.html#config2py.s_configparser.preprocess_ini_section_items">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.s_configparser.preprocess_ini_section_items">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">preprocess_ini_section_items</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">Mapping</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform list values into newline-separated strings, in view of writing the value to a ini formatted section</span>
+<span class="w">    </span><span class="sd">"""Transform list values into newline-separated strings, in view of writing the value to a ini formatted section</span>
 <span class="sd">    &gt;&gt;&gt; section = {</span>
-<span class="sd">    ...     &#39;name&#39;: &#39;aspyre&#39;,</span>
-<span class="sd">    ...     &#39;keywords&#39;: [&#39;documentation&#39;, &#39;packaging&#39;, &#39;publishing&#39;]</span>
+<span class="sd">    ...     'name': 'aspyre',</span>
+<span class="sd">    ...     'keywords': ['documentation', 'packaging', 'publishing']</span>
 <span class="sd">    ... }</span>
 <span class="sd">    &gt;&gt;&gt; for_ini = dict(preprocess_ini_section_items(section))</span>
-<span class="sd">    &gt;&gt;&gt; print(&#39;keywords =&#39; + for_ini[&#39;keywords&#39;])  # doctest: +NORMALIZE_WHITESPACE</span>
+<span class="sd">    &gt;&gt;&gt; print('keywords =' + for_ini['keywords'])  # doctest: +NORMALIZE_WHITESPACE</span>
 <span class="sd">    keywords =</span>
 <span class="sd">        documentation</span>
 <span class="sd">        packaging</span>
 <span class="sd">        publishing</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n\t</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n\t</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span></div>
 
 </pre></div>
 
-           </div>
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
           </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
   </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
+</p></div>
+      
+    </div>
+  
+</div>
 
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+  </footer>
+  </body>
 </html>

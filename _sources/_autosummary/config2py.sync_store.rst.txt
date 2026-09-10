@@ -1,0 +1,21 @@
+config2py.sync\_store
+=====================
+
+.. automodule:: config2py.sync_store
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      register_extension
+      get_format_handlers
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      SyncStore
+      FileStore
+      JsonStore
+   

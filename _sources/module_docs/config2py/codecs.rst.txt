@@ -1,4 +1,0 @@
-config2py.codecs
-================
-.. automodule:: config2py.codecs
-   :members:

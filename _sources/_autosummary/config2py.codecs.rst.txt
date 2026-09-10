@@ -1,0 +1,20 @@
+config2py.codecs
+================
+
+.. automodule:: config2py.codecs
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      decode_by_extension
+      encode_by_extension
+      get_extension
+      register_codec
+      register_decoder
+      register_encoder
+      list_registered_extensions
+      is_extension_registered
+      get_codec_info
+   

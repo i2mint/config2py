@@ -1,0 +1,22 @@
+config2py.s\_configparser
+=========================
+
+.. automodule:: config2py.s_configparser
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      persist_after_operation
+      postprocess_ini_section_items
+      preprocess_ini_section_items
+      super_and_persist
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ConfigReader
+      ConfigStore
+   

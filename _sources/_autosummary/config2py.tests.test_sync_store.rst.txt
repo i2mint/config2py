@@ -1,0 +1,22 @@
+config2py.tests.test\_sync\_store
+=================================
+
+.. automodule:: config2py.tests.test_sync_store
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      test_extension_registry
+      test_file_store_batch_operations
+      test_file_store_dotted_key_path
+      test_file_store_json
+      test_file_store_key_path
+      test_json_store
+      test_store_repr
+      test_sync_store_auto_sync
+      test_sync_store_basic_operations
+      test_sync_store_context_manager
+      test_sync_store_manual_flush
+   

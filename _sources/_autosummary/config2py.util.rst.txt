@@ -1,0 +1,40 @@
+config2py.util
+==============
+
+.. automodule:: config2py.util
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      FolderSpec
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      always_true
+      app_folder_standards
+      ask_user_for_input
+      create_directories
+      ensure_seeded
+      extract_variable_declarations
+      get_app_folder
+      get_app_rootdir
+      get_configs_directory_for_app
+      get_configs_folder_for_app
+      identity
+      is_not_empty
+      is_repl
+      parse_assignments_from_py_source
+      system_default_for_app_data_folder
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AppData
+      EnvironmentVariables
+      FolderSpec
+   

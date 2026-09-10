@@ -1,0 +1,21 @@
+﻿config2py
+=========
+
+.. automodule:: config2py
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   base
+   codecs
+   errors
+   s_configparser
+   scrap
+   sync_store
+   tests
+   tools
+   util

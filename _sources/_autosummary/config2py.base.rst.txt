@@ -1,0 +1,25 @@
+config2py.base
+==============
+
+.. automodule:: config2py.base
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      ask_user_for_key
+      get_config
+      gettable_containers
+      is_not_empty
+      is_not_none_nor_empty
+      sources_chainmap
+      user_gettable
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      FuncBasedGettableContainer
+      GettableContainer
+   

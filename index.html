@@ -1,238 +1,789 @@
 
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to config2py’s documentation! &mdash; config2py 0.1.49 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
 
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="alternate" type="text/markdown" href="index.html.md">
+<link rel="describedby" href="llms.txt" type="text/markdown">
+    <title>config2py &#8212; config2py</title>
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=1190fe33"></script>
-      <script src="_static/doctools.js?v=fd6eb6e6"></script>
-      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
-      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/js/theme.js"></script>
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/epythet.css?v=54f41860" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+
+    <script src="_static/documentation_options.js?v=f2b49961"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=fd10adb8"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="config2py" href="module_docs/config2py.html" /> 
-</head>
+    <link rel="next" title="API reference" href="api.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.50" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
 
-          
-          
-          <a href="#" class="icon icon-home">
-            config2py
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py.html">config2py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/base.html">config2py.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/codecs.html">config2py.codecs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/errors.html">config2py.errors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/s_configparser.html">config2py.s_configparser</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/sync_store.html">config2py.sync_store</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests.html">config2py.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_app_data.html">config2py.tests.test_app_data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_base.html">config2py.tests.test_base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_codecs.html">config2py.tests.test_codecs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_platform_standards.html">config2py.tests.test_platform_standards</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tools.html">config2py.tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/util.html">config2py.util</a></li>
-</ul>
 
-        </div>
-      </div>
-    </nav>
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">config2py</a>
-      </nav>
+  
+    
+  
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Welcome to config2py’s documentation!</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
-      </li>
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">config2py</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API reference
+  </a>
+</li>
+
   </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="welcome-to-config2py-s-documentation">
-<h1>Welcome to config2py’s documentation!<a class="headerlink" href="#welcome-to-config2py-s-documentation" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py.html">config2py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/base.html">config2py.base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/base.html#config2py.base.FuncBasedGettableContainer"><code class="docutils literal notranslate"><span class="pre">FuncBasedGettableContainer</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/base.html#config2py.base.GettableContainer"><code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/base.html#config2py.base.ask_user_for_key"><code class="docutils literal notranslate"><span class="pre">ask_user_for_key()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/base.html#config2py.base.get_config"><code class="docutils literal notranslate"><span class="pre">get_config()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/base.html#config2py.base.gettable_containers"><code class="docutils literal notranslate"><span class="pre">gettable_containers()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/base.html#config2py.base.sources_chainmap"><code class="docutils literal notranslate"><span class="pre">sources_chainmap()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/base.html#config2py.base.user_gettable"><code class="docutils literal notranslate"><span class="pre">user_gettable()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/codecs.html">config2py.codecs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.decode_by_extension"><code class="docutils literal notranslate"><span class="pre">decode_by_extension()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.encode_by_extension"><code class="docutils literal notranslate"><span class="pre">encode_by_extension()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.get_codec_info"><code class="docutils literal notranslate"><span class="pre">get_codec_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.get_extension"><code class="docutils literal notranslate"><span class="pre">get_extension()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.is_extension_registered"><code class="docutils literal notranslate"><span class="pre">is_extension_registered()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.list_registered_extensions"><code class="docutils literal notranslate"><span class="pre">list_registered_extensions()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.register_codec"><code class="docutils literal notranslate"><span class="pre">register_codec()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.register_decoder"><code class="docutils literal notranslate"><span class="pre">register_decoder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/codecs.html#config2py.codecs.register_encoder"><code class="docutils literal notranslate"><span class="pre">register_encoder()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/errors.html">config2py.errors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/errors.html#config2py.errors.Config2PyError"><code class="docutils literal notranslate"><span class="pre">Config2PyError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/errors.html#config2py.errors.ConfigNotFound"><code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/s_configparser.html">config2py.s_configparser</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigReader"><code class="docutils literal notranslate"><span class="pre">ConfigReader</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/s_configparser.html#config2py.s_configparser.ConfigStore"><code class="docutils literal notranslate"><span class="pre">ConfigStore</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/s_configparser.html#config2py.s_configparser.postprocess_ini_section_items"><code class="docutils literal notranslate"><span class="pre">postprocess_ini_section_items()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/s_configparser.html#config2py.s_configparser.preprocess_ini_section_items"><code class="docutils literal notranslate"><span class="pre">preprocess_ini_section_items()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/s_configparser.html#config2py.s_configparser.super_and_persist"><code class="docutils literal notranslate"><span class="pre">super_and_persist()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/sync_store.html">config2py.sync_store</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/sync_store.html#config2py.sync_store.FileStore"><code class="docutils literal notranslate"><span class="pre">FileStore</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/sync_store.html#config2py.sync_store.JsonStore"><code class="docutils literal notranslate"><span class="pre">JsonStore</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/sync_store.html#config2py.sync_store.SyncStore"><code class="docutils literal notranslate"><span class="pre">SyncStore</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/sync_store.html#config2py.sync_store.get_format_handlers"><code class="docutils literal notranslate"><span class="pre">get_format_handlers()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/sync_store.html#config2py.sync_store.register_extension"><code class="docutils literal notranslate"><span class="pre">register_extension()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests.html">config2py.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_app_data.html">config2py.tests.test_app_data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_base.html">config2py.tests.test_base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_codecs.html">config2py.tests.test_codecs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_platform_standards.html">config2py.tests.test_platform_standards</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html">config2py.tests.test_sync_store</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_extension_registry"><code class="docutils literal notranslate"><span class="pre">test_extension_registry()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_batch_operations"><code class="docutils literal notranslate"><span class="pre">test_file_store_batch_operations()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_dotted_key_path"><code class="docutils literal notranslate"><span class="pre">test_file_store_dotted_key_path()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_json"><code class="docutils literal notranslate"><span class="pre">test_file_store_json()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_file_store_key_path"><code class="docutils literal notranslate"><span class="pre">test_file_store_key_path()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_json_store"><code class="docutils literal notranslate"><span class="pre">test_json_store()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_store_repr"><code class="docutils literal notranslate"><span class="pre">test_store_repr()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_auto_sync"><code class="docutils literal notranslate"><span class="pre">test_sync_store_auto_sync()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_basic_operations"><code class="docutils literal notranslate"><span class="pre">test_sync_store_basic_operations()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_context_manager"><code class="docutils literal notranslate"><span class="pre">test_sync_store_context_manager()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tests/test_sync_store.html#config2py.tests.test_sync_store.test_sync_store_manual_flush"><code class="docutils literal notranslate"><span class="pre">test_sync_store_manual_flush()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/test_tools.html">config2py.tests.test_tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tests/utils_for_testing.html">config2py.tests.utils_for_testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/tools.html">config2py.tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tools.html#config2py.tools.extract_exports"><code class="docutils literal notranslate"><span class="pre">extract_exports()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tools.html#config2py.tools.get_configs_local_store"><code class="docutils literal notranslate"><span class="pre">get_configs_local_store()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tools.html#config2py.tools.simple_config_getter"><code class="docutils literal notranslate"><span class="pre">simple_config_getter()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/tools.html#config2py.tools.source_config_params"><code class="docutils literal notranslate"><span class="pre">source_config_params()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/config2py/util.html">config2py.util</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.AppData"><code class="docutils literal notranslate"><span class="pre">AppData</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.EnvironmentVariables"><code class="docutils literal notranslate"><span class="pre">EnvironmentVariables</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.FolderSpec"><code class="docutils literal notranslate"><span class="pre">FolderSpec</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.always_true"><code class="docutils literal notranslate"><span class="pre">always_true()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.app_folder_standards"><code class="docutils literal notranslate"><span class="pre">app_folder_standards()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.ask_user_for_input"><code class="docutils literal notranslate"><span class="pre">ask_user_for_input()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.create_directories"><code class="docutils literal notranslate"><span class="pre">create_directories()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.ensure_seeded"><code class="docutils literal notranslate"><span class="pre">ensure_seeded()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.extract_variable_declarations"><code class="docutils literal notranslate"><span class="pre">extract_variable_declarations()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.get_app_config_folder"><code class="docutils literal notranslate"><span class="pre">get_app_config_folder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.get_app_data_directory"><code class="docutils literal notranslate"><span class="pre">get_app_data_directory()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.get_app_data_folder"><code class="docutils literal notranslate"><span class="pre">get_app_data_folder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.get_app_folder"><code class="docutils literal notranslate"><span class="pre">get_app_folder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.get_app_rootdir"><code class="docutils literal notranslate"><span class="pre">get_app_rootdir()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.get_configs_directory_for_app"><code class="docutils literal notranslate"><span class="pre">get_configs_directory_for_app()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.get_configs_folder_for_app"><code class="docutils literal notranslate"><span class="pre">get_configs_folder_for_app()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.identity"><code class="docutils literal notranslate"><span class="pre">identity()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.is_not_empty"><code class="docutils literal notranslate"><span class="pre">is_not_empty()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.is_repl"><code class="docutils literal notranslate"><span class="pre">is_repl()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.parse_assignments_from_py_source"><code class="docutils literal notranslate"><span class="pre">parse_assignments_from_py_source()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/config2py/util.html#config2py.util.system_default_for_app_data_folder"><code class="docutils literal notranslate"><span class="pre">system_default_for_app_data_folder()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
-<p>Release: 0.1.49</p>
-<p>Last change: Aug 04, 2026</p>
-</section>
-
-
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="module_docs/config2py.html" class="btn btn-neutral float-right" title="config2py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+</nav></div>
+      
     </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
 
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      
+      
+        <div class="navbar-item">
 
-</body>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/config2py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/config2py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <!-- generated by epythet -->
+<section id="config2py">
+<h1>config2py<a class="headerlink" href="#config2py" title="Link to this heading">#</a></h1>
+<p>Simplified reading and writing configurations from various sources and formats.</p>
+<p>To install:	<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">config2py</span></code></p>
+<p><a class="reference external" href="https://i2mint.github.io/config2py/">Documentation</a></p>
+</section>
+<section id="the-cherry-on-top-config-getter">
+<h1>The cherry on top: config_getter<a class="headerlink" href="#the-cherry-on-top-config-getter" title="Link to this heading">#</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py</span><span class="w"> </span><span class="kn">import</span> <span class="n">config_getter</span>
+</pre></div>
+</div>
+<p>Let’s start with an extremely convenient, no questions asked, object.
+Later, we’ll look under the hood to show the many tools that support it, and can be shaped to fit many desired behaviors.</p>
+<p>What <code class="docutils literal notranslate"><span class="pre">config2py.config_getter(key)</span></code> will do is:</p>
+<ul class="simple">
+<li><p>search for <code class="docutils literal notranslate"><span class="pre">key</span></code> in your environment variables, and if not found…</p></li>
+<li><p>… search for it in a default local directory (more on that later), and if not found…</p></li>
+<li><p>… ask the user to enter the value that key should have, and then put it in the local directory mentioned above.</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617"><img alt="image" src="https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617" width="341" />
+</a>
+<p><em>Note: The “… ask the user to enter the value…” will be activated only when in an interactive environment (python console, jupyter notebook, etc.), as decided by the <code class="docutils literal notranslate"><span class="pre">config2py.is_repl()</span></code> function</em></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config_getter</span><span class="p">(</span><span class="s2">"HOME"</span><span class="p">)</span>  <span class="c1"># if you are using Linux/MacOS</span>
+<span class="c1"># config_getter('USERPROFILE')  # if you are using Windows</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>'/Users/thorwhalen'
+</pre></div>
+</div>
+<p>Now, normally all systems come with a <code class="docutils literal notranslate"><span class="pre">HOME</span></code> environment variable (or a <code class="docutils literal notranslate"><span class="pre">USERPROFILE</span></code> on windows), so the above should always work fine.
+But see what happens if you ask for a key that is not an environment variable:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_config_val</span> <span class="o">=</span> <span class="n">config_getter</span><span class="p">(</span><span class="s2">"_TEST_NON_EXISTING_KEY_"</span><span class="p">)</span>  <span class="c1"># triggers a user input dialog</span>
+<span class="c1"># ... I enter 'my config value' in the dialog, and then...</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_config_val</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>'my config value'
+</pre></div>
+</div>
+<p>But if I do that again (even on a different day, somewhere else (on my same computer), in a different session), it will get me the value I entered in the user input dialog.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_config_val</span> <span class="o">=</span> <span class="n">config_getter</span><span class="p">(</span>
+    <span class="s2">"_TEST_NON_EXISTING_KEY_"</span>
+<span class="p">)</span>  <span class="c1"># does not trigger input dialog</span>
+<span class="n">my_config_val</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>'my config value'
+</pre></div>
+</div>
+<p>And of course, we give you a means to delete that value, since <code class="docutils literal notranslate"><span class="pre">config_getter</span></code> has a <code class="docutils literal notranslate"><span class="pre">local_configs</span></code> mapping (think <code class="docutils literal notranslate"><span class="pre">dict</span></code>) to the local files where it has been stored.
+You can do all the usual stuff you do with a <code class="docutils literal notranslate"><span class="pre">dict</span></code> (except the effects will be on local files),
+like list the keys (with <code class="docutils literal notranslate"><span class="pre">list(.)</span></code>), get values for a key (with <code class="docutils literal notranslate"><span class="pre">.[key]</span></code>), ask for the number of keys (<code class="docutils literal notranslate"><span class="pre">len(.)</span></code>), and, well, delete stuff:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="s2">"_TEST_NON_EXISTING_KEY_"</span> <span class="ow">in</span> <span class="n">config_getter</span><span class="o">.</span><span class="n">configs</span><span class="p">:</span>
+    <span class="k">del</span> <span class="n">config_getter</span><span class="o">.</span><span class="n">configs</span><span class="p">[</span><span class="s2">"_TEST_NON_EXISTING_KEY_"</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This tool allows you to:</p>
+<ul class="simple">
+<li><p>not have to set up any special configs stuff (unless you want/need to)</p></li>
+<li><p>enables you to share your notebooks (CLIs etc.) with others without having to polute the code with configs-setup gunk…</p></li>
+<li><p>… including when you put local file/folder paths (or worse, secrets) in your notebook or code, which others then have to edit (instead, here, just enter a probably-unique name for the needed resource, then enter your filepath in the user input dialog instead)</p></li>
+</ul>
+<p>This is very convenient situation where user input (via things like <code class="docutils literal notranslate"><span class="pre">__builtins__.input</span></code> or <code class="docutils literal notranslate"><span class="pre">getpass.getpass</span></code> etc) is available. But <strong>you should not use this to manage configurations/resources anywhere were there’s not a user to see and respond to the builtin user input dialog</strong></p>
+<p>Don’t fret though, this <code class="docutils literal notranslate"><span class="pre">config_getter</span></code> is just our no-BS entry point to much more.
+Let’s have a slight look under its hood to see what else we can do with it.</p>
+<p>And of course, if you’re that type, you can already have a look at <a class="reference external" href="https://i2mint.github.io/config2py/">the documentation</a></p>
+<section id="simple-config-getter-controlling-your-config-getter-a-bit-more">
+<h2><code class="docutils literal notranslate"><span class="pre">simple_config_getter</span></code>: Controlling your config_getter a bit more<a class="headerlink" href="#simple-config-getter-controlling-your-config-getter-a-bit-more" title="Link to this heading">#</a></h2>
+<p>If you look up for the definition of the <code class="docutils literal notranslate"><span class="pre">config_getter</span></code> function you imported above, you’ll find this: <code class="docutils literal notranslate"><span class="pre">config_getter</span> <span class="pre">=</span> <span class="pre">simple_config_getter()</span></code>.
+That is, it was created by <code class="docutils literal notranslate"><span class="pre">simple_config_getter</span></code> with its default arguments.
+Let’s have a look at what these are.</p>
+<p>In fact, <code class="docutils literal notranslate"><span class="pre">simple_config_getter</span></code> is a function to make configuration getters that ressemble the one we’ve seen above:</p>
+<a class="reference internal image-reference" href="https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617"><img alt="image" src="https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617" width="341" />
+</a>
+<p>But where you can control what the central store (by default a local configuration files store) is, and whether to first search in environment variables or not, and whether to ask the user for the value, if not found before, or not.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py</span><span class="w"> </span><span class="kn">import</span> <span class="n">simple_config_getter</span><span class="p">,</span> <span class="n">get_configs_local_store</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">i2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sig</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="nb">str</span><span class="p">(</span><span class="n">Sig</span><span class="p">(</span><span class="n">simple_config_getter</span><span class="p">))</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(configs_src: str = '.../.config/config2py/configs'
+*
+first_look_in_env_vars: bool = True
+ask_user_if_key_not_found: bool = None
+config_store_factory: Callable = &lt;function get_configs_local_store at 0x10a457370&gt;)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">first_look_in_env_vars</span></code> specifies whether to look into environment variables first, or not.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ask_user_if_key_not_found</span></code> specifies whether to ask the user if a configuration key is not found. The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which will result in checking if you’re running in an interactive environment or not.
+When you use <code class="docutils literal notranslate"><span class="pre">config2py</span></code> in production though, you should definitely specify <code class="docutils literal notranslate"><span class="pre">ask_user_if_key_not_found=False</span></code> to make that choice explicit.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">configs_src</span></code> default is automatically set to be the <code class="docutils literal notranslate"><span class="pre">config2py/configs</span></code> folder of your system’s config directory (following XDG standards on Unix/Linux/macOS). You can override this with environment variables like <code class="docutils literal notranslate"><span class="pre">CONFIG2PY_CONFIG_DIR</span></code>, <code class="docutils literal notranslate"><span class="pre">CONFIG2PY_DATA_DIR</span></code>, etc., or the standard XDG variables.</p>
+<p>Your central store will be <code class="docutils literal notranslate"><span class="pre">config_store_factory(configs_src)</span></code>, and since you can also specify <code class="docutils literal notranslate"><span class="pre">config_store_factory</span></code>, you have total control over the store.</p>
+<p>The default <code class="docutils literal notranslate"><span class="pre">config_store_factory</span></code> is <code class="docutils literal notranslate"><span class="pre">get_configs_local_store</span></code> which will give you a locally persisted store where if <code class="docutils literal notranslate"><span class="pre">configs_src</span></code>:</p>
+<ul class="simple">
+<li><p>is a directory, it’s assumed to be a folder of text files.</p></li>
+<li><p>is a file, it’s assumed to be an ini or cfg file.</p></li>
+<li><p>is a string, it’s assumed to be an app name, from which to create a config folder for with the default method</p></li>
+</ul>
+</section>
+</section>
+<section id="setting-the-config-key-search-path">
+<h1>Setting the config key search path<a class="headerlink" href="#setting-the-config-key-search-path" title="Link to this heading">#</a></h1>
+<p>If you check out the code for <code class="docutils literal notranslate"><span class="pre">simple_config_getter</span></code>, you’ll find that all it it is simply setting the <code class="docutils literal notranslate"><span class="pre">sources</span></code> argument for the <code class="docutils literal notranslate"><span class="pre">get_config</span></code> function.
+Something more or less like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">configs</span> <span class="o">=</span> <span class="n">config_store_factory</span><span class="p">(</span><span class="n">configs_src</span><span class="p">)</span>
+<span class="n">source</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span>  <span class="c1"># search in environment variables first</span>
+    <span class="n">configs</span><span class="p">,</span>  <span class="c1"># then search in configs</span>
+    <span class="n">user_gettable</span><span class="p">(</span><span class="n">configs</span><span class="p">),</span>  <span class="c1"># if not found, ask the user and store in</span>
+<span class="p">]</span>
+<span class="n">config_getter</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the <code class="docutils literal notranslate"><span class="pre">user_gettable(local_configs)</span></code> part. If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is <strong>defined</strong> (not called), you can stick <code class="docutils literal notranslate"><span class="pre">locals()</span></code> in front of the <code class="docutils literal notranslate"><span class="pre">os.environ</span></code>.</p>
+<p>So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the <code class="docutils literal notranslate"><span class="pre">user_gettable(local_configs)</span></code> part. If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is <strong>defined</strong> (not called), you can stick <code class="docutils literal notranslate"><span class="pre">locals()</span></code> in front of the <code class="docutils literal notranslate"><span class="pre">os.environ</span></code>.</p>
+<p>Let’s work through a custom-made <code class="docutils literal notranslate"><span class="pre">config_getter</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_config</span><span class="p">,</span> <span class="n">user_gettable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextFiles</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">my_configs</span> <span class="o">=</span> <span class="n">TextFiles</span><span class="p">(</span>
+    <span class="s2">"~/.my_configs/"</span>
+<span class="p">)</span>  <span class="c1"># Note, to run this, you'd need to have such a directory!</span>
+<span class="c1"># (But you can also use my_configs = dict() if you want.)</span>
+<span class="n">config_getter</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span>
+    <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="nb">locals</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">my_configs</span><span class="p">,</span> <span class="n">user_gettable</span><span class="p">(</span><span class="n">my_configs</span><span class="p">)]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Now let’s see what happens when we do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config_getter</span><span class="p">(</span><span class="s2">"SOME_CONFIG_KEY"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Well, it will first look in <code class="docutils literal notranslate"><span class="pre">locals()</span></code>, which is a dictionary containing local variables
+where the <code class="docutils literal notranslate"><span class="pre">config_getter</span></code> was <strong>defined</strong> (careful – not called!!).
+This is desirable sometimes when you define your <code class="docutils literal notranslate"><span class="pre">config_getter</span></code> in a module that has other python variables you’d like to use.</p>
+<p>Assuming it doesn’t find such a key in <code class="docutils literal notranslate"><span class="pre">locals()</span></code> it goes on to try to find it in
+<code class="docutils literal notranslate"><span class="pre">os.environ</span></code>, which is a dict containing system environment variables.</p>
+<p>Assuming it doesn’t find it there either (that is, doesn’t find a file with that name in
+the directory <code class="docutils literal notranslate"><span class="pre">~/.my_configs/</span></code>), it will prompt the user to enter the value of that key.
+The function finally returns with the value that the user entered.</p>
+<p>But there’s more!</p>
+<p>Now look at what’s in <code class="docutils literal notranslate"><span class="pre">my_configs</span></code>!
+If you’ve used <code class="docutils literal notranslate"><span class="pre">TextFiles</span></code>, look in the folder to see that there’s a new file.
+Either way, if you do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_configs</span><span class="p">[</span><span class="s2">"SOME_CONFIG_KEY"</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>You’ll now see the value the user entered.</p>
+<p>This means what? This means that the next time you try to get the config:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config_getter</span><span class="p">(</span><span class="s2">"SOME_CONFIG_KEY"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It will return the value that the user entered last time, without prompting the
+user again.</p>
+<section id="syncstore-auto-syncing-key-value-stores">
+<h2>SyncStore: Auto-Syncing Key-Value Stores<a class="headerlink" href="#syncstore-auto-syncing-key-value-stores" title="Link to this heading">#</a></h2>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SyncStore</span></code> provides MutableMapping interfaces that automatically persist changes to backing storage. Changes sync immediately by default, or can be deferred using a context manager for efficient batch operations.</p>
+</section>
+<section id="basic-usage">
+<h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py.sync_store</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileStore</span><span class="p">,</span> <span class="n">JsonStore</span>
+
+<span class="c1"># Auto-detected from .json extension</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="s2">"config.json"</span><span class="p">)</span>
+<span class="n">config</span><span class="p">[</span><span class="s2">"api_key"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"secret"</span>  <span class="c1"># Syncs immediately</span>
+
+<span class="c1"># Batch operations (deferred sync)</span>
+<span class="k">with</span> <span class="n">config</span><span class="p">:</span>
+    <span class="n">config</span><span class="p">[</span><span class="s2">"a"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">config</span><span class="p">[</span><span class="s2">"b"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">config</span><span class="p">[</span><span class="s2">"c"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="c1"># Syncs once on exit</span>
+</pre></div>
+</div>
+</section>
+<section id="nested-sections">
+<h3>Nested Sections<a class="headerlink" href="#nested-sections" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Work with specific section via key_path</span>
+<span class="n">db_config</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="s2">"config.json"</span><span class="p">,</span> <span class="n">key_path</span><span class="o">=</span><span class="s2">"database"</span><span class="p">)</span>
+<span class="n">db_config</span><span class="p">[</span><span class="s2">"host"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"localhost"</span>  <span class="c1"># Only affects database section</span>
+
+<span class="c1"># Dotted notation for deep nesting</span>
+<span class="n">items</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="s2">"config.json"</span><span class="p">,</span> <span class="n">key_path</span><span class="o">=</span><span class="s2">"app.settings.items"</span><span class="p">)</span>
+<span class="n">items</span><span class="p">[</span><span class="s2">"item1"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"value"</span>
+</pre></div>
+</div>
+</section>
+<section id="supported-formats">
+<h3>Supported Formats<a class="headerlink" href="#supported-formats" title="Link to this heading">#</a></h3>
+<p>Auto-detected by extension:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.json</span></code> - JSON (stdlib)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.ini</span></code>, <code class="docutils literal notranslate"><span class="pre">.cfg</span></code> - INI files (stdlib)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">.yml</span></code> - YAML (if PyYAML installed)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.toml</span></code> - TOML (if tomli/tomllib installed)</p></li>
+</ul>
+<p>Register custom formats:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sync_store</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_extension</span>
+
+<span class="n">register_extension</span><span class="p">(</span><span class="s2">".custom"</span><span class="p">,</span> <span class="n">my_loader</span><span class="p">,</span> <span class="n">my_dumper</span><span class="p">)</span>
+<span class="n">store</span> <span class="o">=</span> <span class="n">FileStore</span><span class="p">(</span><span class="s2">"data.custom"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-backing-storage">
+<h3>Custom Backing Storage<a class="headerlink" href="#custom-backing-storage" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py.sync_store</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyncStore</span>
+
+
+<span class="c1"># Any backing storage via loader/dumper</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_loader</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">fetch_from_database</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">my_dumper</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">save_to_database</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="n">store</span> <span class="o">=</span> <span class="n">SyncStore</span><span class="p">(</span><span class="n">my_loader</span><span class="p">,</span> <span class="n">my_dumper</span><span class="p">)</span>
+<span class="n">store</span><span class="p">[</span><span class="s2">"key"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"value"</span>  <span class="c1"># Calls my_dumper</span>
+</pre></div>
+</div>
+</section>
+<section id="key-classes">
+<h3>Key Classes<a class="headerlink" href="#key-classes" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">SyncStore</span></code></strong> - Base class with loader/dumper functions</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">FileStore</span></code></strong> - File-based with extension detection and key_path</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">JsonStore</span></code></strong> - Explicit JSON with sensible defaults</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="a-few-notable-tools-you-can-import-from-config2py">
+<h1>A few notable tools you can import from config2py<a class="headerlink" href="#a-few-notable-tools-you-can-import-from-config2py" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">get_config</span></code>: Get a config value from a list of sources. See more below.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user_gettable</span></code>: Create a <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code> that asks the user for a value, optionally saving it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ask_user_for_input</span></code>: Ask the user for input, optionally masking, validating and transforming the input.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_app_folder</span></code>: Returns the full path of a directory suitable for storing application-specific data for a given app name and folder kind (config, data, cache, state, runtime).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_app_config_folder</span></code>: Specialized version of <code class="docutils literal notranslate"><span class="pre">get_app_folder</span></code> for configuration files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_app_data_folder</span></code>: Specialized version of <code class="docutils literal notranslate"><span class="pre">get_app_folder</span></code> for application data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_configs_local_store</span></code>: Get a local store (mapping interface of local files) of configs for a given app or package name</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">configs</span></code>: A default store instance for configs, defaulting to a local store under a default configuration local directory.</p></li>
+</ul>
+<section id="get-config">
+<h2>get_config<a class="headerlink" href="#get-config" title="Link to this heading">#</a></h2>
+<p>Get a config value from a list of sources.</p>
+<p>This function acts as a mini-framework to construct config accessors including defining
+multiple sources of where to find these configs,</p>
+<p>A source can be a function or a <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code>.
+(A <code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code> is anything that can be indexed with brackets: <code class="docutils literal notranslate"><span class="pre">obj[k]</span></code>,
+like <code class="docutils literal notranslate"><span class="pre">dict</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code>, etc..).</p>
+<p>Let’s take two sources: a <code class="docutils literal notranslate"><span class="pre">dict</span></code> and a <code class="docutils literal notranslate"><span class="pre">Callable</span></code>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; def func(k):
+...     if k == 'foo':
+...         return 'quux'
+...     elif k == 'green':
+...         return 'eggs'
+...     else:
+...         raise RuntimeError(f"I don't handle that: {k}")
+&gt;&gt;&gt; dict_ = {'foo': 'bar', 'baz': 'qux'}
+&gt;&gt;&gt; sources = [func, dict_]
+</pre></div>
+</div>
+<p>See that <code class="docutils literal notranslate"><span class="pre">get_config</span></code> go through the sources in the order they were listed,
+and returns the first value it finds (or manages to compute) for the key:</p>
+<p><code class="docutils literal notranslate"><span class="pre">get_config</span></code> finds <code class="docutils literal notranslate"><span class="pre">'foo'</span></code> in the very first source (<code class="docutils literal notranslate"><span class="pre">func</span></code>):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; get_config('foo', sources)
+'quux'
+</pre></div>
+</div>
+<p>But <code class="docutils literal notranslate"><span class="pre">baz</span></code> makes <code class="docutils literal notranslate"><span class="pre">func</span></code> raise an error, so it goes to the next source: <code class="docutils literal notranslate"><span class="pre">dict_</span></code>.
+There, it finds <code class="docutils literal notranslate"><span class="pre">'baz'</span></code> and returns its value:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; get_config('baz', sources)
+'qux'
+</pre></div>
+</div>
+<p>On the other hand, no one manages to find a config value for <code class="docutils literal notranslate"><span class="pre">'no_a_key'</span></code>, so
+<code class="docutils literal notranslate"><span class="pre">get_config</span></code> raises an error:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; get_config('no_a_key', sources)
+Traceback (most recent call last):
+...
+config2py.errors.ConfigNotFound: Could not find config for key: no_a_key
+</pre></div>
+</div>
+<p>But if you provide a default value, it will return that instead:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; get_config('no_a_key', sources, default='default')
+'default'
+</pre></div>
+</div>
+<p>You can also provide a function that will be called on the value before it is
+returned. This is useful if you want to do some post-processing on the value,
+or if you want to make sure that the value is of a certain type:</p>
+<p>This “search the next source if the previous one fails” behavior may not be what
+you want in some situations, since you’d be hiding some errors that you might
+want to be aware of. This is why allow you to specify what exceptions should
+actually be considered as “config not found” exceptions, through the
+<code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions</span></code> argument, which defaults to <code class="docutils literal notranslate"><span class="pre">Exception</span></code>.</p>
+<p>Further, your sources may return a value, but not one that you consider valid:
+For example, a sentinel like <code class="docutils literal notranslate"><span class="pre">None</span></code>. In this case you may want the search to
+continue. This is what the <code class="docutils literal notranslate"><span class="pre">val_is_valid</span></code> argument is for. It is a function
+that takes a value and returns a boolean. If it returns <code class="docutils literal notranslate"><span class="pre">False</span></code>, the search
+will continue. If it returns <code class="docutils literal notranslate"><span class="pre">True</span></code>, the search will stop and the value will
+be returned.</p>
+<p>Finally, we have <code class="docutils literal notranslate"><span class="pre">egress</span> <span class="pre">:</span> <span class="pre">Callable[[KT,</span> <span class="pre">TT],</span> <span class="pre">VT]</span></code>.
+This is a function that takes a key and a value, and
+returns a value. It is called after the value has been found, and its return
+value is the one that is returned by <code class="docutils literal notranslate"><span class="pre">get_config</span></code>. This is useful if you want
+to do some post-processing on the value, or before you return the value, or if you
+want to do some caching.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; config_store = dict()
+&gt;&gt;&gt; def store_before_returning(k, v):
+...    config_store[k] = v
+...    return v
+&gt;&gt;&gt; get_config('foo', sources, egress=store_before_returning)
+'quux'
+&gt;&gt;&gt; config_store
+{'foo': 'quux'}
+
+Note that a source can be a callable or a ``GettableContainer`` (most of the
+time, a ``Mapping`` (e.g. ``dict``)).
+Here, you should be compelled to use the resources of ``dol``
+(https://pypi.org/project/dol/) which will allow you to make ``Mapping``s for all
+sorts of data sources.
+</pre></div>
+</div>
+<p>For more info, see: https://github.com/i2mint/config2py/issues/4</p>
+</section>
+</section>
+<section id="user-gettable">
+<h1>user_gettable<a class="headerlink" href="#user-gettable" title="Link to this heading">#</a></h1>
+<p>So, what’s that <code class="docutils literal notranslate"><span class="pre">user_gettable</span></code>?</p>
+<p>It’s a way for you to specify that the system should ask the user for a key, and optionally save it somewhere, plus many other parameters (like what to ask the user, etc.)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">user_gettable</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">user_gettable</span><span class="p">()</span>
+<span class="n">s</span><span class="p">[</span><span class="s2">"SOME_KEY"</span><span class="p">]</span>
+<span class="c1"># will trigger a prompt for the user to enter the value of SOME_KEY</span>
+<span class="c1"># ... and when they do (say they entered 'SOME_VAL') it will return that value</span>
+
+<span class="c1"># And if you specify a save_to store (usually a persistent MutableMapping made with the dol package)</span>
+<span class="c1"># then it will save the value to that store for future use</span>
+<span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">some</span><span class="o">=</span><span class="s2">"store"</span><span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">user_gettable</span><span class="p">(</span><span class="n">save_to</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+<span class="n">s</span><span class="p">[</span><span class="s2">"SOME_KEY"</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>More on that another day…</p>
+<p class="epythet-aggregates">This documentation as a single file: <a href="config2py.md">config2py.md</a> (Markdown, for agents).</p>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API reference</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">config2py</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cherry-on-top-config-getter">The cherry on top: config_getter</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-config-getter-controlling-your-config-getter-a-bit-more"><code class="docutils literal notranslate"><span class="pre">simple_config_getter</span></code>: Controlling your config_getter a bit more</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-the-config-key-search-path">Setting the config key search path</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#syncstore-auto-syncing-key-value-stores">SyncStore: Auto-Syncing Key-Value Stores</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic Usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nested-sections">Nested Sections</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-formats">Supported Formats</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-backing-storage">Custom Backing Storage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-classes">Key Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#a-few-notable-tools-you-can-import-from-config2py">A few notable tools you can import from config2py</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-config">get_config</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#user-gettable">user_gettable</a></li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/index.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
 </html>
