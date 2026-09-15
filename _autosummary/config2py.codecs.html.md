@@ -50,14 +50,14 @@ and conditionally registers codecs that require third-party libraries (yaml, jso
 Decode data based on key’s extension.
 
 * **Parameters:**
-  * **key** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Key or filename with extension
-  * **data** ([`bytes`](https://docs.python.org/3/library/stdtypes.html#bytes)) – Bytes to decode
+  * **key** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Key or filename with extension
+  * **data** ([`bytes`](https://docs.python.org/3/builtins/stdtypes.html#bytes)) – Bytes to decode
 * **Return type:**
   [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)
 * **Returns:**
   Decoded Python object
 * **Raises:**
-  [**ValueError**](https://docs.python.org/3/library/exceptions.html#ValueError) – If no decoder registered for extension
+  [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – If no decoder registered for extension
 
 ### Examples
 
@@ -72,14 +72,14 @@ Decode data based on key’s extension.
 Encode object based on key’s extension.
 
 * **Parameters:**
-  * **key** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Key or filename with extension
+  * **key** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Key or filename with extension
   * **obj** ([`Any`](https://docs.python.org/3/library/typing.html#typing.Any)) – Python object to encode
 * **Return type:**
-  [`bytes`](https://docs.python.org/3/library/stdtypes.html#bytes)
+  [`bytes`](https://docs.python.org/3/builtins/stdtypes.html#bytes)
 * **Returns:**
   Encoded bytes
 * **Raises:**
-  [**ValueError**](https://docs.python.org/3/library/exceptions.html#ValueError) – If no encoder registered for extension
+  [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – If no encoder registered for extension
 
 ### Examples
 
@@ -94,9 +94,9 @@ Encode object based on key’s extension.
 Get information about a registered codec.
 
 * **Parameters:**
-  **extension** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – File extension (with or without leading dot)
+  **extension** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File extension (with or without leading dot)
 * **Return type:**
-  [`dict`](https://docs.python.org/3/library/stdtypes.html#dict)[[`str`](https://docs.python.org/3/library/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
 * **Returns:**
   Dictionary with codec information
 
@@ -115,9 +115,9 @@ True
 Extract extension from a key (filename, path, etc.).
 
 * **Parameters:**
-  **key** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – A string that may contain a file extension
+  **key** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – A string that may contain a file extension
 * **Return type:**
-  [`str`](https://docs.python.org/3/library/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 * **Returns:**
   Extension without the dot, or empty string if no extension found
 
@@ -141,9 +141,9 @@ Extract extension from a key (filename, path, etc.).
 Check if an extension has any codec registered.
 
 * **Parameters:**
-  **extension** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – File extension (with or without leading dot)
+  **extension** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File extension (with or without leading dot)
 * **Return type:**
-  [`bool`](https://docs.python.org/3/library/functions.html#bool)
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 * **Returns:**
   True if decoder or encoder is registered
 
@@ -161,7 +161,7 @@ False
 List all registered extensions.
 
 * **Return type:**
-  [`list`](https://docs.python.org/3/library/stdtypes.html#list)[[`str`](https://docs.python.org/3/library/stdtypes.html#str)]
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 * **Returns:**
   Sorted list of registered extensions
 
@@ -178,13 +178,13 @@ True
 Register encoder and/or decoder for an extension.
 
 * **Parameters:**
-  * **extension** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – File extension (with or without leading dot)
-  * **encoder** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`bytes`](https://docs.python.org/3/library/stdtypes.html#bytes)]]) – Function to encode objects to bytes
-  * **decoder** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`bytes`](https://docs.python.org/3/library/stdtypes.html#bytes)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]) – Function to decode bytes to objects
-  * **overwrite** ([`bool`](https://docs.python.org/3/library/functions.html#bool)) – Whether to overwrite existing codec
-  * **dependency** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/library/stdtypes.html#str)]) – Optional package name required for this codec
+  * **extension** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File extension (with or without leading dot)
+  * **encoder** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`bytes`](https://docs.python.org/3/builtins/stdtypes.html#bytes)]]) – Function to encode objects to bytes
+  * **decoder** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`bytes`](https://docs.python.org/3/builtins/stdtypes.html#bytes)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]) – Function to decode bytes to objects
+  * **overwrite** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to overwrite existing codec
+  * **dependency** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Optional package name required for this codec
 * **Raises:**
-  [**ValueError**](https://docs.python.org/3/library/exceptions.html#ValueError) – If codec already registered and overwrite=False
+  [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – If codec already registered and overwrite=False
 
 ### Examples
 
@@ -199,8 +199,8 @@ Register encoder and/or decoder for an extension.
 Decorator to register a decoder function.
 
 * **Parameters:**
-  * **extension** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – File extension (with or without leading dot)
-  * **overwrite** ([`bool`](https://docs.python.org/3/library/functions.html#bool)) – Whether to overwrite existing decoder
+  * **extension** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File extension (with or without leading dot)
+  * **overwrite** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to overwrite existing decoder
 * **Returns:**
   Decorator function
 
@@ -217,8 +217,8 @@ Decorator to register a decoder function.
 Decorator to register an encoder function.
 
 * **Parameters:**
-  * **extension** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – File extension (with or without leading dot)
-  * **overwrite** ([`bool`](https://docs.python.org/3/library/functions.html#bool)) – Whether to overwrite existing encoder
+  * **extension** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File extension (with or without leading dot)
+  * **overwrite** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to overwrite existing encoder
 * **Returns:**
   Decorator function
 

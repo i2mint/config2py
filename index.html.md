@@ -8,6 +8,21 @@ To install:	`pip install config2py`
 
 [Documentation](https://i2mint.github.io/config2py/)
 
+<!-- epythet:agentic-readme:start -->
+
+## For AI agents
+
+`config2py` ships no skills or subagents of its own — it’s the thing that reads
+*your* agent’s config, not the other way around. If you’re an agent that needs to
+fetch a value from an environment variable, a local file, or a user prompt without
+three different codecs and a `configparser` incantation, this is your package.
+
+**The documentation, machine-readable**: [`llms.txt`](https://i2mint.github.io/config2py/llms.txt) indexes every page; [`config2py.md`](https://i2mint.github.io/config2py/config2py.md) is the whole documentation in one file; every page has a `.md` twin; [`objects.inv`](https://i2mint.github.io/config2py/objects.inv) maps symbols to URLs.
+
+If you are a control freak (human or otherwise), the rest of this README is written for you, starting at [The cherry on top: config_getter]().
+
+<!-- epythet:agentic-readme:end -->
+
 # The cherry on top: config_getter
 
 ```python

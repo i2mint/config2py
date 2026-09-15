@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=f2b49961"></script>
+    <script src="../../_static/documentation_options.js?v=61349712"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.50" />
+  <meta name="docsearch:version" content="0.1.52" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -792,11 +792,25 @@ window.runMermaid = runMermaid;</script>
 <span class="c1"># openai.api_key = _api_key</span>
 
 
+<div class="viewcode-block" id="is_not_none_nor_empty">
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.is_not_none_nor_empty">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_not_none_nor_empty</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""True unless ``x`` is ``None`` or the empty string.</span>
+
+<span class="sd">    &gt;&gt;&gt; is_not_none_nor_empty(None)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; is_not_none_nor_empty('')</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; is_not_none_nor_empty('a')</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; is_not_none_nor_empty(0)</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">!=</span> <span class="s2">""</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
 
 
 <div class="viewcode-block" id="get_config">
@@ -892,8 +906,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Note that a source can be a callable or a ``GettableContainer`` (most of the</span>
 <span class="sd">    time, a ``Mapping`` (e.g. ``dict``)).</span>
 <span class="sd">    Here, you should be compelled to use the resources of ``dol``</span>
-<span class="sd">    (https://pypi.org/project/dol/) which will allow you to make ``Mapping``s for all</span>
-<span class="sd">    sorts of data sources.</span>
+<span class="sd">    (https://pypi.org/project/dol/) which will allow you to make ``Mapping`` objects</span>
+<span class="sd">    for all sorts of data sources.</span>
 
 <span class="sd">    For more info, see: https://github.com/i2mint/config2py/issues/4</span>
 
@@ -1148,11 +1162,25 @@ window.runMermaid = runMermaid;</script>
         <span class="p">)</span>
 
 
+<div class="viewcode-block" id="is_not_empty">
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.is_not_empty">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_not_empty</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""True unless ``val`` is ``None`` or the empty string.</span>
+
+<span class="sd">    &gt;&gt;&gt; is_not_empty(None)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; is_not_empty('')</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; is_not_empty('a')</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; is_not_empty(0)</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">val</span> <span class="o">!=</span> <span class="s2">""</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
 
 
 <div class="viewcode-block" id="ask_user_for_key">
@@ -1238,54 +1266,57 @@ window.runMermaid = runMermaid;</script>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create a ``GettableContainer`` that asks the user for a value, optionally saving it.</span>
 
-<span class="sd">    :param save_to: Where to save the user's response: a ``MutableMapping`` (or</span>
-<span class="sd">        anything with a ``__setitem__``), or a ``(key, value)`` saver function.</span>
-<span class="sd">        If ``None``, the user's response is not saved.</span>
-<span class="sd">    :param prompt_template: A template string to prompt the user with. It should</span>
-<span class="sd">        contain a placeholder for the key, e.g. ``"Enter a value for {}: "``.</span>
-<span class="sd">    :param egress: A function to apply to the user's response before returning it.</span>
-<span class="sd">        This can be used to validate the response, for example.</span>
-<span class="sd">    :param user_asker: A function that asks the user for input. It should take a</span>
-<span class="sd">        prompt string and return the user's response.</span>
-<span class="sd">    :param val_is_valid: A function that takes a value and returns a boolean. If it</span>
-<span class="sd">        returns ``False``, the user will be asked for a new value.</span>
-<span class="sd">    :param config_not_found_exceptions: An iterable of exceptions that should be</span>
-<span class="sd">        considered as "config not found" exceptions. If the user's response raises</span>
-<span class="sd">        one of these exceptions, the user will be asked for a new value.</span>
-<span class="sd">    :return: A ``GettableContainer`` that asks the user for a value, optionally saving</span>
-<span class="sd">        it.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        save_to: Where to save the user's response: a ``MutableMapping`` (or</span>
+<span class="sd">            anything with a ``__setitem__``), or a ``(key, value)`` saver function.</span>
+<span class="sd">            If ``None``, the user's response is not saved.</span>
+<span class="sd">        prompt_template: A template string to prompt the user with. It should</span>
+<span class="sd">            contain a placeholder for the key, e.g. ``"Enter a value for {}: "``.</span>
+<span class="sd">        egress: A function to apply to the user's response before returning it.</span>
+<span class="sd">            This can be used to validate the response, for example.</span>
+<span class="sd">        user_asker: A function that asks the user for input. It should take a</span>
+<span class="sd">            prompt string and return the user's response.</span>
+<span class="sd">        val_is_valid: A function that takes a value and returns a boolean. If it</span>
+<span class="sd">            returns ``False``, the user will be asked for a new value.</span>
+<span class="sd">        config_not_found_exceptions: An iterable of exceptions that should be</span>
+<span class="sd">            considered as "config not found" exceptions. If the user's response</span>
+<span class="sd">            raises one of these exceptions, the user will be asked for a new value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A ``GettableContainer`` that asks the user for a value, optionally saving it.</span>
 
 <span class="sd">    Example:</span>
 
-<span class="sd">    &gt;&gt;&gt; s = user_gettable()</span>
-<span class="sd">    &gt;&gt;&gt; v = s['SOME_KEY']  # doctest: +SKIP</span>
-<span class="sd">    'SOME_VAL'</span>
+<span class="sd">        &gt;&gt;&gt; s = user_gettable()</span>
+<span class="sd">        &gt;&gt;&gt; v = s['SOME_KEY']  # doctest: +SKIP</span>
+<span class="sd">        'SOME_VAL'</span>
 
-<span class="sd">    This will trigger a prompt for the user to enter the value of ``SOME_KEY``.</span>
-<span class="sd">    When they do (say they entered 'SOME_VAL') it will return that value.</span>
+<span class="sd">        This will trigger a prompt for the user to enter the value of ``SOME_KEY``.</span>
+<span class="sd">        When they do (say they entered 'SOME_VAL') it will return that value.</span>
 
-<span class="sd">    And if you specify a save_to store (usually a persistent MutableMapping made with</span>
-<span class="sd">    the ``dol`` package) then it will save the value to that store for future use.</span>
+<span class="sd">        And if you specify a save_to store (usually a persistent MutableMapping made</span>
+<span class="sd">        with the ``dol`` package) then it will save the value to that store for</span>
+<span class="sd">        future use.</span>
 
-<span class="sd">    &gt;&gt;&gt; d = dict(some='store')</span>
-<span class="sd">    &gt;&gt;&gt; s = user_gettable(save_to=d)</span>
-<span class="sd">    &gt;&gt;&gt; s['SOME_KEY']  # doctest: +SKIP</span>
-<span class="sd">    'SOME_VAL'</span>
-<span class="sd">    &gt;&gt;&gt; d  # doctest: +SKIP</span>
-<span class="sd">    {'some': 'store', 'SOME_KEY': 'SOME_VAL'}</span>
+<span class="sd">        &gt;&gt;&gt; d = dict(some='store')</span>
+<span class="sd">        &gt;&gt;&gt; s = user_gettable(save_to=d)</span>
+<span class="sd">        &gt;&gt;&gt; s['SOME_KEY']  # doctest: +SKIP</span>
+<span class="sd">        'SOME_VAL'</span>
+<span class="sd">        &gt;&gt;&gt; d  # doctest: +SKIP</span>
+<span class="sd">        {'some': 'store', 'SOME_KEY': 'SOME_VAL'}</span>
 
-<span class="sd">    When saving isn't a simple write (say you need to encrypt, or write to two</span>
-<span class="sd">    places), ``save_to`` can be a ``(key, value)`` function instead:</span>
+<span class="sd">        When saving isn't a simple write (say you need to encrypt, or write to two</span>
+<span class="sd">        places), ``save_to`` can be a ``(key, value)`` function instead:</span>
 
-<span class="sd">    &gt;&gt;&gt; saved = []</span>
-<span class="sd">    &gt;&gt;&gt; s = user_gettable(</span>
-<span class="sd">    ...     save_to=lambda k, v: saved.append((k, v)),</span>
-<span class="sd">    ...     user_asker=lambda prompt: 'SOME_VAL',</span>
-<span class="sd">    ... )</span>
-<span class="sd">    &gt;&gt;&gt; s['SOME_KEY']</span>
-<span class="sd">    'SOME_VAL'</span>
-<span class="sd">    &gt;&gt;&gt; saved</span>
-<span class="sd">    [('SOME_KEY', 'SOME_VAL')]</span>
+<span class="sd">        &gt;&gt;&gt; saved = []</span>
+<span class="sd">        &gt;&gt;&gt; s = user_gettable(</span>
+<span class="sd">        ...     save_to=lambda k, v: saved.append((k, v)),</span>
+<span class="sd">        ...     user_asker=lambda prompt: 'SOME_VAL',</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; s['SOME_KEY']</span>
+<span class="sd">        'SOME_VAL'</span>
+<span class="sd">        &gt;&gt;&gt; saved</span>
+<span class="sd">        [('SOME_KEY', 'SOME_VAL')]</span>
 
 <span class="sd">    """</span>
     <span class="n">getter</span> <span class="o">=</span> <span class="n">ask_user_for_key</span><span class="p">(</span>

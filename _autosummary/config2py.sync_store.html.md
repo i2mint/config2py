@@ -51,13 +51,13 @@ A SyncStore backed by a file with automatic format detection.
 Supports nested key paths for working with specific sections.
 
 * **Parameters:**
-  * **filepath** (`Union`[[`str`](https://docs.python.org/3/library/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to file (supports ~ expansion)
-  * **key_path** (`Union`[[`str`](https://docs.python.org/3/library/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/library/stdtypes.html#str), [`...`](https://docs.python.org/3/library/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/library/constants.html#None)]) – Optional nested path to operate on
-  * **loader** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/library/stdtypes.html#str)], [`dict`](https://docs.python.org/3/library/stdtypes.html#dict)]]) – Optional custom loader (auto-detected from extension if not provided)
-  * **dumper** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/library/stdtypes.html#dict)], [`str`](https://docs.python.org/3/library/stdtypes.html#str)]]) – Optional custom dumper (auto-detected from extension if not provided)
-  * **mode** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – File read mode (‘r’ for text, ‘rb’ for binary)
-  * **dump_kwargs** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`dict`](https://docs.python.org/3/library/stdtypes.html#dict)]) – Additional kwargs for dumper
-  * **create_file_content** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`dict`](https://docs.python.org/3/library/stdtypes.html#dict)]]) – Optional factory callable that returns initial dict content
+  * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to file (supports ~ expansion)
+  * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
+  * **loader** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]]) – Optional custom loader (auto-detected from extension if not provided)
+  * **dumper** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – Optional custom dumper (auto-detected from extension if not provided)
+  * **mode** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File read mode (‘r’ for text, ‘rb’ for binary)
+  * **dump_kwargs** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]) – Additional kwargs for dumper
+  * **create_file_content** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]]) – Optional factory callable that returns initial dict content
     for missing files. If None, FileNotFoundError is raised for missing files.
   * **create_key_path_content** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]) – Optional factory callable that returns initial content
     for missing key_path. If None, KeyError is raised for missing key paths.
@@ -102,10 +102,10 @@ A FileStore specialized for JSON files.
 Pre-configured with json.loads/dumps and sensible defaults.
 
 * **Parameters:**
-  * **filepath** (`Union`[[`str`](https://docs.python.org/3/library/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
-  * **key_path** (`Union`[[`str`](https://docs.python.org/3/library/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/library/stdtypes.html#str), [`...`](https://docs.python.org/3/library/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/library/constants.html#None)]) – Optional nested path to operate on
-  * **indent** ([`int`](https://docs.python.org/3/library/functions.html#int)) – JSON indentation (default: 2)
-  * **ensure_ascii** ([`bool`](https://docs.python.org/3/library/functions.html#bool)) – Whether to escape non-ASCII (default: False)
+  * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
+  * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
+  * **indent** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – JSON indentation (default: 2)
+  * **ensure_ascii** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to escape non-ASCII (default: False)
   * **\*\*dump_kwargs** – Additional kwargs for json.dumps
 
 ### *class* config2py.sync_store.SyncStore(loader, dumper)
@@ -117,8 +117,8 @@ A MutableMapping that automatically syncs changes to backing storage.
 Supports deferred sync via context manager for efficient batch operations.
 
 * **Parameters:**
-  * **loader** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`dict`](https://docs.python.org/3/library/stdtypes.html#dict)]) – Function that returns the current data as a dict
-  * **dumper** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/library/stdtypes.html#dict)], [`None`](https://docs.python.org/3/library/constants.html#None)]) – Function that persists the data dict to storage
+  * **loader** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]) – Function that returns the current data as a dict
+  * **dumper** ([`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Function that persists the data dict to storage
 
 ### Example
 
@@ -161,4 +161,4 @@ Get loader/dumper for a file based on extension.
 Register loader/dumper for a file extension.
 
 * **Return type:**
-  [`None`](https://docs.python.org/3/library/constants.html#None)
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)

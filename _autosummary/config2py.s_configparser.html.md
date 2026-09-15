@@ -4,7 +4,7 @@ Data Object Layer for configparser standard lib.
 
 ### Functions
 
-| `persist_after_operation`(method_func)                                                     |                                                                                                               |
+| [`persist_after_operation`](#config2py.s_configparser.persist_after_operation)(method_func)      | Wrap a mutating method so it calls `self.persist()` after running.                                            |
 |--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
 | [`postprocess_ini_section_items`](#config2py.s_configparser.postprocess_ini_section_items)(items)      | Transform newline-separated string values into actual list of strings (assuming that intent)                  |
 | [`preprocess_ini_section_items`](#config2py.s_configparser.preprocess_ini_section_items)(items)       | Transform list values into newline-separated strings, in view of writing the value to a ini formatted section |
@@ -77,8 +77,7 @@ A KvReader to read config files
 
 #### persist()
 
-Persists the data (if not in a context manager).
-Persists means to call
+Disabled: `ConfigReader` is read-only.
 
 ### *class* config2py.s_configparser.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
@@ -195,7 +194,7 @@ But it’s not automatically persisted
 {'like': 'you', 'something': 'else'}
 ```
 
-### TODO: Could make section updates auto-persistent by wrapping configparser.SectionProxy
+# TODO: Could make section updates auto-persistent by wrapping configparser.SectionProxy
 
 For your convenience, the ConfigStore is also a context manager, that will,
 you guessed, persist stuff when (and only when) you exit it.
@@ -244,6 +243,20 @@ Needed because the Store.get didn’t catch the NoSectionError
 
 Persists the data (if not in a context manager).
 Persists means to call
+
+#### to_dict()
+
+Return the whole config as a `{section: {key: value}}` dict.
+
+### config2py.s_configparser.persist_after_operation(method_func)
+
+Wrap a mutating method so it calls `self.persist()` after running.
+
+Used to make `ConfigStore` methods like `__setitem__` and
+`__delitem__` persist their change to the store’s target immediately –
+which writes to disk only when `target_kind` is `'filepath'`; for
+`'string'`, `'bytes'` and `'dict'` targets, `persist()` just returns
+the serialized data without touching disk.
 
 ### config2py.s_configparser.postprocess_ini_section_items(items)
 

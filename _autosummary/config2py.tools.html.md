@@ -16,9 +16,9 @@ Get a dict of `{name: value}` pairs from the `name="value" pairs of unix
 export lines (that is, lines of the ``export NAME="VALUE"` format
 
 * **Parameters:**
-  **exports** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Filepath or string contents thereof
+  **exports** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Filepath or string contents thereof
 * **Return type:**
-  [`dict`](https://docs.python.org/3/library/stdtypes.html#dict)
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
 * **Returns:**
   A dict of extracted `{name: value}` pairs
 
@@ -55,12 +55,12 @@ and then, if the key is not found in this “central” store, optionally (but n
 default) asks the user for the value and stores it in the central config store.
 
 * **Parameters:**
-  * **configs_src** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – A specification of the central config store. By default:
+  * **configs_src** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – A specification of the central config store. By default:
     If it’s a directory (with at least a slash), it’s assumed to be a folder of text files.
     If it’s a file, it’s assumed to be an ini or cfg file.
     If it’s a string, it’s assumed to be an app name, from which to create a folder
-  * **first_look_in_env_vars** ([`bool`](https://docs.python.org/3/library/functions.html#bool)) – Whether to look in environment variables first
-  * **ask_user_if_key_not_found** ([`bool`](https://docs.python.org/3/library/functions.html#bool)) – Whether to ask the user if the key is not found
+  * **first_look_in_env_vars** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to look in environment variables first
+  * **ask_user_if_key_not_found** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to ask the user if the key is not found
     (and subsequently store the key in the central config store)
   * **config_store_factory** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)) – A function that takes a config source specification
     and returns the central config store

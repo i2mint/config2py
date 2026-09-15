@@ -8,8 +8,8 @@ Base for getting configs from various sources and formats
 |----------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
 | [`get_config`](#config2py.base.get_config)([key, sources, default, egress, ...])  | Get a config value from a list of sources                                          |
 | [`gettable_containers`](#config2py.base.gettable_containers)(sources[, val_is_valid, ...]) | Convert an iterable of sources into `GettableContainers`                           |
-| `is_not_empty`(val)                                                                                |                                                                                    |
-| `is_not_none_nor_empty`(x)                                                                         |                                                                                    |
+| [`is_not_empty`](#config2py.base.is_not_empty)(val)                                 | True unless `val` is `None` or the empty string.                                   |
+| [`is_not_none_nor_empty`](#config2py.base.is_not_none_nor_empty)(x)                          | True unless `x` is `None` or the empty string.                                     |
 | [`sources_chainmap`](#config2py.base.sources_chainmap)(sources[, val_is_valid, ...])    | Create a `ChainMap` from a list of sources                                         |
 | [`user_gettable`](#config2py.base.user_gettable)([save_to, prompt_template, ...])    | Create a `GettableContainer` that asks the user for a value, optionally saving it. |
 
@@ -21,7 +21,7 @@ Base for getting configs from various sources and formats
 
 ### *class* config2py.base.FuncBasedGettableContainer(getter, val_is_valid=<function always_true>, config_not_found_exceptions=(<class 'Exception'>, ))
 
-Bases: [`object`](https://docs.python.org/3/library/functions.html#object)
+Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 A class that wraps a `Callable[[KT], VT]` function so it has a (partial)
 Mapping[KT, TT] interface. It is “partial” in the sense that it only implements
@@ -101,7 +101,7 @@ KeyError: 'no_a_key'
 Function that just returns True.
 
 * **Return type:**
-  [`bool`](https://docs.python.org/3/library/functions.html#bool)
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### *class* config2py.base.GettableContainer(\*args, \*\*kwargs)
 
@@ -165,13 +165,13 @@ Ask the user for the value of `key`, optionally saving it.
     `ask_user_for_key` is returned, so you can specify the key later.
   * **prompt_template** – A template string to prompt the user with. It should
     contain a placeholder for the key, e.g. `"Enter a value for {}: "`.
-  * **save_to** (`Union`[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/library/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
+  * **save_to** (`Union`[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the response is not saved. See `_resolve_saver`.
   * **save_condition** – A function of the value, deciding whether to save it.
   * **user_asker** – A function that takes a prompt string and returns the user’s
     response.
-  * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable) | [`None`](https://docs.python.org/3/library/constants.html#None)) – A `(key, value)` function to apply to the user’s response before
+  * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – A `(key, value)` function to apply to the user’s response before
     returning (and saving) it.
 
 The value can be saved to any `MutableMapping`:
@@ -293,14 +293,8 @@ want to do some caching.
 Note that a source can be a callable or a `GettableContainer` (most of the
 time, a `Mapping` (e.g. `dict`)).
 Here, you should be compelled to use the resources of `dol`
-([https://pypi.org/project/dol/](https://pypi.org/project/dol/)) which will allow you to make 
-
-```
-``
-```
-
-Mapping\`\`s for all
-sorts of data sources.
+([https://pypi.org/project/dol/](https://pypi.org/project/dol/)) which will allow you to make `Mapping` objects
+for all sorts of data sources.
 
 For more info, see: [https://github.com/i2mint/config2py/issues/4](https://github.com/i2mint/config2py/issues/4)
 
@@ -310,6 +304,39 @@ Convert an iterable of sources into `GettableContainers`
 
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable)[[`GettableContainer`](#config2py.base.GettableContainer)]
+
+### config2py.base.is_not_empty(val)
+
+True unless `val` is `None` or the empty string.
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+```pycon
+>>> is_not_empty(None)
+False
+>>> is_not_empty('')
+False
+>>> is_not_empty('a')
+True
+>>> is_not_empty(0)
+True
+```
+
+### config2py.base.is_not_none_nor_empty(x)
+
+True unless `x` is `None` or the empty string.
+
+```pycon
+>>> is_not_none_nor_empty(None)
+False
+>>> is_not_none_nor_empty('')
+False
+>>> is_not_none_nor_empty('a')
+True
+>>> is_not_none_nor_empty(0)
+True
+```
 
 ### config2py.base.sources_chainmap(sources, val_is_valid=<function always_true>, config_not_found_exceptions=(<class 'Exception'>, ))
 
@@ -323,23 +350,22 @@ Create a `ChainMap` from a list of sources
 Create a `GettableContainer` that asks the user for a value, optionally saving it.
 
 * **Parameters:**
-  * **save_to** (`Union`[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/library/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
+  * **save_to** (`Union`[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the user’s response is not saved.
   * **prompt_template** – A template string to prompt the user with. It should
     contain a placeholder for the key, e.g. `"Enter a value for {}: "`.
-  * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable) | [`None`](https://docs.python.org/3/library/constants.html#None)) – A function to apply to the user’s response before returning it.
+  * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – A function to apply to the user’s response before returning it.
     This can be used to validate the response, for example.
   * **user_asker** – A function that asks the user for input. It should take a
     prompt string and return the user’s response.
-  * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`bool`](https://docs.python.org/3/library/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
+  * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
     returns `False`, the user will be asked for a new value.
-  * **config_not_found_exceptions** ([`tuple`](https://docs.python.org/3/library/stdtypes.html#tuple)[[`type`](https://docs.python.org/3/library/functions.html#type)[[`Exception`](https://docs.python.org/3/library/exceptions.html#Exception)], [`...`](https://docs.python.org/3/library/constants.html#Ellipsis)]) – An iterable of exceptions that should be
-    considered as “config not found” exceptions. If the user’s response raises
-    one of these exceptions, the user will be asked for a new value.
+  * **config_not_found_exceptions** ([`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`type`](https://docs.python.org/3/builtins/functions.html#type)[[`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exception)], [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)]) – An iterable of exceptions that should be
+    considered as “config not found” exceptions. If the user’s response
+    raises one of these exceptions, the user will be asked for a new value.
 * **Returns:**
-  A `GettableContainer` that asks the user for a value, optionally saving
-  it.
+  A `GettableContainer` that asks the user for a value, optionally saving it.
 
 ### Example
 
@@ -352,8 +378,9 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
 This will trigger a prompt for the user to enter the value of `SOME_KEY`.
 When they do (say they entered ‘SOME_VAL’) it will return that value.
 
-And if you specify a save_to store (usually a persistent MutableMapping made with
-the `dol` package) then it will save the value to that store for future use.
+And if you specify a save_to store (usually a persistent MutableMapping made
+with the `dol` package) then it will save the value to that store for
+future use.
 
 ```pycon
 >>> d = dict(some='store')

@@ -10,7 +10,7 @@ Error classes for config2py.
 
 ### *exception* config2py.errors.Config2PyError
 
-Bases: [`Exception`](https://docs.python.org/3/library/exceptions.html#Exception)
+Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exception)
 
 Base class for config2py errors.
 

@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=f2b49961"></script>
+    <script src="../../_static/documentation_options.js?v=61349712"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.50" />
+  <meta name="docsearch:version" content="0.1.52" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -883,6 +883,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        dumper: Function that persists the data dict to storage</span>
 
 <span class="sd">    Example:</span>
+
 <span class="sd">        &gt;&gt;&gt; def my_loader():</span>
 <span class="sd">        ...     return {'x': 1}</span>
 <span class="sd">        &gt;&gt;&gt;</span>
@@ -906,6 +907,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">Loader</span><span class="p">,</span> <span class="n">dumper</span><span class="p">:</span> <span class="n">Dumper</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""See the class docstring for ``loader`` and ``dumper``."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span> <span class="o">=</span> <span class="n">loader</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dumper</span> <span class="o">=</span> <span class="n">dumper</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span>
@@ -985,6 +987,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            for missing key_path. If None, KeyError is raised for missing key paths.</span>
 
 <span class="sd">    Example:</span>
+
 <span class="sd">        &gt;&gt;&gt; import tempfile</span>
 <span class="sd">        &gt;&gt;&gt; import os</span>
 <span class="sd">        &gt;&gt;&gt;</span>
@@ -1025,6 +1028,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">create_file_content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">create_key_path_content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""See the class docstring for each parameter."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key_path</span> <span class="o">=</span> <span class="n">_normalize_key_path</span><span class="p">(</span><span class="n">key_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
@@ -1137,6 +1141,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">ensure_ascii</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">dump_kwargs</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""See the class docstring for each parameter."""</span>
         <span class="n">dump_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"indent"</span><span class="p">,</span> <span class="n">indent</span><span class="p">)</span>
         <span class="n">dump_kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"ensure_ascii"</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="p">)</span>
 

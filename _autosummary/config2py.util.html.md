@@ -35,7 +35,7 @@ Utility functions for config2py.
 
 ### *class* config2py.util.AppData(app_name, , package_name=None, seed_data_dir='_seed_data')
 
-Bases: [`object`](https://docs.python.org/3/library/functions.html#object)
+Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 Per-user data directory facade for a Python application.
 
@@ -53,16 +53,16 @@ Seed files are read via `importlib.resources` from
 `<package_name>._seed_data.{resources,config}/`.
 
 * **Parameters:**
-  * **app_name** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – The application name used for the directory under the
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – The application name used for the directory under the
     XDG root (e.g. `"my_app"` → `~/.local/share/my_app`).
-  * **package_name** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/library/stdtypes.html#str)]) – The top-level Python package that contains the
+  * **package_name** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – The top-level Python package that contains the
     `_seed_data` directory.  Defaults to *app_name*.
-  * **seed_data_dir** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Name of the seed-data sub-package inside the
+  * **seed_data_dir** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the seed-data sub-package inside the
     Python package (default `"_seed_data"`).
 
-Example:
+### Example
 
-```default
+```pycon
 >>> app = AppData("myapp", package_name="myapp")
 >>> app.app_folder()
 PosixPath('/Users/.../.local/share/myapp')
@@ -104,7 +104,7 @@ Class to wrap environment variables without revealing sensitive information.
 
 ### *class* config2py.util.FolderSpec(env_var, default_path, subpath)
 
-Bases: [`tuple`](https://docs.python.org/3/library/stdtypes.html#tuple)
+Bases: [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)
 
 Declarative description of where a given folder kind lives on a platform.
 
@@ -132,7 +132,7 @@ Alias for field number 2
 Function that just returns True.
 
 * **Return type:**
-  [`bool`](https://docs.python.org/3/library/functions.html#bool)
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### config2py.util.app_folder_standards(os_name='posix')
 
@@ -145,10 +145,10 @@ on any platform – callers can ask for the table of an OS they are not
 running on.
 
 * **Parameters:**
-  **os_name** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – An `os.name` value; `"nt"` selects the Windows standards,
+  **os_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – An `os.name` value; `"nt"` selects the Windows standards,
   anything else selects the XDG Base Directory standards.
 * **Return type:**
-  [`dict`](https://docs.python.org/3/library/stdtypes.html#dict)
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
 
 ```pycon
 >>> app_folder_standards("nt")["cache"]
@@ -162,16 +162,16 @@ FolderSpec(env_var='XDG_CACHE_HOME', default_path='~/.cache', subpath='')
 Ask the user for input, optionally masking, validating and transforming the input.
 
 * **Parameters:**
-  * **prompt** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Prompt to display to the user
-  * **default** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Default value to return if the user enters nothing
+  * **prompt** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Prompt to display to the user
+  * **default** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Default value to return if the user enters nothing
   * **mask_input** – Whether to mask the user’s input
-  * **masking_toggle_str** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – String to toggle input masking. If `None`, no toggle
+  * **masking_toggle_str** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – String to toggle input masking. If `None`, no toggle
     is available. If not `None` (a common choice is the empty string)
     the user can enter this string to toggle input masking.
   * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)) – Function to apply to the user’s response before returning it.
     This can be used to validate the response, for example.
 * **Return type:**
-  [`str`](https://docs.python.org/3/library/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 * **Returns:**
   The user’s response (or the default value if the user entered nothing)
 
@@ -179,18 +179,16 @@ Ask the user for input, optionally masking, validating and transforming the inpu
 
 Create directories up to a specified limit.
 
-### Parameters
-
-dirpath (str): The directory path to create.
-max_dirs_to_make (int, optional): The maximum number of directories to create. If None, there’s no limit.
-
-### Returns
-
-bool: True if the directory was created successfully, False otherwise.
-
-### Raises
-
-ValueError: If max_dirs_to_make is negative.
+* **Parameters:**
+  * **dirpath** ([*str*](https://docs.python.org/3/builtins/stdtypes.html#str)) – The directory path to create.
+  * **max_dirs_to_make** ([*int*](https://docs.python.org/3/builtins/functions.html#int) *,* *optional*) – The maximum number of directories to
+    create. If None, there’s no limit.
+* **Returns:**
+  True if the directory was created successfully, False otherwise.
+* **Return type:**
+  [*bool*](https://docs.python.org/3/builtins/functions.html#bool)
+* **Raises:**
+  [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – If max_dirs_to_make is negative.
 
 ### Examples
 
@@ -227,21 +225,21 @@ and writes its bytes to *target*.  If *target* already exists, this is
 a no-op (user edits are preserved).
 
 * **Parameters:**
-  * **target** (`Union`[[`str`](https://docs.python.org/3/library/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Destination path for the seeded file.
-  * **package_name** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Top-level Python package that ships the seed data.
-  * **seed_subpackage** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Subdirectory inside `_seed_data` (e.g. `"resources"`
+  * **target** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Destination path for the seeded file.
+  * **package_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Top-level Python package that ships the seed data.
+  * **seed_subpackage** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Subdirectory inside `_seed_data` (e.g. `"resources"`
     or `"config"`).
-  * **filename** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Name of the seed file.
-  * **seed_data_dir** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Name of the seed-data directory inside *package_name*
+  * **filename** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the seed file.
+  * **seed_data_dir** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the seed-data directory inside *package_name*
     (default `"_seed_data"`).
 * **Return type:**
   [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)
 * **Returns:**
   The resolved *target* as a `Path`.
 
-Example:
+### Example
 
-```default
+```pycon
 >>> from config2py import ensure_seeded
 >>> # ensure_seeded("/tmp/myfile.txt", "mypkg", "resources", "myfile.txt")
 ```
@@ -256,8 +254,8 @@ See issue for more info and applications:
 [https://github.com/i2mint/config2py/issues/2](https://github.com/i2mint/config2py/issues/2)
 
 * **Parameters:**
-  * **string** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – String to extract variable declarations from
-  * **expand** ([`dict`](https://docs.python.org/3/library/stdtypes.html#dict) | [`bool`](https://docs.python.org/3/library/functions.html#bool) | [`None`](https://docs.python.org/3/library/constants.html#None)) – An optional dictionary of variable names and values to use to
+  * **string** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – String to extract variable declarations from
+  * **expand** ([`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict) | [`bool`](https://docs.python.org/3/builtins/functions.html#bool) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – An optional dictionary of variable names and values to use to
     expand variables that are referenced (i.e. `$NAME` is a reference to `NAME`
     variable) in the values of config variables.
     If `True`, `expand` is replaced with an empty dictionary, which means we
@@ -265,7 +263,7 @@ See issue for more info and applications:
     expansion with. If `False`, `expand` is replaced with `None`, indicating
     that we don’t want to expand any variables.
 * **Return type:**
-  [`dict`](https://docs.python.org/3/library/stdtypes.html#dict)
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
 * **Returns:**
   A dictionary of variable names and values.
 
@@ -313,17 +311,26 @@ expand dictionary.
 
 Retrieve or create the app directory specific to the given app name and folder kind.
 
-The folder kind determines where the app’s files are stored:
-Here are concise explanations for each folder kind:
+The folder kind determines where the app’s files are stored. Here are concise
+explanations for each folder kind:
 
-```default
-**config**: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
-**data**: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
-**cache**: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
-**state**: Application state and logs that persist between sessions but aren't critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn't be auto-deleted.
-**runtime**: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
-**TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.
-```
+- **config**: User preferences and settings files (e.g., API keys, theme
+  preferences, editor settings). Files users might edit manually or that
+  define how the app behaves.
+- **data**: Essential user-created content and application state (e.g.,
+  databases, saved games, user documents, session files). Data that should
+  be backed up and persists across updates.
+- **cache**: Temporary, regeneratable files (e.g., downloaded images,
+  compiled assets, web cache). Can be safely deleted to free space without
+  losing user work.
+- **state**: Application state and logs that persist between sessions but
+  aren’t critical user data (e.g., command history, undo history, recently
+  opened files, log files). Unlike cache, shouldn’t be auto-deleted.
+- **runtime**: Temporary runtime files that only exist while the app runs
+  (e.g., PID files, Unix sockets, lock files, named pipes). Typically
+  cleared on logout/reboot.
+- **TL;DR**: config = settings, data = user files, cache = disposable,
+  state = logs/history, runtime = process files.
 
 * **Parameters:**
   * **app_name** – Name of the app for which the directory is needed.
@@ -335,7 +342,7 @@ Here are concise explanations for each folder kind:
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/library/stdtypes.html#str)
+  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -382,17 +389,26 @@ True
 
 Retrieve or create the app directory specific to the given app name and folder kind.
 
-The folder kind determines where the app’s files are stored:
-Here are concise explanations for each folder kind:
+The folder kind determines where the app’s files are stored. Here are concise
+explanations for each folder kind:
 
-```default
-**config**: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
-**data**: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
-**cache**: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
-**state**: Application state and logs that persist between sessions but aren't critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn't be auto-deleted.
-**runtime**: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
-**TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.
-```
+- **config**: User preferences and settings files (e.g., API keys, theme
+  preferences, editor settings). Files users might edit manually or that
+  define how the app behaves.
+- **data**: Essential user-created content and application state (e.g.,
+  databases, saved games, user documents, session files). Data that should
+  be backed up and persists across updates.
+- **cache**: Temporary, regeneratable files (e.g., downloaded images,
+  compiled assets, web cache). Can be safely deleted to free space without
+  losing user work.
+- **state**: Application state and logs that persist between sessions but
+  aren’t critical user data (e.g., command history, undo history, recently
+  opened files, log files). Unlike cache, shouldn’t be auto-deleted.
+- **runtime**: Temporary runtime files that only exist while the app runs
+  (e.g., PID files, Unix sockets, lock files, named pipes). Typically
+  cleared on logout/reboot.
+- **TL;DR**: config = settings, data = user files, cache = disposable,
+  state = logs/history, runtime = process files.
 
 * **Parameters:**
   * **app_name** – Name of the app for which the directory is needed.
@@ -404,7 +420,7 @@ Here are concise explanations for each folder kind:
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/library/stdtypes.html#str)
+  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -451,17 +467,26 @@ True
 
 Retrieve or create the app directory specific to the given app name and folder kind.
 
-The folder kind determines where the app’s files are stored:
-Here are concise explanations for each folder kind:
+The folder kind determines where the app’s files are stored. Here are concise
+explanations for each folder kind:
 
-```default
-**config**: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
-**data**: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
-**cache**: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
-**state**: Application state and logs that persist between sessions but aren't critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn't be auto-deleted.
-**runtime**: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
-**TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.
-```
+- **config**: User preferences and settings files (e.g., API keys, theme
+  preferences, editor settings). Files users might edit manually or that
+  define how the app behaves.
+- **data**: Essential user-created content and application state (e.g.,
+  databases, saved games, user documents, session files). Data that should
+  be backed up and persists across updates.
+- **cache**: Temporary, regeneratable files (e.g., downloaded images,
+  compiled assets, web cache). Can be safely deleted to free space without
+  losing user work.
+- **state**: Application state and logs that persist between sessions but
+  aren’t critical user data (e.g., command history, undo history, recently
+  opened files, log files). Unlike cache, shouldn’t be auto-deleted.
+- **runtime**: Temporary runtime files that only exist while the app runs
+  (e.g., PID files, Unix sockets, lock files, named pipes). Typically
+  cleared on logout/reboot.
+- **TL;DR**: config = settings, data = user files, cache = disposable,
+  state = logs/history, runtime = process files.
 
 * **Parameters:**
   * **app_name** – Name of the app for which the directory is needed.
@@ -473,7 +498,7 @@ Here are concise explanations for each folder kind:
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/library/stdtypes.html#str)
+  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -520,29 +545,38 @@ True
 
 Retrieve or create the app directory specific to the given app name and folder kind.
 
-The folder kind determines where the app’s files are stored:
-Here are concise explanations for each folder kind:
+The folder kind determines where the app’s files are stored. Here are concise
+explanations for each folder kind:
 
-```default
-**config**: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
-**data**: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
-**cache**: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
-**state**: Application state and logs that persist between sessions but aren't critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn't be auto-deleted.
-**runtime**: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
-**TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.
-```
+- **config**: User preferences and settings files (e.g., API keys, theme
+  preferences, editor settings). Files users might edit manually or that
+  define how the app behaves.
+- **data**: Essential user-created content and application state (e.g.,
+  databases, saved games, user documents, session files). Data that should
+  be backed up and persists across updates.
+- **cache**: Temporary, regeneratable files (e.g., downloaded images,
+  compiled assets, web cache). Can be safely deleted to free space without
+  losing user work.
+- **state**: Application state and logs that persist between sessions but
+  aren’t critical user data (e.g., command history, undo history, recently
+  opened files, log files). Unlike cache, shouldn’t be auto-deleted.
+- **runtime**: Temporary runtime files that only exist while the app runs
+  (e.g., PID files, Unix sockets, lock files, named pipes). Typically
+  cleared on logout/reboot.
+- **TL;DR**: config = settings, data = user files, cache = disposable,
+  state = logs/history, runtime = process files.
 
 * **Parameters:**
-  * **app_name** ([`str`](https://docs.python.org/3/library/stdtypes.html#str)) – Name of the app for which the directory is needed.
-  * **setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/library/stdtypes.html#str)], [`None`](https://docs.python.org/3/library/constants.html#None)]) – A callback function to initialize the directory.
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the directory is needed.
+  * **setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to initialize the directory.
     Default is \_default_folder_setup.
-  * **ensure_exists** ([`bool`](https://docs.python.org/3/library/functions.html#bool)) – Whether to ensure the directory exists.
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to ensure the directory exists.
   * **folder_kind** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'config'`, `'data'`, `'cache'`, `'state'`, `'runtime'`]) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
     Default is ‘config’ for backward compatibility.
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [`str`](https://docs.python.org/3/library/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -615,21 +649,19 @@ On Windows:
     **state**: Application state and logs that persist between sessions but aren’t critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn’t be auto-deleted.
     **runtime**: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
     **TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.
-  * **ensure_exists** ([`bool`](https://docs.python.org/3/library/functions.html#bool)) – Whether to create the directory if it doesn’t exist
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to create the directory if it doesn’t exist
 * **Returns:**
   The full path of the app root folder for the specified kind.
 * **Return type:**
-  [`str`](https://docs.python.org/3/library/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 #### NOTE
-> The default root folder follows XDG Base Directory standards on Unix/Linux/macOS.
-> You can override this by setting environment variables:
+The default root folder follows XDG Base Directory standards on Unix/Linux/macOS.
+You can override this by setting environment variables:
 
-> - CONFIG2PY_CONFIG_DIR, CONFIG2PY_DATA_DIR, CONFIG2PY_CACHE_DIR, etc.
-
-(highest priority, overrides everything, and works on **every** platform –
-see `config2py_env_var` for the full list of names)
-
+- CONFIG2PY_CONFIG_DIR, CONFIG2PY_DATA_DIR, CONFIG2PY_CACHE_DIR, etc.
+  (highest priority, overrides everything, and works on **every** platform –
+  see `config2py_env_var` for the full list of names)
 - The platform’s own standard variable: XDG_CONFIG_HOME, XDG_DATA_HOME,
   XDG_CACHE_HOME, etc. on Unix/Linux/macOS; APPDATA / LOCALAPPDATA / TEMP on
   Windows. The XDG variables are a POSIX standard and are **not** consulted on
@@ -651,27 +683,25 @@ see `config2py_env_var` for the full list of names)
 
 Retrieve or create the configs directory specific to the given app name.
 
-### Args
-
-- app_name (str): Name of the app for which the configs directory is needed.
-- configs_name (str): Name of the configs directory.
-- app_dir_setup_callback (Callable[[str], None]): A callback function to initialize the app directory.
-  : Default is \_default_folder_setup.
-- config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.
-  : Default is \_default_folder_setup.
+* **Parameters:**
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the configs directory is needed.
+  * **configs_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the configs directory.
+  * **app_dir_setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to
+    initialize the app directory. Default is \_default_folder_setup.
+  * **config_dir_setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to
+    initialize the configs directory. Default is \_default_folder_setup.
 
 ### config2py.util.get_configs_folder_for_app(app_name='config2py', \*, configs_name='configs', app_dir_setup_callback=<function \_default_folder_setup>, config_dir_setup_callback=<function \_default_folder_setup>)
 
 Retrieve or create the configs directory specific to the given app name.
 
-### Args
-
-- app_name (str): Name of the app for which the configs directory is needed.
-- configs_name (str): Name of the configs directory.
-- app_dir_setup_callback (Callable[[str], None]): A callback function to initialize the app directory.
-  : Default is \_default_folder_setup.
-- config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.
-  : Default is \_default_folder_setup.
+* **Parameters:**
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the configs directory is needed.
+  * **configs_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the configs directory.
+  * **app_dir_setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to
+    initialize the app directory. Default is \_default_folder_setup.
+  * **config_dir_setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to
+    initialize the configs directory. Default is \_default_folder_setup.
 
 ### config2py.util.identity(x)
 
@@ -685,7 +715,7 @@ Function that just returns its argument.
 Function that returns True if x is not empty.
 
 * **Return type:**
-  [`bool`](https://docs.python.org/3/library/functions.html#bool)
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### config2py.util.is_repl()
 
@@ -696,21 +726,17 @@ To test: If you put it in a module.py, do a print of it in the module, and do
 If you do `python -i module.py`, or call it from a python console or jupyter
 notebook, it should return `True`.
 
-* **Parameters:**
-  **repl_conditions** ([*list*](https://docs.python.org/3/library/stdtypes.html#list)) – 
-
-  A list of functions that return True if the interpreter
-  is running in a REPL, False otherwise.
-  By default, this is a list of two functions that check if:
-  - `get_ipython` is in globals
-  - `__main__` does not have a `__file__` attribute
 * **Returns:**
   True if running in a REPL, False otherwise.
 * **Return type:**
-  [*bool*](https://docs.python.org/3/library/functions.html#bool)
+  [*bool*](https://docs.python.org/3/builtins/functions.html#bool)
 
-is_repl.repl_conditions is a set of functions that return True if the interpreter.
-This set can be modified to modify the behavior of `is_repl`.
+`is_repl` returns `True` if any function in `is_repl.repl_conditions`
+(a set of no-argument callables) returns `True`. By default that set checks
+whether `get_ipython` is in globals, or whether `__main__` has no
+`__file__` attribute. Mutate `is_repl.repl_conditions` in place (e.g.
+`is_repl.repl_conditions.add(fn)`) to change the checks – rebinding the
+attribute to a new set has no effect, since `is_repl` reads the original set.
 
 ### config2py.util.parse_assignments_from_py_source(source_code, \*, name_filt=None, value_filt=<function \_value_node_is_instance_of>)
 
@@ -737,8 +763,8 @@ that kind, falling back to the spec’s `default_path`; the spec’s
 
 * **Parameters:**
   * **folder_kind** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'config'`, `'data'`, `'cache'`, `'state'`, `'runtime'`]) – One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.
-  * **standards** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`dict`](https://docs.python.org/3/library/stdtypes.html#dict)]) – The `{folder_kind: FolderSpec}` table to resolve against.
+  * **standards** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]) – The `{folder_kind: FolderSpec}` table to resolve against.
     Defaults to the running platform’s (`APP_FOLDER_STANDARDS`);
     pass another platform’s table to resolve as that platform would.
 * **Return type:**
-  [`str`](https://docs.python.org/3/library/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)

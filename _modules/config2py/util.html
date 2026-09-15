@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=f2b49961"></script>
+    <script src="../../_static/documentation_options.js?v=61349712"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.50" />
+  <meta name="docsearch:version" content="0.1.52" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -768,9 +768,11 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Wrap ``os.environ`` as the (only) mapping in the chain."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return a fixed, value-free label so secrets aren't printed."""</span>
         <span class="k">return</span> <span class="s2">"EnvironmentVariables"</span></div>
 
 
@@ -924,34 +926,36 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Create directories up to a specified limit.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    dirpath (str): The directory path to create.</span>
-<span class="sd">    max_dirs_to_make (int, optional): The maximum number of directories to create. If None, there's no limit.</span>
+<span class="sd">        dirpath (str): The directory path to create.</span>
+<span class="sd">        max_dirs_to_make (int, optional): The maximum number of directories to</span>
+<span class="sd">            create. If None, there's no limit.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    bool: True if the directory was created successfully, False otherwise.</span>
+<span class="sd">        bool: True if the directory was created successfully, False otherwise.</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">    ValueError: If max_dirs_to_make is negative.</span>
+<span class="sd">        ValueError: If max_dirs_to_make is negative.</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">    &gt;&gt;&gt; import tempfile, shutil</span>
-<span class="sd">    &gt;&gt;&gt; temp_dir = tempfile.mkdtemp()</span>
-<span class="sd">    &gt;&gt;&gt; target_dir = os.path.join(temp_dir, 'a', 'b', 'c')</span>
-<span class="sd">    &gt;&gt;&gt; create_directories(target_dir, max_dirs_to_make=2)</span>
-<span class="sd">    False</span>
-<span class="sd">    &gt;&gt;&gt; create_directories(target_dir, max_dirs_to_make=3)</span>
-<span class="sd">    True</span>
-<span class="sd">    &gt;&gt;&gt; os.path.isdir(target_dir)</span>
-<span class="sd">    True</span>
-<span class="sd">    &gt;&gt;&gt; shutil.rmtree(temp_dir)  # Cleanup</span>
 
-<span class="sd">    &gt;&gt;&gt; temp_dir = tempfile.mkdtemp()</span>
-<span class="sd">    &gt;&gt;&gt; target_dir = os.path.join(temp_dir, 'a', 'b', 'c', 'd')</span>
-<span class="sd">    &gt;&gt;&gt; create_directories(target_dir)</span>
-<span class="sd">    True</span>
-<span class="sd">    &gt;&gt;&gt; os.path.isdir(target_dir)</span>
-<span class="sd">    True</span>
-<span class="sd">    &gt;&gt;&gt; shutil.rmtree(temp_dir)  # Cleanup</span>
+<span class="sd">        &gt;&gt;&gt; import tempfile, shutil</span>
+<span class="sd">        &gt;&gt;&gt; temp_dir = tempfile.mkdtemp()</span>
+<span class="sd">        &gt;&gt;&gt; target_dir = os.path.join(temp_dir, 'a', 'b', 'c')</span>
+<span class="sd">        &gt;&gt;&gt; create_directories(target_dir, max_dirs_to_make=2)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; create_directories(target_dir, max_dirs_to_make=3)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; os.path.isdir(target_dir)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; shutil.rmtree(temp_dir)  # Cleanup</span>
+
+<span class="sd">        &gt;&gt;&gt; temp_dir = tempfile.mkdtemp()</span>
+<span class="sd">        &gt;&gt;&gt; target_dir = os.path.join(temp_dir, 'a', 'b', 'c', 'd')</span>
+<span class="sd">        &gt;&gt;&gt; create_directories(target_dir)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; os.path.isdir(target_dir)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; shutil.rmtree(temp_dir)  # Cleanup</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">max_dirs_to_make</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_dirs_to_make</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"max_dirs_to_make must be non-negative or None"</span><span class="p">)</span>
@@ -1113,6 +1117,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Returns the root directory for a specific folder kind.</span>
 
 <span class="sd">    The folder kind determines which standard directory is returned:</span>
+
 <span class="sd">    - 'config': Configuration files (XDG_CONFIG_HOME, default ~/.config)</span>
 <span class="sd">    - 'data': Application data (XDG_DATA_HOME, default ~/.local/share)</span>
 <span class="sd">    - 'cache': Temporary/cache files (XDG_CACHE_HOME, default ~/.cache)</span>
@@ -1120,6 +1125,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    - 'runtime': Runtime files (XDG_RUNTIME_DIR, default /tmp)</span>
 
 <span class="sd">    On Windows:</span>
+
 <span class="sd">    - 'config': %APPDATA%</span>
 <span class="sd">    - 'data': %LOCALAPPDATA%</span>
 <span class="sd">    - 'cache': %LOCALAPPDATA%\\Temp</span>
@@ -1144,6 +1150,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    Note: The default root folder follows XDG Base Directory standards on Unix/Linux/macOS.</span>
 <span class="sd">    You can override this by setting environment variables:</span>
+
 <span class="sd">    - CONFIG2PY_CONFIG_DIR, CONFIG2PY_DATA_DIR, CONFIG2PY_CACHE_DIR, etc.</span>
 <span class="sd">      (highest priority, overrides everything, and works on **every** platform --</span>
 <span class="sd">      see ``config2py_env_var`` for the full list of names)</span>
@@ -1183,10 +1190,10 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    with a hidden file for identification.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">    - directory_path (str): Path to the directory to be initialized.</span>
+<span class="sd">        directory_path (str): Path to the directory to be initialized.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">    This is the default setup callback for directories managed by config2py.</span>
+<span class="sd">        This is the default setup callback for directories managed by config2py.</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory_path</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1208,14 +1215,26 @@ window.runMermaid = runMermaid;</script>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Retrieve or create the app directory specific to the given app name and folder kind.</span>
 
-<span class="sd">    The folder kind determines where the app's files are stored:</span>
-<span class="sd">    Here are concise explanations for each folder kind:</span>
-<span class="sd">        **config**: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.</span>
-<span class="sd">        **data**: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.</span>
-<span class="sd">        **cache**: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.</span>
-<span class="sd">        **state**: Application state and logs that persist between sessions but aren't critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn't be auto-deleted.</span>
-<span class="sd">        **runtime**: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.</span>
-<span class="sd">        **TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.</span>
+<span class="sd">    The folder kind determines where the app's files are stored. Here are concise</span>
+<span class="sd">    explanations for each folder kind:</span>
+
+<span class="sd">    - **config**: User preferences and settings files (e.g., API keys, theme</span>
+<span class="sd">      preferences, editor settings). Files users might edit manually or that</span>
+<span class="sd">      define how the app behaves.</span>
+<span class="sd">    - **data**: Essential user-created content and application state (e.g.,</span>
+<span class="sd">      databases, saved games, user documents, session files). Data that should</span>
+<span class="sd">      be backed up and persists across updates.</span>
+<span class="sd">    - **cache**: Temporary, regeneratable files (e.g., downloaded images,</span>
+<span class="sd">      compiled assets, web cache). Can be safely deleted to free space without</span>
+<span class="sd">      losing user work.</span>
+<span class="sd">    - **state**: Application state and logs that persist between sessions but</span>
+<span class="sd">      aren't critical user data (e.g., command history, undo history, recently</span>
+<span class="sd">      opened files, log files). Unlike cache, shouldn't be auto-deleted.</span>
+<span class="sd">    - **runtime**: Temporary runtime files that only exist while the app runs</span>
+<span class="sd">      (e.g., PID files, Unix sockets, lock files, named pipes). Typically</span>
+<span class="sd">      cleared on logout/reboot.</span>
+<span class="sd">    - **TL;DR**: config = settings, data = user files, cache = disposable,</span>
+<span class="sd">      state = logs/history, runtime = process files.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        app_name: Name of the app for which the directory is needed.</span>
@@ -1293,12 +1312,12 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Retrieve or create the configs directory specific to the given app name.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">    - app_name (str): Name of the app for which the configs directory is needed.</span>
-<span class="sd">    - configs_name (str): Name of the configs directory.</span>
-<span class="sd">    - app_dir_setup_callback (Callable[[str], None]): A callback function to initialize the app directory.</span>
-<span class="sd">                                                       Default is _default_folder_setup.</span>
-<span class="sd">    - config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.</span>
-<span class="sd">                                                         Default is _default_folder_setup.</span>
+<span class="sd">        app_name (str): Name of the app for which the configs directory is needed.</span>
+<span class="sd">        configs_name (str): Name of the configs directory.</span>
+<span class="sd">        app_dir_setup_callback (Callable[[str], None]): A callback function to</span>
+<span class="sd">            initialize the app directory. Default is _default_folder_setup.</span>
+<span class="sd">        config_dir_setup_callback (Callable[[str], None]): A callback function to</span>
+<span class="sd">            initialize the configs directory. Default is _default_folder_setup.</span>
 <span class="sd">    """</span>
     <span class="n">app_dir</span> <span class="o">=</span> <span class="n">get_app_config_folder</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">setup_callback</span><span class="o">=</span><span class="n">app_dir_setup_callback</span><span class="p">)</span>
     <span class="n">configs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app_dir</span><span class="p">,</span> <span class="n">configs_name</span><span class="p">)</span>
@@ -1349,7 +1368,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Returns:</span>
 <span class="sd">        The resolved *target* as a ``Path``.</span>
 
-<span class="sd">    Example::</span>
+<span class="sd">    Example:</span>
 
 <span class="sd">        &gt;&gt;&gt; from config2py import ensure_seeded</span>
 <span class="sd">        &gt;&gt;&gt; # ensure_seeded("/tmp/myfile.txt", "mypkg", "resources", "myfile.txt")</span>
@@ -1391,7 +1410,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        seed_data_dir: Name of the seed-data sub-package inside the</span>
 <span class="sd">            Python package (default ``"_seed_data"``).</span>
 
-<span class="sd">    Example::</span>
+<span class="sd">    Example:</span>
 
 <span class="sd">        &gt;&gt;&gt; app = AppData("myapp", package_name="myapp")</span>
 <span class="sd">        &gt;&gt;&gt; app.app_folder()  # doctest: +SKIP</span>
@@ -1405,6 +1424,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">package_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed_data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"_seed_data"</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""See the class docstring for each parameter."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app_name</span> <span class="o">=</span> <span class="n">app_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">package_name</span> <span class="o">=</span> <span class="n">package_name</span> <span class="ow">or</span> <span class="n">app_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seed_data_dir</span> <span class="o">=</span> <span class="n">seed_data_dir</span>
@@ -1492,17 +1512,15 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    If you do ``python -i module.py``, or call it from a python console or jupyter</span>
 <span class="sd">    notebook, it should return ``True``.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        repl_conditions (list): A list of functions that return True if the interpreter</span>
-<span class="sd">            is running in a REPL, False otherwise.</span>
-<span class="sd">            By default, this is a list of two functions that check if:</span>
-<span class="sd">            - ``get_ipython`` is in globals</span>
-<span class="sd">            - ``__main__`` does not have a ``__file__`` attribute</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        bool: True if running in a REPL, False otherwise.</span>
 
-<span class="sd">    is_repl.repl_conditions is a set of functions that return True if the interpreter.</span>
-<span class="sd">    This set can be modified to modify the behavior of ``is_repl``.</span>
+<span class="sd">    ``is_repl`` returns ``True`` if any function in ``is_repl.repl_conditions``</span>
+<span class="sd">    (a set of no-argument callables) returns ``True``. By default that set checks</span>
+<span class="sd">    whether ``get_ipython`` is in globals, or whether ``__main__`` has no</span>
+<span class="sd">    ``__file__`` attribute. Mutate ``is_repl.repl_conditions`` in place (e.g.</span>
+<span class="sd">    ``is_repl.repl_conditions.add(fn)``) to change the checks -- rebinding the</span>
+<span class="sd">    attribute to a new set has no effect, since ``is_repl`` reads the original set.</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">condition</span><span class="p">()</span> <span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">_repl_conditions</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">True</span>

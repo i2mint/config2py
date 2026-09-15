@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../../_static/documentation_options.js?v=f2b49961"></script>
+    <script src="../../_static/documentation_options.js?v=61349712"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.50" />
+  <meta name="docsearch:version" content="0.1.52" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -703,6 +703,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">based on their file extensions. It includes codecs for bytes &lt;-&gt; JSON-friendly Python types.</span>
 
 <span class="sd">Examples:</span>
+
 <span class="sd">    &gt;&gt;&gt; # Basic usage</span>
 <span class="sd">    &gt;&gt;&gt; data = {'name': 'config2py', 'version': '1.0'}</span>
 <span class="sd">    &gt;&gt;&gt;</span>
@@ -776,6 +777,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        Extension without the dot, or empty string if no extension found</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">        &gt;&gt;&gt; get_extension('config.json')</span>
 <span class="sd">        'json'</span>
 <span class="sd">        &gt;&gt;&gt; get_extension('/path/to/data.yaml')</span>
@@ -819,6 +821,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        ValueError: If no decoder registered for extension</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">        &gt;&gt;&gt; data = b'{"key": "value"}'</span>
 <span class="sd">        &gt;&gt;&gt; decode_by_extension('config.json', data)</span>
 <span class="sd">        {'key': 'value'}</span>
@@ -852,6 +855,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        ValueError: If no encoder registered for extension</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">        &gt;&gt;&gt; obj = {'key': 'value'}</span>
 <span class="sd">        &gt;&gt;&gt; encoded = encode_by_extension('config.json', obj)</span>
 <span class="sd">        &gt;&gt;&gt; assert b'"key"' in encoded</span>
@@ -897,6 +901,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        ValueError: If codec already registered and overwrite=False</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">        &gt;&gt;&gt; def my_encoder(obj): return str(obj).encode()</span>
 <span class="sd">        &gt;&gt;&gt; def my_decoder(data): return eval(data.decode())</span>
 <span class="sd">        &gt;&gt;&gt; register_codec('.custom', encoder=my_encoder, decoder=my_decoder, overwrite=True)</span>
@@ -933,6 +938,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        Decorator function</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">        &gt;&gt;&gt; @register_decoder('.custom', overwrite=True)</span>
 <span class="sd">        ... def decode_custom(data: bytes) -&gt; dict:</span>
 <span class="sd">        ...     return {'data': data.decode()}</span>
@@ -964,6 +970,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        Decorator function</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">        &gt;&gt;&gt; @register_encoder('.custom', overwrite=True)</span>
 <span class="sd">        ... def encode_custom(obj: dict) -&gt; bytes:</span>
 <span class="sd">        ...     return obj.get('data', '').encode()</span>
@@ -996,6 +1003,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        Sorted list of registered extensions</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">        &gt;&gt;&gt; extensions = list_registered_extensions()</span>
 <span class="sd">        &gt;&gt;&gt; '.json' in extensions</span>
 <span class="sd">        True</span>
@@ -1017,6 +1025,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        True if decoder or encoder is registered</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">        &gt;&gt;&gt; is_extension_registered('.json')</span>
 <span class="sd">        True</span>
 <span class="sd">        &gt;&gt;&gt; is_extension_registered('.nonexistent')</span>
@@ -1041,6 +1050,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        Dictionary with codec information</span>
 
 <span class="sd">    Examples:</span>
+
 <span class="sd">        &gt;&gt;&gt; info = get_codec_info('.json')</span>
 <span class="sd">        &gt;&gt;&gt; info['has_encoder']</span>
 <span class="sd">        True</span>
