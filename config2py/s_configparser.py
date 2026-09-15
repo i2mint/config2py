@@ -59,7 +59,10 @@ def persist_after_operation(method_func):
     """Wrap a mutating method so it calls ``self.persist()`` after running.
 
     Used to make ``ConfigStore`` methods like ``__setitem__`` and
-    ``__delitem__`` write their change to disk immediately.
+    ``__delitem__`` persist their change to the store's target immediately --
+    which writes to disk only when ``target_kind`` is ``'filepath'``; for
+    ``'string'``, ``'bytes'`` and ``'dict'`` targets, ``persist()`` just returns
+    the serialized data without touching disk.
     """
 
     @wraps(method_func)
@@ -380,7 +383,7 @@ class ConfigReader(ConfigStore):
     """
 
     def persist(self):
-        """``ConfigReader`` is read-only and has nothing to persist."""
+        """Disabled: ``ConfigReader`` is read-only."""
         raise NotImplementedError("persist disabled for ConfigReader")
 
     def __setitem__(self, k, v):

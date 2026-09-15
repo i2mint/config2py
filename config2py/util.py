@@ -761,9 +761,11 @@ def is_repl():
         bool: True if running in a REPL, False otherwise.
 
     ``is_repl`` returns ``True`` if any function in ``is_repl.repl_conditions``
-    (a set of no-argument, no-parameter callables) returns ``True``. By default that
-    set checks whether ``get_ipython`` is in globals, or whether ``__main__`` has no
-    ``__file__`` attribute. Reassign ``is_repl.repl_conditions`` to change the checks.
+    (a set of no-argument callables) returns ``True``. By default that set checks
+    whether ``get_ipython`` is in globals, or whether ``__main__`` has no
+    ``__file__`` attribute. Mutate ``is_repl.repl_conditions`` in place (e.g.
+    ``is_repl.repl_conditions.add(fn)``) to change the checks -- rebinding the
+    attribute to a new set has no effect, since ``is_repl`` reads the original set.
     """
     if any(condition() for condition in _repl_conditions):
         return True
