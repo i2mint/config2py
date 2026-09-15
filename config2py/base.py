@@ -91,6 +91,17 @@ GetConfigEgress = Callable[[KT, VT], VT]
 
 
 def is_not_none_nor_empty(x):
+    """True unless ``x`` is ``None`` or the empty string.
+
+    >>> is_not_none_nor_empty(None)
+    False
+    >>> is_not_none_nor_empty('')
+    False
+    >>> is_not_none_nor_empty('a')
+    True
+    >>> is_not_none_nor_empty(0)
+    True
+    """
     if isinstance(x, str):
         return x != ""
     else:
@@ -188,8 +199,8 @@ def get_config(
     Note that a source can be a callable or a ``GettableContainer`` (most of the
     time, a ``Mapping`` (e.g. ``dict``)).
     Here, you should be compelled to use the resources of ``dol``
-    (https://pypi.org/project/dol/) which will allow you to make ``Mapping``s for all
-    sorts of data sources.
+    (https://pypi.org/project/dol/) which will allow you to make ``Mapping`` objects
+    for all sorts of data sources.
 
     For more info, see: https://github.com/i2mint/config2py/issues/4
 
@@ -435,6 +446,17 @@ def _resolve_saver(save_to: SaveTo) -> Optional[KTSaver]:
 
 
 def is_not_empty(val) -> bool:
+    """True unless ``val`` is ``None`` or the empty string.
+
+    >>> is_not_empty(None)
+    False
+    >>> is_not_empty('')
+    False
+    >>> is_not_empty('a')
+    True
+    >>> is_not_empty(0)
+    True
+    """
     if isinstance(val, str):
         return val != ""
     else:
@@ -519,54 +541,57 @@ def user_gettable(
     """
     Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
 
-    :param save_to: Where to save the user's response: a ``MutableMapping`` (or
-        anything with a ``__setitem__``), or a ``(key, value)`` saver function.
-        If ``None``, the user's response is not saved.
-    :param prompt_template: A template string to prompt the user with. It should
-        contain a placeholder for the key, e.g. ``"Enter a value for {}: "``.
-    :param egress: A function to apply to the user's response before returning it.
-        This can be used to validate the response, for example.
-    :param user_asker: A function that asks the user for input. It should take a
-        prompt string and return the user's response.
-    :param val_is_valid: A function that takes a value and returns a boolean. If it
-        returns ``False``, the user will be asked for a new value.
-    :param config_not_found_exceptions: An iterable of exceptions that should be
-        considered as "config not found" exceptions. If the user's response raises
-        one of these exceptions, the user will be asked for a new value.
-    :return: A ``GettableContainer`` that asks the user for a value, optionally saving
-        it.
+    Args:
+        save_to: Where to save the user's response: a ``MutableMapping`` (or
+            anything with a ``__setitem__``), or a ``(key, value)`` saver function.
+            If ``None``, the user's response is not saved.
+        prompt_template: A template string to prompt the user with. It should
+            contain a placeholder for the key, e.g. ``"Enter a value for {}: "``.
+        egress: A function to apply to the user's response before returning it.
+            This can be used to validate the response, for example.
+        user_asker: A function that asks the user for input. It should take a
+            prompt string and return the user's response.
+        val_is_valid: A function that takes a value and returns a boolean. If it
+            returns ``False``, the user will be asked for a new value.
+        config_not_found_exceptions: An iterable of exceptions that should be
+            considered as "config not found" exceptions. If the user's response
+            raises one of these exceptions, the user will be asked for a new value.
+
+    Returns:
+        A ``GettableContainer`` that asks the user for a value, optionally saving it.
 
     Example:
 
-    >>> s = user_gettable()
-    >>> v = s['SOME_KEY']  # doctest: +SKIP
-    'SOME_VAL'
+        >>> s = user_gettable()
+        >>> v = s['SOME_KEY']  # doctest: +SKIP
+        'SOME_VAL'
 
-    This will trigger a prompt for the user to enter the value of ``SOME_KEY``.
-    When they do (say they entered 'SOME_VAL') it will return that value.
+        This will trigger a prompt for the user to enter the value of ``SOME_KEY``.
+        When they do (say they entered 'SOME_VAL') it will return that value.
 
-    And if you specify a save_to store (usually a persistent MutableMapping made with
-    the ``dol`` package) then it will save the value to that store for future use.
+        And if you specify a save_to store (usually a persistent MutableMapping made
+        with the ``dol`` package) then it will save the value to that store for
+        future use.
 
-    >>> d = dict(some='store')
-    >>> s = user_gettable(save_to=d)
-    >>> s['SOME_KEY']  # doctest: +SKIP
-    'SOME_VAL'
-    >>> d  # doctest: +SKIP
-    {'some': 'store', 'SOME_KEY': 'SOME_VAL'}
+        >>> d = dict(some='store')
+        >>> s = user_gettable(save_to=d)
+        >>> s['SOME_KEY']  # doctest: +SKIP
+        'SOME_VAL'
+        >>> d  # doctest: +SKIP
+        {'some': 'store', 'SOME_KEY': 'SOME_VAL'}
 
-    When saving isn't a simple write (say you need to encrypt, or write to two
-    places), ``save_to`` can be a ``(key, value)`` function instead:
+        When saving isn't a simple write (say you need to encrypt, or write to two
+        places), ``save_to`` can be a ``(key, value)`` function instead:
 
-    >>> saved = []
-    >>> s = user_gettable(
-    ...     save_to=lambda k, v: saved.append((k, v)),
-    ...     user_asker=lambda prompt: 'SOME_VAL',
-    ... )
-    >>> s['SOME_KEY']
-    'SOME_VAL'
-    >>> saved
-    [('SOME_KEY', 'SOME_VAL')]
+        >>> saved = []
+        >>> s = user_gettable(
+        ...     save_to=lambda k, v: saved.append((k, v)),
+        ...     user_asker=lambda prompt: 'SOME_VAL',
+        ... )
+        >>> s['SOME_KEY']
+        'SOME_VAL'
+        >>> saved
+        [('SOME_KEY', 'SOME_VAL')]
 
     """
     getter = ask_user_for_key(

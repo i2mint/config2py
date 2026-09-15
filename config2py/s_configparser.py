@@ -56,6 +56,12 @@ empty string value here =
 
 
 def persist_after_operation(method_func):
+    """Wrap a mutating method so it calls ``self.persist()`` after running.
+
+    Used to make ``ConfigStore`` methods like ``__setitem__`` and
+    ``__delitem__`` write their change to disk immediately.
+    """
+
     @wraps(method_func)
     def _method_func(self, *args, **kwargs):
         output = method_func(self, *args, **kwargs)
@@ -68,10 +74,12 @@ def persist_after_operation(method_func):
 def super_and_persist(super_cls, method_name):
     """
     To be able to do this:
-    ```
-    __setitem__ = super_and_persist(ConfigParser, '__setitem__')
-    __delitem__ = super_and_persist(ConfigParser, '__delitem__')
-    ```
+
+    .. code-block:: text
+
+        __setitem__ = super_and_persist(ConfigParser, '__setitem__')
+        __delitem__ = super_and_persist(ConfigParser, '__delitem__')
+
     in your class definition block.
 
     I thought I needed to wrap more method this way, but as it turns out, I might not,
@@ -151,9 +159,11 @@ class ConfigStore(ConfigParserStore):
     {}
 
     You can delete sections
+
     >>> del s['add']
 
     But you'll need to refresh your reader to see the effect.
+
     >>> list(config_reader)
     ['DEFAULT', 'nothing', 'add']
     >>> config_reader = ConfigReader(ini_filepath)
@@ -162,6 +172,7 @@ class ConfigStore(ConfigParserStore):
 
     You can use `update` to write several sections at the same time.
     Note that existing sections will be completely overwritten.
+
     >>> s.update({'nothing': {'like': 'you'}, 'new_section': {'a': 'b', 'c': 'd'}})
     >>> ConfigReader(ini_filepath).to_dict()
     {'DEFAULT': {}, 'nothing': {'like': 'you'}, 'new_section': {'a': 'b', 'c': 'd'}}
@@ -173,15 +184,18 @@ class ConfigStore(ConfigParserStore):
     will not be persisted.
 
     You'll see the updated section in the store.
+
     >>> s['nothing'].update({'something': 'else'})
     >>> dict(s['nothing'])
     {'like': 'you', 'something': 'else'}
 
     But it's not automatically persisted
+
     >>> dict(ConfigReader(ini_filepath)['nothing'])
     {'like': 'you'}
 
     ... unless you ask for it explicitly
+
     >>> s.persist()
     >>> dict(ConfigReader(ini_filepath)['nothing'])
     {'like': 'you', 'something': 'else'}
@@ -218,6 +232,9 @@ class ConfigStore(ConfigParserStore):
         target_kind=None,
         **more_config_parser_kwargs,
     ):
+        """See the class docstring: ``source`` may be a filepath, a config string,
+        bytes, a dict, or a readable stream; ``defaults``, ``dict_type`` and
+        ``allow_no_value`` are passed on to ``ConfigParser``."""
         super().__init__(
             defaults, dict_type, allow_no_value, **more_config_parser_kwargs
         )
@@ -248,6 +265,7 @@ class ConfigStore(ConfigParserStore):
         self.target_kind = target_kind or source_kind
 
     def to_dict(self):
+        """Return the whole config as a ``{section: {key: value}}`` dict."""
         return {
             section: dict(section_contents)
             for section, section_contents in self.items()
@@ -310,6 +328,7 @@ class ConfigStore(ConfigParserStore):
 
 class ConfigReader(ConfigStore):
     r"""A KvReader to read config files
+
     >>> from config2py.s_configparser import ConfigReader
     >>>
     >>> # from a (pretend) file
@@ -361,12 +380,15 @@ class ConfigReader(ConfigStore):
     """
 
     def persist(self):
+        """``ConfigReader`` is read-only and has nothing to persist."""
         raise NotImplementedError("persist disabled for ConfigReader")
 
     def __setitem__(self, k, v):
+        """``ConfigReader`` is read-only."""
         raise NotImplementedError("__setitem__ disabled for ConfigReader")
 
     def __delitem__(self, k):
+        """``ConfigReader`` is read-only."""
         raise NotImplementedError("__delitem__ disabled for ConfigReader")
 
 
@@ -419,6 +441,7 @@ def postprocess_ini_section_items(items: Mapping | Iterable) -> Generator:
 # TODO: Find out if configparse has an option to do this processing alreadys
 def preprocess_ini_section_items(items: Mapping | Iterable) -> Generator:
     """Transform list values into newline-separated strings, in view of writing the value to a ini formatted section
+
     >>> section = {
     ...     'name': 'aspyre',
     ...     'keywords': ['documentation', 'packaging', 'publishing']

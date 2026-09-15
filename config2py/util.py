@@ -58,9 +58,11 @@ class EnvironmentVariables(ChainMap):
     """
 
     def __init__(self):
+        """Wrap ``os.environ`` as the (only) mapping in the chain."""
         super().__init__(os.environ)
 
     def __repr__(self):
+        """Return a fixed, value-free label so secrets aren't printed."""
         return "EnvironmentVariables"
 
 
@@ -205,34 +207,36 @@ def create_directories(dirpath, max_dirs_to_make=None):
     Create directories up to a specified limit.
 
     Parameters:
-    dirpath (str): The directory path to create.
-    max_dirs_to_make (int, optional): The maximum number of directories to create. If None, there's no limit.
+        dirpath (str): The directory path to create.
+        max_dirs_to_make (int, optional): The maximum number of directories to
+            create. If None, there's no limit.
 
     Returns:
-    bool: True if the directory was created successfully, False otherwise.
+        bool: True if the directory was created successfully, False otherwise.
 
     Raises:
-    ValueError: If max_dirs_to_make is negative.
+        ValueError: If max_dirs_to_make is negative.
 
     Examples:
-    >>> import tempfile, shutil
-    >>> temp_dir = tempfile.mkdtemp()
-    >>> target_dir = os.path.join(temp_dir, 'a', 'b', 'c')
-    >>> create_directories(target_dir, max_dirs_to_make=2)
-    False
-    >>> create_directories(target_dir, max_dirs_to_make=3)
-    True
-    >>> os.path.isdir(target_dir)
-    True
-    >>> shutil.rmtree(temp_dir)  # Cleanup
 
-    >>> temp_dir = tempfile.mkdtemp()
-    >>> target_dir = os.path.join(temp_dir, 'a', 'b', 'c', 'd')
-    >>> create_directories(target_dir)
-    True
-    >>> os.path.isdir(target_dir)
-    True
-    >>> shutil.rmtree(temp_dir)  # Cleanup
+        >>> import tempfile, shutil
+        >>> temp_dir = tempfile.mkdtemp()
+        >>> target_dir = os.path.join(temp_dir, 'a', 'b', 'c')
+        >>> create_directories(target_dir, max_dirs_to_make=2)
+        False
+        >>> create_directories(target_dir, max_dirs_to_make=3)
+        True
+        >>> os.path.isdir(target_dir)
+        True
+        >>> shutil.rmtree(temp_dir)  # Cleanup
+
+        >>> temp_dir = tempfile.mkdtemp()
+        >>> target_dir = os.path.join(temp_dir, 'a', 'b', 'c', 'd')
+        >>> create_directories(target_dir)
+        True
+        >>> os.path.isdir(target_dir)
+        True
+        >>> shutil.rmtree(temp_dir)  # Cleanup
     """
     if max_dirs_to_make is not None and max_dirs_to_make < 0:
         raise ValueError("max_dirs_to_make must be non-negative or None")
@@ -385,6 +389,7 @@ def get_app_rootdir(
     Returns the root directory for a specific folder kind.
 
     The folder kind determines which standard directory is returned:
+
     - 'config': Configuration files (XDG_CONFIG_HOME, default ~/.config)
     - 'data': Application data (XDG_DATA_HOME, default ~/.local/share)
     - 'cache': Temporary/cache files (XDG_CACHE_HOME, default ~/.cache)
@@ -392,6 +397,7 @@ def get_app_rootdir(
     - 'runtime': Runtime files (XDG_RUNTIME_DIR, default /tmp)
 
     On Windows:
+
     - 'config': %APPDATA%
     - 'data': %LOCALAPPDATA%
     - 'cache': %LOCALAPPDATA%\\Temp
@@ -416,6 +422,7 @@ def get_app_rootdir(
 
     Note: The default root folder follows XDG Base Directory standards on Unix/Linux/macOS.
     You can override this by setting environment variables:
+
     - CONFIG2PY_CONFIG_DIR, CONFIG2PY_DATA_DIR, CONFIG2PY_CACHE_DIR, etc.
       (highest priority, overrides everything, and works on **every** platform --
       see ``config2py_env_var`` for the full list of names)
@@ -454,10 +461,10 @@ def _default_folder_setup(directory_path: str) -> None:
     with a hidden file for identification.
 
     Args:
-    - directory_path (str): Path to the directory to be initialized.
+        directory_path (str): Path to the directory to be initialized.
 
     Note:
-    This is the default setup callback for directories managed by config2py.
+        This is the default setup callback for directories managed by config2py.
     """
     if not os.path.isdir(directory_path):
         os.makedirs(directory_path, exist_ok=True)
@@ -477,14 +484,26 @@ def get_app_folder(
     """
     Retrieve or create the app directory specific to the given app name and folder kind.
 
-    The folder kind determines where the app's files are stored:
-    Here are concise explanations for each folder kind:
-        **config**: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
-        **data**: Essential user-created content and application state (e.g., databases, saved games, user documents, session files). Data that should be backed up and persists across updates.
-        **cache**: Temporary, regeneratable files (e.g., downloaded images, compiled assets, web cache). Can be safely deleted to free space without losing user work.
-        **state**: Application state and logs that persist between sessions but aren't critical user data (e.g., command history, undo history, recently opened files, log files). Unlike cache, shouldn't be auto-deleted.
-        **runtime**: Temporary runtime files that only exist while the app runs (e.g., PID files, Unix sockets, lock files, named pipes). Typically cleared on logout/reboot.
-        **TL;DR**: config = settings, data = user files, cache = disposable, state = logs/history, runtime = process files.
+    The folder kind determines where the app's files are stored. Here are concise
+    explanations for each folder kind:
+
+    - **config**: User preferences and settings files (e.g., API keys, theme
+      preferences, editor settings). Files users might edit manually or that
+      define how the app behaves.
+    - **data**: Essential user-created content and application state (e.g.,
+      databases, saved games, user documents, session files). Data that should
+      be backed up and persists across updates.
+    - **cache**: Temporary, regeneratable files (e.g., downloaded images,
+      compiled assets, web cache). Can be safely deleted to free space without
+      losing user work.
+    - **state**: Application state and logs that persist between sessions but
+      aren't critical user data (e.g., command history, undo history, recently
+      opened files, log files). Unlike cache, shouldn't be auto-deleted.
+    - **runtime**: Temporary runtime files that only exist while the app runs
+      (e.g., PID files, Unix sockets, lock files, named pipes). Typically
+      cleared on logout/reboot.
+    - **TL;DR**: config = settings, data = user files, cache = disposable,
+      state = logs/history, runtime = process files.
 
     Args:
         app_name: Name of the app for which the directory is needed.
@@ -559,12 +578,12 @@ def get_configs_folder_for_app(
     Retrieve or create the configs directory specific to the given app name.
 
     Args:
-    - app_name (str): Name of the app for which the configs directory is needed.
-    - configs_name (str): Name of the configs directory.
-    - app_dir_setup_callback (Callable[[str], None]): A callback function to initialize the app directory.
-                                                       Default is _default_folder_setup.
-    - config_dir_setup_callback (Callable[[str], None]): A callback function to initialize the configs directory.
-                                                         Default is _default_folder_setup.
+        app_name (str): Name of the app for which the configs directory is needed.
+        configs_name (str): Name of the configs directory.
+        app_dir_setup_callback (Callable[[str], None]): A callback function to
+            initialize the app directory. Default is _default_folder_setup.
+        config_dir_setup_callback (Callable[[str], None]): A callback function to
+            initialize the configs directory. Default is _default_folder_setup.
     """
     app_dir = get_app_config_folder(app_name, setup_callback=app_dir_setup_callback)
     configs_dir = os.path.join(app_dir, configs_name)
@@ -612,7 +631,7 @@ def ensure_seeded(
     Returns:
         The resolved *target* as a ``Path``.
 
-    Example::
+    Example:
 
         >>> from config2py import ensure_seeded
         >>> # ensure_seeded("/tmp/myfile.txt", "mypkg", "resources", "myfile.txt")
@@ -651,7 +670,7 @@ class AppData:
         seed_data_dir: Name of the seed-data sub-package inside the
             Python package (default ``"_seed_data"``).
 
-    Example::
+    Example:
 
         >>> app = AppData("myapp", package_name="myapp")
         >>> app.app_folder()  # doctest: +SKIP
@@ -665,6 +684,7 @@ class AppData:
         package_name: Optional[str] = None,
         seed_data_dir: str = "_seed_data",
     ):
+        """See the class docstring for each parameter."""
         self.app_name = app_name
         self.package_name = package_name or app_name
         self.seed_data_dir = seed_data_dir
@@ -737,17 +757,13 @@ def is_repl():
     If you do ``python -i module.py``, or call it from a python console or jupyter
     notebook, it should return ``True``.
 
-    Args:
-        repl_conditions (list): A list of functions that return True if the interpreter
-            is running in a REPL, False otherwise.
-            By default, this is a list of two functions that check if:
-            - ``get_ipython`` is in globals
-            - ``__main__`` does not have a ``__file__`` attribute
     Returns:
         bool: True if running in a REPL, False otherwise.
 
-    is_repl.repl_conditions is a set of functions that return True if the interpreter.
-    This set can be modified to modify the behavior of ``is_repl``.
+    ``is_repl`` returns ``True`` if any function in ``is_repl.repl_conditions``
+    (a set of no-argument, no-parameter callables) returns ``True``. By default that
+    set checks whether ``get_ipython`` is in globals, or whether ``__main__`` has no
+    ``__file__`` attribute. Reassign ``is_repl.repl_conditions`` to change the checks.
     """
     if any(condition() for condition in _repl_conditions):
         return True
