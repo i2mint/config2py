@@ -4,6 +4,7 @@ This module provides a flexible pattern for encoding and decoding configuration 
 based on their file extensions. It includes codecs for bytes <-> JSON-friendly Python types.
 
 Examples:
+
     >>> # Basic usage
     >>> data = {'name': 'config2py', 'version': '1.0'}
     >>>
@@ -75,6 +76,7 @@ def get_extension(key: str) -> str:
         Extension without the dot, or empty string if no extension found
 
     Examples:
+
         >>> get_extension('config.json')
         'json'
         >>> get_extension('/path/to/data.yaml')
@@ -115,6 +117,7 @@ def decode_by_extension(key: str, data: bytes) -> Any:
         ValueError: If no decoder registered for extension
 
     Examples:
+
         >>> data = b'{"key": "value"}'
         >>> decode_by_extension('config.json', data)
         {'key': 'value'}
@@ -145,6 +148,7 @@ def encode_by_extension(key: str, obj: Any) -> bytes:
         ValueError: If no encoder registered for extension
 
     Examples:
+
         >>> obj = {'key': 'value'}
         >>> encoded = encode_by_extension('config.json', obj)
         >>> assert b'"key"' in encoded
@@ -187,6 +191,7 @@ def register_codec(
         ValueError: If codec already registered and overwrite=False
 
     Examples:
+
         >>> def my_encoder(obj): return str(obj).encode()
         >>> def my_decoder(data): return eval(data.decode())
         >>> register_codec('.custom', encoder=my_encoder, decoder=my_decoder, overwrite=True)
@@ -220,6 +225,7 @@ def register_decoder(extension: str, *, overwrite: bool = False):
         Decorator function
 
     Examples:
+
         >>> @register_decoder('.custom', overwrite=True)
         ... def decode_custom(data: bytes) -> dict:
         ...     return {'data': data.decode()}
@@ -248,6 +254,7 @@ def register_encoder(extension: str, *, overwrite: bool = False):
         Decorator function
 
     Examples:
+
         >>> @register_encoder('.custom', overwrite=True)
         ... def encode_custom(obj: dict) -> bytes:
         ...     return obj.get('data', '').encode()
@@ -277,6 +284,7 @@ def list_registered_extensions() -> list[str]:
         Sorted list of registered extensions
 
     Examples:
+
         >>> extensions = list_registered_extensions()
         >>> '.json' in extensions
         True
@@ -295,6 +303,7 @@ def is_extension_registered(extension: str) -> bool:
         True if decoder or encoder is registered
 
     Examples:
+
         >>> is_extension_registered('.json')
         True
         >>> is_extension_registered('.nonexistent')
@@ -316,6 +325,7 @@ def get_codec_info(extension: str) -> dict[str, Any]:
         Dictionary with codec information
 
     Examples:
+
         >>> info = get_codec_info('.json')
         >>> info['has_encoder']
         True

@@ -176,6 +176,7 @@ class SyncStore(MutableMapping):
         dumper: Function that persists the data dict to storage
 
     Example:
+
         >>> def my_loader():
         ...     return {'x': 1}
         >>>
@@ -199,6 +200,7 @@ class SyncStore(MutableMapping):
     """
 
     def __init__(self, loader: Loader, dumper: Dumper):
+        """See the class docstring for ``loader`` and ``dumper``."""
         self._loader = loader
         self._dumper = dumper
         self._data = None
@@ -272,6 +274,7 @@ class FileStore(SyncStore):
             for missing key_path. If None, KeyError is raised for missing key paths.
 
     Example:
+
         >>> import tempfile
         >>> import os
         >>>
@@ -312,6 +315,7 @@ class FileStore(SyncStore):
         create_file_content: Optional[Callable[[], dict]] = None,
         create_key_path_content: Optional[Callable[[], Any]] = None,
     ):
+        """See the class docstring for each parameter."""
         self.filepath = Path(filepath).expanduser()
         self.key_path = _normalize_key_path(key_path)
         self.mode = mode
@@ -421,6 +425,7 @@ class JsonStore(FileStore):
         ensure_ascii: bool = False,
         **dump_kwargs,
     ):
+        """See the class docstring for each parameter."""
         dump_kwargs.setdefault("indent", indent)
         dump_kwargs.setdefault("ensure_ascii", ensure_ascii)
 
