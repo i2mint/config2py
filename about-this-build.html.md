@@ -2,7 +2,7 @@
 
 # About this build
 
-This documentation was built on **2026-09-22 13:54 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/d71bd91e4c0f8fa07b15f638fd1c7f920963a275"><code>d71bd91</code></a> on branch <code>master</code>, for **config2py 0.1.53** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-09-22 14:46 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/10e900555e6b9f26827a6493f3a9c1cb3af47a83"><code>10e9005</code></a> on branch <code>master</code>, for **config2py 0.1.54** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -11,9 +11,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/d71bd91e4c0f8fa07b15f638fd1c7f920963a275"><code>d71bd91e4c0f8fa07b15f638fd1c7f920963a275</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/10e900555e6b9f26827a6493f3a9c1cb3af47a83"><code>10e900555e6b9f26827a6493f3a9c1cb3af47a83</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
-| Tags at this commit | <code>0.1.53</code>                                                                                                                                     |
+| Tags at this commit | <code>0.1.54</code>                                                                                                                                     |
 | Working tree        | clean                                                                                                                                                   |
 | Remote              | <code>https://github.com/i2mint/config2py</code>                                                                                                        |
 
@@ -22,9 +22,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/35736417979">35736417979</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/35742479925">35742479925</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>3dbfedb5351f2b94dbf98e15a4b8b4d35fbb027c</code> (in the history of the built commit) |
+| Event commit | <code>c7603902ac98e2dd5ba05de396921c48a4c7f4a5</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -49,13 +49,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.53/">0.1.53</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/config2py/0.1.54/">0.1.54</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout d71bd91e4c0f8fa07b15f638fd1c7f920963a275
+git checkout 10e900555e6b9f26827a6493f3a9c1cb3af47a83
 pip install "epythet==0.2.12"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

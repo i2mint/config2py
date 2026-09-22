@@ -1,34 +1,34 @@
 {
   "schema_version": 1,
-  "built_at": "2026-09-22T13:54:32Z",
+  "built_at": "2026-09-22T14:46:47Z",
   "package": {
     "name": "config2py",
-    "version": "0.1.53",
+    "version": "0.1.54",
     "display_name": "config2py",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "d71bd91e4c0f8fa07b15f638fd1c7f920963a275",
-    "short_commit": "d71bd91",
+    "commit": "10e900555e6b9f26827a6493f3a9c1cb3af47a83",
+    "short_commit": "10e9005",
     "branch": "master",
     "tags": [
-      "0.1.53"
+      "0.1.54"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/config2py",
-    "commit_url": "https://github.com/i2mint/config2py/commit/d71bd91e4c0f8fa07b15f638fd1c7f920963a275",
+    "commit_url": "https://github.com/i2mint/config2py/commit/10e900555e6b9f26827a6493f3a9c1cb3af47a83",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/config2py",
-    "sha": "3dbfedb5351f2b94dbf98e15a4b8b4d35fbb027c",
+    "sha": "c7603902ac98e2dd5ba05de396921c48a4c7f4a5",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "35736417979",
-    "run_url": "https://github.com/i2mint/config2py/actions/runs/35736417979",
+    "run_id": "35742479925",
+    "run_url": "https://github.com/i2mint/config2py/actions/runs/35742479925",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -62,11 +62,11 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.53",
+    "latest": "0.1.54",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout d71bd91e4c0f8fa07b15f638fd1c7f920963a275\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout 10e900555e6b9f26827a6493f3a9c1cb3af47a83\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,
