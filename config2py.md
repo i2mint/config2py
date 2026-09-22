@@ -1,4 +1,4 @@
-> built 2026-09-15 12:47 UTC from 588be98 (master) · config2py 0.1.52. Details: build_info.json
+> built 2026-09-22 13:54 UTC from d71bd91 (master) · config2py 0.1.53. Details: build_info.json
 
 # index.html.md
 
@@ -1759,13 +1759,15 @@ Utility functions for config2py.
 | [`is_not_empty`](_autosummary/config2py.util.html.md#config2py.util.is_not_empty)(x)                                   | Function that returns True if x is not empty.                                                                                                                                           |
 | [`is_repl`](_autosummary/config2py.util.html.md#config2py.util.is_repl)()                                         | Determines if the Python interpreter is running in REPL.                                                                                                                                |
 | [`parse_assignments_from_py_source`](_autosummary/config2py.util.html.md#config2py.util.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                                                              |
+| [`secure_makedirs`](_autosummary/config2py.util.html.md#config2py.util.secure_makedirs)(dirpath, \*[, exist_ok])          | `os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.                                                                                                        |
+| [`secure_open`](_autosummary/config2py.util.html.md#config2py.util.secure_open)(path[, mode])                         | Open `path` for writing with owner-only (`0o600`) permissions.                                                                                                                          |
 | [`system_default_for_app_data_folder`](_autosummary/config2py.util.html.md#config2py.util.system_default_for_app_data_folder)([...])         | Get the system default folder for `folder_kind`.                                                                                                                                        |
 
 ### Classes
 
 | [`AppData`](_autosummary/config2py.util.html.md#config2py.util.AppData)(app_name, \*[, package_name, ...])   | Per-user data directory facade for a Python application.                     |
 |-----------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
-| [`EnvironmentVariables`](_autosummary/config2py.util.html.md#config2py.util.EnvironmentVariables)()                       | Class to wrap environment variables without revealing sensitive information. |
+| [`EnvironmentVariables`](_autosummary/config2py.util.html.md#config2py.util.EnvironmentVariables)()                       | Class to wrap environment variables, hiding values from `repr`/`print` only. |
 | [`FolderSpec`](_autosummary/config2py.util.html.md#config2py.util.FolderSpec)(env_var, default_path, subpath)   | Declarative description of where a given folder kind lives on a platform.    |
 
 ### *class* config2py.util.AppData(app_name, , package_name=None, seed_data_dir='_seed_data')
@@ -1835,7 +1837,13 @@ Return a user resource path, seeding from package data if missing.
 
 Bases: [`ChainMap`](https://docs.python.org/3/library/collections.html#collections.ChainMap)
 
-Class to wrap environment variables without revealing sensitive information.
+Class to wrap environment variables, hiding values from `repr`/`print` only.
+
+`__repr__` is overridden to avoid printing secrets to a REPL or log, but values
+are still reachable through normal `Mapping` operations – `dict(envvar)`,
+`envvar.items()`/`.values()`, `pickle.dumps(envvar)`, or a structured logger
+that walks the mapping. Treat this as UI-level redaction, not access control (see
+i2mint/config2py#16).
 
 ### *class* config2py.util.FolderSpec(env_var, default_path, subpath)
 
@@ -2488,6 +2496,42 @@ Parse assignments from python source code.
 {'a': 1, 'b': 'hello', 'c': [1, 2, 3], 'd': 4}
 ```
 
+### config2py.util.secure_makedirs(dirpath, , exist_ok=True)
+
+`os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.
+
+`os.makedirs(..., mode=0o700, exist_ok=True)` alone won’t re-tighten an existing
+directory’s mode, so this follows up with an explicit `os.chmod`. Intended for
+directories that may hold config/secret files (see i2mint/config2py#15).
+
+### config2py.util.secure_open(path, mode='w')
+
+Open `path` for writing with owner-only (`0o600`) permissions.
+
+Two cases, both handled:
+
+- *New* file: the restrictive mode is applied atomically at creation via
+  `os.open`, so there is no window where the file briefly exists with the
+  process’s default umask (commonly world-readable, `0o644`).
+- *Pre-existing* file with looser permissions: `os.open`’s `mode` argument
+  is a POSIX no-op in this case (only consulted when a new file is actually
+  created), so an explicit `os.fchmod` re-tightens it – on the open file
+  descriptor, not the path, so it’s not subject to a TOCTOU swap either.
+
+Intended for files that may hold secrets (see i2mint/config2py#15).
+
+```pycon
+>>> import tempfile, os
+>>> path = tempfile.mktemp()
+>>> with secure_open(path, "w") as f:
+...     _ = f.write("secret")
+>>> # Unix mode bits aren't meaningful on Windows -- os.stat there reports 0o666
+>>> # regardless of what secure_open does, so only assert the mode on POSIX.
+>>> oct(os.stat(path).st_mode & 0o777) if os.name == "posix" else "0o600"
+'0o600'
+>>> os.remove(path)
+```
+
 ### config2py.util.system_default_for_app_data_folder(folder_kind='config', , standards=None)
 
 Get the system default folder for `folder_kind`.
@@ -2511,7 +2555,7 @@ that kind, falling back to the spec’s `default_path`; the spec’s
 
 # About this build
 
-This documentation was built on **2026-09-15 12:47 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/588be982d567aef1a0fce3b0619e36b0bfc66414"><code>588be98</code></a> on branch <code>master</code>, for **config2py 0.1.52** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-09-22 13:54 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/d71bd91e4c0f8fa07b15f638fd1c7f920963a275"><code>d71bd91</code></a> on branch <code>master</code>, for **config2py 0.1.53** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2520,9 +2564,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/588be982d567aef1a0fce3b0619e36b0bfc66414"><code>588be982d567aef1a0fce3b0619e36b0bfc66414</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/d71bd91e4c0f8fa07b15f638fd1c7f920963a275"><code>d71bd91e4c0f8fa07b15f638fd1c7f920963a275</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
-| Tags at this commit | <code>0.1.52</code>                                                                                                                                     |
+| Tags at this commit | <code>0.1.53</code>                                                                                                                                     |
 | Working tree        | clean                                                                                                                                                   |
 | Remote              | <code>https://github.com/i2mint/config2py</code>                                                                                                        |
 
@@ -2531,9 +2575,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/34970722095">34970722095</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/35736417979">35736417979</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>821a4c75fe0eb20e9974f58eb0ef3abfc1787036</code> (in the history of the built commit) |
+| Event commit | <code>3dbfedb5351f2b94dbf98e15a4b8b4d35fbb027c</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2558,13 +2602,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.52/">0.1.52</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/config2py/0.1.53/">0.1.53</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 588be982d567aef1a0fce3b0619e36b0bfc66414
+git checkout d71bd91e4c0f8fa07b15f638fd1c7f920963a275
 pip install "epythet==0.2.12"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

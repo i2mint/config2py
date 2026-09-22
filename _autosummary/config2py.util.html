@@ -10,6 +10,8 @@
 
 <link rel="alternate" type="text/markdown" href="config2py.util.html.md">
 <link rel="describedby" href="../llms.txt" type="text/markdown">
+<link rel="alternate" type="text/markdown" href="config2py.util.html.md">
+<link rel="describedby" href="llms.txt">
     <title>config2py.util &#8212; config2py</title>
   
   
@@ -42,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
 
-    <script src="../_static/documentation_options.js?v=61349712"></script>
+    <script src="../_static/documentation_options.js?v=c54c130b"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +56,7 @@
     <link rel="prev" title="config2py.tools" href="config2py.tools.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.52" />
+  <meta name="docsearch:version" content="0.1.53" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -431,6 +433,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.parse_assignments_from_py_source" title="config2py.util.parse_assignments_from_py_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_assignments_from_py_source</span></code></a>(source_code, *)</p></td>
 <td><p>Parse assignments from python source code.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.secure_makedirs" title="config2py.util.secure_makedirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secure_makedirs</span></code></a>(dirpath, *[, exist_ok])</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">os.makedirs(dirpath,</span> <span class="pre">mode=0o700)</span></code>, re-tightening the mode if it already exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.secure_open" title="config2py.util.secure_open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secure_open</span></code></a>(path[, mode])</p></td>
+<td><p>Open <code class="docutils literal notranslate"><span class="pre">path</span></code> for writing with owner-only (<code class="docutils literal notranslate"><span class="pre">0o600</span></code>) permissions.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.system_default_for_app_data_folder" title="config2py.util.system_default_for_app_data_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">system_default_for_app_data_folder</span></code></a>([...])</p></td>
 <td><p>Get the system default folder for <code class="docutils literal notranslate"><span class="pre">folder_kind</span></code>.</p></td>
 </tr>
@@ -444,7 +452,7 @@
 <td><p>Per-user data directory facade for a Python application.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.EnvironmentVariables" title="config2py.util.EnvironmentVariables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EnvironmentVariables</span></code></a>()</p></td>
-<td><p>Class to wrap environment variables without revealing sensitive information.</p></td>
+<td><p>Class to wrap environment variables, hiding values from <code class="docutils literal notranslate"><span class="pre">repr</span></code>/<code class="docutils literal notranslate"><span class="pre">print</span></code> only.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.FolderSpec" title="config2py.util.FolderSpec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FolderSpec</span></code></a>(env_var, default_path, subpath)</p></td>
 <td><p>Declarative description of where a given folder kind lives on a platform.</p></td>
@@ -537,7 +545,12 @@ Python package (default <code class="docutils literal notranslate"><span class="
 <dt class="sig sig-object py" id="config2py.util.EnvironmentVariables">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">EnvironmentVariables</span></span><a class="reference internal" href="../_modules/config2py/util.html#EnvironmentVariables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.EnvironmentVariables" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.ChainMap" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChainMap</span></code></a></p>
-<p>Class to wrap environment variables without revealing sensitive information.</p>
+<p>Class to wrap environment variables, hiding values from <code class="docutils literal notranslate"><span class="pre">repr</span></code>/<code class="docutils literal notranslate"><span class="pre">print</span></code> only.</p>
+<p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code> is overridden to avoid printing secrets to a REPL or log, but values
+are still reachable through normal <code class="docutils literal notranslate"><span class="pre">Mapping</span></code> operations – <code class="docutils literal notranslate"><span class="pre">dict(envvar)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">envvar.items()</span></code>/<code class="docutils literal notranslate"><span class="pre">.values()</span></code>, <code class="docutils literal notranslate"><span class="pre">pickle.dumps(envvar)</span></code>, or a structured logger
+that walks the mapping. Treat this as UI-level redaction, not access control (see
+i2mint/config2py#16).</p>
 </dd></dl>
 
 <dl class="py class">
@@ -1256,6 +1269,43 @@ attribute to a new set has no effect, since <code class="docutils literal notran
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.secure_makedirs">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">secure_makedirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirpath</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">exist_ok</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#secure_makedirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.secure_makedirs" title="Link to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">os.makedirs(dirpath,</span> <span class="pre">mode=0o700)</span></code>, re-tightening the mode if it already exists.</p>
+<p><code class="docutils literal notranslate"><span class="pre">os.makedirs(...,</span> <span class="pre">mode=0o700,</span> <span class="pre">exist_ok=True)</span></code> alone won’t re-tighten an existing
+directory’s mode, so this follows up with an explicit <code class="docutils literal notranslate"><span class="pre">os.chmod</span></code>. Intended for
+directories that may hold config/secret files (see i2mint/config2py#15).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.secure_open">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">secure_open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#secure_open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.secure_open" title="Link to this definition">#</a></dt>
+<dd><p>Open <code class="docutils literal notranslate"><span class="pre">path</span></code> for writing with owner-only (<code class="docutils literal notranslate"><span class="pre">0o600</span></code>) permissions.</p>
+<p>Two cases, both handled:</p>
+<ul class="simple">
+<li><p><em>New</em> file: the restrictive mode is applied atomically at creation via
+<code class="docutils literal notranslate"><span class="pre">os.open</span></code>, so there is no window where the file briefly exists with the
+process’s default umask (commonly world-readable, <code class="docutils literal notranslate"><span class="pre">0o644</span></code>).</p></li>
+<li><p><em>Pre-existing</em> file with looser permissions: <code class="docutils literal notranslate"><span class="pre">os.open</span></code>’s <code class="docutils literal notranslate"><span class="pre">mode</span></code> argument
+is a POSIX no-op in this case (only consulted when a new file is actually
+created), so an explicit <code class="docutils literal notranslate"><span class="pre">os.fchmod</span></code> re-tightens it – on the open file
+descriptor, not the path, so it’s not subject to a TOCTOU swap either.</p></li>
+</ul>
+<p>Intended for files that may hold secrets (see i2mint/config2py#15).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mktemp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"secret"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Unix mode bits aren't meaningful on Windows -- os.stat there reports 0o666</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># regardless of what secure_open does, so only assert the mode on POSIX.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">oct</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="mo">0o777</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"posix"</span> <span class="k">else</span> <span class="s2">"0o600"</span>
+<span class="go">'0o600'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="config2py.util.system_default_for_app_data_folder">
 <span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">system_default_for_app_data_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">standards</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#system_default_for_app_data_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.system_default_for_app_data_folder" title="Link to this definition">#</a></dt>
 <dd><p>Get the system default folder for <code class="docutils literal notranslate"><span class="pre">folder_kind</span></code>.</p>
@@ -1348,6 +1398,8 @@ pass another platform’s table to resolve as that platform would.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.is_not_empty"><code class="docutils literal notranslate"><span class="pre">is_not_empty()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.is_repl"><code class="docutils literal notranslate"><span class="pre">is_repl()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.parse_assignments_from_py_source"><code class="docutils literal notranslate"><span class="pre">parse_assignments_from_py_source()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.secure_makedirs"><code class="docutils literal notranslate"><span class="pre">secure_makedirs()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.secure_open"><code class="docutils literal notranslate"><span class="pre">secure_open()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.system_default_for_app_data_folder"><code class="docutils literal notranslate"><span class="pre">system_default_for_app_data_folder()</span></code></a></li>
 </ul>
   </nav></div>

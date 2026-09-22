@@ -6,7 +6,7 @@
 ## Pages
 
 - [config2py](index.html.md): Simplified reading and writing configurations from various sources and formats.
-- [API reference](api.html.md): | [`config2py`](_autosummary/config2py.html.md#module-config2py)   | Tools to read and write configu...
+- [API reference](api.html.md): | &#96;config2py&#96;   | Tools to read and write configurations from various sources and formats   |
 - [config2py](_autosummary/config2py.html.md): Tools to read and write configurations from various sources and formats
 - [config2py.base](_autosummary/config2py.base.html.md): Base for getting configs from various sources and formats
 - [config2py.codecs](_autosummary/config2py.codecs.html.md): Extension-based codec registries for configuration file parsing.
@@ -15,11 +15,11 @@
 - [config2py.sync_store](_autosummary/config2py.sync_store.html.md): Synchronized key-value stores with automatic persistence.
 - [config2py.tools](_autosummary/config2py.tools.html.md): Various tools
 - [config2py.util](_autosummary/config2py.util.html.md): Utility functions for config2py.
-- [About this build](about-this-build.html.md): This documentation was built on **2026-09-15 12:47 UTC** from commit <a href="https://github.com/i2m...
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-09-22 13:54 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
 
----
+## Optional
 
-For more comprehensive documentation, see [config2py.md](config2py.md)
+- [config2py.md](config2py.md): Complete documentation in a single file.
 
 ## Build
 

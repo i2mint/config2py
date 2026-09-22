@@ -1,0 +1,14 @@
+# config2py
+
+Tools to read and write configurations from various sources and formats
+
+### Modules
+
+| [`base`](config2py.base.md#module-config2py.base)                     | Base for getting configs from various sources and formats        |
+|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------|
+| [`codecs`](config2py.codecs.md#module-config2py.codecs)                 | Extension-based codec registries for configuration file parsing. |
+| [`errors`](config2py.errors.md#module-config2py.errors)                 | Error classes for config2py.                                     |
+| [`s_configparser`](config2py.s_configparser.md#module-config2py.s_configparser) | Data Object Layer for configparser standard lib.                 |
+| [`sync_store`](config2py.sync_store.md#module-config2py.sync_store)         | Synchronized key-value stores with automatic persistence.        |
+| [`tools`](config2py.tools.md#module-config2py.tools)                   | Various tools                                                    |
+| [`util`](config2py.util.md#module-config2py.util)                     | Utility functions for config2py.                                 |
