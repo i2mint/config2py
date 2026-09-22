@@ -47,7 +47,9 @@ def secure_open(path, mode="w"):
     >>> path = tempfile.mktemp()
     >>> with secure_open(path, "w") as f:
     ...     _ = f.write("secret")
-    >>> oct(os.stat(path).st_mode & 0o777)
+    >>> # Unix mode bits aren't meaningful on Windows -- os.stat there reports 0o666
+    >>> # regardless of what secure_open does, so only assert the mode on POSIX.
+    >>> oct(os.stat(path).st_mode & 0o777) if os.name == "posix" else "0o600"
     '0o600'
     >>> os.remove(path)
     """
