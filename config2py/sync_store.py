@@ -31,6 +31,7 @@ from typing import Callable, Any, Iterator, Union, Tuple, Optional, Dict
 from collections.abc import MutableMapping
 from pathlib import Path
 import json
+import os
 from functools import reduce
 
 __all__ = [
@@ -43,6 +44,25 @@ __all__ = [
 
 # Note: Independent module. No imports from config2py, dol etc.
 # TODO: Do we want to use more stuff from config2py, dol, etc.?
+
+
+def _secure_open(path, mode="w"):
+    """Open ``path`` for writing with owner-only (``0o600``) permissions.
+
+    Local copy of ``config2py.util.secure_open`` -- this module deliberately has no
+    intra-package imports (see note above). Avoids writing files that may hold secrets
+    with the process's default (often world-readable) umask; see i2mint/config2py#15.
+
+    Re-tightens via ``os.fchmod`` on the open fd (not just relying on ``os.open``'s
+    ``mode`` argument, which POSIX only consults when a *new* file is created -- a
+    pre-existing, already-loose file would otherwise keep its old permissions).
+    """
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    fd = os.open(path, flags, 0o600)
+    if hasattr(os, "fchmod"):  # POSIX only -- Windows ACLs aren't unix mode bits
+        os.fchmod(fd, 0o600)
+    return os.fdopen(fd, mode)
+
 
 # Type aliases
 KeyPath = Union[str, Tuple[str, ...], None]
@@ -350,10 +370,10 @@ class FileStore(SyncStore):
 
             # Create file with initial content
             initial_data = self.create_file_content()
-            self.filepath.parent.mkdir(parents=True, exist_ok=True)
+            self.filepath.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
             content = self._file_dumper(initial_data, **self.dump_kwargs)
             write_mode = "w" if "b" not in self.mode else "wb"
-            with open(self.filepath, write_mode) as f:
+            with _secure_open(self.filepath, write_mode) as f:
                 f.write(content)
             data = initial_data
         else:
@@ -376,7 +396,7 @@ class FileStore(SyncStore):
             # Write back to file
             content = self._file_dumper(full_data, **self.dump_kwargs)
             write_mode = "w" if "b" not in self.mode else "wb"
-            with open(self.filepath, write_mode) as f:
+            with _secure_open(self.filepath, write_mode) as f:
                 f.write(content)
 
             return initial_content
@@ -394,7 +414,7 @@ class FileStore(SyncStore):
             content = self._file_dumper(full_data, **self.dump_kwargs)
 
         write_mode = "w" if "b" not in self.mode else "wb"
-        with open(self.filepath, write_mode) as f:
+        with _secure_open(self.filepath, write_mode) as f:
             f.write(content)
 
     def __repr__(self):
