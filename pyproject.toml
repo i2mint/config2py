@@ -82,3 +82,9 @@ testpaths = ["config2py"]
 # overrides this setting. Diverging here means doctests that pass locally can
 # fail in CI (and vice versa) -- notably NORMALIZE_WHITESPACE, which CI does not set.
 doctest_optionflags = ["ELLIPSIS", "IGNORE_EXCEPTION_DETAIL"]
+
+[tool.wads.ci]
+project_name = "config2py"
+
+[tool.wads.ci.testing]
+python_versions = ["3.10", "3.12"]
