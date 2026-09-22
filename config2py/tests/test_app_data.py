@@ -107,6 +107,11 @@ class TestEnsureSeeded:
         assert result == target
         assert target.exists()
         assert target.read_bytes() == b"hello world\nline two\n"
+        if os.name == "posix":
+            # i2mint/config2py#15: seeded files (may hold secrets, e.g. AppData.get_config)
+            # must not be created world-readable.
+            assert oct(target.stat().st_mode & 0o777) == "0o600"
+            assert oct(target.parent.stat().st_mode & 0o777) == "0o700"
 
     def test_preserves_existing_file(self, tmp_path, mock_seeds_for_ensure):
         target = tmp_path / "hello.txt"
@@ -234,6 +239,8 @@ class TestAppData:
             midi_dir = app.get_artifact_dir("midi")
             assert midi_dir.is_dir()
             assert _same_path(midi_dir, tmp_path / "testapp" / "artifacts" / "midi")
+            if os.name == "posix":  # i2mint/config2py#15
+                assert oct(midi_dir.stat().st_mode & 0o777) == "0o700"
 
     def test_get_artifact_dir_multiple_kinds(self, tmp_path):
         with _redirect_app_root("data", tmp_path):

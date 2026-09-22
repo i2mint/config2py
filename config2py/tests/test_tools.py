@@ -34,7 +34,12 @@ def test_simple_config_getter(mock_config_store_factory):
     # assert config_getter(key) == "from store"
 
     # Test getting config with ask_user_if_key_not_found=True
-    with patch("builtins.input", return_value="from user"):
+    # (patch both prompt functions ask_user_for_input can dispatch to -- which one is
+    # used depends on mask_input, default False today, see i2mint/config2py#13)
+    with (
+        patch("builtins.input", return_value="from user"),
+        patch("getpass.getpass", return_value="from user"),
+    ):
         config_getter = simple_config_getter(ask_user_if_key_not_found=True)
         assert config_getter("new_key") == "from user"
 

@@ -9,6 +9,8 @@ from io import StringIO
 
 from dol import Store
 
+from config2py.util import secure_open
+
 # from py2store.signatures import Sig
 
 _test_config_str = """[Simple Values]
@@ -287,7 +289,7 @@ class ConfigStore(ConfigParserStore):
         """
         if not self._within_context_manager:
             if self.target_kind == "filepath":
-                with open(self.source, "w") as fp:
+                with secure_open(self.source, "w") as fp:
                     return self.write(fp, self.space_around_delimiters)
             else:
                 if self.target_kind == "stream":

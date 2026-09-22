@@ -28,6 +28,47 @@ not_found = mk_sentinel("not_found")
 no_default = mk_sentinel("no_default")
 
 
+def secure_open(path, mode="w"):
+    """Open ``path`` for writing with owner-only (``0o600``) permissions.
+
+    Two cases, both handled:
+
+    - *New* file: the restrictive mode is applied atomically at creation via
+      ``os.open``, so there is no window where the file briefly exists with the
+      process's default umask (commonly world-readable, ``0o644``).
+    - *Pre-existing* file with looser permissions: ``os.open``'s ``mode`` argument
+      is a POSIX no-op in this case (only consulted when a new file is actually
+      created), so an explicit ``os.fchmod`` re-tightens it -- on the open file
+      descriptor, not the path, so it's not subject to a TOCTOU swap either.
+
+    Intended for files that may hold secrets (see i2mint/config2py#15).
+
+    >>> import tempfile, os
+    >>> path = tempfile.mktemp()
+    >>> with secure_open(path, "w") as f:
+    ...     _ = f.write("secret")
+    >>> oct(os.stat(path).st_mode & 0o777)
+    '0o600'
+    >>> os.remove(path)
+    """
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    fd = os.open(path, flags, 0o600)
+    if hasattr(os, "fchmod"):  # POSIX only -- Windows ACLs aren't unix mode bits
+        os.fchmod(fd, 0o600)  # re-tighten if the file already existed (see docstring)
+    return os.fdopen(fd, mode)
+
+
+def secure_makedirs(dirpath, *, exist_ok=True):
+    """``os.makedirs(dirpath, mode=0o700)``, re-tightening the mode if it already exists.
+
+    ``os.makedirs(..., mode=0o700, exist_ok=True)`` alone won't re-tighten an existing
+    directory's mode, so this follows up with an explicit ``os.chmod``. Intended for
+    directories that may hold config/secret files (see i2mint/config2py#15).
+    """
+    os.makedirs(dirpath, mode=0o700, exist_ok=exist_ok)
+    os.chmod(dirpath, 0o700)
+
+
 def always_true(x: Any) -> bool:
     """Function that just returns True."""
     return True
@@ -54,7 +95,13 @@ def is_not_empty(x: Any) -> bool:
 # preserving confidentiality while retaining full read/write functionality.
 class EnvironmentVariables(ChainMap):
     """
-    Class to wrap environment variables without revealing sensitive information.
+    Class to wrap environment variables, hiding values from ``repr``/``print`` only.
+
+    ``__repr__`` is overridden to avoid printing secrets to a REPL or log, but values
+    are still reachable through normal ``Mapping`` operations -- ``dict(envvar)``,
+    ``envvar.items()``/``.values()``, ``pickle.dumps(envvar)``, or a structured logger
+    that walks the mapping. Treat this as UI-level redaction, not access control (see
+    i2mint/config2py#16).
     """
 
     def __init__(self):
@@ -245,7 +292,7 @@ def create_directories(dirpath, max_dirs_to_make=None):
         return True
 
     if max_dirs_to_make is None:
-        os.makedirs(dirpath, exist_ok=True)
+        secure_makedirs(dirpath)
         return True
 
     # Calculate the number of directories to create
@@ -261,7 +308,7 @@ def create_directories(dirpath, max_dirs_to_make=None):
 
     # Create directories from the top level down
     for dir_to_make in reversed(dirs_to_make):
-        os.mkdir(dir_to_make)
+        os.mkdir(dir_to_make, mode=0o700)
 
     return True
 
@@ -467,7 +514,7 @@ def _default_folder_setup(directory_path: str) -> None:
         This is the default setup callback for directories managed by config2py.
     """
     if not os.path.isdir(directory_path):
-        os.makedirs(directory_path, exist_ok=True)
+        secure_makedirs(directory_path)
         # Add a hidden file to annotate the directory as one managed by config2py.
         # This helps distinguish it from directories created by other programs
         # (this can be useful to avoid conflicts).
@@ -641,8 +688,9 @@ def ensure_seeded(
         from importlib.resources import files
 
         ref = files(f"{package_name}.{seed_data_dir}.{seed_subpackage}") / filename
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(ref.read_bytes())
+        secure_makedirs(target.parent)
+        with secure_open(target, "wb") as fp:
+            fp.write(ref.read_bytes())
     return target
 
 
@@ -730,7 +778,7 @@ class AppData:
     def get_artifact_dir(self, kind: str) -> Path:
         """Return (and create) an artifact sub-directory for *kind*."""
         d = self.app_folder(folder_kind="data") / "artifacts" / kind
-        d.mkdir(parents=True, exist_ok=True)
+        secure_makedirs(d)
         return d
 
 
