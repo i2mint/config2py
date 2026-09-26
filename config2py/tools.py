@@ -27,6 +27,12 @@ def get_configs_local_store(
         If it's a directory, it's assumed to be a folder of text files.
         If it's a file, it's assumed to be an ini or cfg file.
         If it's a string, it's assumed to be an app name, from which to create a folder
+
+    Note: a directory is only recognized as such if ``config_src`` contains
+    ``os.path.sep``. A bare name (e.g. ``"configs"``) is always treated as an app
+    name, even if a directory of that name exists in the current working directory;
+    pass ``"./configs"`` (or an absolute path) to use that directory
+    (see https://github.com/i2mint/config2py/issues/28).
     """
     if os.path.sep in config_src and os.path.isdir(config_src):
         # TODO: This was a quick fix to avoid unknowingly making directories in the
@@ -103,7 +109,10 @@ def simple_config_getter(
     return config_getter
 
 
-# Make a ready-to-use config getter, using the defaults
+# Make a ready-to-use config getter, using the defaults.
+# Note: this (and ``local_configs`` below) runs at import time, so ``import config2py``
+# creates the default configs folder (``~/.config/config2py/configs`` on Linux) if it
+# doesn't exist yet. Making this lazy is tracked in i2mint/config2py#26.
 config_getter = simple_config_getter()
 
 
@@ -146,6 +155,13 @@ def extract_exports(exports: str) -> dict:
 
     >>> extract_exports('export KEY="secret"\nexport TOKEN="arbitrary"')
     {'KEY': 'secret', 'TOKEN': 'arbitrary'}
+
+    Note that a single-line argument that is not an existing file is parsed as
+    content, not as a path. A mistyped path therefore silently gives an empty dict
+    (see https://github.com/i2mint/config2py/issues/27):
+
+    >>> extract_exports('no/such/path/.env')
+    {}
 
     Use case:
     ---------
