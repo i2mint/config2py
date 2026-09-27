@@ -27,6 +27,15 @@ export lines (that is, lines of the ``export NAME="VALUE"` format
 {'KEY': 'secret', 'TOKEN': 'arbitrary'}
 ```
 
+Note that a single-line argument that is not an existing file is parsed as
+content, not as a path. A mistyped path therefore silently gives an empty dict
+(see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)):
+
+```pycon
+>>> extract_exports('no/such/path/.env')
+{}
+```
+
 ## Use case:
 
 You have access to environment variables through `os.environ`, but
@@ -43,6 +52,13 @@ Get the local store of configs.
   If it’s a directory, it’s assumed to be a folder of text files.
   If it’s a file, it’s assumed to be an ini or cfg file.
   If it’s a string, it’s assumed to be an app name, from which to create a folder
+
+#### NOTE
+a directory is only recognized as such if `config_src` contains
+`os.path.sep`. A bare name (e.g. `"configs"`) is always treated as an app
+name, even if a directory of that name exists in the current working directory;
+pass `"./configs"` (or an absolute path) to use that directory
+(see [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28)).
 
 ### config2py.tools.simple_config_getter(configs_src='/home/runner/.config/config2py/configs', \*, first_look_in_env_vars=True, ask_user_if_key_not_found=None, config_store_factory=<function get_configs_local_store>)
 

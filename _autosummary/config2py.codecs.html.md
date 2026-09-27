@@ -32,6 +32,12 @@ based on their file extensions. It includes codecs for bytes <-> JSON-friendly P
 The module automatically registers codecs for standard formats (json, toml, ini, etc.)
 and conditionally registers codecs that require third-party libraries (yaml, json5, etc.).
 
+Security warning: the `.pkl` and `.pickle` extensions decode with
+`pickle.loads`, which can execute arbitrary code. Never call
+`decode_by_extension` with those extensions on bytes you do not fully trust (for
+example, bytes fetched from a remote or shared store).
+See [https://github.com/i2mint/config2py/issues/29](https://github.com/i2mint/config2py/issues/29).
+
 ### Functions
 
 | [`decode_by_extension`](#config2py.codecs.decode_by_extension)(key, data)                | Decode data based on key's extension.                |
@@ -58,6 +64,11 @@ Decode data based on key’s extension.
   Decoded Python object
 * **Raises:**
   [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – If no decoder registered for extension
+
+#### WARNING
+The decoder is chosen by the key’s extension alone. `.pkl` and
+`.pickle` map to `pickle.loads`, which can execute arbitrary code, so
+never decode untrusted bytes under those extensions.
 
 ### Examples
 
@@ -190,7 +201,7 @@ Register encoder and/or decoder for an extension.
 
 ```pycon
 >>> def my_encoder(obj): return str(obj).encode()
->>> def my_decoder(data): return eval(data.decode())
+>>> def my_decoder(data): return data.decode()
 >>> register_codec('.custom', encoder=my_encoder, decoder=my_decoder, overwrite=True)
 ```
 

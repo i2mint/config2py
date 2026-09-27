@@ -5,7 +5,7 @@
 
 ## Pages
 
-- [config2py](index.html.md): Simplified reading and writing configurations from various sources and formats.
+- [config2py](index.html.md): Get configuration values and secrets into Python code through layered sources: environment variables...
 - [API reference](api.html.md): | &#96;config2py&#96;   | Tools to read and write configurations from various sources and formats   |
 - [config2py](_autosummary/config2py.html.md): Tools to read and write configurations from various sources and formats
 - [config2py.base](_autosummary/config2py.base.html.md): Base for getting configs from various sources and formats
@@ -16,7 +16,7 @@
 - [config2py.tools](_autosummary/config2py.tools.html.md): Various tools
 - [config2py.util](_autosummary/config2py.util.html.md): Utility functions for config2py.
 - [For AI agents](ai-agents.html.md): &#96;config2py&#96; ships artifacts for coding agents alongside its code. This page lists
-- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-09-22 14:46 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-09-27 09:09 UTC&#42;&#42; from commit &lt;a href="https://github.com/i2m...
 
 ## Optional
 

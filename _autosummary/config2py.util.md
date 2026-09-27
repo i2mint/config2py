@@ -9,8 +9,9 @@ Utility functions for config2py.
 
 ### Functions
 
-| [`always_true`](#config2py.util.always_true)(x)                                    | Function that just returns True.                                                                                                                                                        |
+| [`DFLT_MASKING_INPUT`](#config2py.util.DFLT_MASKING_INPUT)(text)                          | True if `text` (typically a prompt naming a config key) looks secret.                                                                                                                   |
 |----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`always_true`](#config2py.util.always_true)(x)                                    | Function that just returns True.                                                                                                                                                        |
 | [`app_folder_standards`](#config2py.util.app_folder_standards)([os_name])                   | Return the `{folder_kind: FolderSpec}` table for the given `os.name`.                                                                                                                   |
 | [`ask_user_for_input`](#config2py.util.ask_user_for_input)(prompt[, default, ...])        | Ask the user for input, optionally masking, validating and transforming the input.                                                                                                      |
 | [`create_directories`](#config2py.util.create_directories)(dirpath[, max_dirs_to_make])   | Create directories up to a specified limit.                                                                                                                                             |
@@ -23,6 +24,7 @@ Utility functions for config2py.
 | [`identity`](#config2py.util.identity)(x)                                       | Function that just returns its argument.                                                                                                                                                |
 | [`is_not_empty`](#config2py.util.is_not_empty)(x)                                   | Function that returns True if x is not empty.                                                                                                                                           |
 | [`is_repl`](#config2py.util.is_repl)()                                         | Determines if the Python interpreter is running in REPL.                                                                                                                                |
+| [`looks_like_secret`](#config2py.util.looks_like_secret)(text)                           | True if `text` (typically a prompt naming a config key) looks secret.                                                                                                                   |
 | [`parse_assignments_from_py_source`](#config2py.util.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                                                              |
 | [`secure_makedirs`](#config2py.util.secure_makedirs)(dirpath, \*[, exist_ok])          | `os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.                                                                                                        |
 | [`secure_open`](#config2py.util.secure_open)(path[, mode])                         | Open `path` for writing with owner-only (`0o600`) permissions.                                                                                                                          |
@@ -98,6 +100,28 @@ Return a user resource path, seeding from package data if missing.
 * **Return type:**
   [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)
 
+### config2py.util.DFLT_MASKING_INPUT(text)
+
+True if `text` (typically a prompt naming a config key) looks secret.
+
+It errs on the side of masking: a false positive only means the user doesn’t see
+what they type, while a false negative echoes a secret to the terminal. It is a
+plain substring match on the whole prompt, so `KEYS_DIR` or `AUTHOR` also
+match, as would a custom prompt template mentioning “key”. Pass an explicit
+`mask_input` (or your own predicate) when that matters.
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+```pycon
+>>> looks_like_secret("Enter a value for OPENAI_API_KEY: ")
+True
+>>> looks_like_secret("Enter a value for github_token: ")
+True
+>>> looks_like_secret("Enter a value for DATA_DIR: ")
+False
+```
+
 ### *class* config2py.util.EnvironmentVariables
 
 Bases: [`ChainMap`](https://docs.python.org/3/library/collections.html#collections.ChainMap)
@@ -165,14 +189,20 @@ FolderSpec(env_var='LOCALAPPDATA', default_path='~\\AppData\\Local', subpath='Te
 FolderSpec(env_var='XDG_CACHE_HOME', default_path='~/.cache', subpath='')
 ```
 
-### config2py.util.ask_user_for_input(prompt, default='', \*, mask_input=False, masking_toggle_str=None, egress=<function identity>)
+### config2py.util.ask_user_for_input(prompt, default='', \*, mask_input=<function looks_like_secret>, masking_toggle_str=None, egress=<function identity>)
 
 Ask the user for input, optionally masking, validating and transforming the input.
 
 * **Parameters:**
   * **prompt** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Prompt to display to the user
   * **default** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Default value to return if the user enters nothing
-  * **mask_input** – Whether to mask the user’s input
+  * **mask_input** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool) | [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – Whether to mask the user’s input: a bool, or a
+    `prompt -> bool` predicate. The default, `looks_like_secret`, masks
+    prompts that mention something secret-looking (`API_KEY`, `TOKEN`,
+    `PASSWORD`, …) and echoes the others. When masking is decided by a
+    predicate and stdin is piped (not a terminal), the response is read from
+    stdin, as it was before this default existed. An explicit `True` always
+    uses `getpass.getpass`, which reads the terminal even when stdin is piped.
   * **masking_toggle_str** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – String to toggle input masking. If `None`, no toggle
     is available. If not `None` (a common choice is the empty string)
     the user can enter this string to toggle input masking.
@@ -745,6 +775,28 @@ whether `get_ipython` is in globals, or whether `__main__` has no
 `__file__` attribute. Mutate `is_repl.repl_conditions` in place (e.g.
 `is_repl.repl_conditions.add(fn)`) to change the checks – rebinding the
 attribute to a new set has no effect, since `is_repl` reads the original set.
+
+### config2py.util.looks_like_secret(text)
+
+True if `text` (typically a prompt naming a config key) looks secret.
+
+It errs on the side of masking: a false positive only means the user doesn’t see
+what they type, while a false negative echoes a secret to the terminal. It is a
+plain substring match on the whole prompt, so `KEYS_DIR` or `AUTHOR` also
+match, as would a custom prompt template mentioning “key”. Pass an explicit
+`mask_input` (or your own predicate) when that matters.
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+```pycon
+>>> looks_like_secret("Enter a value for OPENAI_API_KEY: ")
+True
+>>> looks_like_secret("Enter a value for github_token: ")
+True
+>>> looks_like_secret("Enter a value for DATA_DIR: ")
+False
+```
 
 ### config2py.util.parse_assignments_from_py_source(source_code, \*, name_filt=None, value_filt=<function \_value_node_is_instance_of>)
 

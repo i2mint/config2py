@@ -14,6 +14,7 @@ config2py.util
 
    .. autosummary::
    
+      DFLT_MASKING_INPUT
       always_true
       app_folder_standards
       ask_user_for_input
@@ -27,6 +28,7 @@ config2py.util
       identity
       is_not_empty
       is_repl
+      looks_like_secret
       parse_assignments_from_py_source
       secure_makedirs
       secure_open

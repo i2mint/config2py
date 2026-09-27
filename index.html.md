@@ -2,24 +2,55 @@
 
 # config2py
 
-Simplified reading and writing configurations from various sources and formats.
+Get configuration values and secrets into Python code through layered sources: environment variables, then a local config folder, then a one-time prompt whose answer is saved for next time. It also gives you per-app config/data/cache folders that follow XDG and Windows conventions, config files you edit as dicts that save on every write, and extension-based codecs.
 
-To install:	`pip install config2py`
+Still typing code yourself? Skip to [For humans who still hand-edit their dotfiles]().
 
-[Documentation](https://i2mint.github.io/config2py/)
+To install: `pip install config2py` · [Documentation](https://i2mint.github.io/config2py/)
+
+# What an agent can do with config2py
+
+- Resolve an API key or setting from environment variables, then a saved local config, and in interactive sessions only, a one-time prompt that masks secret-looking keys and saves the answer.
+- Compose any lookup chain over dicts, callables and [dol](https://github.com/i2mint/dol) stores with `get_config`.
+- Find the right per-user folder for an app’s config, data, cache or state files, overridable by environment variables.
+- Edit JSON, INI, YAML or TOML files as dicts that save on write (`FileStore`, `ConfigStore`), and encode or decode bytes by file extension.
+
+A minimal, non-interactive example:
+
+```python
+from config2py import simple_config_getter
+
+get = simple_config_getter("myapp", ask_user_if_key_not_found=False)
+get.configs["MYAPP_MODEL"] = "small"  # saved as a file in ~/.config/myapp/configs/
+assert get("MYAPP_MODEL") == "small"  # an env var named MYAPP_MODEL would win
+```
+
+The consumer skill below also ships inside the wheel. After `pip install config2py`, its folder is `python -c "import config2py, os; print(os.path.join(config2py.__path__[0], 'data', 'skills'))"`, ready to link into your agent’s skills directory (for example with `skill link-skills <that folder>`).
 
 <!-- epythet:agentic-readme:start -->
 
-## For AI agents
+# For AI agents
 
-`config2py` ships no skills or subagents of its own — it’s the thing that reads
-*your* agent’s config, not the other way around. If you’re an agent that needs to
-fetch a value from an environment variable, a local file, or a user prompt without
-three different codecs and a `configparser` incantation, this is your package.
+`config2py` ships tooling for coding agents. If you are one, start here.
 
-**The documentation, machine-readable**: [`llms.txt`](https://i2mint.github.io/config2py/llms.txt) indexes every page; [`config2py.md`](https://i2mint.github.io/config2py/config2py.md) is the whole documentation in one file; every page has a `.md` twin; [`objects.inv`](https://i2mint.github.io/config2py/objects.inv) maps symbols to URLs.
+**Skills** ([Agent Skills](https://agentskills.io) format), for any agent host. Install one with `gh skill`:
 
-If you are a control freak (human or otherwise), the rest of this README is written for you, starting at [The cherry on top: config_getter]().
+```bash
+gh skill install i2mint/config2py config2py-quickstart --agent claude-code   # or copilot, cursor, codex, gemini
+```
+
+| Skill                  | Use it to                                                              |
+|------------------------|------------------------------------------------------------------------|
+| `config2py-quickstart` | use config2py to get configuration values and secrets into Python code |
+| `config2py-dev`        | work on the config2py codebase itself                                  |
+
+The same skills are inside the wheel, under `config2py/data/skills/`.
+
+**Instruction files**: `.claude/CLAUDE.md` (Claude Code).
+
+**The documentation, machine-readable**: [`llms.txt`](https://i2mint.github.io/config2py/llms.txt) indexes every page; [`config2py.md`](https://i2mint.github.io/config2py/config2py.md) is the whole documentation in one file; every page has a `.md` twin; [`objects.inv`](https://i2mint.github.io/config2py/objects.inv) maps symbols to URLs. The full list, with install lines, is on the site’s [For AI agents](https://i2mint.github.io/config2py/ai-agents.html) page.
+
+If you are a human, the rest of this README is written for you, starting at [The cherry on top: config_getter]().
 
 <!-- epythet:agentic-readme:end -->
 
@@ -29,8 +60,7 @@ If you are a control freak (human or otherwise), the rest of this README is writ
 from config2py import config_getter
 ```
 
-Let’s start with an extremely convenient, no questions asked, object.
-Later, we’ll look under the hood to show the many tools that support it, and can be shaped to fit many desired behaviors.
+Let’s start with an extremely convenient, no questions asked, object. Later, we’ll look under the hood to show the many tools that support it, and can be shaped to fit many desired behaviors.
 
 What `config2py.config_getter(key)` will do is:
 
@@ -51,28 +81,27 @@ config_getter("HOME")  # if you are using Linux/MacOS
 '/Users/thorwhalen'
 ```
 
-Now, normally all systems come with a `HOME` environment variable (or a `USERPROFILE` on windows), so the above should always work fine.
-But see what happens if you ask for a key that is not an environment variable:
+Now, normally all systems come with a `HOME` environment variable (or a `USERPROFILE` on windows), so the above should always work fine. But see what happens if you ask for a key that is not an environment variable:
 
+<!-- no-test -->
 ```python
 my_config_val = config_getter("_TEST_NON_EXISTING_KEY_")  # triggers a user input dialog
 # ... I enter 'my config value' in the dialog, and then...
-```
-
-```python
 my_config_val
 ```
 
 ```none
 'my config value'
 ```
+
+When the key looks like a secret (its name mentions `key`, `token`, `password`, `secret`, `api` and the like), what you type is masked, as with a password prompt. Other values, such as file paths, are echoed so you can see them. You can force either behaviour with `ask_user_for_input(..., mask_input=True)` (or `False`).
 
 But if I do that again (even on a different day, somewhere else (on my same computer), in a different session), it will get me the value I entered in the user input dialog.
 
+<!-- no-test -->
 ```python
-my_config_val = config_getter(
-    "_TEST_NON_EXISTING_KEY_"
-)  # does not trigger input dialog
+# This time, no input dialog:
+my_config_val = config_getter("_TEST_NON_EXISTING_KEY_")
 my_config_val
 ```
 
@@ -80,9 +109,7 @@ my_config_val
 'my config value'
 ```
 
-And of course, we give you a means to delete that value, since `config_getter` has a `local_configs` mapping (think `dict`) to the local files where it has been stored.
-You can do all the usual stuff you do with a `dict` (except the effects will be on local files),
-like list the keys (with `list(.)`), get values for a key (with `.[key]`), ask for the number of keys (`len(.)`), and, well, delete stuff:
+And of course, we give you a means to delete that value, since `config_getter` has a `configs` mapping (think `dict`) to the local files where it has been stored. You can do all the usual stuff you do with a `dict` (except the effects will be on local files), like list the keys (with `list(.)`), get values for a key (with `.[key]`), ask for the number of keys (`len(.)`), and, well, delete stuff:
 
 ```python
 if "_TEST_NON_EXISTING_KEY_" in config_getter.configs:
@@ -97,16 +124,13 @@ This tool allows you to:
 
 This is very convenient situation where user input (via things like `__builtins__.input` or `getpass.getpass` etc) is available. But **you should not use this to manage configurations/resources anywhere were there’s not a user to see and respond to the builtin user input dialog**
 
-Don’t fret though, this `config_getter` is just our no-BS entry point to much more.
-Let’s have a slight look under its hood to see what else we can do with it.
+Don’t fret though, this `config_getter` is just our no-BS entry point to much more. Let’s have a slight look under its hood to see what else we can do with it.
 
 And of course, if you’re that type, you can already have a look at [the documentation](https://i2mint.github.io/config2py/)
 
 ## `simple_config_getter`: Controlling your config_getter a bit more
 
-If you look up for the definition of the `config_getter` function you imported above, you’ll find this: `config_getter = simple_config_getter()`.
-That is, it was created by `simple_config_getter` with its default arguments.
-Let’s have a look at what these are.
+If you look up for the definition of the `config_getter` function you imported above, you’ll find this: `config_getter = simple_config_getter()`. That is, it was created by `simple_config_getter` with its default arguments. Let’s have a look at what these are.
 
 In fact, `simple_config_getter` is a function to make configuration getters that ressemble the one we’ve seen above:
 
@@ -123,16 +147,15 @@ print(*str(Sig(simple_config_getter)).split(","), sep="\n")
 
 ```none
 (configs_src: str = '.../.config/config2py/configs'
-*
-first_look_in_env_vars: bool = True
-ask_user_if_key_not_found: bool = None
-config_store_factory: Callable = <function get_configs_local_store at 0x10a457370>)
+ *
+ first_look_in_env_vars: bool = True
+ ask_user_if_key_not_found: bool = None
+ config_store_factory: collections.abc.Callable = <function get_configs_local_store at 0x10a457370>)
 ```
 
 `first_look_in_env_vars` specifies whether to look into environment variables first, or not.
 
-`ask_user_if_key_not_found` specifies whether to ask the user if a configuration key is not found. The default is `None`, which will result in checking if you’re running in an interactive environment or not.
-When you use `config2py` in production though, you should definitely specify `ask_user_if_key_not_found=False` to make that choice explicit.
+`ask_user_if_key_not_found` specifies whether to ask the user if a configuration key is not found. The default is `None`, which will result in checking if you’re running in an interactive environment or not. When you use `config2py` in production though, you should definitely specify `ask_user_if_key_not_found=False` to make that choice explicit.
 
 The `configs_src` default is automatically set to be the `config2py/configs` folder of your system’s config directory (following XDG standards on Unix/Linux/macOS). You can override this with environment variables like `CONFIG2PY_CONFIG_DIR`, `CONFIG2PY_DATA_DIR`, etc., or the standard XDG variables.
 
@@ -140,15 +163,15 @@ Your central store will be `config_store_factory(configs_src)`, and since you ca
 
 The default `config_store_factory` is `get_configs_local_store` which will give you a locally persisted store where if `configs_src`:
 
-* is a directory, it’s assumed to be a folder of text files.
+* is a directory (a path containing a separator), it’s assumed to be a folder of text files.
 * is a file, it’s assumed to be an ini or cfg file.
 * is a string, it’s assumed to be an app name, from which to create a config folder for with the default method
 
 # Setting the config key search path
 
-If you check out the code for `simple_config_getter`, you’ll find that all it it is simply setting the `sources` argument for the `get_config` function.
-Something more or less like:
+If you check out the code for `simple_config_getter`, you’ll find that all it it is simply setting the `sources` argument for the `get_config` function. Something more or less like:
 
+<!-- no-test -->
 ```python
 configs = config_store_factory(configs_src)
 source = [
@@ -159,21 +182,19 @@ source = [
 config_getter = get_config(sources=source)
 ```
 
-So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the `user_gettable(local_configs)` part. If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.
-
-So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the `user_gettable(local_configs)` part. If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.
+So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the `user_gettable(configs)` part. If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.
 
 Let’s work through a custom-made `config_getter`.
 
 ```python
+import os
+import tempfile
 from config2py import get_config, user_gettable
 from dol import TextFiles
-import os
 
-my_configs = TextFiles(
-    "~/.my_configs/"
-)  # Note, to run this, you'd need to have such a directory!
-# (But you can also use my_configs = dict() if you want.)
+# A folder of text files: TextFiles("~/.my_configs/") would do too, if that directory
+# exists (and a plain dict() works as well). Here, a fresh temporary folder:
+my_configs = TextFiles(tempfile.mkdtemp() + os.sep)
 config_getter = get_config(
     sources=[locals(), os.environ, my_configs, user_gettable(my_configs)]
 )
@@ -181,27 +202,22 @@ config_getter = get_config(
 
 Now let’s see what happens when we do:
 
+<!-- no-test -->
 ```python
 config_getter("SOME_CONFIG_KEY")
 ```
 
-Well, it will first look in `locals()`, which is a dictionary containing local variables
-where the `config_getter` was **defined** (careful – not called!!).
-This is desirable sometimes when you define your `config_getter` in a module that has other python variables you’d like to use.
+Well, it will first look in `locals()`, which is a dictionary containing local variables where the `config_getter` was **defined** (careful – not called!!). This is desirable sometimes when you define your `config_getter` in a module that has other python variables you’d like to use.
 
-Assuming it doesn’t find such a key in `locals()` it goes on to try to find it in
-`os.environ`, which is a dict containing system environment variables.
+Assuming it doesn’t find such a key in `locals()` it goes on to try to find it in `os.environ`, which is a dict containing system environment variables.
 
-Assuming it doesn’t find it there either (that is, doesn’t find a file with that name in
-the directory `~/.my_configs/`), it will prompt the user to enter the value of that key.
-The function finally returns with the value that the user entered.
+Assuming it doesn’t find it there either (that is, doesn’t find a file with that name in the `my_configs` directory), it will prompt the user to enter the value of that key. The function finally returns with the value that the user entered.
 
 But there’s more!
 
-Now look at what’s in `my_configs`!
-If you’ve used `TextFiles`, look in the folder to see that there’s a new file.
-Either way, if you do:
+Now look at what’s in `my_configs`! If you’ve used `TextFiles`, look in the folder to see that there’s a new file. Either way, if you do:
 
+<!-- no-test -->
 ```python
 my_configs["SOME_CONFIG_KEY"]
 ```
@@ -210,12 +226,12 @@ You’ll now see the value the user entered.
 
 This means what? This means that the next time you try to get the config:
 
+<!-- no-test -->
 ```python
 config_getter("SOME_CONFIG_KEY")
 ```
 
-It will return the value that the user entered last time, without prompting the
-user again.
+It will return the value that the user entered last time, without prompting the user again.
 
 ## SyncStore: Auto-Syncing Key-Value Stores
 
@@ -228,8 +244,9 @@ user again.
 ```python
 from config2py.sync_store import FileStore, JsonStore
 
-# Auto-detected from .json extension
-config = FileStore("config.json")
+# Auto-detected from .json extension. create_file_content makes the file if it's
+# missing (without it, a missing file raises FileNotFoundError).
+config = FileStore("config.json", create_file_content=dict)
 config["api_key"] = "secret"  # Syncs immediately
 
 # Batch operations (deferred sync)
@@ -243,12 +260,15 @@ with config:
 ### Nested Sections
 
 ```python
-# Work with specific section via key_path
-db_config = FileStore("config.json", key_path="database")
+# Work with specific section via key_path (create_key_path_content creates the
+# section if it's missing; without it, a missing section raises KeyError)
+db_config = FileStore("config.json", key_path="database", create_key_path_content=dict)
 db_config["host"] = "localhost"  # Only affects database section
 
 # Dotted notation for deep nesting
-items = FileStore("config.json", key_path="app.settings.items")
+items = FileStore(
+    "config.json", key_path="app.settings.items", create_key_path_content=dict
+)
 items["item1"] = "value"
 ```
 
@@ -264,10 +284,20 @@ Auto-detected by extension:
 Register custom formats:
 
 ```python
-from sync_store import register_extension
+from config2py.sync_store import FileStore, register_extension
 
-register_extension(".custom", my_loader, my_dumper)
-store = FileStore("data.custom")
+
+def load_kv(text: str) -> dict:
+    return dict(line.split("=", 1) for line in text.splitlines() if line)
+
+
+def dump_kv(data: dict) -> str:
+    return "\n".join(f"{k}={v}" for k, v in data.items())
+
+
+register_extension(".kv", load_kv, dump_kv)
+store = FileStore("data.kv", create_file_content=dict)
+store["answer"] = "42"
 ```
 
 ### Custom Backing Storage
@@ -275,18 +305,22 @@ store = FileStore("data.custom")
 ```python
 from config2py.sync_store import SyncStore
 
+database = {"key": "old value"}  # stands in for any backing storage
+
 
 # Any backing storage via loader/dumper
 def my_loader():
-    return fetch_from_database()
+    return dict(database)  # e.g. fetch_from_database()
 
 
 def my_dumper(data):
-    save_to_database(data)
+    database.clear()  # e.g. save_to_database(data)
+    database.update(data)
 
 
 store = SyncStore(my_loader, my_dumper)
 store["key"] = "value"  # Calls my_dumper
+assert database == {"key": "value"}
 ```
 
 ### Key Classes
@@ -299,7 +333,7 @@ store["key"] = "value"  # Calls my_dumper
 
 * `get_config`: Get a config value from a list of sources. See more below.
 * `user_gettable`: Create a `GettableContainer` that asks the user for a value, optionally saving it.
-* `ask_user_for_input`: Ask the user for input, optionally masking, validating and transforming the input.
+* `ask_user_for_input`: Ask the user for input, optionally masking, validating and transforming the input. By default it masks prompts that look like they ask for a secret.
 * `get_app_folder`: Returns the full path of a directory suitable for storing application-specific data for a given app name and folder kind (config, data, cache, state, runtime).
 * `get_app_config_folder`: Specialized version of `get_app_folder` for configuration files.
 * `get_app_data_folder`: Specialized version of `get_app_folder` for application data.
@@ -310,16 +344,14 @@ store["key"] = "value"  # Calls my_dumper
 
 Get a config value from a list of sources.
 
-This function acts as a mini-framework to construct config accessors including defining
-multiple sources of where to find these configs,
+This function acts as a mini-framework to construct config accessors including defining multiple sources of where to find these configs.
 
-A source can be a function or a `GettableContainer`.
-(A `GettableContainer` is anything that can be indexed with brackets: `obj[k]`,
-like `dict`, `list`, `str`, etc..).
+A source can be a function or a `GettableContainer`. (A `GettableContainer` is anything that can be indexed with brackets: `obj[k]`, like `dict`, `list`, `str`, etc..).
 
 Let’s take two sources: a `dict` and a `Callable`.
 
 ```none
+>>> from config2py import get_config
 >>> def func(k):
 ...     if k == 'foo':
 ...         return 'quux'
@@ -331,8 +363,7 @@ Let’s take two sources: a `dict` and a `Callable`.
 >>> sources = [func, dict_]
 ```
 
-See that `get_config` go through the sources in the order they were listed,
-and returns the first value it finds (or manages to compute) for the key:
+See that `get_config` go through the sources in the order they were listed, and returns the first value it finds (or manages to compute) for the key:
 
 `get_config` finds `'foo'` in the very first source (`func`):
 
@@ -341,16 +372,14 @@ and returns the first value it finds (or manages to compute) for the key:
 'quux'
 ```
 
-But `baz` makes `func` raise an error, so it goes to the next source: `dict_`.
-There, it finds `'baz'` and returns its value:
+But `baz` makes `func` raise an error, so it goes to the next source: `dict_`. There, it finds `'baz'` and returns its value:
 
 ```none
 >>> get_config('baz', sources)
 'qux'
 ```
 
-On the other hand, no one manages to find a config value for `'no_a_key'`, so
-`get_config` raises an error:
+On the other hand, no one manages to find a config value for `'no_a_key'`, so `get_config` raises an error:
 
 ```none
 >>> get_config('no_a_key', sources)
@@ -366,29 +395,11 @@ But if you provide a default value, it will return that instead:
 'default'
 ```
 
-You can also provide a function that will be called on the value before it is
-returned. This is useful if you want to do some post-processing on the value,
-or if you want to make sure that the value is of a certain type:
+This “search the next source if the previous one fails” behavior may not be what you want in some situations, since you’d be hiding some errors that you might want to be aware of. This is why allow you to specify what exceptions should actually be considered as “config not found” exceptions, through the `config_not_found_exceptions` argument, which defaults to `(Exception,)`, that is, *any* error. Narrow it, for instance to `(KeyError, LookupError)`, when a failing source should raise rather than be skipped.
 
-This “search the next source if the previous one fails” behavior may not be what
-you want in some situations, since you’d be hiding some errors that you might
-want to be aware of. This is why allow you to specify what exceptions should
-actually be considered as “config not found” exceptions, through the
-`config_not_found_exceptions` argument, which defaults to `Exception`.
+Further, your sources may return a value, but not one that you consider valid: For example, a sentinel like `None`. In this case you may want the search to continue. This is what the `val_is_valid` argument is for. It is a function that takes a value and returns a boolean. If it returns `False`, the search will continue. If it returns `True`, the search will stop and the value will be returned.
 
-Further, your sources may return a value, but not one that you consider valid:
-For example, a sentinel like `None`. In this case you may want the search to
-continue. This is what the `val_is_valid` argument is for. It is a function
-that takes a value and returns a boolean. If it returns `False`, the search
-will continue. If it returns `True`, the search will stop and the value will
-be returned.
-
-Finally, we have `egress : Callable[[KT, TT], VT]`.
-This is a function that takes a key and a value, and
-returns a value. It is called after the value has been found, and its return
-value is the one that is returned by `get_config`. This is useful if you want
-to do some post-processing on the value, or before you return the value, or if you
-want to do some caching.
+Finally, we have `egress : Callable[[KT, TT], VT]`. This is a function that takes a key and a value, and returns a value. It is called after the value has been found, and its return value is the one that is returned by `get_config`. This is useful if you want to do some post-processing on the value, or before you return the value, or if you want to do some caching.
 
 ```none
 >>> config_store = dict()
@@ -399,13 +410,9 @@ want to do some caching.
 'quux'
 >>> config_store
 {'foo': 'quux'}
-
-Note that a source can be a callable or a ``GettableContainer`` (most of the
-time, a ``Mapping`` (e.g. ``dict``)).
-Here, you should be compelled to use the resources of ``dol``
-(https://pypi.org/project/dol/) which will allow you to make ``Mapping``s for all
-sorts of data sources.
 ```
+
+Note that a source can be a callable or a `GettableContainer` (most of the time, a `Mapping` (e.g. `dict`)). Here, you should be compelled to use the resources of `dol` (https://pypi.org/project/dol/) which will allow you to make `Mapping`s for all sorts of data sources.
 
 For more info, see: https://github.com/i2mint/config2py/issues/4
 
@@ -415,6 +422,7 @@ So, what’s that `user_gettable`?
 
 It’s a way for you to specify that the system should ask the user for a key, and optionally save it somewhere, plus many other parameters (like what to ask the user, etc.)
 
+<!-- no-test -->
 ```python
 from config2py.base import user_gettable
 
@@ -430,6 +438,36 @@ s = user_gettable(save_to=d)
 s["SOME_KEY"]
 ```
 
-More on that another day…
+The asking function is pluggable (`user_asker`), which also makes `user_gettable` easy to use in tests and scripts:
+
+```python
+from config2py import user_gettable
+
+d = dict(some="store")
+s = user_gettable(save_to=d, user_asker=lambda prompt: "SOME_VAL")
+assert s["SOME_KEY"] == "SOME_VAL"
+assert d == {"some": "store", "SOME_KEY": "SOME_VAL"}
+```
+
+# For humans who still hand-edit their dotfiles
+
+Welcome, fellow keyboard enthusiast. Here is what the sections above don’t already cover.
+
+**Set up and run the tests** the way CI does. Doctests are a big part of the suite, and CI passes its own doctest flags, so use these:
+
+```bash
+git clone https://github.com/i2mint/config2py && cd config2py
+uv venv .venv && . .venv/bin/activate && uv pip install -e . pytest ruff
+python -m pytest config2py --doctest-modules -o doctest_optionflags='ELLIPSIS IGNORE_EXCEPTION_DETAIL' -q
+ruff check .
+```
+
+The Python examples in this README, and in the bundled skill, are run by `config2py/tests/test_docs_examples.py` in a sandboxed home directory. If you add an example that prompts, put `<!-- no-test -->` on the line before its fence.
+
+**Design, in three sentences.** `get_config` is a tiny framework: a source is anything you can index (`dict`, a [dol](https://github.com/i2mint/dol) store) or call, and the first source that yields a valid value wins. Everything else (`simple_config_getter`, `user_gettable`, the app folders) is a preset built on that one idea, so you can take any layer apart and recompose it. All platform-specific folder logic sits in one table, `config2py.util.app_folder_standards`, which takes the OS as an argument so both Windows and POSIX behaviour are tested on any machine.
+
+**Contributing.** Issues and pull requests are welcome on [GitHub](https://github.com/i2mint/config2py/issues). About thirty packages depend on config2py, and a merge to `master` publishes a release to PyPI, so changes to defaults need a run of the dependents’ tests. Never edit the version number, because CI bumps it. The architecture notes and conventions a coding agent follows, in [`.claude/CLAUDE.md`]() and the [`config2py-dev`]() skill, are just as useful to humans.
+
+**Questions** go to [GitHub issues](https://github.com/i2mint/config2py/issues).
 
 <p class="epythet-aggregates">This documentation as a single file: <a href="config2py.md">config2py.md</a> (Markdown, for agents).</p>

@@ -6,6 +6,32 @@
 them, says where each lives in the repository, and points at the
 machine-readable copies of this documentation.
 
+## Skills
+
+Skills are folders holding a `SKILL.md` (the [Agent Skills](https://agentskills.io) format): a description that tells an agent when to use it and a body with the procedure. Install one into your agent with `gh skill` (any host: `--agent claude-code`, `copilot`, `cursor`, `codex`, `gemini`), or use the copy bundled in the wheel.
+
+### `config2py-quickstart`
+
+Use config2py to get configuration values and secrets into Python code: layered lookup (environment variables, then a local config folder, then an interactive prompt whose answer is saved), per-app config/data/cache/state folders that follow XDG and Windows conventions, JSON/INI/YAML/TOML files exposed as dicts that save on write, and extension-based codecs. Use when code needs an API key or setting “from the environment or a config file”, when prompting a user once for a value and remembering it, when deciding where an app should store its files, or when reading and writing config files as mappings. Triggers: config2py, config_getter, simple_config_getter, get_config, user_gettable, ask_user_for_input, get_app_folder, AppData, FileStore, JsonStore, ConfigStore, ConfigReader, decode_by_extension.
+
+```bash
+gh skill install i2mint/config2py config2py-quickstart --agent claude-code
+```
+
+Source: [`config2py/data/skills/config2py-quickstart`](https://github.com/i2mint/config2py/tree/HEAD/config2py/data/skills/config2py-quickstart) (bundled with the pip package).
+
+### `config2py-dev`
+
+Work on the config2py codebase itself: module map, how to run the tests the way CI does (doctests included), the dependents gate before changing a default, the docs-examples test that runs README and skill snippets, the release flow (merging to master publishes to PyPI), and the invariants and open design issues to read before “fixing” something. Use when contributing to, reviewing, debugging or releasing config2py (i2mint/config2py), or when a change touches get_config, simple_config_getter, ask_user_for_input, app folders or any public default.
+
+```bash
+gh skill install i2mint/config2py config2py-dev --agent claude-code
+```
+
+Source: [`skills/config2py-dev`](https://github.com/i2mint/config2py/tree/HEAD/skills/config2py-dev).
+
+The bundled skills are also on disk after `pip install config2py`, under the package’s `data/skills/` directory; link them into an agent without network access with `skill link-skills <that directory>`.
+
 ## Instruction files
 
 Files agents read before working in this repository.
