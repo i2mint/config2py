@@ -94,7 +94,7 @@ assert saved == {"API_TOKEN": "typed value"}
 assert get("API_TOKEN") == "typed value"  # now found in `saved`, not asked again
 ```
 
-The default asker is `ask_user_for_input`. It masks what the user types when the prompt looks secret (it mentions `key`, `token`, `pass`, `pwd`, `secret`, `api`, `auth`, `credential` or `private`) and echoes it otherwise. Force a choice with `ask_user_for_input(prompt, mask_input=True)` (or `False`), or pass your own `prompt -> bool` predicate. When stdin is piped, the answer is read from stdin.
+The default asker is `ask_user_for_input`. It masks what the user types when the prompt looks secret (it mentions `key`, `token`, `pass`, `pwd`, `secret`, `api`, `auth`, `credential` or `private`) and echoes it otherwise. Force a choice with `ask_user_for_input(prompt, mask_input=True)` (or `False`), or pass your own `prompt -> bool` predicate. The match is a plain substring test on the prompt, so `KEYS_DIR` is masked too. When masking comes from the predicate and stdin is piped, the answer is read from stdin; an explicit `mask_input=True` always reads the terminal, like `sudo`.
 
 ## App folders
 

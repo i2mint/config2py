@@ -54,7 +54,7 @@ About 30 packages depend on config2py (for example `py2store`, `xdol`, `oa`, `ai
 
 1. Grep the dependents for the symbol you are changing.
 2. Run their test suites against your working tree (`uv pip install -e <dependent> && uv pip install -e <this repo>` in a scratch venv), before and after your change, and compare pass counts. Known pre-existing failures: `xdol` has 2 doctest-format failures and `oa` has 3 tests that need a real OpenAI key.
-3. Prefer additive, keyword-only parameters. For example, `mask_input` accepts a bool or a `prompt -> bool` predicate, and explicit booleans keep their old meaning.
+3. Prefer additive, keyword-only parameters. For example, `mask_input` accepts a bool or a `prompt -> bool` predicate, and explicit booleans keep their old meaning, including `True` reading the terminal when stdin is piped.
 
 Read these open issues before touching the matching area: #25 (the broad `(Exception,)` fallback), #26 (import-time folder creation), #27 (typo'd paths give silent empty configs), #28 (`os.path.sep` path sniffing), #29 (the pickle decoder), #30 (the masking toggle drops `egress`), #33 (file modes of the configs store), #12 and #17 (folder layout and platformdirs).
 

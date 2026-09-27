@@ -25,7 +25,7 @@ Tools to read and write configurations from various sources and formats: layered
 ```bash
 uv venv .venv && uv pip install -e . pytest ruff
 .venv/bin/pytest config2py --doctest-modules \
-  -o doctest_optionflags='ELLIPSIS IGNORE_EXCEPTION_DETAIL' -q   # 154 passed, 5 skipped
+  -o doctest_optionflags='ELLIPSIS IGNORE_EXCEPTION_DETAIL' -q   # 155 passed, 5 skipped
 .venv/bin/ruff check .
 ```
 
@@ -33,7 +33,7 @@ Or `wads ci-local`. **Gotchas already documented in `pyproject.toml` comments:**
 
 ## Invariants / known gaps (see open issues before "fixing" these)
 
-- **`DFLT_MASKING_INPUT = looks_like_secret`** in `util.py` (since [#13](https://github.com/i2mint/config2py/issues/13)). `ask_user_for_input` masks prompts that mention something secret-looking (`API_KEY`, `TOKEN`, `PASSWORD`, ...) and echoes the others. `mask_input` accepts a bool or a `prompt -> bool` predicate. When stdin is not a terminal and `getpass.getpass` is the stdlib one, masked reads fall back to `input`: stdlib `getpass` reads `/dev/tty`, not stdin, so it would ignore piped input or hang. A frontend's replacement `getpass` (Jupyter) is always used. The tests are in `config2py/tests/test_masking.py`. Don't change the default without re-running the dependents check.
+- **`DFLT_MASKING_INPUT = looks_like_secret`** in `util.py` (since [#13](https://github.com/i2mint/config2py/issues/13)). `ask_user_for_input` masks prompts that mention something secret-looking (`API_KEY`, `TOKEN`, `PASSWORD`, ...) and echoes the others. `mask_input` accepts a bool or a `prompt -> bool` predicate. When masking was inferred by the predicate, stdin is not a terminal, and `getpass.getpass` is the stdlib one, the read falls back to `input`, as before the default existed (stdlib `getpass` reads `/dev/tty`, not stdin). An explicit `mask_input=True` always uses `getpass.getpass`. A frontend's replacement `getpass` (Jupyter) is always used. The tests are in `config2py/tests/test_masking.py`. Don't change the default without re-running the dependents check.
 - The #16 audit was split into follow-ups, each with a plan. Read the matching one before touching an area: [#25](https://github.com/i2mint/config2py/issues/25) (broad `(Exception,)` fallback), [#26](https://github.com/i2mint/config2py/issues/26) (import-time folder creation), [#27](https://github.com/i2mint/config2py/issues/27) (typo'd paths give silent empty configs), [#28](https://github.com/i2mint/config2py/issues/28) (`os.path.sep` path sniffing), [#29](https://github.com/i2mint/config2py/issues/29) (pickle decoder opt-in). Also [#30](https://github.com/i2mint/config2py/issues/30) (the masking toggle drops `egress`, which interacts with `oa`) and [#33](https://github.com/i2mint/config2py/issues/33) (configs-store value files are written `0o644`).
 - [#22](https://github.com/i2mint/config2py/pull/22) (open) removes the vestigial `setup.cfg`, adds `[tool.wads.ci]`, and migrates CI to the reusable-workflow stub. It is blocked on a hosted-CI `action_required` anomaly (see [#23](https://github.com/i2mint/config2py/issues/23)). Until it lands, CI here is the inline uv workflow using discrete `i2mint/wads` actions.
 

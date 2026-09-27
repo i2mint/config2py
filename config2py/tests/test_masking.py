@@ -127,11 +127,11 @@ def test_masking_toggle_starts_from_the_resolved_default(interactive_terminal, m
     assert "Input masking is ENABLED" in prompts[0]
 
 
-@pytest.mark.parametrize("mask_input", [True, looks_like_secret])
-def test_piped_stdin_is_read_even_when_masking(monkeypatch, mask_input):
-    """Stdlib ``getpass`` reads the terminal, not stdin, so it would ignore piped
-    input (or block waiting on the terminal). Without a terminal there is nothing to
-    echo to, so the value must be read from stdin.
+@pytest.mark.parametrize("mask_input", [looks_like_secret, lambda prompt: True])
+def test_piped_stdin_is_read_when_masking_is_inferred(monkeypatch, mask_input):
+    """When masking was *inferred* (the default predicate), piped input keeps being
+    read from stdin, as it was before masking became the default for secret-looking
+    prompts: stdlib ``getpass`` would read the terminal instead (or block on it).
     """
     monkeypatch.setattr(sys, "stdin", io.StringIO("piped value\n"))
     monkeypatch.setattr(
@@ -139,6 +139,21 @@ def test_piped_stdin_is_read_even_when_masking(monkeypatch, mask_input):
     )
     # Note: the real builtins.input is used here, reading the replaced sys.stdin
     assert ask_user_for_input("Enter API_KEY", mask_input=mask_input) == "piped value"
+
+
+def test_explicit_mask_input_true_keeps_reading_the_terminal(monkeypatch):
+    """An explicit ``mask_input=True`` keeps its pre-#13 meaning: stdlib ``getpass``,
+    which deliberately reads the terminal even when stdin is piped (like ``sudo``), so
+    piped data is never mistaken for the secret.
+    """
+    monkeypatch.setattr(sys, "stdin", io.StringIO("piped data, not the secret\n"))
+    fake_getpass = _fake_getpass("typed at the terminal")
+    monkeypatch.setattr(getpass, "getpass", fake_getpass)
+    monkeypatch.setattr(builtins, "input", _fake_input(AssertionError("read stdin")))
+    assert ask_user_for_input("Enter API_KEY", mask_input=True) == (
+        "typed at the terminal"
+    )
+    assert len(fake_getpass.calls) == 1
 
 
 def test_frontend_getpass_is_used_without_a_terminal(monkeypatch):
