@@ -5,6 +5,7 @@ Utility functions for config2py.
 
 import re
 import os
+import sys
 import ast
 from collections import ChainMap, namedtuple
 from pathlib import Path
@@ -22,7 +23,36 @@ from i2 import mk_sentinel  # TODO: Only i2 dependency. Consider replacing.
 #     return type(name, (), {'__repr__': lambda self: name})()
 
 DFLT_APP_NAME = "config2py"
-DFLT_MASKING_INPUT = False
+
+SECRET_LOOKING_PATTERN = re.compile(
+    r"secret|token|pass|pwd|api|key|credential|auth|private", re.IGNORECASE
+)
+
+
+def looks_like_secret(text: str) -> bool:
+    """True if ``text`` (typically a prompt naming a config key) looks secret.
+
+    It errs on the side of masking: a false positive only means the user doesn't see
+    what they type, while a false negative echoes a secret to the terminal. It is a
+    plain substring match on the whole prompt, so ``KEYS_DIR`` or ``AUTHOR`` also
+    match, as would a custom prompt template mentioning "key". Pass an explicit
+    ``mask_input`` (or your own predicate) when that matters.
+
+    >>> looks_like_secret("Enter a value for OPENAI_API_KEY: ")
+    True
+    >>> looks_like_secret("Enter a value for github_token: ")
+    True
+    >>> looks_like_secret("Enter a value for DATA_DIR: ")
+    False
+    """
+    return bool(SECRET_LOOKING_PATTERN.search(text))
+
+
+# The default for ``ask_user_for_input``'s ``mask_input``: either a bool, or a
+# ``prompt -> bool`` predicate deciding per prompt. Masking only secret-looking prompts
+# (rather than all of them) keeps non-secret values, such as the file paths the
+# README suggests storing, visible while being typed (see i2mint/config2py#13).
+DFLT_MASKING_INPUT = looks_like_secret
 
 not_found = mk_sentinel("not_found")
 no_default = mk_sentinel("no_default")
@@ -118,12 +148,38 @@ class EnvironmentVariables(ChainMap):
 envvar = EnvironmentVariables()
 
 
+def _stdin_is_a_terminal() -> bool:
+    try:
+        return sys.stdin is not None and sys.stdin.isatty()
+    except (AttributeError, ValueError):  # exotic or closed stdin
+        return False
+
+
+def _inferred_masked_prompt_func() -> Callable[[str], str]:
+    """The function to read a response with when masking was *inferred* by a predicate.
+
+    The stdlib's ``getpass.getpass`` reads the controlling terminal, not ``sys.stdin``:
+    with piped input it would ignore the pipe (or block waiting on the terminal).
+    Before masking became the default for secret-looking prompts, such prompts read
+    stdin with ``input``, so when stdin isn't a terminal we keep doing that (there's
+    no terminal echo of piped data anyway). A ``getpass.getpass`` replaced by a
+    frontend (e.g. Jupyter's masked widget, where stdin is never a terminal) is always
+    used. An explicit ``mask_input=True`` doesn't come here: it always uses
+    ``getpass.getpass``, which deliberately reads the terminal (like ``sudo``).
+    """
+    getpass_func = getpass.getpass
+    is_stdlib_getpass = getattr(getpass_func, "__module__", None) == "getpass"
+    if is_stdlib_getpass and not _stdin_is_a_terminal():
+        return input
+    return getpass_func
+
+
 # TODO: Make this into an open-closed mini-framework
 def ask_user_for_input(
     prompt: str,
     default: str = "",
     *,
-    mask_input=DFLT_MASKING_INPUT,
+    mask_input: bool | Callable[[str], bool] = DFLT_MASKING_INPUT,
     masking_toggle_str: str = None,
     egress: Callable = identity,
 ) -> str:
@@ -132,7 +188,13 @@ def ask_user_for_input(
 
     :param prompt: Prompt to display to the user
     :param default: Default value to return if the user enters nothing
-    :param mask_input: Whether to mask the user's input
+    :param mask_input: Whether to mask the user's input: a bool, or a
+        ``prompt -> bool`` predicate. The default, ``looks_like_secret``, masks
+        prompts that mention something secret-looking (``API_KEY``, ``TOKEN``,
+        ``PASSWORD``, ...) and echoes the others. When masking is decided by a
+        predicate and stdin is piped (not a terminal), the response is read from
+        stdin, as it was before this default existed. An explicit ``True`` always
+        uses ``getpass.getpass``, which reads the terminal even when stdin is piped.
     :param masking_toggle_str: String to toggle input masking. If ``None``, no toggle
         is available. If not ``None`` (a common choice is the empty string)
         the user can enter this string to toggle input masking.
@@ -140,6 +202,9 @@ def ask_user_for_input(
         This can be used to validate the response, for example.
     :return: The user's response (or the default value if the user entered nothing)
     """
+    masking_is_inferred = callable(mask_input)
+    if masking_is_inferred:
+        mask_input = bool(mask_input(prompt))
     _original_prompt = prompt
     if prompt[-1] != " ":  # pragma: no cover
         prompt = prompt + " "
@@ -152,7 +217,10 @@ def ask_user_for_input(
     if default not in {""}:
         prompt = prompt + f" [{default}]: "
     if mask_input:
-        _prompt_func = getpass.getpass
+        if masking_is_inferred:
+            _prompt_func = _inferred_masked_prompt_func()
+        else:
+            _prompt_func = getpass.getpass
     else:
         _prompt_func = input
 

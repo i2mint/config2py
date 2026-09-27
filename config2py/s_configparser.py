@@ -239,7 +239,11 @@ class ConfigStore(ConfigParserStore):
     ):
         """See the class docstring: ``source`` may be a filepath, a config string,
         bytes, a dict, or a readable stream; ``defaults``, ``dict_type`` and
-        ``allow_no_value`` are passed on to ``ConfigParser``."""
+        ``allow_no_value`` are passed on to ``ConfigParser``.
+
+        Note: a filepath that doesn't exist is silently skipped (the semantics of
+        ``ConfigParser.read``), giving an empty config rather than an error
+        (see https://github.com/i2mint/config2py/issues/27)."""
         super().__init__(
             defaults, dict_type, allow_no_value, **more_config_parser_kwargs
         )

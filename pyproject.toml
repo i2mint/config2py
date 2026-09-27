@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]  # PEP 639: SPDX `license` string + `license-files`
 build-backend = "hatchling.build"
 
 [project]
@@ -8,15 +8,39 @@ version = "0.1.54"
 description = "Simplified reading and writing configurations from various sources and formats"
 readme = "README.md"
 requires-python = ">=3.10"
-keywords = []
-authors = []
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+keywords = [
+    "config",
+    "configuration",
+    "settings",
+    "environment-variables",
+    "secrets",
+    "xdg",
+    "configparser",
+    "key-value-store",
+]
+authors = [{ name = "Thor Whalen" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
 dependencies = ["dol", "i2", "importlib_resources; python_version < '3.9'"]
-
-[project.license]
-text = "Apache-2.0"
 
 [project.urls]
 Homepage = "https://github.com/i2mint/config2py"
+Documentation = "https://i2mint.github.io/config2py/"
+Repository = "https://github.com/i2mint/config2py"
+Issues = "https://github.com/i2mint/config2py/issues"
 
 [project.optional-dependencies]
 dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.1.0"]
@@ -44,6 +68,15 @@ all = [
     "json5>=0.9.0",
     "jproperties>=2.1.0",
 ]
+
+[tool.hatch.build.targets.sdist]
+# .claude/skills/<name> are relative symlinks to the real skill folders
+# (config2py/data/skills/, skills/). hatchling walks with followlinks=True and skips
+# any folder whose inode it has already seen, so without this it would visit the
+# symlinks first and then drop the real folders: config2py/data/skills would be
+# missing from the sdist, and so from the wheel CI builds from it.
+exclude = [".claude/skills"]
+skip-excluded-dirs = true
 
 [tool.ruff]
 line-length = 88
