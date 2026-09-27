@@ -35,7 +35,8 @@ def test_simple_config_getter(mock_config_store_factory):
 
     # Test getting config with ask_user_if_key_not_found=True
     # (patch both prompt functions ask_user_for_input can dispatch to -- which one is
-    # used depends on mask_input, default False today, see i2mint/config2py#13)
+    # used depends on mask_input, which by default masks secret-looking prompts only,
+    # see i2mint/config2py#13)
     with (
         patch("builtins.input", return_value="from user"),
         patch("getpass.getpass", return_value="from user"),

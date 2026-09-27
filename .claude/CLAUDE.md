@@ -39,12 +39,16 @@ command above (matching CI) to catch that before pushing.
 
 ## Invariants / known gaps (see open issues before "fixing" these)
 
-- **`DFLT_MASKING_INPUT = False`** in `util.py` — `simple_config_getter`'s
-  prompt-for-missing-key flow echoes typed input (including secrets) to the
-  terminal by default; masking (`getpass`) is wired in but off by default.
-  Flipping the default is blocked on 3 fleet dependents not present on every
-  box (see [i2mint/config2py#13](https://github.com/i2mint/config2py/issues/13)) —
-  don't change it without re-running the dependents check.
+- **`DFLT_MASKING_INPUT = looks_like_secret`** in `util.py` (since
+  [#13](https://github.com/i2mint/config2py/issues/13)) — `ask_user_for_input`
+  masks prompts that mention something secret-looking (`API_KEY`, `TOKEN`,
+  `PASSWORD`, ...) and echoes the others. `mask_input` accepts a bool or a
+  `prompt -> bool` predicate. When stdin is not a terminal and `getpass.getpass`
+  is the stdlib one, masked reads fall back to `input` (stdlib `getpass` reads
+  `/dev/tty`, not stdin, so it would ignore piped input or hang). A frontend's
+  replacement `getpass` (Jupyter) is always used. Tests in
+  `config2py/tests/test_masking.py`; don't change the default without re-running
+  the dependents check.
 - [i2mint/config2py#16](https://github.com/i2mint/config2py/issues/16) — an
   omnibus of smaller audit findings (docstring overclaims, a broad fallback,
   the pickle codec, import-time side effects) — read before touching those areas.
