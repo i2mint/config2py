@@ -69,6 +69,15 @@ all = [
     "jproperties>=2.1.0",
 ]
 
+[tool.hatch.build.targets.sdist]
+# .claude/skills/<name> are relative symlinks to the real skill folders
+# (config2py/data/skills/, skills/). hatchling walks with followlinks=True and skips
+# any folder whose inode it has already seen, so without this it would visit the
+# symlinks first and then drop the real folders: config2py/data/skills would be
+# missing from the sdist, and so from the wheel CI builds from it.
+exclude = [".claude/skills"]
+skip-excluded-dirs = true
+
 [tool.ruff]
 line-length = 88
 target-version = "py310"
