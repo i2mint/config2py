@@ -705,6 +705,10 @@ def get_configs_folder_for_app(
     app_dir = get_app_config_folder(app_name, setup_callback=app_dir_setup_callback)
     configs_dir = os.path.join(app_dir, configs_name)
     config_dir_setup_callback(configs_dir)
+    # Re-tighten a config2py-managed folder created earlier with a looser mode
+    # (see https://github.com/i2mint/config2py/issues/33)
+    if os.name == "posix" and os.path.isfile(os.path.join(configs_dir, ".config2py")):
+        os.chmod(configs_dir, 0o700)
     return configs_dir
 
 
