@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=9d458db5"></script>
+    <script src="../../_static/documentation_options.js?v=393d09ac"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.56" />
+  <meta name="docsearch:version" content="0.1.57" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -740,14 +740,26 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    the umask default (commonly world-readable ``0o644``). Still an ``isinstance``</span>
 <span class="sd">    of ``TextFiles``, so it is a drop-in replacement</span>
 <span class="sd">    (see https://github.com/i2mint/config2py/issues/33).</span>
+
+<span class="sd">    Like ``TextFiles``, values are UTF-8 on disk whatever the locale, and a failed</span>
+<span class="sd">    write raises ``KeyError``. Unlike it, the value is encoded before the file is</span>
+<span class="sd">    opened, so an unencodable value doesn't leave an emptied file behind</span>
+<span class="sd">    (see https://github.com/i2mint/config2py/issues/35).</span>
 <span class="sd">    """</span>
 
+    <span class="n">encoding</span> <span class="o">=</span> <span class="s2">"utf-8"</span>  <span class="c1"># what dol's TextFiles reads with</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="c1"># dol's TextFiles wraps an inner persister, so write via the full path here.</span>
-        <span class="c1"># (The inner store, and thus any "opener" attribute, is out of reach.)</span>
+        <span class="c1"># dol's TextFiles wraps an inner persister, so write via the full path here,</span>
+        <span class="c1"># keeping that persister's key validation and its KeyError contract.</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_of_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">validate_key</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_of_obj</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span></div>
 
 
 
@@ -865,7 +877,7 @@ window.runMermaid = runMermaid;</script>
 <span class="c1">#   Make the Configs class with use outside config2py in mind.</span>
 <span class="c1">#   Note: Perhaps there's no need for a class.</span>
 <span class="c1">#   Maybe just a function that returns a store</span>
-<span class="n">Configs</span> <span class="o">=</span> <span class="n">TextFiles</span>  <span class="c1"># TODO: deprecate</span>
+<span class="n">Configs</span> <span class="o">=</span> <span class="n">SecureTextFiles</span>  <span class="c1"># TODO: deprecate</span>
 
 <span class="c1"># A default persistent store for configs</span>
 <span class="n">local_configs</span> <span class="o">=</span> <span class="n">get_configs_local_store</span><span class="p">()</span>

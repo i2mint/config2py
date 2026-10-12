@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=9d458db5"></script>
+    <script src="../../_static/documentation_options.js?v=393d09ac"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.56" />
+  <meta name="docsearch:version" content="0.1.57" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -717,7 +717,9 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stat</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainMap</span><span class="p">,</span> <span class="n">namedtuple</span>
@@ -774,12 +776,10 @@ window.runMermaid = runMermaid;</script>
 <span class="n">no_default</span> <span class="o">=</span> <span class="n">mk_sentinel</span><span class="p">(</span><span class="s2">"no_default"</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="secure_open">
-<a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.util.secure_open">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"w"</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Open ``path`` for writing with owner-only (``0o600``) permissions.</span>
-
-<span class="sd">    Two cases, both handled:</span>
+<div class="viewcode-block" id="owner_only_opener">
+<a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.util.owner_only_opener">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">owner_only_opener</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""An ``opener`` for ``open`` that creates (or re-tightens) ``path`` as ``0o600``.</span>
 
 <span class="sd">    - *New* file: the restrictive mode is applied atomically at creation via</span>
 <span class="sd">      ``os.open``, so there is no window where the file briefly exists with the</span>
@@ -788,6 +788,29 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">      is a POSIX no-op in this case (only consulted when a new file is actually</span>
 <span class="sd">      created), so an explicit ``os.fchmod`` re-tightens it -- on the open file</span>
 <span class="sd">      descriptor, not the path, so it's not subject to a TOCTOU swap either.</span>
+<span class="sd">    """</span>
+    <span class="n">fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"fchmod"</span><span class="p">):</span>  <span class="c1"># POSIX only -- Windows ACLs aren't unix mode bits</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">fchmod</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">)</span>  <span class="c1"># re-tighten if the file already existed</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+            <span class="k">raise</span>
+    <span class="k">return</span> <span class="n">fd</span></div>
+
+
+
+<div class="viewcode-block" id="secure_open">
+<a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.util.secure_open">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"w"</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""``open(path, mode, **open_kwargs)`` with owner-only (``0o600``) permissions.</span>
+
+<span class="sd">    The file is created (or re-tightened) by ``owner_only_opener``. Being the builtin</span>
+<span class="sd">    ``open``, it honors ``encoding``, ``newline``, and binary modes (``O_BINARY`` on</span>
+<span class="sd">    Windows). Pass ``encoding=`` explicitly for text: the default is the locale's.</span>
+
+<span class="sd">    The ``mode`` is honored as is (``"a"`` appends; before #35 every mode truncated).</span>
+<span class="sd">    Any mode, including ``"r"``, sets the file's permissions to ``0o600``.</span>
 
 <span class="sd">    Intended for files that may hold secrets (see i2mint/config2py#15).</span>
 
@@ -801,12 +824,45 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    '0o600'</span>
 <span class="sd">    &gt;&gt;&gt; os.remove(path)</span>
 <span class="sd">    """</span>
-    <span class="n">flags</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">O_CREAT</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">O_TRUNC</span>
-    <span class="n">fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"fchmod"</span><span class="p">):</span>  <span class="c1"># POSIX only -- Windows ACLs aren't unix mode bits</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">fchmod</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">)</span>  <span class="c1"># re-tighten if the file already existed (see docstring)</span>
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">opener</span><span class="o">=</span><span class="n">owner_only_opener</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="tighten_mode">
+<a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.util.tighten_mode">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tighten_mode</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Set ``path``'s permission bits to ``mode``, only if they differ. POSIX only.</span>
+
+<span class="sd">    Returns ``True`` if ``path`` ends up with ``mode``. A failing ``chmod`` (read-only</span>
+<span class="sd">    file system, a path owned by someone else) raises if ``strict``, and otherwise</span>
+<span class="sd">    only warns and returns ``False``: tightening is best-effort hardening, and must not</span>
+<span class="sd">    make, for example, ``import config2py`` crash</span>
+<span class="sd">    (see https://github.com/i2mint/config2py/issues/35).</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"posix"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="mo">0o777</span> <span class="o">==</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="n">_warn_not_tightened</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">!r}</span><span class="s2"> to </span><span class="si">{</span><span class="nb">oct</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_warn_not_tightened</span><span class="p">(</span><span class="n">what</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config2PyWarning</span>
+
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"config2py could not tighten the permissions of </span><span class="si">{</span><span class="n">what</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">Config2PyWarning</span><span class="p">,</span>
+        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="secure_makedirs">
@@ -815,11 +871,12 @@ window.runMermaid = runMermaid;</script>
 <span class="w">    </span><span class="sd">"""``os.makedirs(dirpath, mode=0o700)``, re-tightening the mode if it already exists.</span>
 
 <span class="sd">    ``os.makedirs(..., mode=0o700, exist_ok=True)`` alone won't re-tighten an existing</span>
-<span class="sd">    directory's mode, so this follows up with an explicit ``os.chmod``. Intended for</span>
-<span class="sd">    directories that may hold config/secret files (see i2mint/config2py#15).</span>
+<span class="sd">    directory's mode, so this follows up with ``tighten_mode`` (which warns, rather</span>
+<span class="sd">    than raises, if that isn't possible). Intended for directories that may hold</span>
+<span class="sd">    config/secret files (see i2mint/config2py#15).</span>
 <span class="sd">    """</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o700</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="n">exist_ok</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="mo">0o700</span><span class="p">)</span></div>
+    <span class="n">tighten_mode</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="mo">0o700</span><span class="p">)</span></div>
 
 
 
@@ -1462,12 +1519,50 @@ window.runMermaid = runMermaid;</script>
     <span class="n">app_dir</span> <span class="o">=</span> <span class="n">get_app_config_folder</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span> <span class="n">setup_callback</span><span class="o">=</span><span class="n">app_dir_setup_callback</span><span class="p">)</span>
     <span class="n">configs_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app_dir</span><span class="p">,</span> <span class="n">configs_name</span><span class="p">)</span>
     <span class="n">config_dir_setup_callback</span><span class="p">(</span><span class="n">configs_dir</span><span class="p">)</span>
-    <span class="c1"># Re-tighten a config2py-managed folder created earlier with a looser mode</span>
-    <span class="c1"># (see https://github.com/i2mint/config2py/issues/33)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"posix"</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs_dir</span><span class="p">,</span> <span class="s2">".config2py"</span><span class="p">)):</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">configs_dir</span><span class="p">,</span> <span class="mo">0o700</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">configs_dir</span><span class="p">,</span> <span class="s2">".config2py"</span><span class="p">)):</span>
+        <span class="n">_tighten_managed_configs_folder</span><span class="p">(</span><span class="n">configs_dir</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">configs_dir</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_tighten_managed_configs_folder</span><span class="p">(</span><span class="n">configs_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Re-tighten a config2py-managed configs folder created with looser modes.</span>
+
+<span class="sd">    The folder becomes ``0o700`` and the files in it lose their group and other</span>
+<span class="sd">    permission bits, so secrets saved before values were written ``0o600`` are not</span>
+<span class="sd">    left world-readable (see i2mint/config2py#33 and #35). Best-effort: a failing</span>
+<span class="sd">    ``chmod`` warns instead of raising. Symlinks are not followed.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"posix"</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tighten_mode</span><span class="p">(</span><span class="n">configs_dir</span><span class="p">,</span> <span class="mo">0o700</span><span class="p">):</span>
+        <span class="k">return</span>
+    <span class="c1"># Each file is opened without following symlinks and fchmod-ed through its</span>
+    <span class="c1"># descriptor, so a file swapped for a symlink can't redirect the chmod.</span>
+    <span class="n">nofollow</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">O_RDONLY</span> <span class="o">|</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"O_NOFOLLOW"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"O_NONBLOCK"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">failures</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dirpath</span><span class="p">,</span> <span class="n">_dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">configs_dir</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">nofollow</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">error</span><span class="o">.</span><span class="n">errno</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ELOOP</span><span class="p">,</span> <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">):</span>
+                    <span class="n">failures</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">path</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
+                <span class="k">continue</span>  <span class="c1"># a symlink (not followed), or gone</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">st</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fstat</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISREG</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">st_mode</span><span class="p">)</span> <span class="ow">and</span> <span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="mo">0o077</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">fchmod</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="mo">0o700</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="n">failures</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">path</span><span class="p">,</span> <span class="n">error</span><span class="p">))</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">failures</span><span class="p">:</span>  <span class="c1"># one warning, not one per file and per import</span>
+        <span class="n">path</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">failures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">_warn_not_tightened</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">failures</span><span class="p">)</span><span class="si">}</span><span class="s2"> file(s) in </span><span class="si">{</span><span class="n">configs_dir</span><span class="si">!r}</span><span class="s2"> (e.g. </span><span class="si">{</span><span class="n">path</span><span class="si">!r}</span><span class="s2">: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="p">)</span>
 
 
 <span class="n">get_app_data_directory</span> <span class="o">=</span> <span class="n">get_app_config_folder</span>  <span class="c1"># backwards compatibility alias</span>

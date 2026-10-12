@@ -25,10 +25,12 @@ Utility functions for config2py.
 | [`is_not_empty`](#config2py.util.is_not_empty)(x)                                   | Function that returns True if x is not empty.                                                                                                                                           |
 | [`is_repl`](#config2py.util.is_repl)()                                         | Determines if the Python interpreter is running in REPL.                                                                                                                                |
 | [`looks_like_secret`](#config2py.util.looks_like_secret)(text)                           | True if `text` (typically a prompt naming a config key) looks secret.                                                                                                                   |
+| [`owner_only_opener`](#config2py.util.owner_only_opener)(path, flags)                    | An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.                                                                                                                 |
 | [`parse_assignments_from_py_source`](#config2py.util.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                                                              |
 | [`secure_makedirs`](#config2py.util.secure_makedirs)(dirpath, \*[, exist_ok])          | `os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.                                                                                                        |
-| [`secure_open`](#config2py.util.secure_open)(path[, mode])                         | Open `path` for writing with owner-only (`0o600`) permissions.                                                                                                                          |
+| [`secure_open`](#config2py.util.secure_open)(path[, mode])                         | `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.                                                                                                                |
 | [`system_default_for_app_data_folder`](#config2py.util.system_default_for_app_data_folder)([...])         | Get the system default folder for `folder_kind`.                                                                                                                                        |
+| [`tighten_mode`](#config2py.util.tighten_mode)(path, mode, \*[, strict])            | Set `path`'s permission bits to `mode`, only if they differ.                                                                                                                            |
 
 ### Classes
 
@@ -798,6 +800,18 @@ True
 False
 ```
 
+### config2py.util.owner_only_opener(path, flags)
+
+An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.
+
+- *New* file: the restrictive mode is applied atomically at creation via
+  `os.open`, so there is no window where the file briefly exists with the
+  process’s default umask (commonly world-readable, `0o644`).
+- *Pre-existing* file with looser permissions: `os.open`’s `mode` argument
+  is a POSIX no-op in this case (only consulted when a new file is actually
+  created), so an explicit `os.fchmod` re-tightens it – on the open file
+  descriptor, not the path, so it’s not subject to a TOCTOU swap either.
+
 ### config2py.util.parse_assignments_from_py_source(source_code, \*, name_filt=None, value_filt=<function \_value_node_is_instance_of>)
 
 Parse assignments from python source code.
@@ -818,22 +832,20 @@ Parse assignments from python source code.
 `os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.
 
 `os.makedirs(..., mode=0o700, exist_ok=True)` alone won’t re-tighten an existing
-directory’s mode, so this follows up with an explicit `os.chmod`. Intended for
-directories that may hold config/secret files (see i2mint/config2py#15).
+directory’s mode, so this follows up with `tighten_mode` (which warns, rather
+than raises, if that isn’t possible). Intended for directories that may hold
+config/secret files (see i2mint/config2py#15).
 
-### config2py.util.secure_open(path, mode='w')
+### config2py.util.secure_open(path, mode='w', \*\*open_kwargs)
 
-Open `path` for writing with owner-only (`0o600`) permissions.
+`open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.
 
-Two cases, both handled:
+The file is created (or re-tightened) by `owner_only_opener`. Being the builtin
+`open`, it honors `encoding`, `newline`, and binary modes (`O_BINARY` on
+Windows). Pass `encoding=` explicitly for text: the default is the locale’s.
 
-- *New* file: the restrictive mode is applied atomically at creation via
-  `os.open`, so there is no window where the file briefly exists with the
-  process’s default umask (commonly world-readable, `0o644`).
-- *Pre-existing* file with looser permissions: `os.open`’s `mode` argument
-  is a POSIX no-op in this case (only consulted when a new file is actually
-  created), so an explicit `os.fchmod` re-tightens it – on the open file
-  descriptor, not the path, so it’s not subject to a TOCTOU swap either.
+The `mode` is honored as is (`"a"` appends; before #35 every mode truncated).
+Any mode, including `"r"`, sets the file’s permissions to `0o600`.
 
 Intended for files that may hold secrets (see i2mint/config2py#15).
 
@@ -864,3 +876,16 @@ that kind, falling back to the spec’s `default_path`; the spec’s
     pass another platform’s table to resolve as that platform would.
 * **Return type:**
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+### config2py.util.tighten_mode(path, mode, , strict=False)
+
+Set `path`’s permission bits to `mode`, only if they differ. POSIX only.
+
+Returns `True` if `path` ends up with `mode`. A failing `chmod` (read-only
+file system, a path owned by someone else) raises if `strict`, and otherwise
+only warns and returns `False`: tightening is best-effort hardening, and must not
+make, for example, `import config2py` crash
+(see [https://github.com/i2mint/config2py/issues/35](https://github.com/i2mint/config2py/issues/35)).
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)

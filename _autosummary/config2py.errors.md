@@ -4,15 +4,22 @@ Error classes for config2py.
 
 ### Exceptions
 
-| [`Config2PyError`](#config2py.errors.Config2PyError)   | Base class for config2py errors.        |
-|-------------------------------------------------------------------|-----------------------------------------|
-| [`ConfigNotFound`](#config2py.errors.ConfigNotFound)   | Raised when a config file is not found. |
+| [`Config2PyError`](#config2py.errors.Config2PyError)   | Base class for config2py errors.                                      |
+|-------------------------------------------------------------------|-----------------------------------------------------------------------|
+| [`Config2PyWarning`](#config2py.errors.Config2PyWarning) | Warnings issued by config2py (e.g. permissions it could not tighten). |
+| [`ConfigNotFound`](#config2py.errors.ConfigNotFound)   | Raised when a config file is not found.                               |
 
 ### *exception* config2py.errors.Config2PyError
 
 Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exception)
 
 Base class for config2py errors.
+
+### *exception* config2py.errors.Config2PyWarning
+
+Bases: [`UserWarning`](https://docs.python.org/3/builtins/exceptions.html#UserWarning)
+
+Warnings issued by config2py (e.g. permissions it could not tighten).
 
 ### *exception* config2py.errors.ConfigNotFound
 

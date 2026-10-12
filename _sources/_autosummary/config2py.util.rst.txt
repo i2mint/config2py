@@ -29,10 +29,12 @@ config2py.util
       is_not_empty
       is_repl
       looks_like_secret
+      owner_only_opener
       parse_assignments_from_py_source
       secure_makedirs
       secure_open
       system_default_for_app_data_folder
+      tighten_mode
    
    .. rubric:: Classes
 

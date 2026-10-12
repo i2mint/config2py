@@ -17,5 +17,6 @@ config2py.tools
 
    .. autosummary::
    
+      Configs
       SecureTextFiles
    

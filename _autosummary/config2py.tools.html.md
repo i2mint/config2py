@@ -12,8 +12,13 @@ Various tools
 
 ### Classes
 
-| [`SecureTextFiles`](#config2py.tools.SecureTextFiles)(\*args[, delete_func])   | A `dol.TextFiles` (one text file per key) whose value files are `0o600`.   |
-|-------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| [`Configs`](#config2py.tools.Configs)                                |                                                                          |
+|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| [`SecureTextFiles`](#config2py.tools.SecureTextFiles)(\*args[, delete_func]) | A `dol.TextFiles` (one text file per key) whose value files are `0o600`. |
+
+### config2py.tools.Configs
+
+alias of [`SecureTextFiles`](#config2py.tools.SecureTextFiles)
 
 ### *class* config2py.tools.SecureTextFiles(\*args, delete_func=None, \*\*kwargs)
 
@@ -25,6 +30,11 @@ Config values are often secrets (API keys); plain `TextFiles` writes them with
 the umask default (commonly world-readable `0o644`). Still an `isinstance`
 of `TextFiles`, so it is a drop-in replacement
 (see [https://github.com/i2mint/config2py/issues/33](https://github.com/i2mint/config2py/issues/33)).
+
+Like `TextFiles`, values are UTF-8 on disk whatever the locale, and a failed
+write raises `KeyError`. Unlike it, the value is encoded before the file is
+opened, so an unencodable value doesn’t leave an emptied file behind
+(see [https://github.com/i2mint/config2py/issues/35](https://github.com/i2mint/config2py/issues/35)).
 
 ### config2py.tools.extract_exports(exports)
 

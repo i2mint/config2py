@@ -1,4 +1,4 @@
-> built 2026-10-12 04:15 UTC from bb38910 (master) · config2py 0.1.56. Details: build_info.json
+> built 2026-10-12 04:31 UTC from c0643dc (master) · config2py 0.1.57. Details: build_info.json
 
 # index.html.md
 
@@ -1149,15 +1149,22 @@ Error classes for config2py.
 
 ### Exceptions
 
-| [`Config2PyError`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyError)   | Base class for config2py errors.        |
-|-------------------------------------------------------------------|-----------------------------------------|
-| [`ConfigNotFound`](_autosummary/config2py.errors.html.md#config2py.errors.ConfigNotFound)   | Raised when a config file is not found. |
+| [`Config2PyError`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyError)   | Base class for config2py errors.                                      |
+|-------------------------------------------------------------------|-----------------------------------------------------------------------|
+| [`Config2PyWarning`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyWarning) | Warnings issued by config2py (e.g. permissions it could not tighten). |
+| [`ConfigNotFound`](_autosummary/config2py.errors.html.md#config2py.errors.ConfigNotFound)   | Raised when a config file is not found.                               |
 
 ### *exception* config2py.errors.Config2PyError
 
 Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exception)
 
 Base class for config2py errors.
+
+### *exception* config2py.errors.Config2PyWarning
+
+Bases: [`UserWarning`](https://docs.python.org/3/builtins/exceptions.html#UserWarning)
+
+Warnings issued by config2py (e.g. permissions it could not tighten).
 
 ### *exception* config2py.errors.ConfigNotFound
 
@@ -1682,8 +1689,13 @@ Various tools
 
 ### Classes
 
-| [`SecureTextFiles`](_autosummary/config2py.tools.html.md#config2py.tools.SecureTextFiles)(\*args[, delete_func])   | A `dol.TextFiles` (one text file per key) whose value files are `0o600`.   |
-|-------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| [`Configs`](_autosummary/config2py.tools.html.md#config2py.tools.Configs)                                |                                                                          |
+|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| [`SecureTextFiles`](_autosummary/config2py.tools.html.md#config2py.tools.SecureTextFiles)(\*args[, delete_func]) | A `dol.TextFiles` (one text file per key) whose value files are `0o600`. |
+
+### config2py.tools.Configs
+
+alias of [`SecureTextFiles`](_autosummary/config2py.tools.html.md#config2py.tools.SecureTextFiles)
 
 ### *class* config2py.tools.SecureTextFiles(\*args, delete_func=None, \*\*kwargs)
 
@@ -1695,6 +1707,11 @@ Config values are often secrets (API keys); plain `TextFiles` writes them with
 the umask default (commonly world-readable `0o644`). Still an `isinstance`
 of `TextFiles`, so it is a drop-in replacement
 (see [https://github.com/i2mint/config2py/issues/33](https://github.com/i2mint/config2py/issues/33)).
+
+Like `TextFiles`, values are UTF-8 on disk whatever the locale, and a failed
+write raises `KeyError`. Unlike it, the value is encoded before the file is
+opened, so an unencodable value doesn’t leave an emptied file behind
+(see [https://github.com/i2mint/config2py/issues/35](https://github.com/i2mint/config2py/issues/35)).
 
 ### config2py.tools.extract_exports(exports)
 
@@ -1848,10 +1865,12 @@ Utility functions for config2py.
 | [`is_not_empty`](_autosummary/config2py.util.html.md#config2py.util.is_not_empty)(x)                                   | Function that returns True if x is not empty.                                                                                                                                           |
 | [`is_repl`](_autosummary/config2py.util.html.md#config2py.util.is_repl)()                                         | Determines if the Python interpreter is running in REPL.                                                                                                                                |
 | [`looks_like_secret`](_autosummary/config2py.util.html.md#config2py.util.looks_like_secret)(text)                           | True if `text` (typically a prompt naming a config key) looks secret.                                                                                                                   |
+| [`owner_only_opener`](_autosummary/config2py.util.html.md#config2py.util.owner_only_opener)(path, flags)                    | An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.                                                                                                                 |
 | [`parse_assignments_from_py_source`](_autosummary/config2py.util.html.md#config2py.util.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                                                              |
 | [`secure_makedirs`](_autosummary/config2py.util.html.md#config2py.util.secure_makedirs)(dirpath, \*[, exist_ok])          | `os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.                                                                                                        |
-| [`secure_open`](_autosummary/config2py.util.html.md#config2py.util.secure_open)(path[, mode])                         | Open `path` for writing with owner-only (`0o600`) permissions.                                                                                                                          |
+| [`secure_open`](_autosummary/config2py.util.html.md#config2py.util.secure_open)(path[, mode])                         | `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.                                                                                                                |
 | [`system_default_for_app_data_folder`](_autosummary/config2py.util.html.md#config2py.util.system_default_for_app_data_folder)([...])         | Get the system default folder for `folder_kind`.                                                                                                                                        |
+| [`tighten_mode`](_autosummary/config2py.util.html.md#config2py.util.tighten_mode)(path, mode, \*[, strict])            | Set `path`'s permission bits to `mode`, only if they differ.                                                                                                                            |
 
 ### Classes
 
@@ -2621,6 +2640,18 @@ True
 False
 ```
 
+### config2py.util.owner_only_opener(path, flags)
+
+An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.
+
+- *New* file: the restrictive mode is applied atomically at creation via
+  `os.open`, so there is no window where the file briefly exists with the
+  process’s default umask (commonly world-readable, `0o644`).
+- *Pre-existing* file with looser permissions: `os.open`’s `mode` argument
+  is a POSIX no-op in this case (only consulted when a new file is actually
+  created), so an explicit `os.fchmod` re-tightens it – on the open file
+  descriptor, not the path, so it’s not subject to a TOCTOU swap either.
+
 ### config2py.util.parse_assignments_from_py_source(source_code, \*, name_filt=None, value_filt=<function \_value_node_is_instance_of>)
 
 Parse assignments from python source code.
@@ -2641,22 +2672,20 @@ Parse assignments from python source code.
 `os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.
 
 `os.makedirs(..., mode=0o700, exist_ok=True)` alone won’t re-tighten an existing
-directory’s mode, so this follows up with an explicit `os.chmod`. Intended for
-directories that may hold config/secret files (see i2mint/config2py#15).
+directory’s mode, so this follows up with `tighten_mode` (which warns, rather
+than raises, if that isn’t possible). Intended for directories that may hold
+config/secret files (see i2mint/config2py#15).
 
-### config2py.util.secure_open(path, mode='w')
+### config2py.util.secure_open(path, mode='w', \*\*open_kwargs)
 
-Open `path` for writing with owner-only (`0o600`) permissions.
+`open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.
 
-Two cases, both handled:
+The file is created (or re-tightened) by `owner_only_opener`. Being the builtin
+`open`, it honors `encoding`, `newline`, and binary modes (`O_BINARY` on
+Windows). Pass `encoding=` explicitly for text: the default is the locale’s.
 
-- *New* file: the restrictive mode is applied atomically at creation via
-  `os.open`, so there is no window where the file briefly exists with the
-  process’s default umask (commonly world-readable, `0o644`).
-- *Pre-existing* file with looser permissions: `os.open`’s `mode` argument
-  is a POSIX no-op in this case (only consulted when a new file is actually
-  created), so an explicit `os.fchmod` re-tightens it – on the open file
-  descriptor, not the path, so it’s not subject to a TOCTOU swap either.
+The `mode` is honored as is (`"a"` appends; before #35 every mode truncated).
+Any mode, including `"r"`, sets the file’s permissions to `0o600`.
 
 Intended for files that may hold secrets (see i2mint/config2py#15).
 
@@ -2688,6 +2717,19 @@ that kind, falling back to the spec’s `default_path`; the spec’s
 * **Return type:**
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
+### config2py.util.tighten_mode(path, mode, , strict=False)
+
+Set `path`’s permission bits to `mode`, only if they differ. POSIX only.
+
+Returns `True` if `path` ends up with `mode`. A failing `chmod` (read-only
+file system, a path owned by someone else) raises if `strict`, and otherwise
+only warns and returns `False`: tightening is best-effort hardening, and must not
+make, for example, `import config2py` crash
+(see [https://github.com/i2mint/config2py/issues/35](https://github.com/i2mint/config2py/issues/35)).
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
 
 # about-this-build.html.md
 
@@ -2695,7 +2737,7 @@ that kind, falling back to the spec’s `default_path`; the spec’s
 
 # About this build
 
-This documentation was built on **2026-10-12 04:15 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/bb3891048a243743d333a9b00ba3c7b41720b3bd"><code>bb38910</code></a> on branch <code>master</code>, for **config2py 0.1.56** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-12 04:31 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/c0643dc6bcbe0bfc06ae95c9d4d831a58326018a"><code>c0643dc</code></a> on branch <code>master</code>, for **config2py 0.1.57** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2704,9 +2746,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/bb3891048a243743d333a9b00ba3c7b41720b3bd"><code>bb3891048a243743d333a9b00ba3c7b41720b3bd</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/c0643dc6bcbe0bfc06ae95c9d4d831a58326018a"><code>c0643dc6bcbe0bfc06ae95c9d4d831a58326018a</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
-| Tags at this commit | <code>0.1.56</code>                                                                                                                                     |
+| Tags at this commit | <code>0.1.57</code>                                                                                                                                     |
 | Working tree        | clean                                                                                                                                                   |
 | Remote              | <code>https://github.com/i2mint/config2py</code>                                                                                                        |
 
@@ -2715,9 +2757,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38202925087">38202925087</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38204014774">38204014774</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>c423d851b021eb7f5a9d16f9ee86e93e0b9d0597</code> (in the history of the built commit) |
+| Event commit | <code>795ccb262e0323a65a3c1a2c66a08e58b603a844</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -2742,13 +2784,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.56/">0.1.56</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/config2py/0.1.57/">0.1.57</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout bb3891048a243743d333a9b00ba3c7b41720b3bd
+git checkout c0643dc6bcbe0bfc06ae95c9d4d831a58326018a
 pip install "epythet==0.2.12"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=9d458db5"></script>
+    <script src="../_static/documentation_options.js?v=393d09ac"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.56" />
+  <meta name="docsearch:version" content="0.1.57" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -415,12 +415,21 @@
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.tools.SecureTextFiles" title="config2py.tools.SecureTextFiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SecureTextFiles</span></code></a>(*args[, delete_func])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.tools.Configs" title="config2py.tools.Configs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Configs</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.tools.SecureTextFiles" title="config2py.tools.SecureTextFiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SecureTextFiles</span></code></a>(*args[, delete_func])</p></td>
 <td><p>A <code class="docutils literal notranslate"><span class="pre">dol.TextFiles</span></code> (one text file per key) whose value files are <code class="docutils literal notranslate"><span class="pre">0o600</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="config2py.tools.Configs">
+<span class="sig-prename descclassname"><span class="pre">config2py.tools.</span></span><span class="sig-name descname"><span class="pre">Configs</span></span><a class="headerlink" href="#config2py.tools.Configs" title="Link to this definition">#</a></dt>
+<dd><p>alias of <a class="reference internal" href="#config2py.tools.SecureTextFiles" title="config2py.tools.SecureTextFiles"><code class="xref py py-class docutils literal notranslate"><span class="pre">SecureTextFiles</span></code></a></p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="config2py.tools.SecureTextFiles">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.tools.</span></span><span class="sig-name descname"><span class="pre">SecureTextFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/tools.html#SecureTextFiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.tools.SecureTextFiles" title="Link to this definition">#</a></dt>
@@ -430,6 +439,10 @@
 the umask default (commonly world-readable <code class="docutils literal notranslate"><span class="pre">0o644</span></code>). Still an <code class="docutils literal notranslate"><span class="pre">isinstance</span></code>
 of <code class="docutils literal notranslate"><span class="pre">TextFiles</span></code>, so it is a drop-in replacement
 (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/33">i2mint/config2py#33</a>).</p>
+<p>Like <code class="docutils literal notranslate"><span class="pre">TextFiles</span></code>, values are UTF-8 on disk whatever the locale, and a failed
+write raises <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>. Unlike it, the value is encoded before the file is
+opened, so an unencodable value doesn’t leave an emptied file behind
+(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/35">i2mint/config2py#35</a>).</p>
 </dd></dl>
 
 <dl class="py function">
@@ -613,6 +626,7 @@ make sure to use the same names for the kwargs as the config params.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.tools.Configs"><code class="docutils literal notranslate"><span class="pre">Configs</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.tools.SecureTextFiles"><code class="docutils literal notranslate"><span class="pre">SecureTextFiles</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.tools.extract_exports"><code class="docutils literal notranslate"><span class="pre">extract_exports()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.tools.get_configs_local_store"><code class="docutils literal notranslate"><span class="pre">get_configs_local_store()</span></code></a></li>

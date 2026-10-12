@@ -9,5 +9,6 @@ config2py.errors
    .. autosummary::
    
       Config2PyError
+      Config2PyWarning
       ConfigNotFound
    
