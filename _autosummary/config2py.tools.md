@@ -10,6 +10,22 @@ Various tools
 | [`simple_config_getter`](#config2py.tools.simple_config_getter)([configs_src, ...])   | Make a simple config getter from a "central" config source specification.                                                                         |
 | [`source_config_params`](#config2py.tools.source_config_params)(\*config_params)      | A decorator factory that sources config params, based on their names, to a config getter that will be provided when calling the wrapped function. |
 
+### Classes
+
+| [`SecureTextFiles`](#config2py.tools.SecureTextFiles)(\*args[, delete_func])   | A `dol.TextFiles` (one text file per key) whose value files are `0o600`.   |
+|-------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+
+### *class* config2py.tools.SecureTextFiles(\*args, delete_func=None, \*\*kwargs)
+
+Bases: `TextFiles`
+
+A `dol.TextFiles` (one text file per key) whose value files are `0o600`.
+
+Config values are often secrets (API keys); plain `TextFiles` writes them with
+the umask default (commonly world-readable `0o644`). Still an `isinstance`
+of `TextFiles`, so it is a drop-in replacement
+(see [https://github.com/i2mint/config2py/issues/33](https://github.com/i2mint/config2py/issues/33)).
+
 ### config2py.tools.extract_exports(exports)
 
 Get a dict of `{name: value}` pairs from the `name="value" pairs of unix

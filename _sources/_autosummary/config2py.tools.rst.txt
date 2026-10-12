@@ -13,3 +13,9 @@ config2py.tools
       simple_config_getter
       source_config_params
    
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      SecureTextFiles
+   

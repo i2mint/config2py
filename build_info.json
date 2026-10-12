@@ -1,41 +1,41 @@
 {
   "schema_version": 1,
-  "built_at": "2026-09-27T09:09:22Z",
+  "built_at": "2026-10-12T04:15:25Z",
   "package": {
     "name": "config2py",
-    "version": "0.1.55",
+    "version": "0.1.56",
     "display_name": "config2py",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "8c59d56eac145f7278fd47a73260e1091a8d6b1d",
-    "short_commit": "8c59d56",
+    "commit": "bb3891048a243743d333a9b00ba3c7b41720b3bd",
+    "short_commit": "bb38910",
     "branch": "master",
     "tags": [
-      "0.1.55"
+      "0.1.56"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/config2py",
-    "commit_url": "https://github.com/i2mint/config2py/commit/8c59d56eac145f7278fd47a73260e1091a8d6b1d",
+    "commit_url": "https://github.com/i2mint/config2py/commit/bb3891048a243743d333a9b00ba3c7b41720b3bd",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/config2py",
-    "sha": "5e7e436dc82b72a09887f676c792eda9fb73802e",
+    "sha": "c423d851b021eb7f5a9d16f9ee86e93e0b9d0597",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "36308374160",
-    "run_url": "https://github.com/i2mint/config2py/actions/runs/36308374160",
+    "run_id": "38202925087",
+    "run_url": "https://github.com/i2mint/config2py/actions/runs/38202925087",
     "server_url": "https://github.com"
   },
   "tools": {
     "epythet": "0.2.12",
     "sphinx": "9.1.0",
     "docutils": "0.22.4",
-    "python": "3.12.14"
+    "python": "3.12.15"
   },
   "config": {
     "theme": "auto",
@@ -58,15 +58,15 @@
   },
   "site": {
     "modules_documented": 8,
-    "objects_documented": 77
+    "objects_documented": 78
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.55",
+    "latest": "0.1.56",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout 8c59d56eac145f7278fd47a73260e1091a8d6b1d\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout bb3891048a243743d333a9b00ba3c7b41720b3bd\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,
