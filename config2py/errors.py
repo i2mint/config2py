@@ -7,3 +7,7 @@ class Config2PyError(Exception):
 
 class ConfigNotFound(Config2PyError):
     """Raised when a config file is not found."""
+
+
+class Config2PyWarning(UserWarning):
+    """Warnings issued by config2py (e.g. permissions it could not tighten)."""

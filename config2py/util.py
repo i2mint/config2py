@@ -4,6 +4,7 @@ Utility functions for config2py.
 """
 
 import re
+import errno
 import os
 import stat
 import sys
@@ -87,6 +88,9 @@ def secure_open(path, mode="w", **open_kwargs):
     ``open``, it honors ``encoding``, ``newline``, and binary modes (``O_BINARY`` on
     Windows). Pass ``encoding=`` explicitly for text: the default is the locale's.
 
+    The ``mode`` is honored as is (``"a"`` appends; before #35 every mode truncated).
+    Any mode, including ``"r"``, sets the file's permissions to ``0o600``.
+
     Intended for files that may hold secrets (see i2mint/config2py#15).
 
     >>> import tempfile, os
@@ -121,14 +125,19 @@ def tighten_mode(path, mode, *, strict=False) -> bool:
     except OSError as error:
         if strict:
             raise
-        import warnings
-
-        warnings.warn(
-            f"config2py could not set the permissions of {path!r} to {oct(mode)}: "
-            f"{error}",
-            stacklevel=2,
-        )
+        _warn_not_tightened(f"{path!r} to {oct(mode)}: {error}")
         return False
+
+
+def _warn_not_tightened(what):
+    import warnings
+    from config2py.errors import Config2PyWarning
+
+    warnings.warn(
+        f"config2py could not tighten the permissions of {what}",
+        Config2PyWarning,
+        stacklevel=3,
+    )
 
 
 def secure_makedirs(dirpath, *, exist_ok=True):
@@ -764,15 +773,32 @@ def _tighten_managed_configs_folder(configs_dir):
         return
     if not tighten_mode(configs_dir, 0o700):
         return
-    for dirpath, dirnames, filenames in os.walk(configs_dir):
+    # Each file is opened without following symlinks and fchmod-ed through its
+    # descriptor, so a file swapped for a symlink can't redirect the chmod.
+    nofollow = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+    failures = []
+    for dirpath, _dirnames, filenames in os.walk(configs_dir):
         for name in filenames:
             path = os.path.join(dirpath, name)
             try:
-                st = os.lstat(path)
-            except OSError:
-                continue
-            if stat.S_ISREG(st.st_mode) and st.st_mode & 0o077:
-                tighten_mode(path, st.st_mode & 0o700)
+                fd = os.open(path, nofollow)
+            except OSError as error:
+                if error.errno not in (errno.ELOOP, errno.ENOENT):
+                    failures.append((path, error))
+                continue  # a symlink (not followed), or gone
+            try:
+                st = os.fstat(fd)
+                if stat.S_ISREG(st.st_mode) and st.st_mode & 0o077:
+                    os.fchmod(fd, st.st_mode & 0o700)
+            except OSError as error:
+                failures.append((path, error))
+            finally:
+                os.close(fd)
+    if failures:  # one warning, not one per file and per import
+        path, error = failures[0]
+        _warn_not_tightened(
+            f"{len(failures)} file(s) in {configs_dir!r} (e.g. {path!r}: {error})"
+        )
 
 
 get_app_data_directory = get_app_config_folder  # backwards compatibility alias

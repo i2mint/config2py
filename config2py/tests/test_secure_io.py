@@ -260,3 +260,28 @@ def test_failed_writes_raise_key_error_like_text_files(tmp_path):
             store["KEY"] = 3  # not a str
     # ...and, unlike TextFiles, it doesn't leave a truncated file behind
     assert not (tmp_path / "SecureTextFiles" / "KEY").exists()
+
+
+@posix_only
+def test_untightenable_files_give_one_warning(tmp_path, monkeypatch):
+    """#35 review: files that can't be tightened give one warning, not one each."""
+    from config2py.errors import Config2PyWarning
+    from config2py.util import get_configs_folder_for_app
+
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.delenv("XDG_CONFIG_HOME", raising=False)
+    path = get_configs_folder_for_app("app35_warn")
+    for name in ("A", "B", "C"):
+        p = os.path.join(path, name)
+        with open(p, "w") as f:
+            f.write("x")
+        os.chmod(p, 0o644)
+
+    def _eperm(*args, **kwargs):
+        raise PermissionError(1, "Operation not permitted")
+
+    monkeypatch.setattr(os, "fchmod", _eperm)
+    with pytest.warns(Config2PyWarning) as record:
+        get_configs_folder_for_app("app35_warn")
+    assert len(record) == 1
+    assert "3 file(s)" in str(record[0].message)
