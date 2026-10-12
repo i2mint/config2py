@@ -13,8 +13,26 @@ from config2py.util import (
     DFLT_CONFIG_FOLDER,
     is_repl,
     DFLT_CONFIGS_NAME,
+    secure_open,
 )
 from config2py.base import get_config, user_gettable
+
+
+class SecureTextFiles(TextFiles):
+    """A ``dol.TextFiles`` (one text file per key) whose value files are ``0o600``.
+
+    Config values are often secrets (API keys); plain ``TextFiles`` writes them with
+    the umask default (commonly world-readable ``0o644``). Still an ``isinstance``
+    of ``TextFiles``, so it is a drop-in replacement
+    (see https://github.com/i2mint/config2py/issues/33).
+    """
+
+    def __setitem__(self, k, v):
+        # dol's TextFiles wraps an inner persister, so write via the full path here.
+        # (The inner store, and thus any "opener" attribute, is out of reach.)
+        path = self._id_of_key(k)
+        with secure_open(path, "w") as fp:
+            fp.write(v)
 
 
 # TODO: Make it into an open-closed plug-in using routing
@@ -46,7 +64,7 @@ def get_configs_local_store(
         #         f"get_configs_local_store function from a directory that doesn't "
         #         "contain a {config_src} folder."
         #     )
-        return TextFiles(config_src)
+        return SecureTextFiles(config_src)
     elif os.path.isfile(config_src):
         # TODO: Not tested
         # TODO: Make this open-closed plug-in via routing argument
@@ -58,7 +76,7 @@ def get_configs_local_store(
     elif os.path.sep not in config_src:  # it's just a string
         # TODO: is "get" the right word, since it makes the folder too
         path = get_configs_folder_for_app(config_src, configs_name=configs_name)
-        return TextFiles(path)
+        return SecureTextFiles(path)
     else:
         raise ValueError(
             f"config_src must be a directory, ini or cfg file, or app name. "

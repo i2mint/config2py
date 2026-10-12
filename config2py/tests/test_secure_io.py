@@ -69,3 +69,34 @@ def test_file_store_write_is_owner_only(tmp_path):
     with open(path) as f:
         assert json.load(f)["new_key"] == "new_value"
     assert oct(path.stat().st_mode & 0o777) == "0o600"
+
+
+@posix_only
+def test_configs_store_writes_owner_only_files(tmp_path):
+    """#33: values saved through the configs store are 0o600, even in a 0o755 folder."""
+    from dol import TextFiles
+    from config2py.tools import get_configs_local_store
+
+    folder = tmp_path / "configs"
+    folder.mkdir(mode=0o755)
+    store = get_configs_local_store(str(folder))
+    assert isinstance(store, TextFiles)
+    store["API_KEY"] = "sk-demo"
+    assert store["API_KEY"] == "sk-demo"
+    assert oct((folder / "API_KEY").stat().st_mode & 0o777) == "0o600"
+    (folder / "API_KEY").chmod(0o644)  # overwrite re-tightens too
+    store["API_KEY"] = "sk-new"
+    assert oct((folder / "API_KEY").stat().st_mode & 0o777) == "0o600"
+
+
+@posix_only
+def test_existing_managed_configs_folder_is_retightened(tmp_path, monkeypatch):
+    """#33: an older config2py-managed 0o755 configs folder becomes 0o700."""
+    from config2py.util import get_configs_folder_for_app
+
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.delenv("XDG_CONFIG_HOME", raising=False)
+    path = get_configs_folder_for_app("app33_test")
+    os.chmod(path, 0o755)
+    assert get_configs_folder_for_app("app33_test") == path
+    assert oct(os.stat(path).st_mode & 0o777) == "0o700"
