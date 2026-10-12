@@ -100,3 +100,188 @@ def test_existing_managed_configs_folder_is_retightened(tmp_path, monkeypatch):
     os.chmod(path, 0o755)
     assert get_configs_folder_for_app("app33_test") == path
     assert oct(os.stat(path).st_mode & 0o777) == "0o700"
+
+
+# --------------------------------------------------------------------------------------
+# Regressions and gaps from #34 (see https://github.com/i2mint/config2py/issues/35)
+
+
+def _sandboxed_env(home, **extra):
+    """An env whose HOME and XDG folders all point into ``home``, plus ``extra``."""
+    env = dict(os.environ, HOME=str(home), **extra)
+    for name in ("XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME", "XDG_STATE_HOME"):
+        env.pop(name, None)
+    return env
+
+
+def _run_python(code, env):
+    import subprocess
+    import sys
+
+    return subprocess.run(
+        [sys.executable, "-c", code],
+        env=env,
+        capture_output=True,
+        text=True,
+        stdin=subprocess.DEVNULL,
+        timeout=120,
+    )
+
+
+@posix_only
+def test_import_survives_a_folder_it_cannot_chmod(tmp_path):
+    """#35.1: ``import config2py`` must not crash when the configs folder can't be
+    chmod-ed (read-only file system, folder owned by someone else)."""
+    env = _sandboxed_env(tmp_path)
+    first = _run_python("import config2py", env)  # creates the managed folder
+    assert first.returncode == 0, first.stderr
+    configs_dir = tmp_path / ".config" / "config2py" / "configs"
+    assert (configs_dir / ".config2py").is_file()
+    os.chmod(configs_dir, 0o755)  # an older, looser folder that "needs" re-tightening
+    code = (
+        "import errno, os\n"
+        "def _chmod(*a, **k):\n"
+        "    raise OSError(errno.EROFS, 'Read-only file system')\n"
+        "os.chmod = _chmod\n"
+        "import warnings\n"
+        "with warnings.catch_warnings(record=True) as w:\n"
+        "    warnings.simplefilter('always')\n"
+        "    import config2py\n"
+        "print(len(w))\n"
+    )
+    result = _run_python(code, env)
+    assert result.returncode == 0, result.stderr
+    assert int(result.stdout.strip()) >= 1  # it warns instead
+
+
+@posix_only
+def test_already_tight_folder_is_not_chmod_ed(tmp_path, monkeypatch):
+    """#35.1: no chmod at all when the mode is already right."""
+    from config2py.util import get_configs_folder_for_app
+
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.delenv("XDG_CONFIG_HOME", raising=False)
+    path = get_configs_folder_for_app("app35_test")
+    assert oct(os.stat(path).st_mode & 0o777) == "0o700"
+
+    def _no_chmod(*args, **kwargs):
+        raise AssertionError(f"unexpected chmod: {args}")
+
+    monkeypatch.setattr(os, "chmod", _no_chmod)
+    assert get_configs_folder_for_app("app35_test") == path
+
+
+def test_values_are_written_as_utf8_whatever_the_locale(tmp_path):
+    """#35.2: values are UTF-8 on disk even under a non-UTF-8 locale (``LC_ALL=C``),
+    and a failed write never leaves a truncated (empty) file behind."""
+    folder = tmp_path / "configs"
+    folder.mkdir()
+    (folder / "NAME").write_bytes(b"old")
+    code = (
+        "import sys\n"
+        "from config2py.tools import get_configs_local_store\n"
+        f"store = get_configs_local_store({str(folder) + os.sep!r})\n"
+        "store['NAME'] = 'caf\\u00e9'\n"
+        "assert store['NAME'] == 'caf\\u00e9', store['NAME']\n"
+        "try:\n"
+        "    store['NAME'] = 'bad \\udc80'\n"  # a lone surrogate: not encodable
+        "except KeyError:\n"
+        "    pass\n"
+        "else:\n"
+        "    sys.exit('expected a KeyError')\n"
+        "assert store['NAME'] == 'caf\\u00e9', store['NAME']\n"
+    )
+    env = _sandboxed_env(
+        tmp_path, LC_ALL="C", LANG="C", PYTHONUTF8="0", PYTHONCOERCECLOCALE="0"
+    )
+    result = _run_python(code, env)
+    assert result.returncode == 0, result.stderr
+    assert (folder / "NAME").read_bytes() == "café".encode("utf-8")
+
+
+@posix_only
+def test_existing_loose_files_in_managed_folder_are_tightened(tmp_path, monkeypatch):
+    """#35.3: secrets saved before #34 (0o644) are tightened, not only on overwrite.
+    Symlinks are not followed, and unmanaged folders are left alone."""
+    from config2py.util import get_configs_folder_for_app
+
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.delenv("XDG_CONFIG_HOME", raising=False)
+    path = get_configs_folder_for_app("app35_files")
+    secret = os.path.join(path, "API_KEY")
+    nested = os.path.join(path, "sub", "TOKEN")
+    os.makedirs(os.path.dirname(nested))
+    outside = tmp_path / "outside.txt"
+    outside.write_text("not ours")
+    for p in (secret, nested, outside):
+        with open(p, "w") as f:
+            f.write("x")
+        os.chmod(p, 0o644)
+    os.symlink(outside, os.path.join(path, "LINK"))
+
+    get_configs_folder_for_app("app35_files")
+
+    assert oct(os.stat(secret).st_mode & 0o777) == "0o600"
+    assert oct(os.stat(nested).st_mode & 0o777) == "0o600"
+    assert oct(outside.stat().st_mode & 0o777) == "0o644"  # symlink target untouched
+
+    unmanaged = tmp_path / ".config" / "unmanaged" / "configs"
+    unmanaged.mkdir(parents=True)
+    loose = unmanaged / "KEY"
+    loose.write_text("x")
+    loose.chmod(0o644)
+    get_configs_folder_for_app("unmanaged")
+    assert oct(loose.stat().st_mode & 0o777) == "0o644"
+
+
+@posix_only
+def test_configs_alias_is_the_secure_store(tmp_path):
+    """#35.4: the public ``Configs`` alias writes owner-only files too."""
+    from config2py.tools import Configs, SecureTextFiles
+
+    assert Configs is SecureTextFiles
+    store = Configs(str(tmp_path))
+    store["API_KEY"] = "sk-demo"
+    assert oct((tmp_path / "API_KEY").stat().st_mode & 0o777) == "0o600"
+
+
+def test_failed_writes_raise_key_error_like_text_files(tmp_path):
+    """#35.5: a failed write raises ``KeyError``, as dol's ``TextFiles`` does."""
+    from dol import TextFiles
+    from config2py.tools import SecureTextFiles
+
+    for store_cls in (TextFiles, SecureTextFiles):
+        folder = tmp_path / store_cls.__name__
+        folder.mkdir()
+        store = store_cls(str(folder))
+        with pytest.raises(KeyError):
+            store["missing_dir/KEY"] = "value"  # parent folder doesn't exist
+        with pytest.raises(KeyError):
+            store["KEY"] = 3  # not a str
+    # ...and, unlike TextFiles, it doesn't leave a truncated file behind
+    assert not (tmp_path / "SecureTextFiles" / "KEY").exists()
+
+
+@posix_only
+def test_untightenable_files_give_one_warning(tmp_path, monkeypatch):
+    """#35 review: files that can't be tightened give one warning, not one each."""
+    from config2py.errors import Config2PyWarning
+    from config2py.util import get_configs_folder_for_app
+
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.delenv("XDG_CONFIG_HOME", raising=False)
+    path = get_configs_folder_for_app("app35_warn")
+    for name in ("A", "B", "C"):
+        p = os.path.join(path, name)
+        with open(p, "w") as f:
+            f.write("x")
+        os.chmod(p, 0o644)
+
+    def _eperm(*args, **kwargs):
+        raise PermissionError(1, "Operation not permitted")
+
+    monkeypatch.setattr(os, "fchmod", _eperm)
+    with pytest.warns(Config2PyWarning) as record:
+        get_configs_folder_for_app("app35_warn")
+    assert len(record) == 1
+    assert "3 file(s)" in str(record[0].message)

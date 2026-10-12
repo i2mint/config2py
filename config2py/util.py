@@ -4,7 +4,9 @@ Utility functions for config2py.
 """
 
 import re
+import errno
 import os
+import stat
 import sys
 import ast
 from collections import ChainMap, namedtuple
@@ -58,10 +60,8 @@ not_found = mk_sentinel("not_found")
 no_default = mk_sentinel("no_default")
 
 
-def secure_open(path, mode="w"):
-    """Open ``path`` for writing with owner-only (``0o600``) permissions.
-
-    Two cases, both handled:
+def owner_only_opener(path, flags):
+    """An ``opener`` for ``open`` that creates (or re-tightens) ``path`` as ``0o600``.
 
     - *New* file: the restrictive mode is applied atomically at creation via
       ``os.open``, so there is no window where the file briefly exists with the
@@ -70,6 +70,26 @@ def secure_open(path, mode="w"):
       is a POSIX no-op in this case (only consulted when a new file is actually
       created), so an explicit ``os.fchmod`` re-tightens it -- on the open file
       descriptor, not the path, so it's not subject to a TOCTOU swap either.
+    """
+    fd = os.open(path, flags, 0o600)
+    if hasattr(os, "fchmod"):  # POSIX only -- Windows ACLs aren't unix mode bits
+        try:
+            os.fchmod(fd, 0o600)  # re-tighten if the file already existed
+        except BaseException:
+            os.close(fd)
+            raise
+    return fd
+
+
+def secure_open(path, mode="w", **open_kwargs):
+    """``open(path, mode, **open_kwargs)`` with owner-only (``0o600``) permissions.
+
+    The file is created (or re-tightened) by ``owner_only_opener``. Being the builtin
+    ``open``, it honors ``encoding``, ``newline``, and binary modes (``O_BINARY`` on
+    Windows). Pass ``encoding=`` explicitly for text: the default is the locale's.
+
+    The ``mode`` is honored as is (``"a"`` appends; before #35 every mode truncated).
+    Any mode, including ``"r"``, sets the file's permissions to ``0o600``.
 
     Intended for files that may hold secrets (see i2mint/config2py#15).
 
@@ -83,22 +103,53 @@ def secure_open(path, mode="w"):
     '0o600'
     >>> os.remove(path)
     """
-    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
-    fd = os.open(path, flags, 0o600)
-    if hasattr(os, "fchmod"):  # POSIX only -- Windows ACLs aren't unix mode bits
-        os.fchmod(fd, 0o600)  # re-tighten if the file already existed (see docstring)
-    return os.fdopen(fd, mode)
+    return open(path, mode, opener=owner_only_opener, **open_kwargs)
+
+
+def tighten_mode(path, mode, *, strict=False) -> bool:
+    """Set ``path``'s permission bits to ``mode``, only if they differ. POSIX only.
+
+    Returns ``True`` if ``path`` ends up with ``mode``. A failing ``chmod`` (read-only
+    file system, a path owned by someone else) raises if ``strict``, and otherwise
+    only warns and returns ``False``: tightening is best-effort hardening, and must not
+    make, for example, ``import config2py`` crash
+    (see https://github.com/i2mint/config2py/issues/35).
+    """
+    if os.name != "posix":
+        return True
+    try:
+        if os.stat(path).st_mode & 0o777 == mode:
+            return True
+        os.chmod(path, mode)
+        return True
+    except OSError as error:
+        if strict:
+            raise
+        _warn_not_tightened(f"{path!r} to {oct(mode)}: {error}")
+        return False
+
+
+def _warn_not_tightened(what):
+    import warnings
+    from config2py.errors import Config2PyWarning
+
+    warnings.warn(
+        f"config2py could not tighten the permissions of {what}",
+        Config2PyWarning,
+        stacklevel=3,
+    )
 
 
 def secure_makedirs(dirpath, *, exist_ok=True):
     """``os.makedirs(dirpath, mode=0o700)``, re-tightening the mode if it already exists.
 
     ``os.makedirs(..., mode=0o700, exist_ok=True)`` alone won't re-tighten an existing
-    directory's mode, so this follows up with an explicit ``os.chmod``. Intended for
-    directories that may hold config/secret files (see i2mint/config2py#15).
+    directory's mode, so this follows up with ``tighten_mode`` (which warns, rather
+    than raises, if that isn't possible). Intended for directories that may hold
+    config/secret files (see i2mint/config2py#15).
     """
     os.makedirs(dirpath, mode=0o700, exist_ok=exist_ok)
-    os.chmod(dirpath, 0o700)
+    tighten_mode(dirpath, 0o700)
 
 
 def always_true(x: Any) -> bool:
@@ -705,11 +756,49 @@ def get_configs_folder_for_app(
     app_dir = get_app_config_folder(app_name, setup_callback=app_dir_setup_callback)
     configs_dir = os.path.join(app_dir, configs_name)
     config_dir_setup_callback(configs_dir)
-    # Re-tighten a config2py-managed folder created earlier with a looser mode
-    # (see https://github.com/i2mint/config2py/issues/33)
-    if os.name == "posix" and os.path.isfile(os.path.join(configs_dir, ".config2py")):
-        os.chmod(configs_dir, 0o700)
+    if os.path.isfile(os.path.join(configs_dir, ".config2py")):
+        _tighten_managed_configs_folder(configs_dir)
     return configs_dir
+
+
+def _tighten_managed_configs_folder(configs_dir):
+    """Re-tighten a config2py-managed configs folder created with looser modes.
+
+    The folder becomes ``0o700`` and the files in it lose their group and other
+    permission bits, so secrets saved before values were written ``0o600`` are not
+    left world-readable (see i2mint/config2py#33 and #35). Best-effort: a failing
+    ``chmod`` warns instead of raising. Symlinks are not followed.
+    """
+    if os.name != "posix":
+        return
+    if not tighten_mode(configs_dir, 0o700):
+        return
+    # Each file is opened without following symlinks and fchmod-ed through its
+    # descriptor, so a file swapped for a symlink can't redirect the chmod.
+    nofollow = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+    failures = []
+    for dirpath, _dirnames, filenames in os.walk(configs_dir):
+        for name in filenames:
+            path = os.path.join(dirpath, name)
+            try:
+                fd = os.open(path, nofollow)
+            except OSError as error:
+                if error.errno not in (errno.ELOOP, errno.ENOENT):
+                    failures.append((path, error))
+                continue  # a symlink (not followed), or gone
+            try:
+                st = os.fstat(fd)
+                if stat.S_ISREG(st.st_mode) and st.st_mode & 0o077:
+                    os.fchmod(fd, st.st_mode & 0o700)
+            except OSError as error:
+                failures.append((path, error))
+            finally:
+                os.close(fd)
+    if failures:  # one warning, not one per file and per import
+        path, error = failures[0]
+        _warn_not_tightened(
+            f"{len(failures)} file(s) in {configs_dir!r} (e.g. {path!r}: {error})"
+        )
 
 
 get_app_data_directory = get_app_config_folder  # backwards compatibility alias

@@ -25,14 +25,26 @@ class SecureTextFiles(TextFiles):
     the umask default (commonly world-readable ``0o644``). Still an ``isinstance``
     of ``TextFiles``, so it is a drop-in replacement
     (see https://github.com/i2mint/config2py/issues/33).
+
+    Like ``TextFiles``, values are UTF-8 on disk whatever the locale, and a failed
+    write raises ``KeyError``. Unlike it, the value is encoded before the file is
+    opened, so an unencodable value doesn't leave an emptied file behind
+    (see https://github.com/i2mint/config2py/issues/35).
     """
 
+    encoding = "utf-8"  # what dol's TextFiles reads with
+
     def __setitem__(self, k, v):
-        # dol's TextFiles wraps an inner persister, so write via the full path here.
-        # (The inner store, and thus any "opener" attribute, is out of reach.)
+        # dol's TextFiles wraps an inner persister, so write via the full path here,
+        # keeping that persister's key validation and its KeyError contract.
         path = self._id_of_key(k)
-        with secure_open(path, "w") as fp:
-            fp.write(v)
+        self.store.validate_key(path)
+        try:
+            data = self._data_of_obj(v).encode(self.encoding)
+            with secure_open(path, "wb") as fp:
+                fp.write(data)
+        except Exception as error:
+            raise KeyError(str(error)) from error
 
 
 # TODO: Make it into an open-closed plug-in using routing
@@ -143,7 +155,7 @@ config_getter = simple_config_getter()
 #   Make the Configs class with use outside config2py in mind.
 #   Note: Perhaps there's no need for a class.
 #   Maybe just a function that returns a store
-Configs = TextFiles  # TODO: deprecate
+Configs = SecureTextFiles  # TODO: deprecate
 
 # A default persistent store for configs
 local_configs = get_configs_local_store()
