@@ -1,4 +1,4 @@
-> built 2026-10-13 07:09 UTC from 3839f6a (master) · config2py 0.1.64. Details: build_info.json
+> built 2026-10-13 07:34 UTC from 7ac8726 (master) · config2py 0.1.65. Details: build_info.json
 
 # index.html.md
 
@@ -1152,7 +1152,7 @@ Error classes for config2py.
 | [`report_missing_config_file`](_autosummary/config2py.errors.html.md#config2py.errors.report_missing_config_file)(path, \*[, ...])   | Act on a config source `path` that is not an existing, readable file.                                                                    |
 |------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
 | [`unusable_config_file_problem`](_autosummary/config2py.errors.html.md#config2py.errors.unusable_config_file_problem)(path)            | Why `path` can't be read as a config file, as `(error_class, errno, reason)`, or `None` if it is an existing, readable, non-folder path. |
-| [`validate_on_missing`](_autosummary/config2py.errors.html.md#config2py.errors.validate_on_missing)(on_missing)               | Check that `on_missing` is one of `ON_MISSING_OPTIONS` and return it.                                                                    |
+| [`validate_on_missing`](_autosummary/config2py.errors.html.md#config2py.errors.validate_on_missing)(on_missing, \*[, name])   | Check that `on_missing` is one of `ON_MISSING_OPTIONS` and return it.                                                                    |
 
 ### Exceptions
 
@@ -1219,9 +1219,12 @@ reported as not a regular file.
 Why `path` can’t be read as a config file, as `(error_class, errno, reason)`,
 or `None` if it is an existing, readable, non-folder path.
 
-### config2py.errors.validate_on_missing(on_missing)
+### config2py.errors.validate_on_missing(on_missing, , name='on_missing')
 
 Check that `on_missing` is one of `ON_MISSING_OPTIONS` and return it.
+
+`name` is the argument the error message names (`on_unsafe_folder` uses the
+same three options).
 
 * **Return type:**
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
@@ -4067,16 +4070,18 @@ looked at, not its parents. POSIX only (`None` elsewhere); a missing folder is
 
 # About this build
 
-This documentation was built on **2026-10-13 07:09 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/3839f6a16e3015f8d4f6bf487bd427f85a2b1792"><code>3839f6a</code></a> on branch <code>master</code>, for **config2py 0.1.64** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 07:34 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/7ac8726d5ff32227295db3a60d1472b684438cb7"><code>7ac8726</code></a> on branch <code>master</code>, for **config2py 0.1.65** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.1.65) is behind the latest release on PyPI (0.1.66): `pip install config2py` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/3839f6a16e3015f8d4f6bf487bd427f85a2b1792"><code>3839f6a16e3015f8d4f6bf487bd427f85a2b1792</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/7ac8726d5ff32227295db3a60d1472b684438cb7"><code>7ac8726d5ff32227295db3a60d1472b684438cb7</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4087,15 +4092,15 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38360765259">38360765259</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38363296780">38363296780</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>3839f6a16e3015f8d4f6bf487bd427f85a2b1792</code> (in the history of the built commit) |
+| Event commit | <code>7ac8726d5ff32227295db3a60d1472b684438cb7</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.14  |
+| epythet  | 0.2.15  |
 | Sphinx   | 9.1.0   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
@@ -4114,14 +4119,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.64/">0.1.64</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/config2py/0.1.66/">0.1.66</a>, newer than the documented version (0.1.65).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 3839f6a16e3015f8d4f6bf487bd427f85a2b1792
-pip install "epythet==0.2.14"
+git checkout 7ac8726d5ff32227295db3a60d1472b684438cb7
+pip install "epythet==0.2.15"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

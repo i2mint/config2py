@@ -7,7 +7,7 @@ Error classes for config2py.
 | [`report_missing_config_file`](#config2py.errors.report_missing_config_file)(path, \*[, ...])   | Act on a config source `path` that is not an existing, readable file.                                                                    |
 |------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
 | [`unusable_config_file_problem`](#config2py.errors.unusable_config_file_problem)(path)            | Why `path` can't be read as a config file, as `(error_class, errno, reason)`, or `None` if it is an existing, readable, non-folder path. |
-| [`validate_on_missing`](#config2py.errors.validate_on_missing)(on_missing)               | Check that `on_missing` is one of `ON_MISSING_OPTIONS` and return it.                                                                    |
+| [`validate_on_missing`](#config2py.errors.validate_on_missing)(on_missing, \*[, name])   | Check that `on_missing` is one of `ON_MISSING_OPTIONS` and return it.                                                                    |
 
 ### Exceptions
 
@@ -74,9 +74,12 @@ reported as not a regular file.
 Why `path` can’t be read as a config file, as `(error_class, errno, reason)`,
 or `None` if it is an existing, readable, non-folder path.
 
-### config2py.errors.validate_on_missing(on_missing)
+### config2py.errors.validate_on_missing(on_missing, , name='on_missing')
 
 Check that `on_missing` is one of `ON_MISSING_OPTIONS` and return it.
+
+`name` is the argument the error message names (`on_unsafe_folder` uses the
+same three options).
 
 * **Return type:**
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)

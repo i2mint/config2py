@@ -5,17 +5,19 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-10-13 07:09 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/3839f6a16e3015f8d4f6bf487bd427f85a2b1792"><code>3839f6a</code></a> on branch <code>master</code>, for **config2py 0.1.64** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 07:34 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/7ac8726d5ff32227295db3a60d1472b684438cb7"><code>7ac8726</code></a> on branch <code>master</code>, for **config2py 0.1.65** (from <code>pyproject.toml</code>).
 
-:::{note}
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+:::{warning}
+The documentation and the package may be misaligned:
+
+- The documented version (0.1.65) is behind the latest release on PyPI (0.1.66): `pip install config2py` gives newer code than these docs describe.
 :::
 
 ## Source
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/i2mint/config2py/commit/3839f6a16e3015f8d4f6bf487bd427f85a2b1792"><code>3839f6a16e3015f8d4f6bf487bd427f85a2b1792</code></a> |
+| Commit | <a href="https://github.com/i2mint/config2py/commit/7ac8726d5ff32227295db3a60d1472b684438cb7"><code>7ac8726d5ff32227295db3a60d1472b684438cb7</code></a> |
 | Branch | <code>master</code> |
 | Tags at this commit | none |
 | Working tree | clean |
@@ -26,15 +28,15 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 | | |
 |---|---|
 | Repository | <code>i2mint/config2py</code> |
-| Run | <a href="https://github.com/i2mint/config2py/actions/runs/38360765259">38360765259</a> |
+| Run | <a href="https://github.com/i2mint/config2py/actions/runs/38363296780">38363296780</a> |
 | Ref | <code>refs/heads/master</code> |
-| Event commit | <code>3839f6a16e3015f8d4f6bf487bd427f85a2b1792</code> (in the history of the built commit) |
+| Event commit | <code>7ac8726d5ff32227295db3a60d1472b684438cb7</code> (in the history of the built commit) |
 
 ## Tools
 
 | | |
 |---|---|
-| epythet | 0.2.14 |
+| epythet | 0.2.15 |
 | Sphinx | 9.1.0 |
 | docutils | 0.22.4 |
 | Python | 3.12.15 |
@@ -53,14 +55,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.64/">0.1.64</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/config2py/0.1.66/">0.1.66</a>, newer than the documented version (0.1.65).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 3839f6a16e3015f8d4f6bf487bd427f85a2b1792
-pip install "epythet==0.2.14"
+git checkout 7ac8726d5ff32227295db3a60d1472b684438cb7
+pip install "epythet==0.2.15"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

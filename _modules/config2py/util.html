@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=a395f30a"></script>
+    <script src="../../_static/documentation_options.js?v=07ed7713"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.64" />
+  <meta name="docsearch:version" content="0.1.65" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -985,9 +985,12 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    """</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">InsecureConfigFolderWarning</span><span class="p">,</span> <span class="n">validate_on_missing</span>
 
-    <span class="n">validate_on_missing</span><span class="p">(</span><span class="n">on_unsafe</span><span class="p">)</span>  <span class="c1"># same three options as ``on_missing``</span>
+    <span class="n">validate_on_missing</span><span class="p">(</span><span class="n">on_unsafe</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"on_unsafe"</span><span class="p">)</span>  <span class="c1"># the options of ``on_missing``</span>
     <span class="k">if</span> <span class="n">on_unsafe</span> <span class="o">==</span> <span class="s2">"ignore"</span><span class="p">:</span>
         <span class="k">return</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">on_unsafe</span> <span class="o">==</span> <span class="s2">"warn"</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_warned_unsafe_folders</span><span class="p">:</span>
+        <span class="k">return</span>  <span class="c1"># warned once already: don't look again</span>
     <span class="n">reason</span> <span class="o">=</span> <span class="n">unsafe_folder_reason</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">reason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
@@ -999,7 +1002,6 @@ window.runMermaid = runMermaid;</script>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">on_unsafe</span> <span class="o">==</span> <span class="s2">"raise"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">PermissionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_warned_unsafe_folders</span><span class="p">:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
@@ -1397,6 +1399,28 @@ window.runMermaid = runMermaid;</script>
 <span class="n">DFLT_APP_FOLDER_KIND</span><span class="p">:</span> <span class="n">AppFolderKind</span> <span class="o">=</span> <span class="s2">"config"</span>  <span class="c1"># type: ignore (for &lt;3.11)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_absolute_path_from_env</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The value of env var ``name`` if it is an absolute path (after ``~`` expansion).</span>
+
+<span class="sd">    A blank or relative value counts as unset, as the XDG Base Directory spec says for</span>
+<span class="sd">    ``XDG_*`` (i2mint/config2py#38): honoured, it would root config folders, secrets</span>
+<span class="sd">    included, at the current working directory, often a project checkout.</span>
+<span class="sd">    """</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">value</span><span class="p">)):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Ignoring </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">: it is not an absolute path, so it would put "</span>
+            <span class="s2">"config folders (secrets included) under the current working directory."</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
 <div class="viewcode-block" id="system_default_for_app_data_folder">
 <a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.system_default_for_app_data_folder">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">system_default_for_app_data_folder</span><span class="p">(</span>
@@ -1419,9 +1443,7 @@ window.runMermaid = runMermaid;</script>
     <span class="k">if</span> <span class="n">standards</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">standards</span> <span class="o">=</span> <span class="n">APP_FOLDER_STANDARDS</span>
     <span class="n">env_var</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">subpath</span> <span class="o">=</span> <span class="n">standards</span><span class="p">[</span><span class="n">folder_kind</span><span class="p">]</span>
-    <span class="c1"># An empty variable counts as unset (XDG Base Directory spec; i2mint/config2py#38):</span>
-    <span class="c1"># ``os.getenv(env_var, default)`` would return "" and root us at the cwd.</span>
-    <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">env_var</span><span class="p">)</span> <span class="ow">or</span> <span class="n">default</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">_absolute_path_from_env</span><span class="p">(</span><span class="n">env_var</span><span class="p">)</span> <span class="ow">or</span> <span class="n">default</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">subpath</span><span class="p">)</span> <span class="k">if</span> <span class="n">subpath</span> <span class="k">else</span> <span class="n">root</span></div>
 
 
@@ -1496,8 +1518,9 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        '/Users/.../.cache'</span>
 <span class="sd">    """</span>
     <span class="n">folderpath</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="c1"># Check config2py custom env var first (an empty one counts as unset, #38)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">config2py_env_var</span><span class="p">,</span> <span class="n">folder_kind</span><span class="p">))</span>
+        <span class="c1"># Check config2py custom env var first (a blank or relative one counts as</span>
+        <span class="c1"># unset, #38)</span>
+        <span class="n">_absolute_path_from_env</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">config2py_env_var</span><span class="p">,</span> <span class="n">folder_kind</span><span class="p">))</span>
         <span class="c1"># ... if not, use system default</span>
         <span class="ow">or</span> <span class="n">system_default_for_app_data_folder</span><span class="p">(</span><span class="n">folder_kind</span><span class="p">)</span>
     <span class="p">)</span>
