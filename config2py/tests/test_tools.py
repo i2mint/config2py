@@ -16,7 +16,26 @@ def mock_config_store_factory():
         yield mock_factory
 
 
-def test_simple_config_getter(mock_config_store_factory, tmp_path):
+@pytest.fixture
+def real_default_store_untouched():
+    """Fail if a test creates or writes into the real default configs folder (#40)."""
+    from config2py.tools import _DFLT_CONFIGS_FOLDER_PATH as folder
+
+    def snapshot():
+        return {
+            os.path.join(root, name): os.stat(os.path.join(root, name)).st_mtime_ns
+            for root, dirs, files in os.walk(folder)
+            for name in dirs + files
+        }
+
+    before = (os.path.isdir(folder), snapshot())
+    yield
+    assert (os.path.isdir(folder), snapshot()) == before
+
+
+def test_simple_config_getter(
+    mock_config_store_factory, tmp_path, monkeypatch, real_default_store_untouched
+):
     key = "_CONFIG2PY_SAFE_TO_DELETE_VAR_"
 
     # Set up mock config store
@@ -24,12 +43,18 @@ def test_simple_config_getter(mock_config_store_factory, tmp_path):
     mock_config_store_factory.return_value = mock_config_store
 
     # Test getting config from environment variable
-    os.environ[key] = "from env var"
-    config_getter = simple_config_getter(first_look_in_env_vars=True)
+    # (the source and factory are explicit: see the note on ask_user_if_key_not_found)
+    configs_src = str(tmp_path / "configs")
+    monkeypatch.setenv(key, "from env var")
+    config_getter = simple_config_getter(
+        configs_src,
+        first_look_in_env_vars=True,
+        config_store_factory=mock_config_store_factory,
+    )
     assert config_getter(key) == "from env var"
 
     # Test getting config from central config store
-    del os.environ[key]  # delete env var to test central config store
+    monkeypatch.delenv(key)  # delete env var to test central config store
     # config_getter = simple_config_getter()
     # assert config_getter(key) == "from store"
 
@@ -45,7 +70,7 @@ def test_simple_config_getter(mock_config_store_factory, tmp_path):
         # defaults are bound at definition time, so patching the module attribute
         # does not reach them, and the real default store would be written to (#40).
         config_getter = simple_config_getter(
-            str(tmp_path / "configs"),
+            configs_src,
             ask_user_if_key_not_found=True,
             config_store_factory=mock_config_store_factory,
         )
