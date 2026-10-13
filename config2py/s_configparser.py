@@ -2,6 +2,7 @@
 Data Object Layer for configparser standard lib.
 """
 
+import locale as _locale
 import os as _os
 from configparser import ConfigParser
 from configparser import BasicInterpolation, ExtendedInterpolation
@@ -114,6 +115,29 @@ ConfigParserStore.__name__ = "ConfigParserStore"
 # TODO: Extend to a KvPersister (include __setitem__ and __delitem__)
 #   Relevant methods: add_section, write, remove_section. Need to decide on auto-persistence.
 #   In fact, the reader is already a writer (from ConfigParser), but need to manage persistence.
+def _locale_encoding():
+    """The locale's encoding, also in UTF-8 mode (where ``open``'s default is UTF-8)."""
+    if hasattr(_locale, "getencoding"):  # Python 3.11+
+        return _locale.getencoding()
+    return _locale.getpreferredencoding(False)
+
+
+def _decode_config_text(data: bytes) -> str:
+    """Decode an ini file's bytes: as UTF-8 (what ``persist`` writes; a BOM is
+    tolerated) if they are valid UTF-8, else with the locale's encoding (what
+    ``persist`` wrote before https://github.com/i2mint/config2py/issues/37).
+
+    >>> _decode_config_text("café".encode("utf-8"))
+    'café'
+    >>> _decode_config_text("café".encode("utf-8-sig"))
+    'café'
+    """
+    try:
+        return data.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return data.decode(_locale_encoding())
+
+
 class ConfigStore(ConfigParserStore):
     r"""Persister (read, write, delete) for ini configs.
 
@@ -262,7 +286,7 @@ class ConfigStore(ConfigParserStore):
                 self.read_string(source)
                 source_kind = "string"
             else:
-                self.read(source)
+                self._read_filepaths(source)
                 source_kind = "filepath"
         elif isinstance(source, bytes):
             self.read_string(source.decode())
@@ -274,11 +298,30 @@ class ConfigStore(ConfigParserStore):
             self.read_file(source)
             source_kind = "stream"
         else:
-            self.read(source)
+            self._read_filepaths(source)
             source_kind = "unknown"
         self.source = source
         self.source_kind = source_kind
         self.target_kind = target_kind or source_kind
+
+    def _read_filepaths(self, filepaths):
+        """Like ``self.read(filepaths)``, but each file is read once, as bytes, and
+        decoded by ``_decode_config_text`` (so pipes such as ``/dev/stdin`` still
+        work). As with ``read``, files that can't be opened are skipped."""
+        if isinstance(filepaths, (str, bytes, _os.PathLike)):
+            filepaths = [filepaths]
+        read_ok = []
+        for filepath in filepaths:
+            try:
+                with open(filepath, "rb") as fp:
+                    data = fp.read()
+            except OSError:
+                continue
+            self.read_file(StringIO(_decode_config_text(data)), source=filepath)
+            if isinstance(filepath, _os.PathLike):
+                filepath = _os.fspath(filepath)
+            read_ok.append(filepath)
+        return read_ok
 
     def to_dict(self):
         """Return the whole config as a ``{section: {key: value}}`` dict."""
@@ -300,8 +343,15 @@ class ConfigStore(ConfigParserStore):
         """
         if not self._within_context_manager:
             if self.target_kind == "filepath":
-                with secure_open(self.source, "w") as fp:
-                    return self.write(fp, self.space_around_delimiters)
+                # Encode it all before opening (which empties the file), so a value
+                # that can't be encoded doesn't leave a truncated file behind.
+                buffer = StringIO()
+                self.write(buffer, self.space_around_delimiters)
+                text = buffer.getvalue()
+                text.encode("utf-8")  # raises UnicodeEncodeError before truncating
+                with secure_open(self.source, "w", encoding="utf-8") as fp:
+                    fp.write(text)
+                return None
             else:
                 if self.target_kind == "stream":
                     target = self.source
@@ -343,9 +393,9 @@ class ConfigStore(ConfigParserStore):
 
 
 def _missing_filepaths(source) -> list:
-    """The filepaths in ``source`` that ``ConfigStore`` would read but that are not
-    existing files. A multi-line, blank, or ``[section]``-starting ``str`` is content,
-    not a filepath."""
+    """The filepaths in ``source`` that ``ConfigStore`` would read but that don't
+    exist (or are folders). Pipes (``/dev/stdin``) count as existing. A multi-line,
+    blank, or ``[section]``-starting ``str`` is content, not a filepath."""
 
     def is_filepath(x):
         if isinstance(x, str):
@@ -359,7 +409,7 @@ def _missing_filepaths(source) -> list:
         candidates = [x for x in source if is_filepath(x)]
     else:
         candidates = []
-    return [x for x in candidates if not _os.path.isfile(x)]
+    return [x for x in candidates if not _os.path.exists(x) or _os.path.isdir(x)]
 
 
 class ConfigReader(ConfigStore):
