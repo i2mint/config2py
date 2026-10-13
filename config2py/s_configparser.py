@@ -14,6 +14,7 @@ from dol import Store
 from config2py.util import secure_open
 from config2py.errors import (  # private names: py2store star-imports this module
     report_missing_config_file as _report_missing_config_file,
+    unusable_config_file_problem as _unusable_config_file_problem,
     validate_on_missing as _validate_on_missing,
 )
 
@@ -394,7 +395,7 @@ class ConfigStore(ConfigParserStore):
 
 def _missing_filepaths(source) -> list:
     """The filepaths in ``source`` that ``ConfigStore`` would read but that don't
-    exist (or are folders). Pipes (``/dev/stdin``) count as existing. A multi-line,
+    exist, are folders, or are unreadable. Pipes (``/dev/stdin``) count as existing. A multi-line,
     blank, or ``[section]``-starting ``str`` is content, not a filepath."""
 
     def is_filepath(x):
@@ -409,7 +410,7 @@ def _missing_filepaths(source) -> list:
         candidates = [x for x in source if is_filepath(x)]
     else:
         candidates = []
-    return [x for x in candidates if not _os.path.exists(x) or _os.path.isdir(x)]
+    return [x for x in candidates if _unusable_config_file_problem(x) is not None]
 
 
 class ConfigReader(ConfigStore):
@@ -468,9 +469,11 @@ class ConfigReader(ConfigStore):
 
     A filepath (a single-line ``str``, an ``os.PathLike``, or several of them in a list
     or tuple) that is not an existing file reads as empty, as ``configparser`` does.
+    So does one that is a folder or can't be read (permission denied).
     ``on_missing`` says what else happens: ``"warn"`` (the default) issues a
-    ``MissingConfigFileWarning``, ``"raise"`` raises ``FileNotFoundError``, and
-    ``"ignore"`` does nothing (see https://github.com/i2mint/config2py/issues/27).
+    ``MissingConfigFileWarning``, ``"raise"`` raises ``FileNotFoundError`` (or
+    ``IsADirectoryError`` / ``PermissionError``), and ``"ignore"`` does nothing
+    (see https://github.com/i2mint/config2py/issues/27 and /43).
 
     >>> c = ConfigReader('no/such/file.ini', on_missing='ignore')
     >>> list(c)
