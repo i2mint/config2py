@@ -3,6 +3,7 @@
 from collections.abc import Callable
 from pathlib import Path
 import re
+import threading
 from dol import Pipe, TextFiles, resolve_path
 import os
 from i2 import Sig
@@ -14,6 +15,7 @@ from config2py.util import (
     is_repl,
     DFLT_CONFIGS_NAME,
     secure_open,
+    setup_configs_folder,
 )
 from config2py.base import get_config, user_gettable
 
@@ -63,7 +65,13 @@ def get_configs_local_store(
     name, even if a directory of that name exists in the current working directory;
     pass ``"./configs"`` (or an absolute path) to use that directory
     (see https://github.com/i2mint/config2py/issues/28).
+
+    The default, ``DFLT_CONFIG_FOLDER``, is config2py's own configs folder. It is
+    created here, on first use, rather than at import
+    (see https://github.com/i2mint/config2py/issues/26).
     """
+    if config_src == DFLT_CONFIG_FOLDER:
+        setup_configs_folder(DFLT_CONFIG_FOLDER)
     if os.path.sep in config_src and os.path.isdir(config_src):
         # TODO: This was a quick fix to avoid unknowingly making directories in the
         #   wrong place. Broke stuff so leaving this for later.
@@ -139,15 +147,16 @@ def simple_config_getter(
     return config_getter
 
 
-# Make a ready-to-use config getter, using the defaults.
-# Note: this (and ``local_configs`` below) runs at import time, so ``import config2py``
-# creates the default configs folder (``~/.config/config2py/configs`` on Linux) if it
-# doesn't exist yet. Making this lazy is tracked in i2mint/config2py#26.
-config_getter = simple_config_getter()
-
-
 # --------------------------------------------------------------------
 # Ready to import instances
+#
+# ``config_getter`` (a ready-to-use config getter, using the defaults), ``local_configs``
+# (a default persistent store for configs) and ``configs`` (an alias of
+# ``local_configs``) are built on first access, by the module ``__getattr__`` below,
+# then cached as ordinary module attributes. Building them creates the default configs
+# folder (``~/.config/config2py/configs`` on Linux), so doing it lazily keeps
+# ``import config2py`` free of disk writes
+# (see https://github.com/i2mint/config2py/issues/26).
 #
 # TODO: Is destined to be a class that makes a store (MutableMapping) to access configs
 #   (properties, etc.). The default is TextFiles, but the user should be able to specify
@@ -157,12 +166,30 @@ config_getter = simple_config_getter()
 #   Maybe just a function that returns a store
 Configs = SecureTextFiles  # TODO: deprecate
 
-# A default persistent store for configs
-local_configs = get_configs_local_store()
-
-# TODO: This is the real purpose of the Configs class (not even used here)
+# TODO: ``configs`` is the real purpose of the Configs class (not even used here)
 #    To provide a default (but customizable) `MutableMapping` interface to configs
-configs = local_configs  # TODO: backwards compatibility alias
+_lazy_instance_factories = {
+    "config_getter": lambda: simple_config_getter(),
+    "local_configs": lambda: get_configs_local_store(),
+    "configs": lambda: __getattr__("local_configs"),  # backwards compatibility alias
+}
+_lazy_instances_lock = threading.RLock()
+
+
+def __getattr__(name):
+    """Build, cache and return the lazy instances ``config_getter``,
+    ``local_configs`` and ``configs`` (PEP 562)."""
+    if name not in _lazy_instance_factories:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    with _lazy_instances_lock:  # so concurrent first accesses get the same object
+        if name not in globals():
+            globals()[name] = _lazy_instance_factories[name]()
+        return globals()[name]
+
+
+def __dir__():
+    return sorted(set(globals()) | set(_lazy_instance_factories))
+
 
 # --------------------------------------------------------------------
 

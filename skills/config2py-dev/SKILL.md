@@ -20,7 +20,7 @@ metadata:
 | Module | What lives there |
 |---|---|
 | `base.py` | `get_config` (the layered lookup), `sources_chainmap`, `FuncBasedGettableContainer` (callable to `KeyError`-raising mapping), `user_gettable` and `ask_user_for_key` (prompt, then save) |
-| `tools.py` | `simple_config_getter`, `get_configs_local_store`, the import-time instances `config_getter`, `local_configs` and `configs`, plus `extract_exports` and `source_config_params` |
+| `tools.py` | `simple_config_getter`, `get_configs_local_store`, the lazy instances `config_getter`, `local_configs` and `configs` (built on first access by a module `__getattr__`, re-exported by the package's own `__getattr__`), plus `extract_exports` and `source_config_params` |
 | `util.py` | `ask_user_for_input` (masking), `looks_like_secret`, `envvar`, app folders (`app_folder_standards`, `get_app_rootdir`, `get_app_folder`, `AppData`, `ensure_seeded`), `secure_open`/`secure_makedirs`, `is_repl` |
 | `s_configparser.py` | `ConfigStore`/`ConfigReader`, mapping views over `configparser` |
 | `sync_store.py` | `SyncStore`, `FileStore`, `JsonStore`, `register_extension`. It deliberately imports nothing from the package |
@@ -46,7 +46,7 @@ ruff check . && ruff format --check .
 
 ## Test isolation
 
-`import config2py` creates `~/.config/config2py/configs/`, and folder defaults such as `DFLT_CONFIG_FOLDER` are computed at import. A test that needs a clean home must point `HOME` and the `XDG_*` variables (or `CONFIG2PY_*_DIR`) at a temp dir in a subprocess, as `test_docs_examples.py` does. Setting them after import has no effect on the module-level defaults. Prompt tests patch both `builtins.input` and `getpass.getpass`; `config2py/tests/utils_for_testing.py` has `user_input_patch` for that.
+`import config2py` writes nothing to disk (#26), but folder defaults such as `DFLT_CONFIG_FOLDER` are computed at import, and the first access to `config_getter`/`local_configs`/`configs` creates `~/.config/config2py/configs/`. A test that needs a clean home must point `HOME` and the `XDG_*` variables (or `CONFIG2PY_*_DIR`) at a temp dir in a subprocess, as `test_docs_examples.py` does. Setting them after import has no effect on the module-level defaults. Prompt tests patch both `builtins.input` and `getpass.getpass`; `config2py/tests/utils_for_testing.py` has `user_input_patch` for that.
 
 ## Before changing a default or public behaviour
 
@@ -56,7 +56,7 @@ About 30 packages depend on config2py (for example `py2store`, `xdol`, `oa`, `ai
 2. Run their test suites against your working tree (`uv pip install -e <dependent> && uv pip install -e <this repo>` in a scratch venv), before and after your change, and compare pass counts. Known pre-existing failures: `xdol` has 2 doctest-format failures and `oa` has 3 tests that need a real OpenAI key.
 3. Prefer additive, keyword-only parameters. For example, `mask_input` accepts a bool or a `prompt -> bool` predicate, and explicit booleans keep their old meaning, including `True` reading the terminal when stdin is piped.
 
-Read these open issues before touching the matching area: #25 (the broad `(Exception,)` fallback), #26 (import-time folder creation), #27 (typo'd paths give silent empty configs), #28 (`os.path.sep` path sniffing), #29 (the pickle decoder), #30 (the masking toggle drops `egress`), #33 (file modes of the configs store), #12 and #17 (folder layout and platformdirs).
+Read these open issues before touching the matching area: #25 (the broad `(Exception,)` fallback), #27 (typo'd paths give silent empty configs), #28 (`os.path.sep` path sniffing), #29 (the pickle decoder), #30 (the masking toggle drops `egress`), #33 (file modes of the configs store), #12 and #17 (folder layout and platformdirs).
 
 ## Release flow
 

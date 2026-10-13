@@ -176,7 +176,7 @@ assert decode_by_extension("x.upper", encode_by_extension("x.upper", "hi")) == "
 ## Gotchas
 
 - **Prompts in production.** `ask_user_if_key_not_found=None` (the default) prompts whenever `is_repl()` is true, and that includes `python -c` and notebooks. Pass `ask_user_if_key_not_found=False` in services, CI and libraries.
-- **Import-time side effect.** `import config2py` creates `~/.config/config2py/configs/`, and default folders are resolved at import. In tests, point `HOME`/`XDG_CONFIG_HOME` (or `CONFIG2PY_CONFIG_DIR`) at a temp dir *before* the first import.
+- **Default folders are resolved at import.** `import config2py` writes nothing to disk, but the default folder paths are computed then; the first access to `config_getter`, `local_configs` or `configs` creates `~/.config/config2py/configs/`. In tests, point `HOME`/`XDG_CONFIG_HOME` (or `CONFIG2PY_CONFIG_DIR`) at a temp dir *before* the first import.
 - **Broad fallback.** `config_not_found_exceptions` defaults to `(Exception,)`, so a bug or network error in a callable source silently falls through to the next source. Narrow it when you can.
 - **Plain text, not a vault.** Values saved by the prompt flow are plain one-file-per-key text files, currently written with the umask default and protected only by their `0o700` folder when config2py created it (i2mint/config2py#33). `envvar` hides values from `repr()` only, not from iteration or pickling.
 - **Silent empties.** `ConfigReader("typo.ini")` and `extract_exports("typo/.env")` return empty results instead of raising, so check that the path exists first.

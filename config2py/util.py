@@ -741,6 +741,7 @@ def get_configs_folder_for_app(
     configs_name: str = DFLT_CONFIGS_NAME,
     app_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
     config_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
+    ensure_exists: bool = True,
 ):
     """
     Retrieve or create the configs directory specific to the given app name.
@@ -752,10 +753,27 @@ def get_configs_folder_for_app(
             initialize the app directory. Default is _default_folder_setup.
         config_dir_setup_callback (Callable[[str], None]): A callback function to
             initialize the configs directory. Default is _default_folder_setup.
+        ensure_exists (bool): Whether to create (and set up) the directory. With
+            ``False``, only the path is computed: nothing is created or chmod-ed.
     """
     app_dir = get_app_config_folder(app_name, setup_callback=app_dir_setup_callback)
     configs_dir = os.path.join(app_dir, configs_name)
-    config_dir_setup_callback(configs_dir)
+    if not ensure_exists:
+        return configs_dir
+    return setup_configs_folder(configs_dir, setup_callback=config_dir_setup_callback)
+
+
+def setup_configs_folder(
+    configs_dir: str,
+    *,
+    setup_callback: Callable[[str], None] = _default_folder_setup,
+) -> str:
+    """Create ``configs_dir`` (via ``setup_callback``) and return it.
+
+    If the folder is one config2py manages (it holds a ``.config2py`` marker), its
+    modes are also re-tightened, as ``get_configs_folder_for_app`` does.
+    """
+    setup_callback(configs_dir)
     if os.path.isfile(os.path.join(configs_dir, ".config2py")):
         _tighten_managed_configs_folder(configs_dir)
     return configs_dir
@@ -806,7 +824,10 @@ get_configs_directory_for_app = (
     get_configs_folder_for_app  # backwards compatibility alias
 )
 
-DFLT_CONFIG_FOLDER = get_configs_folder_for_app()
+# The path of config2py's own configs folder. It is computed at import but only
+# created on first use (see ``config2py.tools``), so ``import config2py`` writes
+# nothing to disk (see https://github.com/i2mint/config2py/issues/26).
+DFLT_CONFIG_FOLDER = get_configs_folder_for_app(ensure_exists=False)
 
 
 # ---------------------------------------------------------------------------
