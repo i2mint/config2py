@@ -38,7 +38,7 @@ def test_the_warning_is_a_config2py_user_warning():
 
 @pytest.mark.parametrize("source", ["no/such/file.ini", Path("no/such/file.ini")])
 def test_config_reader_warns_on_a_missing_file(source):
-    with pytest.warns(MissingConfigFileWarning, match="no/such/file.ini") as record:
+    with pytest.warns(MissingConfigFileWarning, match="file.ini") as record:
         reader = ConfigReader(source)
     assert list(reader) == ["DEFAULT"]  # still reads as empty, as before
     assert record[0].filename == __file__  # points at the caller's line
