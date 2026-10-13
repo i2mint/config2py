@@ -289,3 +289,78 @@ def test_untightenable_files_give_one_warning(tmp_path, monkeypatch):
         get_configs_folder_for_app("app35_warn")
     assert len(record) == 1
     assert "3 file(s)" in str(record[0].message)
+
+
+# --------------------------------------------------------------------------------------
+# Follow-ups from the #35 review (see https://github.com/i2mint/config2py/issues/37)
+
+
+def test_ini_files_are_utf8_whatever_the_locale(tmp_path):
+    """#37.1: ``ConfigStore.persist`` writes UTF-8 and ``ConfigReader`` reads it back,
+    even under a non-UTF-8 locale (``LC_ALL=C``), where both used the locale's
+    encoding (ASCII), so a non-ASCII value could not even be saved."""
+    path = tmp_path / "config.ini"
+    code = (
+        "from config2py import ConfigStore, ConfigReader\n"
+        f"store = ConfigStore({str(path)!r})\n"
+        "store['section'] = {'name': 'caf\\u00e9'}\n"
+        f"assert ConfigReader({str(path)!r})['section']['name'] == 'caf\\u00e9'\n"
+    )
+    env = _sandboxed_env(
+        tmp_path, LC_ALL="C", LANG="C", PYTHONUTF8="0", PYTHONCOERCECLOCALE="0"
+    )
+    result = _run_python(code, env)
+    assert result.returncode == 0, result.stderr
+    assert "café".encode("utf-8") in path.read_bytes()
+
+
+def test_ini_files_in_the_locale_encoding_still_read(tmp_path, monkeypatch):
+    """#37.1: a file that isn't valid UTF-8 (written in the locale's encoding, as
+    ``persist`` did before) is still read with the locale's encoding, and a UTF-8 BOM
+    is tolerated."""
+    from config2py import ConfigReader
+    from config2py import s_configparser
+
+    latin1 = tmp_path / "latin1.ini"
+    latin1.write_bytes("[s]\nname = café\n".encode("latin-1"))
+    encodings = []
+    original_read = s_configparser.ConfigStore.read
+
+    def spy_read(self, filenames, encoding=None):
+        encodings.append(encoding)
+        return original_read(self, filenames, encoding="latin-1")
+
+    monkeypatch.setattr(s_configparser.ConfigStore, "read", spy_read)
+    assert ConfigReader(str(latin1))["s"]["name"] == "café"
+    assert encodings == [None]  # None: the locale's encoding, as before
+    monkeypatch.undo()
+
+    bom = tmp_path / "bom.ini"
+    bom.write_bytes("[s]\nname = café\n".encode("utf-8-sig"))
+    assert ConfigReader(bom)["s"]["name"] == "café"
+
+
+def test_several_filepaths_are_each_decoded(tmp_path):
+    from config2py import ConfigReader
+
+    (tmp_path / "a.ini").write_bytes("[a]\nk = é\n".encode("utf-8"))
+    (tmp_path / "b.ini").write_bytes("[b]\nk = x\n".encode("utf-8"))
+    paths = [str(tmp_path / "a.ini"), tmp_path / "b.ini"]
+    reader = ConfigReader(paths)
+    assert reader["a"]["k"] == "é" and reader["b"]["k"] == "x"
+
+
+def test_secure_text_files_dol_contract(tmp_path):
+    """#37.3: ``SecureTextFiles.__setitem__`` relies on these ``dol`` internals
+    (``dol`` is unpinned). If this fails, ``dol`` changed them: update
+    ``SecureTextFiles`` accordingly."""
+    from config2py.tools import SecureTextFiles
+
+    store = SecureTextFiles(str(tmp_path) + os.sep)
+    assert callable(store._id_of_key)
+    assert callable(store.store.validate_key)
+    assert callable(store._data_of_obj)
+    path = store._id_of_key("KEY")
+    assert os.path.dirname(path) == str(tmp_path)
+    store["KEY"] = "value"
+    assert (tmp_path / "KEY").read_text(encoding="utf-8") == "value"

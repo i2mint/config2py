@@ -35,6 +35,16 @@ class SecureTextFiles(TextFiles):
     write raises ``KeyError``. Unlike it, the value is encoded before the file is
     opened, so an unencodable value doesn't leave an emptied file behind
     (see https://github.com/i2mint/config2py/issues/35).
+
+    Like ``TextFiles`` (and ``open``), a value file that is a symlink is followed, and
+    its target is the file written (and tightened to ``0o600``). That is deliberate:
+    it keeps value files symlinked from elsewhere (a dotfiles repo, say) working, and
+    in config2py's own configs folder (``0o700``) only its owner can plant a link
+    (see https://github.com/i2mint/config2py/issues/37).
+
+    ``__setitem__`` relies on three ``dol`` internals: ``_id_of_key``,
+    ``store.validate_key`` and ``_data_of_obj``. ``dol`` is unpinned, so
+    ``test_secure_text_files_dol_contract`` checks they still exist.
     """
 
     encoding = "utf-8"  # what dol's TextFiles reads with

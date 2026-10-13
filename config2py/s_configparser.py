@@ -114,6 +114,31 @@ ConfigParserStore.__name__ = "ConfigParserStore"
 # TODO: Extend to a KvPersister (include __setitem__ and __delitem__)
 #   Relevant methods: add_section, write, remove_section. Need to decide on auto-persistence.
 #   In fact, the reader is already a writer (from ConfigParser), but need to manage persistence.
+def _text_file_encoding(filepath):
+    """``"utf-8-sig"`` if the file at ``filepath`` is valid UTF-8 (with or without a
+    BOM), else ``None`` (meaning: the locale's encoding, ``open``'s default). Also
+    ``None`` if the file can't be read, leaving that to the caller.
+
+    >>> import os, tempfile
+    >>> path = tempfile.mktemp()
+    >>> with open(path, "wb") as f:
+    ...     _ = f.write("café".encode("utf-8"))
+    >>> _text_file_encoding(path)
+    'utf-8-sig'
+    >>> with open(path, "wb") as f:
+    ...     _ = f.write("café".encode("latin-1"))
+    >>> _text_file_encoding(path) is None
+    True
+    >>> os.remove(path)
+    """
+    try:
+        with open(filepath, "rb") as fp:
+            fp.read().decode("utf-8")
+        return "utf-8-sig"
+    except (OSError, UnicodeDecodeError):
+        return None
+
+
 class ConfigStore(ConfigParserStore):
     r"""Persister (read, write, delete) for ini configs.
 
@@ -262,7 +287,7 @@ class ConfigStore(ConfigParserStore):
                 self.read_string(source)
                 source_kind = "string"
             else:
-                self.read(source)
+                self._read_filepaths(source)
                 source_kind = "filepath"
         elif isinstance(source, bytes):
             self.read_string(source.decode())
@@ -274,11 +299,22 @@ class ConfigStore(ConfigParserStore):
             self.read_file(source)
             source_kind = "stream"
         else:
-            self.read(source)
+            self._read_filepaths(source)
             source_kind = "unknown"
         self.source = source
         self.source_kind = source_kind
         self.target_kind = target_kind or source_kind
+
+    def _read_filepaths(self, filepaths):
+        """``self.read(filepaths)``, decoding each file as UTF-8 (what ``persist``
+        writes), or with the locale's encoding (as before) if it isn't valid UTF-8
+        (see https://github.com/i2mint/config2py/issues/37)."""
+        if isinstance(filepaths, (str, bytes, _os.PathLike)):
+            filepaths = [filepaths]
+        read_ok = []
+        for filepath in filepaths:
+            read_ok += self.read(filepath, encoding=_text_file_encoding(filepath))
+        return read_ok
 
     def to_dict(self):
         """Return the whole config as a ``{section: {key: value}}`` dict."""
@@ -300,7 +336,7 @@ class ConfigStore(ConfigParserStore):
         """
         if not self._within_context_manager:
             if self.target_kind == "filepath":
-                with secure_open(self.source, "w") as fp:
+                with secure_open(self.source, "w", encoding="utf-8") as fp:
                     return self.write(fp, self.space_around_delimiters)
             else:
                 if self.target_kind == "stream":
