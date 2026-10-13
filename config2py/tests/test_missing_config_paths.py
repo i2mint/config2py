@@ -69,6 +69,7 @@ def test_config_reader_sources_that_are_not_missing_paths_do_not_warn(ini_file):
         {"section": {"key": "value"}},
         io.StringIO(content),
         "",  # blank: empty content, not a path
+        "[section]",  # a one-line ini is content too
     ):
         _no_warnings(ConfigReader, source)
 
@@ -115,3 +116,18 @@ def test_extract_exports_content_and_existing_files_do_not_warn(tmp_path):
     empty = tmp_path / "empty.env"
     empty.write_text("")
     assert _no_warnings(extract_exports, str(empty)) == {}  # exists, so no warning
+
+
+def test_extract_exports_handles_long_single_line_content():
+    """A long exported value is content, not a filepath "too long" to probe."""
+    value = "x" * 5000
+    assert _no_warnings(extract_exports, f'export A="{value}"') == {"A": value}
+    with pytest.warns(MissingConfigFileWarning):
+        assert extract_exports("y" * 5000) == {}
+
+
+def test_the_warning_classes_are_importable_from_the_package():
+    import config2py
+
+    assert config2py.MissingConfigFileWarning is MissingConfigFileWarning
+    assert config2py.Config2PyWarning is Config2PyWarning

@@ -227,6 +227,13 @@ _extract_name_and_value_from_export_line = Pipe(
 )
 
 
+def _is_file(path: Path) -> bool:
+    try:
+        return path.is_file()
+    except OSError:  # e.g. "File name too long"
+        return False
+
+
 def extract_exports(exports, *, on_missing: str = "warn") -> dict:
     r"""Get a dict of ``{name: value}`` pairs from the ``name="value" pairs of unix
     export lines (that is, lines of the ``export NAME="VALUE"`` format
@@ -263,10 +270,12 @@ def extract_exports(exports, *, on_missing: str = "warn") -> dict:
     validate_on_missing(on_missing)
     if isinstance(exports, os.PathLike):
         exports = os.fspath(exports)
-    if "\n" not in exports and Path(resolve_path(exports)).is_file():
-        exports = Path(resolve_path(exports)).read_text()
-    elif "\n" not in exports and exports.strip() and not export_line_p.search(exports):
-        report_missing_config_file(exports, on_missing=on_missing, stacklevel=2)
+    if "\n" not in exports and not export_line_p.search(exports):  # a filepath
+        filepath = Path(resolve_path(exports))
+        if _is_file(filepath):
+            exports = filepath.read_text()
+        elif exports.strip():
+            report_missing_config_file(exports, on_missing=on_missing, stacklevel=2)
     return dict(
         filter(
             None,

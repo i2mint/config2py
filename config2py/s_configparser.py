@@ -2,7 +2,7 @@
 Data Object Layer for configparser standard lib.
 """
 
-import os
+import os as _os
 from configparser import ConfigParser
 from configparser import BasicInterpolation, ExtendedInterpolation
 from functools import wraps
@@ -11,7 +11,10 @@ from io import StringIO
 from dol import Store
 
 from config2py.util import secure_open
-from config2py.errors import report_missing_config_file, validate_on_missing
+from config2py.errors import (  # private names: py2store star-imports this module
+    report_missing_config_file as _report_missing_config_file,
+    validate_on_missing as _validate_on_missing,
+)
 
 # from py2store.signatures import Sig
 
@@ -341,12 +344,14 @@ class ConfigStore(ConfigParserStore):
 
 def _missing_filepaths(source) -> list:
     """The filepaths in ``source`` that ``ConfigStore`` would read but that are not
-    existing files. A multi-line or blank ``str`` is content, not a filepath."""
+    existing files. A multi-line, blank, or ``[section]``-starting ``str`` is content,
+    not a filepath."""
 
     def is_filepath(x):
         if isinstance(x, str):
-            return "\n" not in x and bool(x.strip())
-        return isinstance(x, os.PathLike)
+            stripped = x.strip()
+            return "\n" not in x and bool(stripped) and not stripped.startswith("[")
+        return isinstance(x, _os.PathLike)
 
     if is_filepath(source):
         candidates = [source]
@@ -354,7 +359,7 @@ def _missing_filepaths(source) -> list:
         candidates = [x for x in source if is_filepath(x)]
     else:
         candidates = []
-    return [x for x in candidates if not os.path.isfile(x)]
+    return [x for x in candidates if not _os.path.isfile(x)]
 
 
 class ConfigReader(ConfigStore):
@@ -427,9 +432,9 @@ class ConfigReader(ConfigStore):
     """
 
     def __init__(self, source, *, on_missing: str = "warn", **kwargs):
-        validate_on_missing(on_missing)
+        _validate_on_missing(on_missing)
         for path in _missing_filepaths(source):
-            report_missing_config_file(path, on_missing=on_missing, stacklevel=2)
+            _report_missing_config_file(path, on_missing=on_missing, stacklevel=2)
         super().__init__(source, **kwargs)
 
     def persist(self):
