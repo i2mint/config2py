@@ -28,11 +28,14 @@ class InsecureConfigFolderWarning(Config2PyWarning):
 ON_MISSING_OPTIONS = ("warn", "raise", "ignore")
 
 
-def validate_on_missing(on_missing: str) -> str:
-    """Check that ``on_missing`` is one of ``ON_MISSING_OPTIONS`` and return it."""
+def validate_on_missing(on_missing: str, *, name: str = "on_missing") -> str:
+    """Check that ``on_missing`` is one of ``ON_MISSING_OPTIONS`` and return it.
+
+    ``name`` is the argument the error message names (``on_unsafe_folder`` uses the
+    same three options)."""
     if on_missing not in ON_MISSING_OPTIONS:
         raise ValueError(
-            f"on_missing must be one of {ON_MISSING_OPTIONS}. Was: {on_missing!r}"
+            f"{name} must be one of {ON_MISSING_OPTIONS}. Was: {on_missing!r}"
         )
     return on_missing
 

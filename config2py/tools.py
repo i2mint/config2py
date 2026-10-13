@@ -96,6 +96,12 @@ class SecureTextFiles(TextFiles):
             data = self._data_of_obj(v).encode(self.encoding)
             with secure_open(path, "wb", follow_symlinks=self._follow_symlinks) as fp:
                 fp.write(data)
+        except UnicodeError as error:
+            # Its text quotes the offending character of the (possibly secret) value.
+            raise KeyError(
+                f"{k!r}: the value can't be encoded as {self.encoding} "
+                f"({type(error).__name__} at position {getattr(error, 'start', '?')})"
+            ) from None
         except Exception as error:
             raise KeyError(str(error)) from error
 
