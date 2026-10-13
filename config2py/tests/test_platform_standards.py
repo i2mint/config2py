@@ -18,6 +18,7 @@ from config2py.util import (
     FolderSpec,
     app_folder_standards,
     config2py_env_var,
+    get_app_folder,
     get_app_rootdir,
     system_default_for_app_data_folder,
 )
@@ -143,18 +144,38 @@ def test_config2py_override_wins_on_every_platform(folder_kind, tmp_path, monkey
     assert os.path.realpath(rootdir) == os.path.realpath(str(target))
 
 
+@pytest.mark.parametrize("os_name", ["posix", "nt"])
 @pytest.mark.parametrize("folder_kind", FOLDER_KINDS)
-def test_empty_env_var_counts_as_unset(folder_kind, tmp_path, monkeypatch):
-    """An empty ``XDG_*`` (or ``CONFIG2PY_<KIND>_DIR``) is treated as unset, not as the
-    cwd (i2mint/config2py#38; the XDG spec says so for ``XDG_*``)."""
-    monkeypatch.chdir(tmp_path)
-    env_var, default, subpath = APP_FOLDER_STANDARDS[folder_kind]
+def test_empty_env_var_counts_as_unset(os_name, folder_kind, monkeypatch):
+    """An empty ``XDG_*`` / ``APPDATA`` ... is treated as unset, not as the cwd
+    (i2mint/config2py#38; the XDG spec says so for ``XDG_*``)."""
+    standards = app_folder_standards(os_name)
+    env_var = standards[folder_kind].env_var
     monkeypatch.delenv(env_var, raising=False)
-    expected = system_default_for_app_data_folder(folder_kind)
+    expected = system_default_for_app_data_folder(folder_kind, standards=standards)
     monkeypatch.setenv(env_var, "")
-    resolved = system_default_for_app_data_folder(folder_kind)
+    resolved = system_default_for_app_data_folder(folder_kind, standards=standards)
     assert resolved == expected
-    assert os.path.isabs(resolved)
+    assert resolved  # not "", which os.path.join would turn into a cwd-relative path
+
+
+@pytest.mark.parametrize("folder_kind", FOLDER_KINDS)
+def test_empty_env_vars_do_not_scatter_folders_in_cwd(
+    folder_kind, tmp_path, monkeypatch
+):
+    """The symptom of #38: ``./config2py/...`` created wherever the process runs.
+
+    Runs in a sandboxed HOME and cwd; both the platform variable and the
+    ``CONFIG2PY_<KIND>_DIR`` override are set to the empty string.
+    """
+    home, cwd = tmp_path / "home", tmp_path / "cwd"
+    home.mkdir()
+    cwd.mkdir()
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("USERPROFILE", str(home))  # ``~`` on Windows
+    monkeypatch.chdir(cwd)
+    monkeypatch.setenv(APP_FOLDER_STANDARDS[folder_kind].env_var, "")
     monkeypatch.setenv(getattr(config2py_env_var, folder_kind), "")
-    assert os.path.realpath(get_app_rootdir(folder_kind)) == os.path.realpath(expected)
-    assert list(tmp_path.iterdir()) == []  # nothing was created under the cwd
+    app_folder = get_app_folder("app38", ensure_exists=True, folder_kind=folder_kind)
+    assert os.path.isabs(app_folder)
+    assert list(cwd.iterdir()) == []
