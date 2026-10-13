@@ -1,4 +1,4 @@
-> built 2026-10-13 05:18 UTC from 5564778 (master) · config2py 0.1.61. Details: build_info.json
+> built 2026-10-13 05:35 UTC from a4691f7 (master) · config2py 0.1.62. Details: build_info.json
 
 # index.html.md
 
@@ -3972,18 +3972,18 @@ make, for example, `import config2py` crash
 
 # About this build
 
-This documentation was built on **2026-10-13 05:18 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/5564778b33c090efdc020aabb0fad7b7e8ffb1f4"><code>5564778</code></a> on branch <code>master</code>, for **config2py 0.1.61** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 05:35 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/a4691f75898c3e5d7128f662e96e802ed0e3e04e"><code>a4691f7</code></a> on branch <code>master</code>, for **config2py 0.1.62** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.61) is behind the latest release on PyPI (0.1.62): `pip install config2py` gives newer code than these docs describe.
+- The documented version (0.1.62) is behind the latest release on PyPI (0.1.63): `pip install config2py` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/5564778b33c090efdc020aabb0fad7b7e8ffb1f4"><code>5564778b33c090efdc020aabb0fad7b7e8ffb1f4</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/a4691f75898c3e5d7128f662e96e802ed0e3e04e"><code>a4691f75898c3e5d7128f662e96e802ed0e3e04e</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -3994,9 +3994,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38350555062">38350555062</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38351996531">38351996531</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>5564778b33c090efdc020aabb0fad7b7e8ffb1f4</code> (in the history of the built commit) |
+| Event commit | <code>a4691f75898c3e5d7128f662e96e802ed0e3e04e</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4021,13 +4021,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.62/">0.1.62</a>, newer than the documented version (0.1.61).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.63/">0.1.63</a>, newer than the documented version (0.1.62).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 5564778b33c090efdc020aabb0fad7b7e8ffb1f4
+git checkout a4691f75898c3e5d7128f662e96e802ed0e3e04e
 pip install "epythet==0.2.13"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
