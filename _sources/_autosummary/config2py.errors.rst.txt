@@ -9,6 +9,7 @@ config2py.errors
    .. autosummary::
    
       report_missing_config_file
+      unusable_config_file_problem
       validate_on_missing
    
    .. rubric:: Exceptions

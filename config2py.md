@@ -1,4 +1,4 @@
-> built 2026-10-13 05:35 UTC from a4691f7 (master) · config2py 0.1.62. Details: build_info.json
+> built 2026-10-13 05:55 UTC from 1f12f38 (master) · config2py 0.1.63. Details: build_info.json
 
 # index.html.md
 
@@ -1149,17 +1149,18 @@ Error classes for config2py.
 
 ### Functions
 
-| [`report_missing_config_file`](_autosummary/config2py.errors.html.md#config2py.errors.report_missing_config_file)(path, \*[, ...])   | Act on a config source `path` that is not an existing file.           |
-|------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
-| [`validate_on_missing`](_autosummary/config2py.errors.html.md#config2py.errors.validate_on_missing)(on_missing)               | Check that `on_missing` is one of `ON_MISSING_OPTIONS` and return it. |
+| [`report_missing_config_file`](_autosummary/config2py.errors.html.md#config2py.errors.report_missing_config_file)(path, \*[, ...])   | Act on a config source `path` that is not an existing, readable file.                                                                    |
+|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| [`unusable_config_file_problem`](_autosummary/config2py.errors.html.md#config2py.errors.unusable_config_file_problem)(path)            | Why `path` can't be read as a config file, as `(error_class, errno, reason)`, or `None` if it is an existing, readable, non-folder path. |
+| [`validate_on_missing`](_autosummary/config2py.errors.html.md#config2py.errors.validate_on_missing)(on_missing)               | Check that `on_missing` is one of `ON_MISSING_OPTIONS` and return it.                                                                    |
 
 ### Exceptions
 
-| [`Config2PyError`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyError)           | Base class for config2py errors.                                                                                                                                                       |
-|---------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`Config2PyWarning`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyWarning)         | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                  |
-| [`ConfigNotFound`](_autosummary/config2py.errors.html.md#config2py.errors.ConfigNotFound)           | Raised when a config file is not found.                                                                                                                                                |
-| [`MissingConfigFileWarning`](_autosummary/config2py.errors.html.md#config2py.errors.MissingConfigFileWarning) | A path given as a config source is not an existing file, so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)). |
+| [`Config2PyError`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyError)           | Base class for config2py errors.                                                                                                                                                                                                                  |
+|---------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`Config2PyWarning`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyWarning)         | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                                                                             |
+| [`ConfigNotFound`](_autosummary/config2py.errors.html.md#config2py.errors.ConfigNotFound)           | Raised when a config file is not found.                                                                                                                                                                                                           |
+| [`MissingConfigFileWarning`](_autosummary/config2py.errors.html.md#config2py.errors.MissingConfigFileWarning) | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43). |
 
 ### *exception* config2py.errors.Config2PyError
 
@@ -1183,18 +1184,31 @@ Raised when a config file is not found.
 
 Bases: [`Config2PyWarning`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyWarning)
 
-A path given as a config source is not an existing file, so it was read as
-empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
+A path given as a config source is not an existing, readable file (it is
+missing, a folder, or unreadable), so it was read as empty
+(see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).
 
-### config2py.errors.report_missing_config_file(path, , on_missing='warn', stacklevel=2)
+### config2py.errors.report_missing_config_file(path, , on_missing='warn', stacklevel=2, resolved_path=None)
 
-Act on a config source `path` that is not an existing file.
+Act on a config source `path` that is not an existing, readable file.
+
+The problem is told apart: missing, a directory, or unreadable (permission
+denied). A path that exists, is readable and isn’t a folder (a device or a pipe) is
+reported as not a regular file.
 
 * **Parameters:**
   * **on_missing** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` issues a `MissingConfigFileWarning`,
-    `"raise"` raises `FileNotFoundError`, `"ignore"` does nothing.
+    `"raise"` raises `FileNotFoundError` (`IsADirectoryError` for a folder,
+    `PermissionError` for an unreadable file), `"ignore"` does nothing.
   * **stacklevel** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Passed to `warnings.warn`, so the warning points at the
     caller’s code (`2` is the caller of this function).
+  * **resolved_path** – What `path` resolves to (`~` expanded, …), when that is
+    what was actually looked at. `path` is what the messages show.
+
+### config2py.errors.unusable_config_file_problem(path)
+
+Why `path` can’t be read as a config file, as `(error_class, errno, reason)`,
+or `None` if it is an existing, readable, non-folder path.
 
 ### config2py.errors.validate_on_missing(on_missing)
 
@@ -1244,11 +1258,11 @@ Tools to read and write configurations from various sources and formats
 
 ### Exceptions
 
-| [`Config2PyError`](_autosummary/config2py.html.md#config2py.Config2PyError)           | Base class for config2py errors.                                                                                                                                                       |
-|---------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`Config2PyWarning`](_autosummary/config2py.html.md#config2py.Config2PyWarning)         | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                  |
-| [`ConfigNotFound`](_autosummary/config2py.html.md#config2py.ConfigNotFound)           | Raised when a config file is not found.                                                                                                                                                |
-| [`MissingConfigFileWarning`](_autosummary/config2py.html.md#config2py.MissingConfigFileWarning) | A path given as a config source is not an existing file, so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)). |
+| [`Config2PyError`](_autosummary/config2py.html.md#config2py.Config2PyError)           | Base class for config2py errors.                                                                                                                                                                                                                  |
+|---------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`Config2PyWarning`](_autosummary/config2py.html.md#config2py.Config2PyWarning)         | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                                                                             |
+| [`ConfigNotFound`](_autosummary/config2py.html.md#config2py.ConfigNotFound)           | Raised when a config file is not found.                                                                                                                                                                                                           |
+| [`MissingConfigFileWarning`](_autosummary/config2py.html.md#config2py.MissingConfigFileWarning) | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43). |
 
 ### *class* config2py.AppData(app_name, , package_name=None, seed_data_dir='_seed_data')
 
@@ -1394,9 +1408,11 @@ A KvReader to read config files
 
 A filepath (a single-line `str`, an `os.PathLike`, or several of them in a list
 or tuple) that is not an existing file reads as empty, as `configparser` does.
+So does one that is a folder or can’t be read (permission denied).
 `on_missing` says what else happens: `"warn"` (the default) issues a
-`MissingConfigFileWarning`, `"raise"` raises `FileNotFoundError`, and
-`"ignore"` does nothing (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
+`MissingConfigFileWarning`, `"raise"` raises `FileNotFoundError` (or
+`IsADirectoryError` / `PermissionError`), and `"ignore"` does nothing
+(see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).
 
 ```pycon
 >>> c = ConfigReader('no/such/file.ini', on_missing='ignore')
@@ -1655,8 +1671,9 @@ Pre-configured with json.loads/dumps and sensible defaults.
 
 Bases: [`Config2PyWarning`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyWarning)
 
-A path given as a config source is not an existing file, so it was read as
-empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
+A path given as a config source is not an existing, readable file (it is
+missing, a folder, or unreadable), so it was read as empty
+(see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).
 
 ### *class* config2py.SyncStore(loader, dumper)
 
@@ -2429,9 +2446,11 @@ A KvReader to read config files
 
 A filepath (a single-line `str`, an `os.PathLike`, or several of them in a list
 or tuple) that is not an existing file reads as empty, as `configparser` does.
+So does one that is a folder or can’t be read (permission denied).
 `on_missing` says what else happens: `"warn"` (the default) issues a
-`MissingConfigFileWarning`, `"raise"` raises `FileNotFoundError`, and
-`"ignore"` does nothing (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
+`MissingConfigFileWarning`, `"raise"` raises `FileNotFoundError` (or
+`IsADirectoryError` / `PermissionError`), and `"ignore"` does nothing
+(see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).
 
 ```pycon
 >>> c = ConfigReader('no/such/file.ini', on_missing='ignore')
@@ -3972,18 +3991,16 @@ make, for example, `import config2py` crash
 
 # About this build
 
-This documentation was built on **2026-10-13 05:35 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/a4691f75898c3e5d7128f662e96e802ed0e3e04e"><code>a4691f7</code></a> on branch <code>master</code>, for **config2py 0.1.62** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 05:55 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/1f12f386f793264876e0fa9663f65d9840206211"><code>1f12f38</code></a> on branch <code>master</code>, for **config2py 0.1.63** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.62) is behind the latest release on PyPI (0.1.63): `pip install config2py` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/a4691f75898c3e5d7128f662e96e802ed0e3e04e"><code>a4691f75898c3e5d7128f662e96e802ed0e3e04e</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/1f12f386f793264876e0fa9663f65d9840206211"><code>1f12f386f793264876e0fa9663f65d9840206211</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -3994,15 +4011,15 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38351996531">38351996531</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38353755402">38353755402</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>a4691f75898c3e5d7128f662e96e802ed0e3e04e</code> (in the history of the built commit) |
+| Event commit | <code>1f12f386f793264876e0fa9663f65d9840206211</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.13  |
+| epythet  | 0.2.14  |
 | Sphinx   | 9.1.0   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
@@ -4021,14 +4038,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.63/">0.1.63</a>, newer than the documented version (0.1.62).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.63/">0.1.63</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout a4691f75898c3e5d7128f662e96e802ed0e3e04e
-pip install "epythet==0.2.13"
+git checkout 1f12f386f793264876e0fa9663f65d9840206211
+pip install "epythet==0.2.14"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

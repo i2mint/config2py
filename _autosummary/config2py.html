@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=cc64e7de"></script>
+    <script src="../_static/documentation_options.js?v=681c63c7"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.62" />
+  <meta name="docsearch:version" content="0.1.63" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -488,7 +488,7 @@
 <td><p>Raised when a config file is not found.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#config2py.MissingConfigFileWarning" title="config2py.MissingConfigFileWarning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code></a></p></td>
-<td><p>A path given as a config source is not an existing file, so it was read as empty (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p></td>
+<td><p>A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a> and /43).</p></td>
 </tr>
 </tbody>
 </table>
@@ -653,9 +653,11 @@ Python package (default <code class="docutils literal notranslate"><span class="
 <p>######## A filepath that doesn’t exist ########</p>
 <p>A filepath (a single-line <code class="docutils literal notranslate"><span class="pre">str</span></code>, an <code class="docutils literal notranslate"><span class="pre">os.PathLike</span></code>, or several of them in a list
 or tuple) that is not an existing file reads as empty, as <code class="docutils literal notranslate"><span class="pre">configparser</span></code> does.
+So does one that is a folder or can’t be read (permission denied).
 <code class="docutils literal notranslate"><span class="pre">on_missing</span></code> says what else happens: <code class="docutils literal notranslate"><span class="pre">&quot;warn&quot;</span></code> (the default) issues a
-<code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>, and
-<code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> does nothing (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p>
+<code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> (or
+<code class="docutils literal notranslate"><span class="pre">IsADirectoryError</span></code> / <code class="docutils literal notranslate"><span class="pre">PermissionError</span></code>), and <code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> does nothing
+(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a> and /43).</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">(</span><span class="s1">'no/such/file.ini'</span><span class="p">,</span> <span class="n">on_missing</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">['DEFAULT']</span>
@@ -910,8 +912,9 @@ for missing key_path. If None, KeyError is raised for missing key paths.</p></li
 <dt class="sig sig-object py" id="config2py.MissingConfigFileWarning">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.</span></span><span class="sig-name descname"><span class="pre">MissingConfigFileWarning</span></span><a class="reference internal" href="../_modules/config2py/errors.html#MissingConfigFileWarning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.MissingConfigFileWarning" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="config2py.errors.html#config2py.errors.Config2PyWarning" title="config2py.errors.Config2PyWarning"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config2PyWarning</span></code></a></p>
-<p>A path given as a config source is not an existing file, so it was read as
-empty (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p>
+<p>A path given as a config source is not an existing, readable file (it is
+missing, a folder, or unreadable), so it was read as empty
+(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a> and /43).</p>
 </dd></dl>
 
 <dl class="py class">

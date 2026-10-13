@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=cc64e7de"></script>
+    <script src="../_static/documentation_options.js?v=681c63c7"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.62" />
+  <meta name="docsearch:version" content="0.1.63" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -482,9 +482,11 @@
 <p>######## A filepath that doesn’t exist ########</p>
 <p>A filepath (a single-line <code class="docutils literal notranslate"><span class="pre">str</span></code>, an <code class="docutils literal notranslate"><span class="pre">os.PathLike</span></code>, or several of them in a list
 or tuple) that is not an existing file reads as empty, as <code class="docutils literal notranslate"><span class="pre">configparser</span></code> does.
+So does one that is a folder or can’t be read (permission denied).
 <code class="docutils literal notranslate"><span class="pre">on_missing</span></code> says what else happens: <code class="docutils literal notranslate"><span class="pre">&quot;warn&quot;</span></code> (the default) issues a
-<code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>, and
-<code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> does nothing (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p>
+<code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> (or
+<code class="docutils literal notranslate"><span class="pre">IsADirectoryError</span></code> / <code class="docutils literal notranslate"><span class="pre">PermissionError</span></code>), and <code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> does nothing
+(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a> and /43).</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">(</span><span class="s1">'no/such/file.ini'</span><span class="p">,</span> <span class="n">on_missing</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">['DEFAULT']</span>

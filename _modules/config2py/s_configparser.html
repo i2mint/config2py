@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=cc64e7de"></script>
+    <script src="../../_static/documentation_options.js?v=681c63c7"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.62" />
+  <meta name="docsearch:version" content="0.1.63" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -727,6 +727,7 @@ window.runMermaid = runMermaid;</script>
 <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">secure_open</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># private names: py2store star-imports this module</span>
     <span class="n">report_missing_config_file</span> <span class="k">as</span> <span class="n">_report_missing_config_file</span><span class="p">,</span>
+    <span class="n">unusable_config_file_problem</span> <span class="k">as</span> <span class="n">_unusable_config_file_problem</span><span class="p">,</span>
     <span class="n">validate_on_missing</span> <span class="k">as</span> <span class="n">_validate_on_missing</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -1125,7 +1126,7 @@ window.runMermaid = runMermaid;</script>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_missing_filepaths</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""The filepaths in ``source`` that ``ConfigStore`` would read but that don't</span>
-<span class="sd">    exist (or are folders). Pipes (``/dev/stdin``) count as existing. A multi-line,</span>
+<span class="sd">    exist, are folders, or are unreadable. Pipes (``/dev/stdin``) count as existing. A multi-line,</span>
 <span class="sd">    blank, or ``[section]``-starting ``str`` is content, not a filepath."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">is_filepath</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -1140,7 +1141,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">source</span> <span class="k">if</span> <span class="n">is_filepath</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">_unusable_config_file_problem</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="ConfigReader">
@@ -1201,9 +1202,11 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    A filepath (a single-line ``str``, an ``os.PathLike``, or several of them in a list</span>
 <span class="sd">    or tuple) that is not an existing file reads as empty, as ``configparser`` does.</span>
+<span class="sd">    So does one that is a folder or can't be read (permission denied).</span>
 <span class="sd">    ``on_missing`` says what else happens: ``"warn"`` (the default) issues a</span>
-<span class="sd">    ``MissingConfigFileWarning``, ``"raise"`` raises ``FileNotFoundError``, and</span>
-<span class="sd">    ``"ignore"`` does nothing (see https://github.com/i2mint/config2py/issues/27).</span>
+<span class="sd">    ``MissingConfigFileWarning``, ``"raise"`` raises ``FileNotFoundError`` (or</span>
+<span class="sd">    ``IsADirectoryError`` / ``PermissionError``), and ``"ignore"`` does nothing</span>
+<span class="sd">    (see https://github.com/i2mint/config2py/issues/27 and /43).</span>
 
 <span class="sd">    &gt;&gt;&gt; c = ConfigReader('no/such/file.ini', on_missing='ignore')</span>
 <span class="sd">    &gt;&gt;&gt; list(c)</span>

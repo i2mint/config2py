@@ -36,11 +36,11 @@ Tools to read and write configurations from various sources and formats
 
 ### Exceptions
 
-| [`Config2PyError`](#config2py.Config2PyError)           | Base class for config2py errors.                                                                                                                                                       |
-|---------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`Config2PyWarning`](#config2py.Config2PyWarning)         | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                  |
-| [`ConfigNotFound`](#config2py.ConfigNotFound)           | Raised when a config file is not found.                                                                                                                                                |
-| [`MissingConfigFileWarning`](#config2py.MissingConfigFileWarning) | A path given as a config source is not an existing file, so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)). |
+| [`Config2PyError`](#config2py.Config2PyError)           | Base class for config2py errors.                                                                                                                                                                                                                  |
+|---------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`Config2PyWarning`](#config2py.Config2PyWarning)         | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                                                                             |
+| [`ConfigNotFound`](#config2py.ConfigNotFound)           | Raised when a config file is not found.                                                                                                                                                                                                           |
+| [`MissingConfigFileWarning`](#config2py.MissingConfigFileWarning) | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43). |
 
 ### *class* config2py.AppData(app_name, , package_name=None, seed_data_dir='_seed_data')
 
@@ -186,9 +186,11 @@ A KvReader to read config files
 
 A filepath (a single-line `str`, an `os.PathLike`, or several of them in a list
 or tuple) that is not an existing file reads as empty, as `configparser` does.
+So does one that is a folder or can’t be read (permission denied).
 `on_missing` says what else happens: `"warn"` (the default) issues a
-`MissingConfigFileWarning`, `"raise"` raises `FileNotFoundError`, and
-`"ignore"` does nothing (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
+`MissingConfigFileWarning`, `"raise"` raises `FileNotFoundError` (or
+`IsADirectoryError` / `PermissionError`), and `"ignore"` does nothing
+(see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).
 
 ```pycon
 >>> c = ConfigReader('no/such/file.ini', on_missing='ignore')
@@ -447,8 +449,9 @@ Pre-configured with json.loads/dumps and sensible defaults.
 
 Bases: [`Config2PyWarning`](config2py.errors.html.md#config2py.errors.Config2PyWarning)
 
-A path given as a config source is not an existing file, so it was read as
-empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
+A path given as a config source is not an existing, readable file (it is
+missing, a folder, or unreadable), so it was read as empty
+(see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).
 
 ### *class* config2py.SyncStore(loader, dumper)
 

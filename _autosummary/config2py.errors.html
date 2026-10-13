@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=cc64e7de"></script>
+    <script src="../_static/documentation_options.js?v=681c63c7"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.62" />
+  <meta name="docsearch:version" content="0.1.63" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -398,9 +398,12 @@
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#config2py.errors.report_missing_config_file" title="config2py.errors.report_missing_config_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">report_missing_config_file</span></code></a>(path, *[, ...])</p></td>
-<td><p>Act on a config source <code class="docutils literal notranslate"><span class="pre">path</span></code> that is not an existing file.</p></td>
+<td><p>Act on a config source <code class="docutils literal notranslate"><span class="pre">path</span></code> that is not an existing, readable file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.errors.validate_on_missing" title="config2py.errors.validate_on_missing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_on_missing</span></code></a>(on_missing)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.errors.unusable_config_file_problem" title="config2py.errors.unusable_config_file_problem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unusable_config_file_problem</span></code></a>(path)</p></td>
+<td><p>Why <code class="docutils literal notranslate"><span class="pre">path</span></code> can't be read as a config file, as <code class="docutils literal notranslate"><span class="pre">(error_class,</span> <span class="pre">errno,</span> <span class="pre">reason)</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if it is an existing, readable, non-folder path.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.errors.validate_on_missing" title="config2py.errors.validate_on_missing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_on_missing</span></code></a>(on_missing)</p></td>
 <td><p>Check that <code class="docutils literal notranslate"><span class="pre">on_missing</span></code> is one of <code class="docutils literal notranslate"><span class="pre">ON_MISSING_OPTIONS</span></code> and return it.</p></td>
 </tr>
 </tbody>
@@ -419,7 +422,7 @@
 <td><p>Raised when a config file is not found.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#config2py.errors.MissingConfigFileWarning" title="config2py.errors.MissingConfigFileWarning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code></a></p></td>
-<td><p>A path given as a config source is not an existing file, so it was read as empty (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p></td>
+<td><p>A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a> and /43).</p></td>
 </tr>
 </tbody>
 </table>
@@ -449,24 +452,38 @@
 <dt class="sig sig-object py" id="config2py.errors.MissingConfigFileWarning">
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.errors.</span></span><span class="sig-name descname"><span class="pre">MissingConfigFileWarning</span></span><a class="reference internal" href="../_modules/config2py/errors.html#MissingConfigFileWarning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.errors.MissingConfigFileWarning" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#config2py.errors.Config2PyWarning" title="config2py.errors.Config2PyWarning"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config2PyWarning</span></code></a></p>
-<p>A path given as a config source is not an existing file, so it was read as
-empty (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p>
+<p>A path given as a config source is not an existing, readable file (it is
+missing, a folder, or unreadable), so it was read as empty
+(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a> and /43).</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.errors.report_missing_config_file">
-<span class="sig-prename descclassname"><span class="pre">config2py.errors.</span></span><span class="sig-name descname"><span class="pre">report_missing_config_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stacklevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/errors.html#report_missing_config_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.errors.report_missing_config_file" title="Link to this definition">#</a></dt>
-<dd><p>Act on a config source <code class="docutils literal notranslate"><span class="pre">path</span></code> that is not an existing file.</p>
+<span class="sig-prename descclassname"><span class="pre">config2py.errors.</span></span><span class="sig-name descname"><span class="pre">report_missing_config_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stacklevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolved_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/errors.html#report_missing_config_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.errors.report_missing_config_file" title="Link to this definition">#</a></dt>
+<dd><p>Act on a config source <code class="docutils literal notranslate"><span class="pre">path</span></code> that is not an existing, readable file.</p>
+<p>The problem is told apart: missing, a directory, or unreadable (permission
+denied). A path that exists, is readable and isn’t a folder (a device or a pipe) is
+reported as not a regular file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>on_missing</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – <code class="docutils literal notranslate"><span class="pre">&quot;warn&quot;</span></code> issues a <code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> does nothing.</p></li>
+<code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> (<code class="docutils literal notranslate"><span class="pre">IsADirectoryError</span></code> for a folder,
+<code class="docutils literal notranslate"><span class="pre">PermissionError</span></code> for an unreadable file), <code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> does nothing.</p></li>
 <li><p><strong>stacklevel</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Passed to <code class="docutils literal notranslate"><span class="pre">warnings.warn</span></code>, so the warning points at the
 caller’s code (<code class="docutils literal notranslate"><span class="pre">2</span></code> is the caller of this function).</p></li>
+<li><p><strong>resolved_path</strong> – What <code class="docutils literal notranslate"><span class="pre">path</span></code> resolves to (<code class="docutils literal notranslate"><span class="pre">~</span></code> expanded, …), when that is
+what was actually looked at. <code class="docutils literal notranslate"><span class="pre">path</span></code> is what the messages show.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.errors.unusable_config_file_problem">
+<span class="sig-prename descclassname"><span class="pre">config2py.errors.</span></span><span class="sig-name descname"><span class="pre">unusable_config_file_problem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/errors.html#unusable_config_file_problem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.errors.unusable_config_file_problem" title="Link to this definition">#</a></dt>
+<dd><p>Why <code class="docutils literal notranslate"><span class="pre">path</span></code> can’t be read as a config file, as <code class="docutils literal notranslate"><span class="pre">(error_class,</span> <span class="pre">errno,</span> <span class="pre">reason)</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">None</span></code> if it is an existing, readable, non-folder path.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -534,6 +551,7 @@ caller’s code (<code class="docutils literal notranslate"><span class="pre">2<
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.ConfigNotFound"><code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.MissingConfigFileWarning"><code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.report_missing_config_file"><code class="docutils literal notranslate"><span class="pre">report_missing_config_file()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.unusable_config_file_problem"><code class="docutils literal notranslate"><span class="pre">unusable_config_file_problem()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.validate_on_missing"><code class="docutils literal notranslate"><span class="pre">validate_on_missing()</span></code></a></li>
 </ul>
   </nav></div>

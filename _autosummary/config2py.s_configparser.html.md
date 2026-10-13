@@ -79,9 +79,11 @@ A KvReader to read config files
 
 A filepath (a single-line `str`, an `os.PathLike`, or several of them in a list
 or tuple) that is not an existing file reads as empty, as `configparser` does.
+So does one that is a folder or can’t be read (permission denied).
 `on_missing` says what else happens: `"warn"` (the default) issues a
-`MissingConfigFileWarning`, `"raise"` raises `FileNotFoundError`, and
-`"ignore"` does nothing (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
+`MissingConfigFileWarning`, `"raise"` raises `FileNotFoundError` (or
+`IsADirectoryError` / `PermissionError`), and `"ignore"` does nothing
+(see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).
 
 ```pycon
 >>> c = ConfigReader('no/such/file.ini', on_missing='ignore')
