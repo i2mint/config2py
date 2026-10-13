@@ -52,6 +52,52 @@ def test_a_private_folder_in_a_world_writable_parent_is_flagged(tmp_path):
 
 
 @posix_only
+@pytest.mark.skipif(
+    not hasattr(os, "geteuid") or os.geteuid() != 0, reason="needs root to chown"
+)
+def test_root_does_not_mind_an_ancestor_merely_owned_by_another_user(
+    tmp_path, monkeypatch
+):
+    """A host user's folder bind-mounted into a container, seen by root (#56)."""
+    parent = tmp_path / "hostdir"
+    parent.mkdir()
+    parent.chmod(0o755)
+    os.chown(parent, 65534, -1)
+    child = parent / "store"
+    child.mkdir(mode=0o700)
+    assert unsafe_folder_reason(child) is None
+    parent.chmod(0o777)  # ...but it is still flagged if others could write there
+    assert "writable" in unsafe_folder_reason(child)
+    parent.chmod(0o755)
+    os.chown(child, 65534, -1)  # and so is the folder itself being foreign
+    assert "owned by another user" in unsafe_folder_reason(child)
+
+
+@posix_only
+def test_a_non_root_user_still_gets_the_ownership_check_on_ancestors(
+    tmp_path, monkeypatch
+):
+    from config2py import util
+
+    parent = tmp_path / "hostdir"
+    (parent / "store").mkdir(parents=True, mode=0o700)
+    parent.chmod(0o755)
+    monkeypatch.setattr(util.os, "geteuid", lambda: 1000)
+    real_stat = os.stat
+
+    def fake_stat(path, *args, **kwargs):  # the parent belongs to someone else
+        st = real_stat(path, *args, **kwargs)
+        if os.fspath(path) == str(parent):
+            fields = list(st)
+            fields[4] = 4242  # st_uid
+            return os.stat_result(fields)
+        return st
+
+    monkeypatch.setattr(util.os, "stat", fake_stat)
+    assert "owned by another user" in util._ancestor_problem(parent / "store")
+
+
+@posix_only
 def test_a_sticky_parent_is_fine(tmp_path):
     parent = tmp_path / "tmpish"
     parent.mkdir()
@@ -203,3 +249,28 @@ def test_a_traverse_only_subfolder_works_when_not_following(private_dir):
     finally:
         sub.chmod(0o700)
     assert (sub / "KEY").read_text() == "w"
+
+
+@posix_only
+def test_root_exemption_without_being_root(tmp_path, monkeypatch):
+    """The same as the root test, faked so that CI (not root) exercises it (#56)."""
+    from config2py import util
+
+    parent = tmp_path / "hostdir"
+    (parent / "store").mkdir(parents=True, mode=0o700)
+    parent.chmod(0o755)
+    real_stat = os.stat
+
+    def parent_owned_by_someone_else(path, *args, **kwargs):
+        st = real_stat(path, *args, **kwargs)
+        if os.fspath(path) == str(parent):
+            fields = list(st)
+            fields[4] = 4242  # st_uid
+            return os.stat_result(fields)
+        return st
+
+    monkeypatch.setattr(util.os, "stat", parent_owned_by_someone_else)
+    monkeypatch.setattr(util.os, "geteuid", lambda: 0)
+    assert util._ancestor_problem(parent / "store") is None
+    monkeypatch.setattr(util.os, "geteuid", lambda: 1000)
+    assert "owned by another user" in util._ancestor_problem(parent / "store")

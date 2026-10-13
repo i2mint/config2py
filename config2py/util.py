@@ -268,8 +268,12 @@ def _ancestor_problem(dirpath) -> Optional[str]:
     use to swap the folder for a symlink, or ``None``. Like ssh's ``StrictModes``,
     which checks every folder up to the root. A sticky folder (``/tmp``) is fine
     even if others can write to it: they can't rename or remove entries they
-    don't own."""
+    don't own. When running as root, an ancestor merely *owned* by another user is
+    fine too (only its being writable by group or others counts): that is what a host
+    user's folder bind-mounted into a container looks like, and root put the folder
+    there on purpose (see https://github.com/i2mint/config2py/issues/56)."""
     ancestor = os.path.realpath(dirpath)
+    check_owner = os.geteuid() != 0
     while True:
         parent = os.path.dirname(ancestor)
         if parent == ancestor:
@@ -280,7 +284,7 @@ def _ancestor_problem(dirpath) -> Optional[str]:
         except OSError:
             continue
         problems = []
-        if st.st_uid not in (os.geteuid(), 0):
+        if check_owner and st.st_uid not in (os.geteuid(), 0):
             problems.append("owned by another user")
         if _loose_permissions(st) and not st.st_mode & stat.S_ISVTX:
             problems.append("writable by its group or by others")
@@ -299,7 +303,8 @@ def unsafe_folder_reason(
     current user is alone in does not count as "its group". With ``check_ancestors``
     (the default) the folders above it are checked the same way (those who can write
     to a parent can swap the folder itself for a symlink), except that a sticky
-    parent, such as ``/tmp``, is fine. ``ignore_sticky`` also accepts the folder
+    parent, such as ``/tmp``, is fine, and root does not mind a parent that is merely
+    owned by another user. ``ignore_sticky`` also accepts the folder
     itself being sticky (as ``/tmp`` is), for a file kept directly in a shared folder.
     POSIX only (``None`` elsewhere); a missing folder is ``None`` too.
 
@@ -1076,6 +1081,31 @@ def _normalized_path(path) -> str:
     return os.path.normcase(os.path.normpath(os.path.abspath(os.path.expanduser(path))))
 
 
+def looks_like_path(src) -> bool:
+    """Whether ``src`` is spelled as a filesystem path rather than as an app name.
+
+    A ``pathlib.Path`` (or any ``os.PathLike``), an absolute path, or a string
+    containing ``os.sep`` or ``os.altsep`` (so ``"C:/work/configs"`` on Windows) is a
+    path. A bare name such as ``"configs"`` is not, whether or not a directory of that
+    name exists (see https://github.com/i2mint/config2py/issues/28).
+
+    >>> looks_like_path("my_app")
+    False
+    >>> looks_like_path("configs/")
+    True
+    >>> from pathlib import Path
+    >>> looks_like_path(Path("configs"))
+    True
+    """
+    if not isinstance(src, str):
+        return isinstance(src, os.PathLike)
+    return (
+        os.path.isabs(src)
+        or os.path.sep in src
+        or bool(os.path.altsep and os.path.altsep in src)
+    )
+
+
 def is_default_configs_folder(path) -> bool:
     """Whether ``path`` (however spelled) is config2py's own configs folder.
 
@@ -1084,8 +1114,7 @@ def is_default_configs_folder(path) -> bool:
     the default folder, whatever the current directory.
     """
     if isinstance(path, str):
-        has_sep = os.path.sep in path or (os.path.altsep and os.path.altsep in path)
-        if not (has_sep or path.startswith("~")):
+        if not (looks_like_path(path) or path.startswith("~")):
             return False
     try:
         return _normalized_path(path) == _normalized_path(_DFLT_CONFIGS_FOLDER_PATH)

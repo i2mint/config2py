@@ -14,6 +14,7 @@ from config2py.util import (
     _DFLT_CONFIGS_FOLDER_PATH,  # the path of DFLT_CONFIG_FOLDER, not created (#26)
     ensure_default_configs_folder,
     is_default_configs_folder,
+    looks_like_path,
     is_repl,
     DFLT_CONFIGS_NAME,
     secure_open,
@@ -121,6 +122,12 @@ def _ensure_if_default_configs_folder(src):
         setup_configs_folder(src)
 
 
+def _is_app_name(src) -> bool:
+    return (
+        isinstance(src, str) and not looks_like_path(src) and src not in ("", ".", "..")
+    )
+
+
 # TODO: Make it into an open-closed plug-in using routing
 def get_configs_local_store(
     config_src=_DFLT_CONFIGS_FOLDER_PATH,
@@ -128,6 +135,7 @@ def get_configs_local_store(
     configs_name=DFLT_CONFIGS_NAME,
     follow_symlinks: bool = True,
     on_unsafe_folder: str = "warn",
+    kind: str = "auto",
 ):
     """Get the local store of configs.
 
@@ -135,6 +143,7 @@ def get_configs_local_store(
         If it's a directory, it's assumed to be a folder of text files.
         If it's a file, it's assumed to be an ini or cfg file.
         If it's a string, it's assumed to be an app name, from which to create a folder
+        (a ``pathlib.Path`` is always a path).
     :param follow_symlinks: Whether the store may write through a symlink at a value
         (or ini) file's path. ``False`` refuses to
         (see https://github.com/i2mint/config2py/issues/45).
@@ -143,18 +152,32 @@ def get_configs_local_store(
         ``/tmp`` is fine) is owned by another user or writable by its group or by
         others (see ``SecureTextFiles``).
 
-    Note: a directory is only recognized as such if ``config_src`` contains
-    ``os.path.sep``. A bare name (e.g. ``"configs"``) is always treated as an app
-    name, even if a directory of that name exists in the current working directory;
-    pass ``"./configs"`` (or an absolute path) to use that directory
-    (see https://github.com/i2mint/config2py/issues/28).
+    :param kind: How to read ``config_src``: ``"auto"`` (default), ``"path"`` or
+        ``"app"``. In ``"auto"`` mode, a ``pathlib.Path``, an absolute path, or a
+        string containing ``os.sep`` or ``os.altsep`` is a path, and any other string
+        is an app name, even if a directory of that name exists in the current working
+        directory (so as not to change where existing callers read and write; only an
+        existing ``.ini``/``.cfg`` file of that name is used as a file).
+        ``kind="path"`` makes a bare name such as ``"configs"`` mean that directory
+        (or file); ``kind="app"`` makes any string an app name.
+        See https://github.com/i2mint/config2py/issues/28.
 
     The default, ``DFLT_CONFIG_FOLDER``, is config2py's own configs folder. It is
     created here, on first use, rather than at import
     (see https://github.com/i2mint/config2py/issues/26).
     """
+    if kind not in ("auto", "path", "app"):
+        raise ValueError(f"kind must be 'auto', 'path' or 'app'. Was: {kind!r}")
+    if kind == "app" and not _is_app_name(config_src):
+        raise ValueError(
+            f"kind='app' needs an app name: a string without path separators, "
+            f"and not '.' or '..'. Was: {config_src!r}"
+        )
+    is_path = kind == "path" or (kind == "auto" and looks_like_path(config_src))
+    if isinstance(config_src, os.PathLike):
+        config_src = os.fspath(config_src)
     _ensure_if_default_configs_folder(config_src)
-    if os.path.sep in config_src and os.path.isdir(config_src):
+    if is_path and os.path.isdir(config_src):
         # TODO: This was a quick fix to avoid unknowingly making directories in the
         #   wrong place. Broke stuff so leaving this for later.
         # if os.path.sep not in config_src:
@@ -171,22 +194,23 @@ def get_configs_local_store(
             follow_symlinks=follow_symlinks,
             on_unsafe_folder=on_unsafe_folder,
         )
-    elif os.path.isfile(config_src):
-        # TODO: Not tested
+    elif (
+        kind != "app"
+        and os.path.isfile(config_src)
         # TODO: Make this open-closed plug-in via routing argument
-        _, extension = os.path.splitext(config_src)
-        if extension in {".ini", ".cfg"}:
-            from config2py.s_configparser import ConfigStore
+        and os.path.splitext(config_src)[1] in {".ini", ".cfg"}
+    ):
+        from config2py.s_configparser import ConfigStore
 
-            # A file in a shared sticky folder (``/tmp``) can't be swapped by others
-            check_folder_is_private(
-                os.path.dirname(os.path.abspath(config_src)),
-                on_unsafe=on_unsafe_folder,
-                stacklevel=2,
-                ignore_sticky=True,
-            )
-            return ConfigStore(config_src, follow_symlinks=follow_symlinks)
-    elif os.path.sep not in config_src:  # it's just a string
+        # A file in a shared sticky folder (``/tmp``) can't be swapped by others
+        check_folder_is_private(
+            os.path.dirname(os.path.abspath(config_src)),
+            on_unsafe=on_unsafe_folder,
+            stacklevel=2,
+            ignore_sticky=True,
+        )
+        return ConfigStore(config_src, follow_symlinks=follow_symlinks)
+    elif not is_path:  # it's just a string
         # TODO: is "get" the right word, since it makes the folder too
         path = get_configs_folder_for_app(config_src, configs_name=configs_name)
         return SecureTextFiles(
