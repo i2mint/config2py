@@ -46,7 +46,9 @@ def unusable_config_file_problem(path):
     return None
 
 
-def report_missing_config_file(path, *, on_missing: str = "warn", stacklevel: int = 2):
+def report_missing_config_file(
+    path, *, on_missing: str = "warn", stacklevel: int = 2, resolved_path=None
+):
     """Act on a config source ``path`` that is not an existing, readable file.
 
     The problem is told apart: missing, a directory, or unreadable (permission
@@ -58,6 +60,8 @@ def report_missing_config_file(path, *, on_missing: str = "warn", stacklevel: in
         ``PermissionError`` for an unreadable file), ``"ignore"`` does nothing.
     :param stacklevel: Passed to ``warnings.warn``, so the warning points at the
         caller's code (``2`` is the caller of this function).
+    :param resolved_path: What ``path`` resolves to (``~`` expanded, ...), when that is
+        what was actually looked at. ``path`` is what the messages show.
     """
     import errno
     import os
@@ -68,7 +72,9 @@ def report_missing_config_file(path, *, on_missing: str = "warn", stacklevel: in
         return
     # The caller decided ``path`` isn't a usable file; ``problem`` says why when it can
     # (a device or pipe exists, is readable, and still isn't a regular file).
-    error_class, code, reason = unusable_config_file_problem(path) or (
+    error_class, code, reason = unusable_config_file_problem(
+        path if resolved_path is None else resolved_path
+    ) or (
         FileNotFoundError,
         errno.ENOENT,
         "Not a regular config file",

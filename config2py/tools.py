@@ -289,7 +289,7 @@ def extract_exports(exports, *, on_missing: str = "warn") -> dict:
             exports = filepath.read_text()
         elif exports.strip():
             report_missing_config_file(
-                os.fspath(filepath), on_missing=on_missing, stacklevel=2
+                exports, on_missing=on_missing, stacklevel=2, resolved_path=filepath
             )
     return dict(
         filter(
