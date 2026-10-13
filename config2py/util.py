@@ -252,9 +252,12 @@ def check_folder_is_private(dirpath, *, on_unsafe: str = "warn", stacklevel: int
     """
     from config2py.errors import InsecureConfigFolderWarning, validate_on_missing
 
-    validate_on_missing(on_unsafe)  # same three options as ``on_missing``
+    validate_on_missing(on_unsafe, name="on_unsafe")  # the options of ``on_missing``
     if on_unsafe == "ignore":
         return
+    key = os.path.realpath(dirpath)
+    if on_unsafe == "warn" and key in _warned_unsafe_folders:
+        return  # warned once already: don't look again
     reason = unsafe_folder_reason(dirpath)
     if reason is None:
         return
@@ -266,7 +269,6 @@ def check_folder_is_private(dirpath, *, on_unsafe: str = "warn", stacklevel: int
     )
     if on_unsafe == "raise":
         raise PermissionError(msg)
-    key = os.path.realpath(dirpath)
     if key not in _warned_unsafe_folders:
         import warnings
 
@@ -639,6 +641,28 @@ config2py_env_var = SimpleNamespace(
 DFLT_APP_FOLDER_KIND: AppFolderKind = "config"  # type: ignore (for <3.11)
 
 
+def _absolute_path_from_env(name: str) -> Optional[str]:
+    """The value of env var ``name`` if it is an absolute path (after ``~`` expansion).
+
+    A blank or relative value counts as unset, as the XDG Base Directory spec says for
+    ``XDG_*`` (i2mint/config2py#38): honoured, it would root config folders, secrets
+    included, at the current working directory, often a project checkout.
+    """
+    value = (os.getenv(name) or "").strip()
+    if not value:
+        return None
+    if not os.path.isabs(os.path.expanduser(value)):
+        import warnings
+
+        warnings.warn(
+            f"Ignoring {name}={value!r}: it is not an absolute path, so it would put "
+            "config folders (secrets included) under the current working directory.",
+            stacklevel=3,
+        )
+        return None
+    return value
+
+
 def system_default_for_app_data_folder(
     folder_kind: AppFolderKind = DFLT_APP_FOLDER_KIND,  # type: ignore (for <3.11)
     *,
@@ -659,9 +683,7 @@ def system_default_for_app_data_folder(
     if standards is None:
         standards = APP_FOLDER_STANDARDS
     env_var, default, subpath = standards[folder_kind]
-    # An empty variable counts as unset (XDG Base Directory spec; i2mint/config2py#38):
-    # ``os.getenv(env_var, default)`` would return "" and root us at the cwd.
-    root = os.path.expanduser(os.getenv(env_var) or default)
+    root = os.path.expanduser(_absolute_path_from_env(env_var) or default)
     return os.path.join(root, subpath) if subpath else root
 
 
@@ -733,8 +755,9 @@ def get_app_rootdir(
         '/Users/.../.cache'
     """
     folderpath = (
-        # Check config2py custom env var first (an empty one counts as unset, #38)
-        os.getenv(getattr(config2py_env_var, folder_kind))
+        # Check config2py custom env var first (a blank or relative one counts as
+        # unset, #38)
+        _absolute_path_from_env(getattr(config2py_env_var, folder_kind))
         # ... if not, use system default
         or system_default_for_app_data_folder(folder_kind)
     )

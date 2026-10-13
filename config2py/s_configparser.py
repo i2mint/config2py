@@ -257,6 +257,10 @@ class ConfigStore(ConfigParserStore):
     source_kind = None
 
     # @Sig.from_objs(['source', ConfigParser.__init__, ('target_kind', None)])  # need to add source and target_kind
+    # A store writes back what it read, so reading an unreadable file as empty would
+    # let the next write replace it (see ``_read_filepaths``).
+    _tolerates_unreadable_sources = False
+
     def __init__(
         self,
         source,
@@ -312,7 +316,11 @@ class ConfigStore(ConfigParserStore):
     def _read_filepaths(self, filepaths):
         """Like ``self.read(filepaths)``, but each file is read once, as bytes, and
         decoded by ``_decode_config_text`` (so pipes such as ``/dev/stdin`` still
-        work). As with ``read``, files that can't be opened are skipped."""
+        work). As with ``read``, a file that does not exist is skipped. Any other
+        error opening one (permissions, too many open files) raises, unless the
+        store says it tolerates unreadable sources (``ConfigReader``, which has
+        already reported them per ``on_missing`` and never writes back): read as
+        empty, a store's next write would replace the whole file."""
         if isinstance(filepaths, (str, bytes, _os.PathLike)):
             filepaths = [filepaths]
         read_ok = []
@@ -320,8 +328,16 @@ class ConfigStore(ConfigParserStore):
             try:
                 with open(filepath, "rb") as fp:
                     data = fp.read()
-            except OSError:
+            except FileNotFoundError:
                 continue
+            except OSError:
+                # Only an existing file a store couldn't read is at risk: its next
+                # write would replace it. A folder, a path through a file, a content
+                # string mistaken for a name -- their errors differ by platform --
+                # hold nothing to lose.
+                if self._tolerates_unreadable_sources or not _os.path.isfile(filepath):
+                    continue
+                raise
             self.read_file(StringIO(_decode_config_text(data)), source=filepath)
             if isinstance(filepath, _os.PathLike):
                 filepath = _os.fspath(filepath)
@@ -353,7 +369,16 @@ class ConfigStore(ConfigParserStore):
                 buffer = StringIO()
                 self.write(buffer, self.space_around_delimiters)
                 text = buffer.getvalue()
-                text.encode("utf-8")  # raises UnicodeEncodeError before truncating
+                try:  # encode before opening, which empties the file
+                    text.encode("utf-8")
+                except UnicodeEncodeError as error:  # its text quotes the character
+                    raise UnicodeEncodeError(  # same type, the character replaced
+                        error.encoding,
+                        "\ufffd" * error.end,
+                        error.start,
+                        error.end,
+                        "a value can't be encoded; nothing was written",
+                    ) from None
                 with secure_open(
                     self.source,
                     "w",
@@ -492,6 +517,9 @@ class ConfigReader(ConfigStore):
       ...
     FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
     """
+
+    # Read-only, and it reports an unusable source itself (``on_missing``).
+    _tolerates_unreadable_sources = True
 
     def __init__(self, source, *, on_missing: str = "warn", **kwargs):
         _validate_on_missing(on_missing)
