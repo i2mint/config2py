@@ -13,6 +13,7 @@ not meaningful on Windows.
 import json
 import os
 import tempfile
+import warnings
 
 import pytest
 
@@ -323,16 +324,8 @@ def test_ini_files_in_the_locale_encoding_still_read(tmp_path, monkeypatch):
 
     latin1 = tmp_path / "latin1.ini"
     latin1.write_bytes("[s]\nname = café\n".encode("latin-1"))
-    encodings = []
-    original_read = s_configparser.ConfigStore.read
-
-    def spy_read(self, filenames, encoding=None):
-        encodings.append(encoding)
-        return original_read(self, filenames, encoding="latin-1")
-
-    monkeypatch.setattr(s_configparser.ConfigStore, "read", spy_read)
+    monkeypatch.setattr(s_configparser, "_locale_encoding", lambda: "latin-1")
     assert ConfigReader(str(latin1))["s"]["name"] == "café"
-    assert encodings == [None]  # None: the locale's encoding, as before
     monkeypatch.undo()
 
     bom = tmp_path / "bom.ini"
@@ -364,3 +357,35 @@ def test_secure_text_files_dol_contract(tmp_path):
     assert os.path.dirname(path) == str(tmp_path)
     store["KEY"] = "value"
     assert (tmp_path / "KEY").read_text(encoding="utf-8") == "value"
+    # and dol's key validation still keeps writes inside the root folder
+    with pytest.raises(KeyError):
+        store["../escape"] = "value"
+    assert not (tmp_path.parent / "escape").exists()
+
+
+@pytest.mark.skipif(not os.path.isdir("/dev/fd"), reason="needs /dev/fd")
+def test_ini_files_can_be_pipes():
+    """Each file is read once, so a pipe (``/dev/stdin``, ``<(cmd)``) still works."""
+    from config2py import ConfigReader
+
+    read_end, write_end = os.pipe()
+    try:
+        os.write(write_end, b"[s]\nk = v\n")
+        os.close(write_end)
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")  # a pipe is not a "missing" file (#27)
+            reader = ConfigReader(f"/dev/fd/{read_end}")
+        assert reader.to_dict()["s"] == {"k": "v"}
+    finally:
+        os.close(read_end)
+
+
+def test_unencodable_value_leaves_the_ini_file_intact(tmp_path):
+    """``persist`` encodes everything before opening (and emptying) the file."""
+    path = tmp_path / "config.ini"
+    store = ConfigStore(str(path))
+    store["good"] = {"k": "v"}
+    before = path.read_bytes()
+    with pytest.raises(UnicodeEncodeError):
+        store["bad"] = {"path": "\udcff"}  # a lone surrogate, as os.fsdecode gives
+    assert path.read_bytes() == before

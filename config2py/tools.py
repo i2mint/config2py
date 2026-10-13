@@ -40,7 +40,10 @@ class SecureTextFiles(TextFiles):
     its target is the file written (and tightened to ``0o600``). That is deliberate:
     it keeps value files symlinked from elsewhere (a dotfiles repo, say) working, and
     in config2py's own configs folder (``0o700``) only its owner can plant a link
-    (see https://github.com/i2mint/config2py/issues/37).
+    (see https://github.com/i2mint/config2py/issues/37). A folder you pass in is not
+    checked: if others can write to it, they can plant a link that redirects your
+    secrets, so keep such stores in folders only you can write to
+    (see https://github.com/i2mint/config2py/issues/45).
 
     ``__setitem__`` relies on three ``dol`` internals: ``_id_of_key``,
     ``store.validate_key`` and ``_data_of_obj``. ``dol`` is unpinned, so
