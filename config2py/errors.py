@@ -50,7 +50,8 @@ def report_missing_config_file(path, *, on_missing: str = "warn", stacklevel: in
     """Act on a config source ``path`` that is not an existing, readable file.
 
     The problem is told apart: missing, a directory, or unreadable (permission
-    denied). A path with no problem is left alone.
+    denied). A path that exists, is readable and isn't a folder (a device or a pipe) is
+    reported as not a regular file.
 
     :param on_missing: ``"warn"`` issues a ``MissingConfigFileWarning``,
         ``"raise"`` raises ``FileNotFoundError`` (``IsADirectoryError`` for a folder,
@@ -58,16 +59,20 @@ def report_missing_config_file(path, *, on_missing: str = "warn", stacklevel: in
     :param stacklevel: Passed to ``warnings.warn``, so the warning points at the
         caller's code (``2`` is the caller of this function).
     """
+    import errno
     import os
     import warnings
 
     validate_on_missing(on_missing)
     if on_missing == "ignore":
         return
-    problem = unusable_config_file_problem(path)
-    if problem is None:
-        return
-    error_class, code, reason = problem
+    # The caller decided ``path`` isn't a usable file; ``problem`` says why when it can
+    # (a device or pipe exists, is readable, and still isn't a regular file).
+    error_class, code, reason = unusable_config_file_problem(path) or (
+        FileNotFoundError,
+        errno.ENOENT,
+        "Not a regular config file",
+    )
     if on_missing == "raise":  # str(error): "[Errno 2] No such config file: 'path'"
         raise error_class(code, reason, os.fspath(path))
     warnings.warn(

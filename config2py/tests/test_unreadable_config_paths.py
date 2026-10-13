@@ -90,3 +90,23 @@ def test_a_readable_file_still_does_not_warn(ini_file):
         reader = ConfigReader(ini_file)
     assert dict(reader["section"]) == {"key": "value"}
 
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="POSIX devices and pipes")
+def test_extract_exports_does_not_read_a_device_as_silently_empty(tmp_path):
+    """An existing, readable path that isn't a regular file (``/dev/null``, a pipe)
+    must still be reported, not fall through silently (found by the review of #43)."""
+    with pytest.warns(MissingConfigFileWarning, match="Not a regular"):
+        assert extract_exports("/dev/null") == {}
+    fifo = tmp_path / "pipe.env"
+    os.mkfifo(fifo)
+    with pytest.raises(FileNotFoundError, match="Not a regular"):
+        extract_exports(str(fifo), on_missing="raise")
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="POSIX home expansion")
+def test_extract_exports_checks_the_resolved_path(tmp_path, monkeypatch):
+    (tmp_path / "somedir").mkdir()
+    monkeypatch.setenv("HOME", str(tmp_path))
+    with pytest.raises(IsADirectoryError):
+        extract_exports("~/somedir", on_missing="raise")
