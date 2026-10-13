@@ -53,6 +53,7 @@ class SecureTextFiles(TextFiles):
     """
 
     encoding = "utf-8"  # what dol's TextFiles reads with
+    _follow_symlinks = True  # per-instance via ``__init__``; see ``__getstate__``
 
     def __init__(
         self,
@@ -75,6 +76,16 @@ class SecureTextFiles(TextFiles):
         rootdir = args[0] if args else kwargs.get("rootdir")
         if rootdir is not None:
             check_folder_is_private(rootdir, on_unsafe=on_unsafe_folder, stacklevel=2)
+
+    # dol's ``Store.__getstate__`` (used by ``copy`` and ``pickle``) keeps only its own
+    # attributes, so carry ours along (a copy must not quietly start following links).
+    def __getstate__(self) -> dict:
+        return {**super().__getstate__(), "_follow_symlinks": self._follow_symlinks}
+
+    def __setstate__(self, state: dict):
+        state = dict(state)
+        self._follow_symlinks = state.pop("_follow_symlinks", True)
+        super().__setstate__(state)
 
     def __setitem__(self, k, v):
         # dol's TextFiles wraps an inner persister, so write via the full path here,

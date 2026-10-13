@@ -65,7 +65,8 @@ def owner_only_opener(path, flags, *, follow_symlinks=True):
 
     With ``follow_symlinks=False`` a symlink at ``path`` is refused (``OSError``,
     ``ELOOP``) instead of followed -- through ``O_NOFOLLOW`` where the platform has
-    it (which only covers the last path component), else by an ``islink`` check.
+    it (which only covers the last path component), else by an ``islink`` check; a file
+    with several hard links is refused too, and left untouched.
     Opening a symlink *you* control is fine; one planted by someone else in a folder
     they can write to would redirect (and ``chmod``) a file of theirs choosing
     (see https://github.com/i2mint/config2py/issues/45).
@@ -78,12 +79,28 @@ def owner_only_opener(path, flags, *, follow_symlinks=True):
       created), so an explicit ``os.fchmod`` re-tightens it -- on the open file
       descriptor, not the path, so it's not subject to a TOCTOU swap either.
     """
+    truncate = False
     if not follow_symlinks:
         if hasattr(os, "O_NOFOLLOW"):
             flags |= os.O_NOFOLLOW
         elif os.path.islink(path):  # Windows: no O_NOFOLLOW (check, then open)
             raise OSError(errno.ELOOP, "Refusing to follow a symlink", os.fspath(path))
+        # Truncate only after checking for a hardlink (a second name for a file
+        # someone else chose), so refusing it leaves the file intact.
+        truncate = bool(flags & os.O_TRUNC)
+        flags &= ~os.O_TRUNC
     fd = os.open(path, flags, 0o600)
+    try:
+        if not follow_symlinks:
+            if os.fstat(fd).st_nlink > 1:
+                raise OSError(
+                    errno.EMLINK, "Refusing a file with several hard links", path
+                )
+            if truncate:
+                os.ftruncate(fd, 0)
+    except BaseException:
+        os.close(fd)
+        raise
     if hasattr(os, "fchmod"):  # POSIX only -- Windows ACLs aren't unix mode bits
         try:
             os.fchmod(fd, 0o600)  # re-tighten if the file already existed
@@ -173,13 +190,35 @@ def secure_makedirs(dirpath, *, exist_ok=True):
 _warned_unsafe_folders: Set[str] = set()  # each folder is warned about once
 
 
+def _is_private_group(gid: int) -> bool:
+    """True if only the current user is in group ``gid`` (a "user-private group", as on
+    Debian-style systems, where a ``umask 002`` makes every folder group-writable).
+    Without the ``grp``/``pwd`` modules (not POSIX), nothing is private."""
+    try:
+        import grp
+        import pwd
+
+        me = pwd.getpwuid(os.geteuid()).pw_name
+        members = set(grp.getgrgid(gid).gr_mem) - {me}
+        primary_of_others = {p.pw_name for p in pwd.getpwall() if p.pw_gid == gid} - {
+            me
+        }
+        return gid in (os.getegid(), *os.getgroups()) and not (
+            members or primary_of_others
+        )
+    except (ImportError, KeyError, OSError):
+        return False
+
+
 def unsafe_folder_reason(dirpath) -> Optional[str]:
     """Why a folder isn't safe to keep secrets in, or ``None`` if it looks fine.
 
     Like ssh's ``StrictModes``: a folder owned by someone other than the current user
     (or root), or writable by its group or by others, lets those users plant a
-    symlink or a file there to redirect or read what config2py writes. POSIX only
-    (``None`` elsewhere); a missing folder is ``None`` too.
+    symlink or a file there to redirect or read what config2py writes. A group the
+    current user is alone in does not count as "its group". Only the folder itself is
+    looked at, not its parents. POSIX only (``None`` elsewhere); a missing folder is
+    ``None`` too.
 
     >>> import tempfile
     >>> with tempfile.TemporaryDirectory() as d:  # created 0o700
@@ -195,7 +234,9 @@ def unsafe_folder_reason(dirpath) -> Optional[str]:
     problems = []
     if st.st_uid not in (os.geteuid(), 0):
         problems.append("owned by another user")
-    if st.st_mode & (stat.S_IWGRP | stat.S_IWOTH):
+    if st.st_mode & stat.S_IWOTH or (
+        st.st_mode & stat.S_IWGRP and not _is_private_group(st.st_gid)
+    ):
         problems.append("writable by its group or by others")
     return " and ".join(problems) or None
 
@@ -227,10 +268,10 @@ def check_folder_is_private(dirpath, *, on_unsafe: str = "warn", stacklevel: int
         raise PermissionError(msg)
     key = os.path.realpath(dirpath)
     if key not in _warned_unsafe_folders:
-        _warned_unsafe_folders.add(key)
         import warnings
 
         warnings.warn(msg, InsecureConfigFolderWarning, stacklevel=stacklevel + 1)
+        _warned_unsafe_folders.add(key)  # after the warn: under -W error it can repeat
 
 
 def always_true(x: Any) -> bool:

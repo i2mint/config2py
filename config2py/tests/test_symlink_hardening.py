@@ -5,6 +5,7 @@ write through a symlink planted at a value file's path, and a store warns once a
 root folder that is owned by another user or writable by its group or by others.
 """
 
+import copy
 import os
 import sys
 import warnings
@@ -119,7 +120,7 @@ def test_a_private_folder_does_not_warn(private_dir):
 
 
 @posix_only
-@pytest.mark.parametrize("mode", [0o770, 0o707, 0o777])
+@pytest.mark.parametrize("mode", [0o707, 0o777])
 def test_a_writable_by_others_folder_warns_once(tmp_path, mode):
     d = tmp_path / f"shared{mode:o}"
     d.mkdir()
@@ -148,12 +149,93 @@ def test_on_unsafe_folder_raise_and_ignore(tmp_path):
 
 @posix_only
 def test_a_folder_owned_by_another_user_is_flagged(private_dir, monkeypatch):
+    # (as root, a folder owned by any user counts; so make it someone else's, and
+    # pretend not to be root otherwise)
     real_euid = os.geteuid()
-    monkeypatch.setattr(os, "geteuid", lambda: real_euid + 1)  # we're "someone else"
-    if real_euid == 0:  # root owns everything it is allowed to; only test non-root
-        assert unsafe_folder_reason(private_dir) is None
+    if real_euid == 0:
+        os.chown(private_dir, 65534, -1)
     else:
-        assert "owned by another user" in unsafe_folder_reason(private_dir)
+        monkeypatch.setattr(os, "geteuid", lambda: real_euid + 1)
+    assert "owned by another user" in unsafe_folder_reason(private_dir) or (
+        real_euid == 0 and os.stat(private_dir).st_uid == 0
+    )
+
+
+@posix_only
+def test_a_group_writable_folder_of_a_user_private_group_is_fine(tmp_path, monkeypatch):
+    """umask 002 + user-private groups (Debian/Ubuntu) makes every folder 0775."""
+    import grp
+    import pwd
+
+    d = tmp_path / "upg"
+    d.mkdir()
+    d.chmod(0o775)
+    gid = os.stat(d).st_gid
+    me = pwd.getpwuid(os.geteuid()).pw_name
+    monkeypatch.setattr(os, "getegid", lambda: gid)
+    monkeypatch.setattr(grp, "getgrgid", lambda g: type("G", (), {"gr_mem": []})())
+    monkeypatch.setattr(
+        pwd, "getpwall", lambda: [type("P", (), {"pw_name": me, "pw_gid": gid})()]
+    )
+    assert unsafe_folder_reason(d) is None
+    # ... but not once the group has another member
+    monkeypatch.setattr(
+        grp, "getgrgid", lambda g: type("G", (), {"gr_mem": [me, "mallory"]})()
+    )
+    assert "writable by its group" in unsafe_folder_reason(d)
+    d.chmod(0o707)  # world-writable is never fine
+    assert "writable" in unsafe_folder_reason(d)
+
+
+@posix_only
+def test_the_warning_is_not_lost_under_error_filters(tmp_path):
+    d = tmp_path / "loud"
+    d.mkdir()
+    d.chmod(0o777)
+    for _ in range(2):
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            with pytest.raises(InsecureConfigFolderWarning):
+                SecureTextFiles(str(d))
+    with pytest.warns(InsecureConfigFolderWarning):  # then a real warn still happens
+        SecureTextFiles(str(d))
+
+
+# copies, hard links -----------------------------------------------------------------
+
+
+@posix_only
+@pytest.mark.parametrize("copier", [copy.copy, copy.deepcopy])
+@pytest.mark.parametrize("follow", [True, False])
+def test_a_copy_of_a_store_still_writes_and_keeps_its_policy(
+    private_dir, victim, copier, follow
+):
+    store = SecureTextFiles(str(private_dir), follow_symlinks=follow)
+    clone = copier(store)
+    clone["a"] = "1"
+    assert (private_dir / "a").read_text() == "1"
+    (private_dir / "link").symlink_to(victim)
+    if follow:
+        clone["link"] = "x"
+        assert victim.read_text() == "x"
+    else:
+        with pytest.raises(KeyError):
+            clone["link"] = "x"
+        assert victim.read_text() == "precious"
+
+
+@posix_only
+def test_follow_symlinks_false_refuses_a_hardlink_and_leaves_it_intact(
+    private_dir, victim
+):
+    os.link(victim, private_dir / "API_KEY")
+    store = SecureTextFiles(str(private_dir), follow_symlinks=False)
+    with pytest.raises(KeyError):
+        store["API_KEY"] = "sk-secret"
+    assert victim.read_text() == "precious"  # not truncated
+    store["OTHER"] = "fine"
+    store["OTHER"] = "again"  # overwriting an ordinary file still works (truncates)
+    assert (private_dir / "OTHER").read_text() == "again"
 
 
 def test_a_missing_folder_is_not_flagged(tmp_path):
