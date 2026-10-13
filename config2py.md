@@ -1,4 +1,4 @@
-> built 2026-10-12 04:31 UTC from c0643dc (master) · config2py 0.1.57. Details: build_info.json
+> built 2026-10-13 03:16 UTC from 4494bd0 (master) · config2py 0.1.57. Details: build_info.json
 
 # index.html.md
 
@@ -2737,7 +2737,7 @@ make, for example, `import config2py` crash
 
 # About this build
 
-This documentation was built on **2026-10-12 04:31 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/c0643dc6bcbe0bfc06ae95c9d4d831a58326018a"><code>c0643dc</code></a> on branch <code>master</code>, for **config2py 0.1.57** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 03:16 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/4494bd0223098c325ed92a98728248a5e9c3e5a2"><code>4494bd0</code></a> on branch <code>master</code>, for **config2py 0.1.57** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -2746,9 +2746,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/c0643dc6bcbe0bfc06ae95c9d4d831a58326018a"><code>c0643dc6bcbe0bfc06ae95c9d4d831a58326018a</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/4494bd0223098c325ed92a98728248a5e9c3e5a2"><code>4494bd0223098c325ed92a98728248a5e9c3e5a2</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
-| Tags at this commit | <code>0.1.57</code>                                                                                                                                     |
+| Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
 | Remote              | <code>https://github.com/i2mint/config2py</code>                                                                                                        |
 
@@ -2757,15 +2757,15 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38204014774">38204014774</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38340797218">38340797218</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>795ccb262e0323a65a3c1a2c66a08e58b603a844</code> (in the history of the built commit) |
+| Event commit | <code>4494bd0223098c325ed92a98728248a5e9c3e5a2</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.12  |
+| epythet  | 0.2.13  |
 | Sphinx   | 9.1.0   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
@@ -2790,8 +2790,8 @@ Latest release: <a href="https://pypi.org/project/config2py/0.1.57/">0.1.57</a>,
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout c0643dc6bcbe0bfc06ae95c9d4d831a58326018a
-pip install "epythet==0.2.12"
+git checkout 4494bd0223098c325ed92a98728248a5e9c3e5a2
+pip install "epythet==0.2.13"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

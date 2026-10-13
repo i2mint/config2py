@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-12T04:31:40Z",
+  "built_at": "2026-10-13T03:16:29Z",
   "package": {
     "name": "config2py",
     "version": "0.1.57",
@@ -9,30 +9,28 @@
   },
   "git": {
     "available": true,
-    "commit": "c0643dc6bcbe0bfc06ae95c9d4d831a58326018a",
-    "short_commit": "c0643dc",
+    "commit": "4494bd0223098c325ed92a98728248a5e9c3e5a2",
+    "short_commit": "4494bd0",
     "branch": "master",
-    "tags": [
-      "0.1.57"
-    ],
+    "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/config2py",
-    "commit_url": "https://github.com/i2mint/config2py/commit/c0643dc6bcbe0bfc06ae95c9d4d831a58326018a",
+    "commit_url": "https://github.com/i2mint/config2py/commit/4494bd0223098c325ed92a98728248a5e9c3e5a2",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/config2py",
-    "sha": "795ccb262e0323a65a3c1a2c66a08e58b603a844",
+    "sha": "4494bd0223098c325ed92a98728248a5e9c3e5a2",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "38204014774",
-    "run_url": "https://github.com/i2mint/config2py/actions/runs/38204014774",
+    "run_id": "38340797218",
+    "run_url": "https://github.com/i2mint/config2py/actions/runs/38340797218",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.12",
+    "epythet": "0.2.13",
     "sphinx": "9.1.0",
     "docutils": "0.22.4",
     "python": "3.12.15"
@@ -66,7 +64,7 @@
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout c0643dc6bcbe0bfc06ae95c9d4d831a58326018a\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout 4494bd0223098c325ed92a98728248a5e9c3e5a2\npip install \"epythet==0.2.13\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,
