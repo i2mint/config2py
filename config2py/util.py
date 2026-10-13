@@ -480,7 +480,7 @@ def ask_user_for_input(
     if masking_is_inferred:
         mask_input = bool(mask_input(prompt))
     _original_prompt = prompt
-    if prompt[-1] != " ":  # pragma: no cover
+    if not prompt.endswith(" "):  # an empty prompt has no last character (#30)
         prompt = prompt + " "
     if masking_toggle_str is not None:
         prompt = (
@@ -506,6 +506,7 @@ def ask_user_for_input(
             default,
             mask_input=not mask_input,
             masking_toggle_str=masking_toggle_str,
+            egress=egress,  # the toggled answer is the answer: it gets the egress too (#30)
         )
 
     return egress(response or default)
