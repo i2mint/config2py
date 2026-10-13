@@ -541,7 +541,6 @@ def system_default_for_app_data_folder(
     return os.path.join(root, subpath) if subpath else root
 
 
-DFLT_CONFIG_FOLDER = system_default_for_app_data_folder("config")
 DFLT_DATA_FOLDER = system_default_for_app_data_folder("data")
 DFLT_CACHE_FOLDER = system_default_for_app_data_folder("cache")
 DFLT_STATE_FOLDER = system_default_for_app_data_folder("state")
@@ -741,6 +740,7 @@ def get_configs_folder_for_app(
     configs_name: str = DFLT_CONFIGS_NAME,
     app_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
     config_dir_setup_callback: Callable[[str], None] = _default_folder_setup,
+    ensure_exists: bool = True,
 ):
     """
     Retrieve or create the configs directory specific to the given app name.
@@ -752,10 +752,27 @@ def get_configs_folder_for_app(
             initialize the app directory. Default is _default_folder_setup.
         config_dir_setup_callback (Callable[[str], None]): A callback function to
             initialize the configs directory. Default is _default_folder_setup.
+        ensure_exists (bool): Whether to create (and set up) the directory. With
+            ``False``, only the path is computed: nothing is created or chmod-ed.
     """
     app_dir = get_app_config_folder(app_name, setup_callback=app_dir_setup_callback)
     configs_dir = os.path.join(app_dir, configs_name)
-    config_dir_setup_callback(configs_dir)
+    if not ensure_exists:
+        return configs_dir
+    return setup_configs_folder(configs_dir, setup_callback=config_dir_setup_callback)
+
+
+def setup_configs_folder(
+    configs_dir: str,
+    *,
+    setup_callback: Callable[[str], None] = _default_folder_setup,
+) -> str:
+    """Create ``configs_dir`` (via ``setup_callback``) and return it.
+
+    If the folder is one config2py manages (it holds a ``.config2py`` marker), its
+    modes are also re-tightened, as ``get_configs_folder_for_app`` does.
+    """
+    setup_callback(configs_dir)
     if os.path.isfile(os.path.join(configs_dir, ".config2py")):
         _tighten_managed_configs_folder(configs_dir)
     return configs_dir
@@ -806,7 +823,53 @@ get_configs_directory_for_app = (
     get_configs_folder_for_app  # backwards compatibility alias
 )
 
-DFLT_CONFIG_FOLDER = get_configs_folder_for_app()
+# The path of config2py's own configs folder. It is computed at import, but the folder
+# is only created on first use, so ``import config2py`` writes nothing to disk
+# (see https://github.com/i2mint/config2py/issues/26). Reading ``DFLT_CONFIG_FOLDER``
+# (served by the module ``__getattr__`` below) creates it, as importing did before.
+_DFLT_CONFIGS_FOLDER_PATH = get_configs_folder_for_app(ensure_exists=False)
+_dflt_configs_folder_is_set_up = False
+
+
+def _normalized_path(path) -> str:
+    return os.path.normcase(os.path.normpath(os.path.abspath(os.path.expanduser(path))))
+
+
+def is_default_configs_folder(path) -> bool:
+    """Whether ``path`` (however spelled) is config2py's own configs folder.
+
+    A string without a path separator (that doesn't start with ``~``) is an app name,
+    not a path (see https://github.com/i2mint/config2py/issues/28), so it is never
+    the default folder, whatever the current directory.
+    """
+    if isinstance(path, str):
+        has_sep = os.path.sep in path or (os.path.altsep and os.path.altsep in path)
+        if not (has_sep or path.startswith("~")):
+            return False
+    try:
+        return _normalized_path(path) == _normalized_path(_DFLT_CONFIGS_FOLDER_PATH)
+    except (TypeError, ValueError, OSError):  # not a path, or no current directory
+        return False
+
+
+def ensure_default_configs_folder() -> str:
+    """Create config2py's own configs folder if needed, and return its path.
+
+    The folder's modes are re-tightened (see ``setup_configs_folder``) once per
+    process; a folder deleted in the meantime is re-created.
+    """
+    global _dflt_configs_folder_is_set_up
+    path = _DFLT_CONFIGS_FOLDER_PATH
+    if not (_dflt_configs_folder_is_set_up and os.path.isdir(path)):
+        setup_configs_folder(path)
+        _dflt_configs_folder_is_set_up = True
+    return path
+
+
+def __getattr__(name):
+    if name == "DFLT_CONFIG_FOLDER":
+        return ensure_default_configs_folder()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 # ---------------------------------------------------------------------------

@@ -3,6 +3,7 @@
 from collections.abc import Callable
 from pathlib import Path
 import re
+import threading
 from dol import Pipe, TextFiles, resolve_path
 import os
 from i2 import Sig
@@ -10,10 +11,13 @@ from i2 import Sig
 from config2py.util import (
     envvar,
     get_configs_folder_for_app,
-    DFLT_CONFIG_FOLDER,
+    _DFLT_CONFIGS_FOLDER_PATH,  # the path of DFLT_CONFIG_FOLDER, not created (#26)
+    ensure_default_configs_folder,
+    is_default_configs_folder,
     is_repl,
     DFLT_CONFIGS_NAME,
     secure_open,
+    setup_configs_folder,
 )
 from config2py.base import get_config, user_gettable
 
@@ -47,9 +51,18 @@ class SecureTextFiles(TextFiles):
             raise KeyError(str(error)) from error
 
 
+def _ensure_if_default_configs_folder(src):
+    """Create config2py's own configs folder if ``src`` is it (#26)."""
+    if is_default_configs_folder(src):
+        ensure_default_configs_folder()
+    elif isinstance(src, str) and src == _DFLT_CONFIGS_FOLDER_PATH:
+        # the default bound at import, if ``config2py.util`` was reloaded since
+        setup_configs_folder(src)
+
+
 # TODO: Make it into an open-closed plug-in using routing
 def get_configs_local_store(
-    config_src=DFLT_CONFIG_FOLDER, *, configs_name=DFLT_CONFIGS_NAME
+    config_src=_DFLT_CONFIGS_FOLDER_PATH, *, configs_name=DFLT_CONFIGS_NAME
 ):
     """Get the local store of configs.
 
@@ -63,7 +76,12 @@ def get_configs_local_store(
     name, even if a directory of that name exists in the current working directory;
     pass ``"./configs"`` (or an absolute path) to use that directory
     (see https://github.com/i2mint/config2py/issues/28).
+
+    The default, ``DFLT_CONFIG_FOLDER``, is config2py's own configs folder. It is
+    created here, on first use, rather than at import
+    (see https://github.com/i2mint/config2py/issues/26).
     """
+    _ensure_if_default_configs_folder(config_src)
     if os.path.sep in config_src and os.path.isdir(config_src):
         # TODO: This was a quick fix to avoid unknowingly making directories in the
         #   wrong place. Broke stuff so leaving this for later.
@@ -98,7 +116,7 @@ def get_configs_local_store(
 
 # TODO: Need tests and demo
 def simple_config_getter(
-    configs_src: str = DFLT_CONFIG_FOLDER,
+    configs_src: str = _DFLT_CONFIGS_FOLDER_PATH,
     *,
     first_look_in_env_vars: bool = True,
     ask_user_if_key_not_found: bool = None,
@@ -123,6 +141,7 @@ def simple_config_getter(
         and returns the central config store
     """
     # TODO: Resource validation block. Refactor! And add tool to config2py if not there
+    _ensure_if_default_configs_folder(configs_src)  # not created at import (#26)
     central_configs = config_store_factory(configs_src)
     sources = []
     if first_look_in_env_vars:
@@ -139,15 +158,16 @@ def simple_config_getter(
     return config_getter
 
 
-# Make a ready-to-use config getter, using the defaults.
-# Note: this (and ``local_configs`` below) runs at import time, so ``import config2py``
-# creates the default configs folder (``~/.config/config2py/configs`` on Linux) if it
-# doesn't exist yet. Making this lazy is tracked in i2mint/config2py#26.
-config_getter = simple_config_getter()
-
-
 # --------------------------------------------------------------------
 # Ready to import instances
+#
+# ``config_getter`` (a ready-to-use config getter, using the defaults), ``local_configs``
+# (a default persistent store for configs) and ``configs`` (an alias of
+# ``local_configs``) are built on first access, by the module ``__getattr__`` below,
+# then cached as ordinary module attributes. Building them creates the default configs
+# folder (``~/.config/config2py/configs`` on Linux), so doing it lazily keeps
+# ``import config2py`` free of disk writes
+# (see https://github.com/i2mint/config2py/issues/26).
 #
 # TODO: Is destined to be a class that makes a store (MutableMapping) to access configs
 #   (properties, etc.). The default is TextFiles, but the user should be able to specify
@@ -157,12 +177,42 @@ config_getter = simple_config_getter()
 #   Maybe just a function that returns a store
 Configs = SecureTextFiles  # TODO: deprecate
 
-# A default persistent store for configs
-local_configs = get_configs_local_store()
-
-# TODO: This is the real purpose of the Configs class (not even used here)
+# TODO: ``configs`` is the real purpose of the Configs class (not even used here)
 #    To provide a default (but customizable) `MutableMapping` interface to configs
-configs = local_configs  # TODO: backwards compatibility alias
+_lazy_instance_factories = {
+    "config_getter": lambda: simple_config_getter(),
+    "local_configs": lambda: get_configs_local_store(),
+    # backwards compatibility alias: the same object as ``local_configs``
+    "configs": lambda: _lazy_instance("local_configs"),
+}
+_lazy_instances = {}  # the built instances, unaffected by patching the attributes
+_lazy_instances_lock = threading.RLock()
+
+
+def _lazy_instance(name):
+    with _lazy_instances_lock:  # so concurrent first accesses get the same object
+        if name not in _lazy_instances:
+            _lazy_instances[name] = _lazy_instance_factories[name]()
+        return _lazy_instances[name]
+
+
+def __getattr__(name):
+    """Build, cache and return the lazy instances ``config_getter``,
+    ``local_configs`` and ``configs`` (PEP 562).
+
+    Building them creates the default configs folder, so an ``OSError`` (say, a
+    read-only HOME) surfaces on first access, which ``import config2py`` used to raise.
+    They are deliberately left out of ``dir()``, so that tools that ``getattr`` every
+    listed name (``pydoc``, doctest collection) don't create the folder.
+    """
+    if name == "DFLT_CONFIG_FOLDER":  # re-exported from util, which creates it
+        return ensure_default_configs_folder()
+    if name not in _lazy_instance_factories:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = _lazy_instance(name)
+    globals()[name] = value  # later accesses are ordinary attribute lookups
+    return value
+
 
 # --------------------------------------------------------------------
 

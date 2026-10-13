@@ -5,11 +5,7 @@ from config2py.tools import (
     extract_exports,
     get_configs_local_store,
     simple_config_getter,
-    config_getter,
-    local_configs,
     Configs,  # user-customized configs store class (default is TextFiles)
-    configs,  # user-customized configs store instance (default is local_configs)
-    # or make configs be more of a default get_configs "chained Mapping"
 )
 from config2py.base import get_config, user_gettable, sources_chainmap
 from config2py.util import (
@@ -27,3 +23,23 @@ from config2py.util import (
 )
 from config2py.sync_store import SyncStore, FileStore, JsonStore, register_extension
 from config2py import codecs  # noqa - Make codecs module available
+
+# ``config_getter``, ``local_configs`` and ``configs`` (the user-customized configs
+# store instance, ``local_configs`` by default) are built on first access, so that
+# ``import config2py`` creates no folder (see https://github.com/i2mint/config2py/issues/26).
+_lazy_tools_attrs = ("config_getter", "local_configs", "configs")
+
+
+def __getattr__(name):
+    if name in _lazy_tools_attrs:
+        from config2py import tools
+
+        return getattr(tools, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+# What ``from config2py import *`` exports: the public names, as without ``__all__``,
+# plus the lazy instances (a star import builds them).
+__all__ = [name for name in globals() if not name.startswith("_")] + list(
+    _lazy_tools_attrs
+)

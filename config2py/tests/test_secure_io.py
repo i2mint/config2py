@@ -130,10 +130,13 @@ def _run_python(code, env):
 
 @posix_only
 def test_import_survives_a_folder_it_cannot_chmod(tmp_path):
-    """#35.1: ``import config2py`` must not crash when the configs folder can't be
-    chmod-ed (read-only file system, folder owned by someone else)."""
+    """#35.1: using config2py's default configs store must not crash when its folder
+    can't be chmod-ed (read-only file system, folder owned by someone else).
+
+    Since #26 the folder is created on first access to the default instances, not by
+    ``import config2py``, so the code below accesses ``config_getter``."""
     env = _sandboxed_env(tmp_path)
-    first = _run_python("import config2py", env)  # creates the managed folder
+    first = _run_python("import config2py; config2py.config_getter", env)  # creates it
     assert first.returncode == 0, first.stderr
     configs_dir = tmp_path / ".config" / "config2py" / "configs"
     assert (configs_dir / ".config2py").is_file()
@@ -147,6 +150,7 @@ def test_import_survives_a_folder_it_cannot_chmod(tmp_path):
         "with warnings.catch_warnings(record=True) as w:\n"
         "    warnings.simplefilter('always')\n"
         "    import config2py\n"
+        "    config2py.config_getter\n"
         "print(len(w))\n"
     )
     result = _run_python(code, env)
