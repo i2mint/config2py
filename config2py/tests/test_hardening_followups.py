@@ -249,3 +249,28 @@ def test_a_traverse_only_subfolder_works_when_not_following(private_dir):
     finally:
         sub.chmod(0o700)
     assert (sub / "KEY").read_text() == "w"
+
+
+@posix_only
+def test_root_exemption_without_being_root(tmp_path, monkeypatch):
+    """The same as the root test, faked so that CI (not root) exercises it (#56)."""
+    from config2py import util
+
+    parent = tmp_path / "hostdir"
+    (parent / "store").mkdir(parents=True, mode=0o700)
+    parent.chmod(0o755)
+    real_stat = os.stat
+
+    def parent_owned_by_someone_else(path, *args, **kwargs):
+        st = real_stat(path, *args, **kwargs)
+        if os.fspath(path) == str(parent):
+            fields = list(st)
+            fields[4] = 4242  # st_uid
+            return os.stat_result(fields)
+        return st
+
+    monkeypatch.setattr(util.os, "stat", parent_owned_by_someone_else)
+    monkeypatch.setattr(util.os, "geteuid", lambda: 0)
+    assert util._ancestor_problem(parent / "store") is None
+    monkeypatch.setattr(util.os, "geteuid", lambda: 1000)
+    assert "owned by another user" in util._ancestor_problem(parent / "store")
