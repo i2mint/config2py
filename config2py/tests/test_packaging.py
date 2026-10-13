@@ -37,6 +37,8 @@ def test_sdist_includes_the_skills():
     _require_source_checkout()
     sdist = pytest.importorskip("hatchling.builders.sdist")
     builder = sdist.SdistBuilder(str(REPO_ROOT))
-    included = {f.relative_path.replace("\\", "/") for f in builder.recurse_included_files()}
+    included = {
+        f.relative_path.replace("\\", "/") for f in builder.recurse_included_files()
+    }
     assert CONSUMER_SKILL in included
     assert DEV_SKILL in included

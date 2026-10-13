@@ -109,7 +109,9 @@ def test_mask_input_can_be_a_custom_predicate(interactive_terminal):
     assert len(fake_getpass.calls) == 1
 
 
-def test_masking_toggle_starts_from_the_resolved_default(interactive_terminal, monkeypatch):
+def test_masking_toggle_starts_from_the_resolved_default(
+    interactive_terminal, monkeypatch
+):
     """With the toggle, the user sees (and flips) the state the heuristic chose."""
     answers = iter(["", "typed"])  # "" toggles masking, then the real value
     prompts = []
@@ -182,7 +184,9 @@ def test_simple_config_getter_masks_secret_keys_end_to_end(
         getpass_returns="sk-not-shown", input_returns="/some/dir"
     )
     get = simple_config_getter(
-        str(tmp_path) + "/", first_look_in_env_vars=False, ask_user_if_key_not_found=True
+        str(tmp_path) + "/",
+        first_look_in_env_vars=False,
+        ask_user_if_key_not_found=True,
     )
     assert get("_C2P_TEST_API_TOKEN_") == "sk-not-shown"
     assert get("_C2P_TEST_DATA_DIR_") == "/some/dir"

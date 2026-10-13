@@ -47,9 +47,9 @@ def test_config_reader_warns_on_a_missing_file(source):
 def test_config_reader_can_raise_or_ignore():
     with pytest.raises(FileNotFoundError, match="no/such/file.ini"):
         ConfigReader("no/such/file.ini", on_missing="raise")
-    assert list(_no_warnings(ConfigReader, "no/such/file.ini", on_missing="ignore")) == [
-        "DEFAULT"
-    ]
+    assert list(
+        _no_warnings(ConfigReader, "no/such/file.ini", on_missing="ignore")
+    ) == ["DEFAULT"]
 
 
 def test_config_reader_reports_only_the_missing_files_of_a_list(ini_file):
