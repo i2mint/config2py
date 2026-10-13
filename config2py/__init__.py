@@ -1,6 +1,12 @@
 """Tools to read and write configurations from various sources and formats"""
 
 from config2py.s_configparser import ConfigStore, ConfigReader
+from config2py.errors import (
+    Config2PyError,
+    Config2PyWarning,
+    ConfigNotFound,
+    MissingConfigFileWarning,
+)
 from config2py.tools import (
     extract_exports,
     get_configs_local_store,

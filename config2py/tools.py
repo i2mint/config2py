@@ -20,6 +20,7 @@ from config2py.util import (
     setup_configs_folder,
 )
 from config2py.base import get_config, user_gettable
+from config2py.errors import report_missing_config_file, validate_on_missing
 
 
 class SecureTextFiles(TextFiles):
@@ -226,22 +227,36 @@ _extract_name_and_value_from_export_line = Pipe(
 )
 
 
-def extract_exports(exports: str) -> dict:
+def _is_file(path: Path) -> bool:
+    try:
+        return path.is_file()
+    except OSError:  # e.g. "File name too long"
+        return False
+
+
+def extract_exports(exports, *, on_missing: str = "warn") -> dict:
     r"""Get a dict of ``{name: value}`` pairs from the ``name="value" pairs of unix
     export lines (that is, lines of the ``export NAME="VALUE"`` format
 
-    :param exports: Filepath or string contents thereof
+    :param exports: Filepath (``str`` or ``os.PathLike``) or string contents thereof
+    :param on_missing: What to do when ``exports`` looks like a filepath (a single,
+        non-blank line with no ``export`` in it) that is not an existing file:
+        ``"warn"`` (the default) issues a ``MissingConfigFileWarning`` and returns
+        ``{}``, ``"raise"`` raises ``FileNotFoundError``, ``"ignore"`` returns ``{}``
+        (see https://github.com/i2mint/config2py/issues/27).
     :return: A dict of extracted ``{name: value}`` pairs
 
     >>> extract_exports('export KEY="secret"\nexport TOKEN="arbitrary"')
     {'KEY': 'secret', 'TOKEN': 'arbitrary'}
+    >>> extract_exports('export KEY="secret"')  # a single line of content works too
+    {'KEY': 'secret'}
 
-    Note that a single-line argument that is not an existing file is parsed as
-    content, not as a path. A mistyped path therefore silently gives an empty dict
-    (see https://github.com/i2mint/config2py/issues/27):
+    A mistyped path is not silently read as empty content:
 
-    >>> extract_exports('no/such/path/.env')
-    {}
+    >>> extract_exports('no/such/path/.env', on_missing='raise')
+    Traceback (most recent call last):
+      ...
+    FileNotFoundError: [Errno 2] No such config file: 'no/such/path/.env'
 
     Use case:
     ---------
@@ -252,8 +267,15 @@ def extract_exports(exports: str) -> dict:
     then this simple parser can be useful.
 
     """
-    if "\n" not in exports and Path(resolve_path(exports)).is_file():
-        exports = Path(resolve_path(exports)).read_text()
+    validate_on_missing(on_missing)
+    if isinstance(exports, os.PathLike):
+        exports = os.fspath(exports)
+    if "\n" not in exports and not export_line_p.search(exports):  # a filepath
+        filepath = Path(resolve_path(exports))
+        if _is_file(filepath):
+            exports = filepath.read_text()
+        elif exports.strip():
+            report_missing_config_file(exports, on_missing=on_missing, stacklevel=2)
     return dict(
         filter(
             None,
