@@ -192,3 +192,54 @@ def test_simple_config_getter_masks_secret_keys_end_to_end(
     assert get("_C2P_TEST_DATA_DIR_") == "/some/dir"
     assert len(fake_getpass.calls) == len(fake_input.calls) == 1
     assert (tmp_path / "_C2P_TEST_API_TOKEN_").read_text() == "sk-not-shown"
+
+
+# --- i2mint/config2py#30: the toggle keeps the egress; an empty prompt works ---
+
+
+def _scripted_prompts(monkeypatch, answers):
+    """Both prompt functions answer from one script, so the test does not care which is used."""
+    answers = iter(answers)
+    shown = []
+
+    def respond(prompt=""):
+        shown.append(prompt)
+        return next(answers)
+
+    respond.__module__ = "getpass"
+    monkeypatch.setattr(getpass, "getpass", respond)
+    monkeypatch.setattr(builtins, "input", respond)
+    return shown
+
+
+def test_the_answer_after_a_masking_toggle_still_goes_through_egress(monkeypatch):
+    _scripted_prompts(monkeypatch, ["", "typed"])  # "" toggles, then the value
+    assert (
+        ask_user_for_input("q", masking_toggle_str="", egress=str.upper) == "TYPED"
+    )
+
+
+def test_egress_runs_once_however_often_masking_is_toggled(monkeypatch):
+    _scripted_prompts(monkeypatch, ["", "", "", "typed"])  # three toggles
+    seen = []
+
+    def egress(value):
+        seen.append(value)
+        return value.upper()
+
+    assert ask_user_for_input("q", masking_toggle_str="", egress=egress) == "TYPED"
+    assert seen == ["typed"], "the toggle itself is not an answer"
+
+
+def test_the_default_also_goes_through_egress_after_a_toggle(monkeypatch):
+    _scripted_prompts(monkeypatch, ["!", ""])  # toggle with "!", then accept the default
+    assert (
+        ask_user_for_input("q", "dflt", masking_toggle_str="!", egress=str.upper)
+        == "DFLT"
+    )
+
+
+def test_an_empty_prompt_is_a_prompt_not_an_indexerror(monkeypatch):
+    shown = _scripted_prompts(monkeypatch, ["typed"])
+    assert ask_user_for_input("", mask_input=False) == "typed"
+    assert shown == [" "]
