@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=3015fd79"></script>
+    <script src="../../_static/documentation_options.js?v=946d7960"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.66" />
+  <meta name="docsearch:version" content="0.1.67" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -727,6 +727,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">_DFLT_CONFIGS_FOLDER_PATH</span><span class="p">,</span>  <span class="c1"># the path of DFLT_CONFIG_FOLDER, not created (#26)</span>
     <span class="n">ensure_default_configs_folder</span><span class="p">,</span>
     <span class="n">is_default_configs_folder</span><span class="p">,</span>
+    <span class="n">looks_like_path</span><span class="p">,</span>
     <span class="n">is_repl</span><span class="p">,</span>
     <span class="n">DFLT_CONFIGS_NAME</span><span class="p">,</span>
     <span class="n">secure_open</span><span class="p">,</span>
@@ -837,6 +838,12 @@ window.runMermaid = runMermaid;</script>
         <span class="n">setup_configs_folder</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_app_name</span><span class="p">(</span><span class="n">src</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">looks_like_path</span><span class="p">(</span><span class="n">src</span><span class="p">)</span> <span class="ow">and</span> <span class="n">src</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"."</span><span class="p">,</span> <span class="s2">".."</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
 <span class="c1"># TODO: Make it into an open-closed plug-in using routing</span>
 <div class="viewcode-block" id="get_configs_local_store">
 <a class="viewcode-back" href="../../_autosummary/config2py.tools.html#config2py.get_configs_local_store">[docs]</a>
@@ -846,6 +853,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">configs_name</span><span class="o">=</span><span class="n">DFLT_CONFIGS_NAME</span><span class="p">,</span>
     <span class="n">follow_symlinks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">on_unsafe_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"warn"</span><span class="p">,</span>
+    <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"auto"</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Get the local store of configs.</span>
 
@@ -853,6 +861,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        If it's a directory, it's assumed to be a folder of text files.</span>
 <span class="sd">        If it's a file, it's assumed to be an ini or cfg file.</span>
 <span class="sd">        If it's a string, it's assumed to be an app name, from which to create a folder</span>
+<span class="sd">        (a ``pathlib.Path`` is always a path).</span>
 <span class="sd">    :param follow_symlinks: Whether the store may write through a symlink at a value</span>
 <span class="sd">        (or ini) file's path. ``False`` refuses to</span>
 <span class="sd">        (see https://github.com/i2mint/config2py/issues/45).</span>
@@ -861,18 +870,32 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        ``/tmp`` is fine) is owned by another user or writable by its group or by</span>
 <span class="sd">        others (see ``SecureTextFiles``).</span>
 
-<span class="sd">    Note: a directory is only recognized as such if ``config_src`` contains</span>
-<span class="sd">    ``os.path.sep``. A bare name (e.g. ``"configs"``) is always treated as an app</span>
-<span class="sd">    name, even if a directory of that name exists in the current working directory;</span>
-<span class="sd">    pass ``"./configs"`` (or an absolute path) to use that directory</span>
-<span class="sd">    (see https://github.com/i2mint/config2py/issues/28).</span>
+<span class="sd">    :param kind: How to read ``config_src``: ``"auto"`` (default), ``"path"`` or</span>
+<span class="sd">        ``"app"``. In ``"auto"`` mode, a ``pathlib.Path``, an absolute path, or a</span>
+<span class="sd">        string containing ``os.sep`` or ``os.altsep`` is a path, and any other string</span>
+<span class="sd">        is an app name, even if a directory of that name exists in the current working</span>
+<span class="sd">        directory (so as not to change where existing callers read and write; only an</span>
+<span class="sd">        existing ``.ini``/``.cfg`` file of that name is used as a file).</span>
+<span class="sd">        ``kind="path"`` makes a bare name such as ``"configs"`` mean that directory</span>
+<span class="sd">        (or file); ``kind="app"`` makes any string an app name.</span>
+<span class="sd">        See https://github.com/i2mint/config2py/issues/28.</span>
 
 <span class="sd">    The default, ``DFLT_CONFIG_FOLDER``, is config2py's own configs folder. It is</span>
 <span class="sd">    created here, on first use, rather than at import</span>
 <span class="sd">    (see https://github.com/i2mint/config2py/issues/26).</span>
 <span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"auto"</span><span class="p">,</span> <span class="s2">"path"</span><span class="p">,</span> <span class="s2">"app"</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"kind must be 'auto', 'path' or 'app'. Was: </span><span class="si">{</span><span class="n">kind</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"app"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_is_app_name</span><span class="p">(</span><span class="n">config_src</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"kind='app' needs an app name: a string without path separators, "</span>
+            <span class="sa">f</span><span class="s2">"and not '.' or '..'. Was: </span><span class="si">{</span><span class="n">config_src</span><span class="si">!r}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="n">is_path</span> <span class="o">=</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">"path"</span> <span class="ow">or</span> <span class="p">(</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">"auto"</span> <span class="ow">and</span> <span class="n">looks_like_path</span><span class="p">(</span><span class="n">config_src</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config_src</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
+        <span class="n">config_src</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">config_src</span><span class="p">)</span>
     <span class="n">_ensure_if_default_configs_folder</span><span class="p">(</span><span class="n">config_src</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="ow">in</span> <span class="n">config_src</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">config_src</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">is_path</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">config_src</span><span class="p">):</span>
         <span class="c1"># TODO: This was a quick fix to avoid unknowingly making directories in the</span>
         <span class="c1">#   wrong place. Broke stuff so leaving this for later.</span>
         <span class="c1"># if os.path.sep not in config_src:</span>
@@ -889,22 +912,23 @@ window.runMermaid = runMermaid;</script>
             <span class="n">follow_symlinks</span><span class="o">=</span><span class="n">follow_symlinks</span><span class="p">,</span>
             <span class="n">on_unsafe_folder</span><span class="o">=</span><span class="n">on_unsafe_folder</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">config_src</span><span class="p">):</span>
-        <span class="c1"># TODO: Not tested</span>
+    <span class="k">elif</span> <span class="p">(</span>
+        <span class="n">kind</span> <span class="o">!=</span> <span class="s2">"app"</span>
+        <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">config_src</span><span class="p">)</span>
         <span class="c1"># TODO: Make this open-closed plug-in via routing argument</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">config_src</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">".ini"</span><span class="p">,</span> <span class="s2">".cfg"</span><span class="p">}:</span>
-            <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.s_configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigStore</span>
+        <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">config_src</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">".ini"</span><span class="p">,</span> <span class="s2">".cfg"</span><span class="p">}</span>
+    <span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.s_configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigStore</span>
 
-            <span class="c1"># A file in a shared sticky folder (``/tmp``) can't be swapped by others</span>
-            <span class="n">check_folder_is_private</span><span class="p">(</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config_src</span><span class="p">)),</span>
-                <span class="n">on_unsafe</span><span class="o">=</span><span class="n">on_unsafe_folder</span><span class="p">,</span>
-                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                <span class="n">ignore_sticky</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="n">ConfigStore</span><span class="p">(</span><span class="n">config_src</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="n">follow_symlinks</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_src</span><span class="p">:</span>  <span class="c1"># it's just a string</span>
+        <span class="c1"># A file in a shared sticky folder (``/tmp``) can't be swapped by others</span>
+        <span class="n">check_folder_is_private</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config_src</span><span class="p">)),</span>
+            <span class="n">on_unsafe</span><span class="o">=</span><span class="n">on_unsafe_folder</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">ignore_sticky</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ConfigStore</span><span class="p">(</span><span class="n">config_src</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="n">follow_symlinks</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_path</span><span class="p">:</span>  <span class="c1"># it's just a string</span>
         <span class="c1"># TODO: is "get" the right word, since it makes the folder too</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">get_configs_folder_for_app</span><span class="p">(</span><span class="n">config_src</span><span class="p">,</span> <span class="n">configs_name</span><span class="o">=</span><span class="n">configs_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">SecureTextFiles</span><span class="p">(</span>

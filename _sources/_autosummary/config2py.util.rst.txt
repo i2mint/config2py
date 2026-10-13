@@ -31,6 +31,7 @@ config2py.util
       is_default_configs_folder
       is_not_empty
       is_repl
+      looks_like_path
       looks_like_secret
       owner_only_opener
       parse_assignments_from_py_source

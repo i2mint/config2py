@@ -27,6 +27,7 @@ Utility functions for config2py.
 | [`is_default_configs_folder`](#config2py.util.is_default_configs_folder)(path)                   | Whether `path` (however spelled) is config2py's own configs folder.                                                                                                                     |
 | [`is_not_empty`](#config2py.util.is_not_empty)(x)                                   | Function that returns True if x is not empty.                                                                                                                                           |
 | [`is_repl`](#config2py.util.is_repl)()                                         | Determines if the Python interpreter is running in REPL.                                                                                                                                |
+| [`looks_like_path`](#config2py.util.looks_like_path)(src)                              | Whether `src` is spelled as a filesystem path rather than as an app name.                                                                                                               |
 | [`looks_like_secret`](#config2py.util.looks_like_secret)(text)                           | True if `text` (typically a prompt naming a config key) looks secret.                                                                                                                   |
 | [`owner_only_opener`](#config2py.util.owner_only_opener)(path, flags, \*[, ...])         | An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.                                                                                                                 |
 | [`parse_assignments_from_py_source`](#config2py.util.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                                                              |
@@ -821,6 +822,28 @@ whether `get_ipython` is in globals, or whether `__main__` has no
 `is_repl.repl_conditions.add(fn)`) to change the checks – rebinding the
 attribute to a new set has no effect, since `is_repl` reads the original set.
 
+### config2py.util.looks_like_path(src)
+
+Whether `src` is spelled as a filesystem path rather than as an app name.
+
+A `pathlib.Path` (or any `os.PathLike`), an absolute path, or a string
+containing `os.sep` or `os.altsep` (so `"C:/work/configs"` on Windows) is a
+path. A bare name such as `"configs"` is not, whether or not a directory of that
+name exists (see [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28)).
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+```pycon
+>>> looks_like_path("my_app")
+False
+>>> looks_like_path("configs/")
+True
+>>> from pathlib import Path
+>>> looks_like_path(Path("configs"))
+True
+```
+
 ### config2py.util.looks_like_secret(text)
 
 True if `text` (typically a prompt naming a config key) looks secret.
@@ -971,7 +994,8 @@ symlink or a file there to redirect or read what config2py writes. A group the
 current user is alone in does not count as “its group”. With `check_ancestors`
 (the default) the folders above it are checked the same way (those who can write
 to a parent can swap the folder itself for a symlink), except that a sticky
-parent, such as `/tmp`, is fine. `ignore_sticky` also accepts the folder
+parent, such as `/tmp`, is fine, and root does not mind a parent that is merely
+owned by another user. `ignore_sticky` also accepts the folder
 itself being sticky (as `/tmp` is), for a file kept directly in a shared folder.
 POSIX only (`None` elsewhere); a missing folder is `None` too.
 

@@ -1,4 +1,4 @@
-> built 2026-10-13 08:43 UTC from 2887853 (master) · config2py 0.1.66. Details: build_info.json
+> built 2026-10-13 15:35 UTC from 5242cd8 (master) · config2py 0.1.67. Details: build_info.json
 
 # index.html.md
 
@@ -2190,7 +2190,7 @@ Retrieve or create the configs directory specific to the given app name.
   * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to create (and set up) the directory. With
     `False`, only the path is computed: nothing is created or chmod-ed.
 
-### config2py.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs', follow_symlinks=True, on_unsafe_folder='warn')
+### config2py.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs', follow_symlinks=True, on_unsafe_folder='warn', kind='auto')
 
 Get the local store of configs.
 
@@ -2199,6 +2199,7 @@ Get the local store of configs.
     If it’s a directory, it’s assumed to be a folder of text files.
     If it’s a file, it’s assumed to be an ini or cfg file.
     If it’s a string, it’s assumed to be an app name, from which to create a folder
+    (a `pathlib.Path` is always a path).
   * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether the store may write through a symlink at a value
     (or ini) file’s path. `False` refuses to
     (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
@@ -2206,13 +2207,15 @@ Get the local store of configs.
     a folder store’s root (or, for an ini file, its folder; a sticky one like
     `/tmp` is fine) is owned by another user or writable by its group or by
     others (see `SecureTextFiles`).
-
-#### NOTE
-a directory is only recognized as such if `config_src` contains
-`os.path.sep`. A bare name (e.g. `"configs"`) is always treated as an app
-name, even if a directory of that name exists in the current working directory;
-pass `"./configs"` (or an absolute path) to use that directory
-(see [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28)).
+  * **kind** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – How to read `config_src`: `"auto"` (default), `"path"` or
+    `"app"`. In `"auto"` mode, a `pathlib.Path`, an absolute path, or a
+    string containing `os.sep` or `os.altsep` is a path, and any other string
+    is an app name, even if a directory of that name exists in the current working
+    directory (so as not to change where existing callers read and write; only an
+    existing `.ini`/`.cfg` file of that name is used as a file).
+    `kind="path"` makes a bare name such as `"configs"` mean that directory
+    (or file); `kind="app"` makes any string an app name.
+    See [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28).
 
 The default, `DFLT_CONFIG_FOLDER`, is config2py’s own configs folder. It is
 created here, on first use, rather than at import
@@ -2997,7 +3000,7 @@ if you want to extract exports from only a specific file (env vars are often
 placed in different linked files), or the exports are defined in a string you hold,
 then this simple parser can be useful.
 
-### config2py.tools.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs', follow_symlinks=True, on_unsafe_folder='warn')
+### config2py.tools.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs', follow_symlinks=True, on_unsafe_folder='warn', kind='auto')
 
 Get the local store of configs.
 
@@ -3006,6 +3009,7 @@ Get the local store of configs.
     If it’s a directory, it’s assumed to be a folder of text files.
     If it’s a file, it’s assumed to be an ini or cfg file.
     If it’s a string, it’s assumed to be an app name, from which to create a folder
+    (a `pathlib.Path` is always a path).
   * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether the store may write through a symlink at a value
     (or ini) file’s path. `False` refuses to
     (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
@@ -3013,13 +3017,15 @@ Get the local store of configs.
     a folder store’s root (or, for an ini file, its folder; a sticky one like
     `/tmp` is fine) is owned by another user or writable by its group or by
     others (see `SecureTextFiles`).
-
-#### NOTE
-a directory is only recognized as such if `config_src` contains
-`os.path.sep`. A bare name (e.g. `"configs"`) is always treated as an app
-name, even if a directory of that name exists in the current working directory;
-pass `"./configs"` (or an absolute path) to use that directory
-(see [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28)).
+  * **kind** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – How to read `config_src`: `"auto"` (default), `"path"` or
+    `"app"`. In `"auto"` mode, a `pathlib.Path`, an absolute path, or a
+    string containing `os.sep` or `os.altsep` is a path, and any other string
+    is an app name, even if a directory of that name exists in the current working
+    directory (so as not to change where existing callers read and write; only an
+    existing `.ini`/`.cfg` file of that name is used as a file).
+    `kind="path"` makes a bare name such as `"configs"` mean that directory
+    (or file); `kind="app"` makes any string an app name.
+    See [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28).
 
 The default, `DFLT_CONFIG_FOLDER`, is config2py’s own configs folder. It is
 created here, on first use, rather than at import
@@ -3129,6 +3135,7 @@ Utility functions for config2py.
 | [`is_default_configs_folder`](_autosummary/config2py.util.html.md#config2py.util.is_default_configs_folder)(path)                   | Whether `path` (however spelled) is config2py's own configs folder.                                                                                                                     |
 | [`is_not_empty`](_autosummary/config2py.util.html.md#config2py.util.is_not_empty)(x)                                   | Function that returns True if x is not empty.                                                                                                                                           |
 | [`is_repl`](_autosummary/config2py.util.html.md#config2py.util.is_repl)()                                         | Determines if the Python interpreter is running in REPL.                                                                                                                                |
+| [`looks_like_path`](_autosummary/config2py.util.html.md#config2py.util.looks_like_path)(src)                              | Whether `src` is spelled as a filesystem path rather than as an app name.                                                                                                               |
 | [`looks_like_secret`](_autosummary/config2py.util.html.md#config2py.util.looks_like_secret)(text)                           | True if `text` (typically a prompt naming a config key) looks secret.                                                                                                                   |
 | [`owner_only_opener`](_autosummary/config2py.util.html.md#config2py.util.owner_only_opener)(path, flags, \*[, ...])         | An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.                                                                                                                 |
 | [`parse_assignments_from_py_source`](_autosummary/config2py.util.html.md#config2py.util.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                                                              |
@@ -3923,6 +3930,28 @@ whether `get_ipython` is in globals, or whether `__main__` has no
 `is_repl.repl_conditions.add(fn)`) to change the checks – rebinding the
 attribute to a new set has no effect, since `is_repl` reads the original set.
 
+### config2py.util.looks_like_path(src)
+
+Whether `src` is spelled as a filesystem path rather than as an app name.
+
+A `pathlib.Path` (or any `os.PathLike`), an absolute path, or a string
+containing `os.sep` or `os.altsep` (so `"C:/work/configs"` on Windows) is a
+path. A bare name such as `"configs"` is not, whether or not a directory of that
+name exists (see [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28)).
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+```pycon
+>>> looks_like_path("my_app")
+False
+>>> looks_like_path("configs/")
+True
+>>> from pathlib import Path
+>>> looks_like_path(Path("configs"))
+True
+```
+
 ### config2py.util.looks_like_secret(text)
 
 True if `text` (typically a prompt naming a config key) looks secret.
@@ -4073,7 +4102,8 @@ symlink or a file there to redirect or read what config2py writes. A group the
 current user is alone in does not count as “its group”. With `check_ancestors`
 (the default) the folders above it are checked the same way (those who can write
 to a parent can swap the folder itself for a symlink), except that a sticky
-parent, such as `/tmp`, is fine. `ignore_sticky` also accepts the folder
+parent, such as `/tmp`, is fine, and root does not mind a parent that is merely
+owned by another user. `ignore_sticky` also accepts the folder
 itself being sticky (as `/tmp` is), for a file kept directly in a shared folder.
 POSIX only (`None` elsewhere); a missing folder is `None` too.
 
@@ -4094,18 +4124,16 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-10-13 08:43 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/2887853d57aa851d68325a04fb129f25f1c897e2"><code>2887853</code></a> on branch <code>master</code>, for **config2py 0.1.66** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 15:35 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/5242cd848f78be7be9e9f56c689768f958f75fd1"><code>5242cd8</code></a> on branch <code>master</code>, for **config2py 0.1.67** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.66) is behind the latest release on PyPI (0.1.67): `pip install config2py` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/2887853d57aa851d68325a04fb129f25f1c897e2"><code>2887853d57aa851d68325a04fb129f25f1c897e2</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/5242cd848f78be7be9e9f56c689768f958f75fd1"><code>5242cd848f78be7be9e9f56c689768f958f75fd1</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4116,15 +4144,15 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38370993850">38370993850</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38423158306">38423158306</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>2887853d57aa851d68325a04fb129f25f1c897e2</code> (in the history of the built commit) |
+| Event commit | <code>5242cd848f78be7be9e9f56c689768f958f75fd1</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.15  |
+| epythet  | 0.2.16  |
 | Sphinx   | 9.1.0   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
@@ -4143,14 +4171,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.67/">0.1.67</a>, newer than the documented version (0.1.66).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.67/">0.1.67</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 2887853d57aa851d68325a04fb129f25f1c897e2
-pip install "epythet==0.2.15"
+git checkout 5242cd848f78be7be9e9f56c689768f958f75fd1
+pip install "epythet==0.2.16"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

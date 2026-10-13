@@ -956,7 +956,7 @@ Retrieve or create the configs directory specific to the given app name.
   * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to create (and set up) the directory. With
     `False`, only the path is computed: nothing is created or chmod-ed.
 
-### config2py.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs', follow_symlinks=True, on_unsafe_folder='warn')
+### config2py.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs', follow_symlinks=True, on_unsafe_folder='warn', kind='auto')
 
 Get the local store of configs.
 
@@ -965,6 +965,7 @@ Get the local store of configs.
     If it’s a directory, it’s assumed to be a folder of text files.
     If it’s a file, it’s assumed to be an ini or cfg file.
     If it’s a string, it’s assumed to be an app name, from which to create a folder
+    (a `pathlib.Path` is always a path).
   * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether the store may write through a symlink at a value
     (or ini) file’s path. `False` refuses to
     (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
@@ -972,13 +973,15 @@ Get the local store of configs.
     a folder store’s root (or, for an ini file, its folder; a sticky one like
     `/tmp` is fine) is owned by another user or writable by its group or by
     others (see `SecureTextFiles`).
-
-#### NOTE
-a directory is only recognized as such if `config_src` contains
-`os.path.sep`. A bare name (e.g. `"configs"`) is always treated as an app
-name, even if a directory of that name exists in the current working directory;
-pass `"./configs"` (or an absolute path) to use that directory
-(see [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28)).
+  * **kind** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – How to read `config_src`: `"auto"` (default), `"path"` or
+    `"app"`. In `"auto"` mode, a `pathlib.Path`, an absolute path, or a
+    string containing `os.sep` or `os.altsep` is a path, and any other string
+    is an app name, even if a directory of that name exists in the current working
+    directory (so as not to change where existing callers read and write; only an
+    existing `.ini`/`.cfg` file of that name is used as a file).
+    `kind="path"` makes a bare name such as `"configs"` mean that directory
+    (or file); `kind="app"` makes any string an app name.
+    See [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28).
 
 The default, `DFLT_CONFIG_FOLDER`, is config2py’s own configs folder. It is
 created here, on first use, rather than at import

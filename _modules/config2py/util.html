@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=3015fd79"></script>
+    <script src="../../_static/documentation_options.js?v=946d7960"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.66" />
+  <meta name="docsearch:version" content="0.1.67" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -996,8 +996,12 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    use to swap the folder for a symlink, or ``None``. Like ssh's ``StrictModes``,</span>
 <span class="sd">    which checks every folder up to the root. A sticky folder (``/tmp``) is fine</span>
 <span class="sd">    even if others can write to it: they can't rename or remove entries they</span>
-<span class="sd">    don't own."""</span>
+<span class="sd">    don't own. When running as root, an ancestor merely *owned* by another user is</span>
+<span class="sd">    fine too (only its being writable by group or others counts): that is what a host</span>
+<span class="sd">    user's folder bind-mounted into a container looks like, and root put the folder</span>
+<span class="sd">    there on purpose (see https://github.com/i2mint/config2py/issues/56)."""</span>
     <span class="n">ancestor</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+    <span class="n">check_owner</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">ancestor</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">parent</span> <span class="o">==</span> <span class="n">ancestor</span><span class="p">:</span>
@@ -1008,7 +1012,7 @@ window.runMermaid = runMermaid;</script>
         <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="n">problems</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">st</span><span class="o">.</span><span class="n">st_uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">(),</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">check_owner</span> <span class="ow">and</span> <span class="n">st</span><span class="o">.</span><span class="n">st_uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">(),</span> <span class="mi">0</span><span class="p">):</span>
             <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"owned by another user"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">_loose_permissions</span><span class="p">(</span><span class="n">st</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISVTX</span><span class="p">:</span>
             <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"writable by its group or by others"</span><span class="p">)</span>
@@ -1029,7 +1033,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    current user is alone in does not count as "its group". With ``check_ancestors``</span>
 <span class="sd">    (the default) the folders above it are checked the same way (those who can write</span>
 <span class="sd">    to a parent can swap the folder itself for a symlink), except that a sticky</span>
-<span class="sd">    parent, such as ``/tmp``, is fine. ``ignore_sticky`` also accepts the folder</span>
+<span class="sd">    parent, such as ``/tmp``, is fine, and root does not mind a parent that is merely</span>
+<span class="sd">    owned by another user. ``ignore_sticky`` also accepts the folder</span>
 <span class="sd">    itself being sticky (as ``/tmp`` is), for a file kept directly in a shared folder.</span>
 <span class="sd">    POSIX only (``None`` elsewhere); a missing folder is ``None`` too.</span>
 
@@ -1849,6 +1854,34 @@ window.runMermaid = runMermaid;</script>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normcase</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">))))</span>
 
 
+<div class="viewcode-block" id="looks_like_path">
+<a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.looks_like_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">looks_like_path</span><span class="p">(</span><span class="n">src</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Whether ``src`` is spelled as a filesystem path rather than as an app name.</span>
+
+<span class="sd">    A ``pathlib.Path`` (or any ``os.PathLike``), an absolute path, or a string</span>
+<span class="sd">    containing ``os.sep`` or ``os.altsep`` (so ``"C:/work/configs"`` on Windows) is a</span>
+<span class="sd">    path. A bare name such as ``"configs"`` is not, whether or not a directory of that</span>
+<span class="sd">    name exists (see https://github.com/i2mint/config2py/issues/28).</span>
+
+<span class="sd">    &gt;&gt;&gt; looks_like_path("my_app")</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; looks_like_path("configs/")</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; from pathlib import Path</span>
+<span class="sd">    &gt;&gt;&gt; looks_like_path(Path("configs"))</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="ow">in</span> <span class="n">src</span>
+        <span class="ow">or</span> <span class="nb">bool</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">altsep</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">altsep</span> <span class="ow">in</span> <span class="n">src</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="is_default_configs_folder">
 <a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.is_default_configs_folder">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_default_configs_folder</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -1859,8 +1892,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    the default folder, whatever the current directory.</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">has_sep</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="ow">in</span> <span class="n">path</span> <span class="ow">or</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">altsep</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">altsep</span> <span class="ow">in</span> <span class="n">path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">has_sep</span> <span class="ow">or</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"~"</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">looks_like_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">or</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"~"</span><span class="p">)):</span>
             <span class="k">return</span> <span class="kc">False</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_normalized_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">==</span> <span class="n">_normalized_path</span><span class="p">(</span><span class="n">_DFLT_CONFIGS_FOLDER_PATH</span><span class="p">)</span>
