@@ -2,6 +2,7 @@
 Data Object Layer for configparser standard lib.
 """
 
+import errno as _errno
 import locale as _locale
 import os as _os
 from configparser import ConfigParser
@@ -137,6 +138,15 @@ def _decode_config_text(data: bytes) -> str:
         return data.decode("utf-8-sig")
     except UnicodeDecodeError:
         return data.decode(_locale_encoding())
+
+
+def _is_not_a_file(error: OSError) -> bool:
+    """Whether opening a source failed because it is no file at all (a folder, a path
+    through a file, or a content string too long to be a name), not because a real
+    file could not be read: such a source holds nothing a write could lose."""
+    return isinstance(error, (IsADirectoryError, NotADirectoryError)) or (
+        error.errno == _errno.ENAMETOOLONG
+    )
 
 
 class ConfigStore(ConfigParserStore):
@@ -330,8 +340,8 @@ class ConfigStore(ConfigParserStore):
                     data = fp.read()
             except FileNotFoundError:
                 continue
-            except OSError:
-                if self._tolerates_unreadable_sources:
+            except OSError as error:
+                if self._tolerates_unreadable_sources or _is_not_a_file(error):
                     continue
                 raise
             self.read_file(StringIO(_decode_config_text(data)), source=filepath)
@@ -365,7 +375,16 @@ class ConfigStore(ConfigParserStore):
                 buffer = StringIO()
                 self.write(buffer, self.space_around_delimiters)
                 text = buffer.getvalue()
-                text.encode("utf-8")  # raises UnicodeEncodeError before truncating
+                try:  # encode before opening, which empties the file
+                    text.encode("utf-8")
+                except UnicodeEncodeError as error:  # its text quotes the character
+                    raise UnicodeEncodeError(  # same type, the character replaced
+                        error.encoding,
+                        "\ufffd" * error.end,
+                        error.start,
+                        error.end,
+                        "a value can't be encoded; nothing was written",
+                    ) from None
                 with secure_open(
                     self.source,
                     "w",

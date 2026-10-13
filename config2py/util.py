@@ -649,7 +649,18 @@ def _absolute_path_from_env(name: str) -> Optional[str]:
     included, at the current working directory, often a project checkout.
     """
     value = (os.getenv(name) or "").strip()
-    return value if value and os.path.isabs(os.path.expanduser(value)) else None
+    if not value:
+        return None
+    if not os.path.isabs(os.path.expanduser(value)):
+        import warnings
+
+        warnings.warn(
+            f"Ignoring {name}={value!r}: it is not an absolute path, so it would put "
+            "config folders (secrets included) under the current working directory.",
+            stacklevel=3,
+        )
+        return None
+    return value
 
 
 def system_default_for_app_data_folder(
