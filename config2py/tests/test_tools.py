@@ -16,7 +16,7 @@ def mock_config_store_factory():
         yield mock_factory
 
 
-def test_simple_config_getter(mock_config_store_factory):
+def test_simple_config_getter(mock_config_store_factory, tmp_path):
     key = "_CONFIG2PY_SAFE_TO_DELETE_VAR_"
 
     # Set up mock config store
@@ -41,8 +41,16 @@ def test_simple_config_getter(mock_config_store_factory):
         patch("builtins.input", return_value="from user"),
         patch("getpass.getpass", return_value="from user"),
     ):
-        config_getter = simple_config_getter(ask_user_if_key_not_found=True)
+        # The factory and the source are passed explicitly: simple_config_getter's
+        # defaults are bound at definition time, so patching the module attribute
+        # does not reach them, and the real default store would be written to (#40).
+        config_getter = simple_config_getter(
+            str(tmp_path / "configs"),
+            ask_user_if_key_not_found=True,
+            config_store_factory=mock_config_store_factory,
+        )
         assert config_getter("new_key") == "from user"
+    assert mock_config_store["new_key"] == "from user"
 
     # TODO: Make this test work
     # Test that config_getter.configs is set correctly
