@@ -27,6 +27,12 @@ Examples:
 
 The module automatically registers codecs for standard formats (json, toml, ini, etc.)
 and conditionally registers codecs that require third-party libraries (yaml, json5, etc.).
+
+Security warning: the ``.pkl`` and ``.pickle`` extensions decode with
+``pickle.loads``, which can execute arbitrary code. Never call
+``decode_by_extension`` with those extensions on bytes you do not fully trust (for
+example, bytes fetched from a remote or shared store).
+See https://github.com/i2mint/config2py/issues/29.
 """
 
 from typing import Callable, TypeVar, Any, Optional
@@ -116,6 +122,11 @@ def decode_by_extension(key: str, data: bytes) -> Any:
     Raises:
         ValueError: If no decoder registered for extension
 
+    Warning:
+        The decoder is chosen by the key's extension alone. ``.pkl`` and
+        ``.pickle`` map to ``pickle.loads``, which can execute arbitrary code, so
+        never decode untrusted bytes under those extensions.
+
     Examples:
 
         >>> data = b'{"key": "value"}'
@@ -193,7 +204,7 @@ def register_codec(
     Examples:
 
         >>> def my_encoder(obj): return str(obj).encode()
-        >>> def my_decoder(data): return eval(data.decode())
+        >>> def my_decoder(data): return data.decode()
         >>> register_codec('.custom', encoder=my_encoder, decoder=my_decoder, overwrite=True)
     """
     if not extension.startswith("."):
@@ -356,6 +367,9 @@ register_codec(
 )
 
 # Pickle - Python object serialization (not text-based, but useful)
+# SECURITY: ``pickle.loads`` executes arbitrary code embedded in the bytes it reads.
+# Only decode ``.pkl``/``.pickle`` data you produced yourself or otherwise fully
+# trust. Making this decoder opt-in is tracked in i2mint/config2py#29.
 register_codec(
     ".pkl",
     encoder=pickle.dumps,

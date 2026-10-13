@@ -78,17 +78,6 @@ Getter = Callable[[KT], VT]
 Sources = Iterable[Union[GettableContainer, Getter]]
 GetConfigEgress = Callable[[KT, VT], VT]
 
-# # TODO: Refactor into reusable function that can look (and write) in multiple stores
-# _open_api_key_env_name = 'OPENAI_API_KEY'
-# _api_key = os.environ.get(_open_api_key_env_name, None)
-# if _api_key is None:
-#     # TODO: Figure out a way to make input response invisible (using * or something)
-#     _api_key = getpass.getpass(
-#         f"Please set your OpenAI API key and press enter to continue. "
-#         f"I will put it in the environment variable {_open_api_key_env_name} "
-#     )
-# openai.api_key = _api_key
-
 
 def is_not_none_nor_empty(x):
     """True unless ``x`` is ``None`` or the empty string.
@@ -171,7 +160,14 @@ def get_config(
     you want in some situations, since you'd be hiding some errors that you might
     want to be aware of. This is why allow you to specify what exceptions should
     actually be considered as "config not found" exceptions, through the
-    ``config_not_found_exceptions`` argument, which defaults to ``Exception``.
+    ``config_not_found_exceptions`` argument, which defaults to ``(Exception,)``.
+
+    Beware that this broad default treats *any* error raised by a callable source
+    (a network blip, a bug, a missing import, rejected credentials) as "not found",
+    and silently moves on to the next, possibly less trusted, source. When the
+    sources are known, prefer passing something narrower, such as
+    ``config_not_found_exceptions=(KeyError, LookupError, FileNotFoundError)``
+    (see https://github.com/i2mint/config2py/issues/25).
 
     Further, your sources may return a value, but not one that you consider valid:
     For example, a sentinel like ``None``. In this case you may want the search to

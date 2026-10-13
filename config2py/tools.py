@@ -13,8 +13,38 @@ from config2py.util import (
     DFLT_CONFIG_FOLDER,
     is_repl,
     DFLT_CONFIGS_NAME,
+    secure_open,
 )
 from config2py.base import get_config, user_gettable
+
+
+class SecureTextFiles(TextFiles):
+    """A ``dol.TextFiles`` (one text file per key) whose value files are ``0o600``.
+
+    Config values are often secrets (API keys); plain ``TextFiles`` writes them with
+    the umask default (commonly world-readable ``0o644``). Still an ``isinstance``
+    of ``TextFiles``, so it is a drop-in replacement
+    (see https://github.com/i2mint/config2py/issues/33).
+
+    Like ``TextFiles``, values are UTF-8 on disk whatever the locale, and a failed
+    write raises ``KeyError``. Unlike it, the value is encoded before the file is
+    opened, so an unencodable value doesn't leave an emptied file behind
+    (see https://github.com/i2mint/config2py/issues/35).
+    """
+
+    encoding = "utf-8"  # what dol's TextFiles reads with
+
+    def __setitem__(self, k, v):
+        # dol's TextFiles wraps an inner persister, so write via the full path here,
+        # keeping that persister's key validation and its KeyError contract.
+        path = self._id_of_key(k)
+        self.store.validate_key(path)
+        try:
+            data = self._data_of_obj(v).encode(self.encoding)
+            with secure_open(path, "wb") as fp:
+                fp.write(data)
+        except Exception as error:
+            raise KeyError(str(error)) from error
 
 
 # TODO: Make it into an open-closed plug-in using routing
@@ -27,6 +57,12 @@ def get_configs_local_store(
         If it's a directory, it's assumed to be a folder of text files.
         If it's a file, it's assumed to be an ini or cfg file.
         If it's a string, it's assumed to be an app name, from which to create a folder
+
+    Note: a directory is only recognized as such if ``config_src`` contains
+    ``os.path.sep``. A bare name (e.g. ``"configs"``) is always treated as an app
+    name, even if a directory of that name exists in the current working directory;
+    pass ``"./configs"`` (or an absolute path) to use that directory
+    (see https://github.com/i2mint/config2py/issues/28).
     """
     if os.path.sep in config_src and os.path.isdir(config_src):
         # TODO: This was a quick fix to avoid unknowingly making directories in the
@@ -40,7 +76,7 @@ def get_configs_local_store(
         #         f"get_configs_local_store function from a directory that doesn't "
         #         "contain a {config_src} folder."
         #     )
-        return TextFiles(config_src)
+        return SecureTextFiles(config_src)
     elif os.path.isfile(config_src):
         # TODO: Not tested
         # TODO: Make this open-closed plug-in via routing argument
@@ -52,7 +88,7 @@ def get_configs_local_store(
     elif os.path.sep not in config_src:  # it's just a string
         # TODO: is "get" the right word, since it makes the folder too
         path = get_configs_folder_for_app(config_src, configs_name=configs_name)
-        return TextFiles(path)
+        return SecureTextFiles(path)
     else:
         raise ValueError(
             f"config_src must be a directory, ini or cfg file, or app name. "
@@ -103,7 +139,10 @@ def simple_config_getter(
     return config_getter
 
 
-# Make a ready-to-use config getter, using the defaults
+# Make a ready-to-use config getter, using the defaults.
+# Note: this (and ``local_configs`` below) runs at import time, so ``import config2py``
+# creates the default configs folder (``~/.config/config2py/configs`` on Linux) if it
+# doesn't exist yet. Making this lazy is tracked in i2mint/config2py#26.
 config_getter = simple_config_getter()
 
 
@@ -116,7 +155,7 @@ config_getter = simple_config_getter()
 #   Make the Configs class with use outside config2py in mind.
 #   Note: Perhaps there's no need for a class.
 #   Maybe just a function that returns a store
-Configs = TextFiles  # TODO: deprecate
+Configs = SecureTextFiles  # TODO: deprecate
 
 # A default persistent store for configs
 local_configs = get_configs_local_store()
@@ -146,6 +185,13 @@ def extract_exports(exports: str) -> dict:
 
     >>> extract_exports('export KEY="secret"\nexport TOKEN="arbitrary"')
     {'KEY': 'secret', 'TOKEN': 'arbitrary'}
+
+    Note that a single-line argument that is not an existing file is parsed as
+    content, not as a path. A mistyped path therefore silently gives an empty dict
+    (see https://github.com/i2mint/config2py/issues/27):
+
+    >>> extract_exports('no/such/path/.env')
+    {}
 
     Use case:
     ---------
