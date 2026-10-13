@@ -122,6 +122,12 @@ def _ensure_if_default_configs_folder(src):
         setup_configs_folder(src)
 
 
+def _is_app_name(src) -> bool:
+    return (
+        isinstance(src, str) and not looks_like_path(src) and src not in ("", ".", "..")
+    )
+
+
 # TODO: Make it into an open-closed plug-in using routing
 def get_configs_local_store(
     config_src=_DFLT_CONFIGS_FOLDER_PATH,
@@ -150,7 +156,8 @@ def get_configs_local_store(
         ``"app"``. In ``"auto"`` mode, a ``pathlib.Path``, an absolute path, or a
         string containing ``os.sep`` or ``os.altsep`` is a path, and any other string
         is an app name, even if a directory of that name exists in the current working
-        directory (so as not to change where existing callers read and write).
+        directory (so as not to change where existing callers read and write; only an
+        existing ``.ini``/``.cfg`` file of that name is used as a file).
         ``kind="path"`` makes a bare name such as ``"configs"`` mean that directory
         (or file); ``kind="app"`` makes any string an app name.
         See https://github.com/i2mint/config2py/issues/28.
@@ -161,8 +168,11 @@ def get_configs_local_store(
     """
     if kind not in ("auto", "path", "app"):
         raise ValueError(f"kind must be 'auto', 'path' or 'app'. Was: {kind!r}")
-    if kind == "app" and not isinstance(config_src, str):
-        raise ValueError(f"kind='app' needs a string app name. Was: {config_src!r}")
+    if kind == "app" and not _is_app_name(config_src):
+        raise ValueError(
+            f"kind='app' needs an app name: a string without path separators, "
+            f"and not '.' or '..'. Was: {config_src!r}"
+        )
     is_path = kind == "path" or (kind == "auto" and looks_like_path(config_src))
     if isinstance(config_src, os.PathLike):
         config_src = os.fspath(config_src)
@@ -184,21 +194,22 @@ def get_configs_local_store(
             follow_symlinks=follow_symlinks,
             on_unsafe_folder=on_unsafe_folder,
         )
-    elif kind != "app" and os.path.isfile(config_src):
-        # TODO: Not tested
+    elif (
+        kind != "app"
+        and os.path.isfile(config_src)
         # TODO: Make this open-closed plug-in via routing argument
-        _, extension = os.path.splitext(config_src)
-        if extension in {".ini", ".cfg"}:
-            from config2py.s_configparser import ConfigStore
+        and os.path.splitext(config_src)[1] in {".ini", ".cfg"}
+    ):
+        from config2py.s_configparser import ConfigStore
 
-            # A file in a shared sticky folder (``/tmp``) can't be swapped by others
-            check_folder_is_private(
-                os.path.dirname(os.path.abspath(config_src)),
-                on_unsafe=on_unsafe_folder,
-                stacklevel=2,
-                ignore_sticky=True,
-            )
-            return ConfigStore(config_src, follow_symlinks=follow_symlinks)
+        # A file in a shared sticky folder (``/tmp``) can't be swapped by others
+        check_folder_is_private(
+            os.path.dirname(os.path.abspath(config_src)),
+            on_unsafe=on_unsafe_folder,
+            stacklevel=2,
+            ignore_sticky=True,
+        )
+        return ConfigStore(config_src, follow_symlinks=follow_symlinks)
     elif not is_path:  # it's just a string
         # TODO: is "get" the right word, since it makes the folder too
         path = get_configs_folder_for_app(config_src, configs_name=configs_name)

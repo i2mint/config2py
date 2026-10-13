@@ -87,3 +87,19 @@ def test_a_path_object_to_an_ini_file(sandbox):
     ini.write_text("[a]\nb = 1\n")
     ini.chmod(0o600)
     assert isinstance(get_configs_local_store(ini, on_unsafe_folder="ignore"), ConfigStore)
+
+
+@pytest.mark.parametrize("name", ["/abs/x", "../escape", "a/b", "..", ".", ""])
+def test_kind_app_rejects_what_is_not_an_app_name(sandbox, name):
+    with pytest.raises(ValueError, match="app name"):
+        get_configs_local_store(name, kind="app")
+
+
+def test_a_file_that_is_not_ini_is_never_silently_ignored(sandbox):
+    (sandbox / "README").write_text("hi")
+    with pytest.raises(ValueError):
+        get_configs_local_store("README", kind="path")
+    with pytest.raises(ValueError):
+        get_configs_local_store("./README")
+    # a bare name is an app name, as ever (it used to return None here)
+    assert isinstance(get_configs_local_store("README"), SecureTextFiles)

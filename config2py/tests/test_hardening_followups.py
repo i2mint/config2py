@@ -55,17 +55,34 @@ def test_a_private_folder_in_a_world_writable_parent_is_flagged(tmp_path):
 @pytest.mark.skipif(
     not hasattr(os, "geteuid") or os.geteuid() != 0, reason="needs root to chown"
 )
-def test_an_ancestor_merely_owned_by_another_user_is_fine(tmp_path):
+def test_an_ancestor_owned_by_another_user_is_flagged_unless_across_a_mount(
+    tmp_path, monkeypatch
+):
     """A host user's folder bind-mounted into a container, seen by root (#56)."""
+    from config2py import util
+
     parent = tmp_path / "hostdir"
     parent.mkdir()
     parent.chmod(0o755)
     os.chown(parent, 65534, -1)
     child = parent / "store"
     child.mkdir(mode=0o700)
+    assert "owned by another user" in unsafe_folder_reason(child)  # same filesystem
+
+    real_stat = os.stat
+
+    def stat_with_parent_on_another_device(path, *args, **kwargs):
+        st = real_stat(path, *args, **kwargs)
+        if os.fspath(path) == str(parent):
+            fields = list(st)
+            fields[2] = st.st_dev + 1  # st_dev
+            return os.stat_result(fields)
+        return st
+
+    monkeypatch.setattr(util.os, "stat", stat_with_parent_on_another_device)
     assert unsafe_folder_reason(child) is None
-    os.chown(child, 65534, -1)  # the folder itself being foreign is still flagged
-    assert "owned by another user" in unsafe_folder_reason(child)
+    parent.chmod(0o777)  # ...but still flagged if others could write there
+    assert "writable" in unsafe_folder_reason(child)
 
 
 @posix_only
