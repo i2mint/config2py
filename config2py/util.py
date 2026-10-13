@@ -268,15 +268,12 @@ def _ancestor_problem(dirpath) -> Optional[str]:
     use to swap the folder for a symlink, or ``None``. Like ssh's ``StrictModes``,
     which checks every folder up to the root. A sticky folder (``/tmp``) is fine
     even if others can write to it: they can't rename or remove entries they
-    don't own. An ancestor on another filesystem than the folder (the other side of
-    a mount point, e.g. a host user's folder bind-mounted into a container, seen by
-    root) is only checked for being writable, not for being owned by another user
-    (see https://github.com/i2mint/config2py/issues/56)."""
+    don't own. When running as root, an ancestor merely *owned* by another user is
+    fine too (only its being writable by group or others counts): that is what a host
+    user's folder bind-mounted into a container looks like, and root put the folder
+    there on purpose (see https://github.com/i2mint/config2py/issues/56)."""
     ancestor = os.path.realpath(dirpath)
-    try:
-        folder_dev = os.stat(ancestor).st_dev
-    except OSError:
-        folder_dev = None
+    check_owner = os.geteuid() != 0
     while True:
         parent = os.path.dirname(ancestor)
         if parent == ancestor:
@@ -287,8 +284,7 @@ def _ancestor_problem(dirpath) -> Optional[str]:
         except OSError:
             continue
         problems = []
-        across_mount = folder_dev is not None and st.st_dev != folder_dev
-        if st.st_uid not in (os.geteuid(), 0) and not across_mount:
+        if check_owner and st.st_uid not in (os.geteuid(), 0):
             problems.append("owned by another user")
         if _loose_permissions(st) and not st.st_mode & stat.S_ISVTX:
             problems.append("writable by its group or by others")
@@ -307,8 +303,8 @@ def unsafe_folder_reason(
     current user is alone in does not count as "its group". With ``check_ancestors``
     (the default) the folders above it are checked the same way (those who can write
     to a parent can swap the folder itself for a symlink), except that a sticky
-    parent, such as ``/tmp``, is fine, and a parent on another filesystem than the
-    folder is not checked for its owner. ``ignore_sticky`` also accepts the folder
+    parent, such as ``/tmp``, is fine, and root does not mind a parent that is merely
+    owned by another user. ``ignore_sticky`` also accepts the folder
     itself being sticky (as ``/tmp`` is), for a file kept directly in a shared folder.
     POSIX only (``None`` elsewhere); a missing folder is ``None`` too.
 
