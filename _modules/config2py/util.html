@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=07ed7713"></script>
+    <script src="../../_static/documentation_options.js?v=3015fd79"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.65" />
+  <meta name="docsearch:version" content="0.1.66" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -778,13 +778,14 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="owner_only_opener">
 <a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.owner_only_opener">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">owner_only_opener</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">owner_only_opener</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""An ``opener`` for ``open`` that creates (or re-tightens) ``path`` as ``0o600``.</span>
 
 <span class="sd">    With ``follow_symlinks=False`` a symlink at ``path`` is refused (``OSError``,</span>
 <span class="sd">    ``ELOOP``) instead of followed -- through ``O_NOFOLLOW`` where the platform has</span>
 <span class="sd">    it (which only covers the last path component), else by an ``islink`` check; a file</span>
-<span class="sd">    with several hard links is refused too, and left untouched.</span>
+<span class="sd">    with several hard links is refused too, and left untouched. ``dir_fd`` makes</span>
+<span class="sd">    ``path`` relative to that open folder (POSIX; see ``secure_open``'s ``beneath``).</span>
 <span class="sd">    Opening a symlink *you* control is fine; one planted by someone else in a folder</span>
 <span class="sd">    they can write to would redirect (and ``chmod``) a file of theirs choosing</span>
 <span class="sd">    (see https://github.com/i2mint/config2py/issues/45).</span>
@@ -801,13 +802,13 @@ window.runMermaid = runMermaid;</script>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">follow_symlinks</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"O_NOFOLLOW"</span><span class="p">):</span>
             <span class="n">flags</span> <span class="o">|=</span> <span class="n">os</span><span class="o">.</span><span class="n">O_NOFOLLOW</span>
-        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>  <span class="c1"># Windows: no O_NOFOLLOW (check, then open)</span>
+        <span class="k">elif</span> <span class="n">dir_fd</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>  <span class="c1"># Windows: no O_NOFOLLOW</span>
             <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ELOOP</span><span class="p">,</span> <span class="s2">"Refusing to follow a symlink"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
         <span class="c1"># Truncate only after checking for a hardlink (a second name for a file</span>
         <span class="c1"># someone else chose), so refusing it leaves the file intact.</span>
         <span class="n">truncate</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">os</span><span class="o">.</span><span class="n">O_TRUNC</span><span class="p">)</span>
         <span class="n">flags</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">os</span><span class="o">.</span><span class="n">O_TRUNC</span>
-    <span class="n">fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">)</span>
+    <span class="n">fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="n">dir_fd</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">follow_symlinks</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">fstat</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span><span class="o">.</span><span class="n">st_nlink</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -831,7 +832,7 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="secure_open">
 <a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.secure_open">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"w"</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"w"</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">beneath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""``open(path, mode, **open_kwargs)`` with owner-only (``0o600``) permissions.</span>
 
 <span class="sd">    The file is created (or re-tightened) by ``owner_only_opener``. Being the builtin</span>
@@ -842,7 +843,13 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Any mode, including ``"r"``, sets the file's permissions to ``0o600``.</span>
 
 <span class="sd">    A symlink at ``path`` is followed (like ``open``) unless ``follow_symlinks=False``,</span>
-<span class="sd">    which raises ``OSError`` instead (see ``owner_only_opener``).</span>
+<span class="sd">    which raises ``OSError`` instead (see ``owner_only_opener``). With</span>
+<span class="sd">    ``follow_symlinks=False`` and ``beneath=&lt;folder&gt;`` (a folder ``path`` is inside),</span>
+<span class="sd">    a symlink at *any* folder between ``beneath`` and the file is refused too (not</span>
+<span class="sd">    ``beneath`` itself, nor the folders above it: those are yours to choose). On POSIX</span>
+<span class="sd">    each folder is opened relative to its parent with ``O_NOFOLLOW``, so the check</span>
+<span class="sd">    can't be raced; elsewhere it is an ``islink`` check</span>
+<span class="sd">    (see https://github.com/i2mint/config2py/issues/51).</span>
 
 <span class="sd">    Intended for files that may hold secrets (see i2mint/config2py#15).</span>
 
@@ -856,11 +863,49 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    '0o600'</span>
 <span class="sd">    &gt;&gt;&gt; os.remove(path)</span>
 <span class="sd">    """</span>
-    <span class="n">opener</span> <span class="o">=</span> <span class="n">owner_only_opener</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">follow_symlinks</span><span class="p">:</span>
-        <span class="n">opener</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">owner_only_opener</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">opener</span><span class="o">=</span><span class="n">opener</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">follow_symlinks</span> <span class="ow">or</span> <span class="n">beneath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">opener</span> <span class="o">=</span> <span class="n">owner_only_opener</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">follow_symlinks</span><span class="p">:</span>
+            <span class="n">opener</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">owner_only_opener</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">opener</span><span class="o">=</span><span class="n">opener</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_open_beneath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">beneath</span><span class="p">,</span> <span class="n">open_kwargs</span><span class="p">)</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_open_beneath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">beneath</span><span class="p">,</span> <span class="n">open_kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""``secure_open(path, follow_symlinks=False, beneath=beneath)``."""</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">altsep</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">IsADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">EISDIR</span><span class="p">,</span> <span class="s2">"Not a file path"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="n">relative</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">beneath</span><span class="p">))</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">relative</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">pardir</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">!r}</span><span class="s2"> is not inside </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">beneath</span><span class="p">)</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="o">*</span><span class="n">folders</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">parts</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"O_NOFOLLOW"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">supports_dir_fd</span><span class="p">):</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">beneath</span><span class="p">)</span>  <span class="c1"># no dir_fd (Windows): check, then open</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+            <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">"isjunction"</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)(</span><span class="n">folder</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ELOOP</span><span class="p">,</span> <span class="s2">"Refusing to follow a symlink"</span><span class="p">,</span> <span class="n">folder</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">open</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span>
+            <span class="n">mode</span><span class="p">,</span>
+            <span class="n">opener</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">owner_only_opener</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">open_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="c1"># O_PATH (Linux): walking a folder needs only search permission, not read</span>
+    <span class="n">dir_flags</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"O_PATH"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">O_RDONLY</span><span class="p">)</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">O_NOFOLLOW</span>
+    <span class="n">dir_flags</span> <span class="o">|=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"O_DIRECTORY"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">dir_fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">beneath</span><span class="p">),</span> <span class="n">dir_flags</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">os</span><span class="o">.</span><span class="n">O_NOFOLLOW</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>  <span class="c1"># ``part`` is a symlink =&gt; OSError (ELOOP / ENOTDIR)</span>
+            <span class="n">next_fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">dir_flags</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="n">dir_fd</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">dir_fd</span><span class="p">)</span>
+            <span class="n">dir_fd</span> <span class="o">=</span> <span class="n">next_fd</span>
+        <span class="n">opener</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">owner_only_opener</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="n">dir_fd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">opener</span><span class="o">=</span><span class="n">opener</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">dir_fd</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="tighten_mode">
@@ -938,21 +983,59 @@ window.runMermaid = runMermaid;</script>
         <span class="k">return</span> <span class="kc">False</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_loose_permissions</span><span class="p">(</span><span class="n">st</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""True if ``st`` (a folder's ``os.stat``) is writable by its group or by others."""</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IWOTH</span>
+        <span class="ow">or</span> <span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IWGRP</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_is_private_group</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">st_gid</span><span class="p">))</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_ancestor_problem</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The first ancestor of ``dirpath`` (symlinks resolved) that another user could</span>
+<span class="sd">    use to swap the folder for a symlink, or ``None``. Like ssh's ``StrictModes``,</span>
+<span class="sd">    which checks every folder up to the root. A sticky folder (``/tmp``) is fine</span>
+<span class="sd">    even if others can write to it: they can't rename or remove entries they</span>
+<span class="sd">    don't own."""</span>
+    <span class="n">ancestor</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">ancestor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="o">==</span> <span class="n">ancestor</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">ancestor</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">st</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">ancestor</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">problems</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">st</span><span class="o">.</span><span class="n">st_uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">(),</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"owned by another user"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_loose_permissions</span><span class="p">(</span><span class="n">st</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISVTX</span><span class="p">:</span>
+            <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"writable by its group or by others"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">problems</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"under </span><span class="si">{</span><span class="n">ancestor</span><span class="si">!r}</span><span class="s2">, which is </span><span class="si">{</span><span class="s1">' and '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">problems</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+
+
 <div class="viewcode-block" id="unsafe_folder_reason">
 <a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.unsafe_folder_reason">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">unsafe_folder_reason</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unsafe_folder_reason</span><span class="p">(</span>
+    <span class="n">dirpath</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">check_ancestors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ignore_sticky</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Why a folder isn't safe to keep secrets in, or ``None`` if it looks fine.</span>
 
 <span class="sd">    Like ssh's ``StrictModes``: a folder owned by someone other than the current user</span>
 <span class="sd">    (or root), or writable by its group or by others, lets those users plant a</span>
 <span class="sd">    symlink or a file there to redirect or read what config2py writes. A group the</span>
-<span class="sd">    current user is alone in does not count as "its group". Only the folder itself is</span>
-<span class="sd">    looked at, not its parents. POSIX only (``None`` elsewhere); a missing folder is</span>
-<span class="sd">    ``None`` too.</span>
+<span class="sd">    current user is alone in does not count as "its group". With ``check_ancestors``</span>
+<span class="sd">    (the default) the folders above it are checked the same way (those who can write</span>
+<span class="sd">    to a parent can swap the folder itself for a symlink), except that a sticky</span>
+<span class="sd">    parent, such as ``/tmp``, is fine. ``ignore_sticky`` also accepts the folder</span>
+<span class="sd">    itself being sticky (as ``/tmp`` is), for a file kept directly in a shared folder.</span>
+<span class="sd">    POSIX only (``None`` elsewhere); a missing folder is ``None`` too.</span>
 
 <span class="sd">    &gt;&gt;&gt; import tempfile</span>
 <span class="sd">    &gt;&gt;&gt; with tempfile.TemporaryDirectory() as d:  # created 0o700</span>
-<span class="sd">    ...     unsafe_folder_reason(d)</span>
+<span class="sd">    ...     unsafe_folder_reason(d, check_ancestors=False)</span>
 <span class="sd">    &gt;&gt;&gt; unsafe_folder_reason("/no/such/folder")</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"geteuid"</span><span class="p">):</span>
@@ -964,17 +1047,24 @@ window.runMermaid = runMermaid;</script>
     <span class="n">problems</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">st</span><span class="o">.</span><span class="n">st_uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">(),</span> <span class="mi">0</span><span class="p">):</span>
         <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"owned by another user"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IWOTH</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IWGRP</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_is_private_group</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">st_gid</span><span class="p">)</span>
-    <span class="p">):</span>
+    <span class="k">if</span> <span class="n">_loose_permissions</span><span class="p">(</span><span class="n">st</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">ignore_sticky</span> <span class="ow">and</span> <span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISVTX</span><span class="p">):</span>
         <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"writable by its group or by others"</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">" and "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">problems</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span></div>
+    <span class="k">if</span> <span class="n">problems</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">" and "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">problems</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_ancestor_problem</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span> <span class="k">if</span> <span class="n">check_ancestors</span> <span class="k">else</span> <span class="kc">None</span></div>
 
 
 
 <div class="viewcode-block" id="check_folder_is_private">
 <a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.check_folder_is_private">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">check_folder_is_private</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">on_unsafe</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"warn"</span><span class="p">,</span> <span class="n">stacklevel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_folder_is_private</span><span class="p">(</span>
+    <span class="n">dirpath</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">on_unsafe</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"warn"</span><span class="p">,</span>
+    <span class="n">stacklevel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">check_ancestors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">ignore_sticky</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Check ``dirpath`` with ``unsafe_folder_reason``, and act on a problem.</span>
 
 <span class="sd">    :param on_unsafe: ``"warn"`` (the default) issues an</span>
@@ -982,6 +1072,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        ``PermissionError``, ``"ignore"`` skips the check. Fix a folder you own with</span>
 <span class="sd">        ``chmod 700``</span>
 <span class="sd">        (see https://github.com/i2mint/config2py/issues/45).</span>
+<span class="sd">    :param check_ancestors: Also check the folders above ``dirpath``.</span>
+<span class="sd">    :param ignore_sticky: Accept ``dirpath`` itself being sticky (like ``/tmp``).</span>
 <span class="sd">    """</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">InsecureConfigFolderWarning</span><span class="p">,</span> <span class="n">validate_on_missing</span>
 
@@ -991,7 +1083,9 @@ window.runMermaid = runMermaid;</script>
     <span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">on_unsafe</span> <span class="o">==</span> <span class="s2">"warn"</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_warned_unsafe_folders</span><span class="p">:</span>
         <span class="k">return</span>  <span class="c1"># warned once already: don't look again</span>
-    <span class="n">reason</span> <span class="o">=</span> <span class="n">unsafe_folder_reason</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+    <span class="n">reason</span> <span class="o">=</span> <span class="n">unsafe_folder_reason</span><span class="p">(</span>
+        <span class="n">dirpath</span><span class="p">,</span> <span class="n">check_ancestors</span><span class="o">=</span><span class="n">check_ancestors</span><span class="p">,</span> <span class="n">ignore_sticky</span><span class="o">=</span><span class="n">ignore_sticky</span>
+    <span class="p">)</span>
     <span class="k">if</span> <span class="n">reason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>

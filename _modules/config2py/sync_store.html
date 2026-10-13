@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=07ed7713"></script>
+    <script src="../../_static/documentation_options.js?v=3015fd79"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.65" />
+  <meta name="docsearch:version" content="0.1.66" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -744,6 +744,7 @@ window.runMermaid = runMermaid;</script>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">MutableMapping</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduce</span>
 
@@ -759,7 +760,7 @@ window.runMermaid = runMermaid;</script>
 <span class="c1"># TODO: Do we want to use more stuff from config2py, dol, etc.?</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"w"</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"w"</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Open ``path`` for writing with owner-only (``0o600``) permissions.</span>
 
 <span class="sd">    Local copy of ``config2py.util.secure_open`` -- this module deliberately has no</span>
@@ -769,12 +770,34 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    Re-tightens via ``os.fchmod`` on the open fd (not just relying on ``os.open``'s</span>
 <span class="sd">    ``mode`` argument, which POSIX only consults when a *new* file is created -- a</span>
 <span class="sd">    pre-existing, already-loose file would otherwise keep its old permissions).</span>
+
+<span class="sd">    With ``follow_symlinks=False`` a symlink at ``path`` (the last component only) and a</span>
+<span class="sd">    file with several hard links are refused (``OSError``), the file left untouched;</span>
+<span class="sd">    see i2mint/config2py#45 and #51.</span>
 <span class="sd">    """</span>
     <span class="n">flags</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">O_WRONLY</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">O_CREAT</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">O_TRUNC</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">follow_symlinks</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"O_NOFOLLOW"</span><span class="p">):</span>
+            <span class="n">flags</span> <span class="o">|=</span> <span class="n">os</span><span class="o">.</span><span class="n">O_NOFOLLOW</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>  <span class="c1"># Windows: no O_NOFOLLOW (check, then open)</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ELOOP</span><span class="p">,</span> <span class="s2">"Refusing to follow a symlink"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="n">flags</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">os</span><span class="o">.</span><span class="n">O_TRUNC</span>  <span class="c1"># truncate only after the hard link check</span>
     <span class="n">fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"fchmod"</span><span class="p">):</span>  <span class="c1"># POSIX only -- Windows ACLs aren't unix mode bits</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">fchmod</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">follow_symlinks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">fstat</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span><span class="o">.</span><span class="n">st_nlink</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span>
+                    <span class="n">errno</span><span class="o">.</span><span class="n">EMLINK</span><span class="p">,</span>
+                    <span class="s2">"Refusing a file with several hard links"</span><span class="p">,</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">ftruncate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"fchmod"</span><span class="p">):</span>  <span class="c1"># POSIX only -- Windows ACLs aren't unix mode bits</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">fchmod</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+        <span class="k">raise</span>
 
 
 <span class="c1"># Type aliases</span>
@@ -1019,6 +1042,9 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            for missing files. If None, FileNotFoundError is raised for missing files.</span>
 <span class="sd">        create_key_path_content: Optional factory callable that returns initial content</span>
 <span class="sd">            for missing key_path. If None, KeyError is raised for missing key paths.</span>
+<span class="sd">        follow_symlinks: If False, writing refuses (``OSError``) to go through a symlink</span>
+<span class="sd">            at ``filepath`` (or a file with several hard links), instead of writing</span>
+<span class="sd">            to its target (see i2mint/config2py#45). Default True, like ``open``.</span>
 
 <span class="sd">    Example:</span>
 
@@ -1061,9 +1087,11 @@ window.runMermaid = runMermaid;</script>
         <span class="n">dump_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">create_file_content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">create_key_path_content</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">follow_symlinks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""See the class docstring for each parameter."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">follow_symlinks</span> <span class="o">=</span> <span class="n">follow_symlinks</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key_path</span> <span class="o">=</span> <span class="n">_normalize_key_path</span><span class="p">(</span><span class="n">key_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span> <span class="o">=</span> <span class="n">dump_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
@@ -1100,7 +1128,9 @@ window.runMermaid = runMermaid;</script>
             <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o700</span><span class="p">)</span>
             <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dumper</span><span class="p">(</span><span class="n">initial_data</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span><span class="p">)</span>
             <span class="n">write_mode</span> <span class="o">=</span> <span class="s2">"w"</span> <span class="k">if</span> <span class="s2">"b"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s2">"wb"</span>
-            <span class="k">with</span> <span class="n">_secure_open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">_secure_open</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follow_symlinks</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">initial_data</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1123,7 +1153,9 @@ window.runMermaid = runMermaid;</script>
             <span class="c1"># Write back to file</span>
             <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dumper</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span><span class="p">)</span>
             <span class="n">write_mode</span> <span class="o">=</span> <span class="s2">"w"</span> <span class="k">if</span> <span class="s2">"b"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s2">"wb"</span>
-            <span class="k">with</span> <span class="n">_secure_open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">_secure_open</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follow_symlinks</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">initial_content</span>
@@ -1141,7 +1173,9 @@ window.runMermaid = runMermaid;</script>
             <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dumper</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span><span class="p">)</span>
 
         <span class="n">write_mode</span> <span class="o">=</span> <span class="s2">"w"</span> <span class="k">if</span> <span class="s2">"b"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s2">"wb"</span>
-        <span class="k">with</span> <span class="n">_secure_open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">_secure_open</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follow_symlinks</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1162,7 +1196,9 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        filepath: Path to JSON file</span>
 <span class="sd">        key_path: Optional nested path to operate on</span>
 <span class="sd">        indent: JSON indentation (default: 2)</span>
+<span class="sd">        follow_symlinks: See ``FileStore``.</span>
 <span class="sd">        ensure_ascii: Whether to escape non-ASCII (default: False)</span>
+<span class="sd">        follow_symlinks: See ``FileStore``.</span>
 <span class="sd">        **dump_kwargs: Additional kwargs for json.dumps</span>
 <span class="sd">    """</span>
 
@@ -1173,6 +1209,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">key_path</span><span class="p">:</span> <span class="n">KeyPath</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
         <span class="n">ensure_ascii</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">follow_symlinks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">dump_kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""See the class docstring for each parameter."""</span>
@@ -1186,6 +1223,7 @@ window.runMermaid = runMermaid;</script>
             <span class="n">key_path</span><span class="o">=</span><span class="n">key_path</span><span class="p">,</span>
             <span class="n">mode</span><span class="o">=</span><span class="s2">"r"</span><span class="p">,</span>
             <span class="n">dump_kwargs</span><span class="o">=</span><span class="n">dump_kwargs</span><span class="p">,</span>
+            <span class="n">follow_symlinks</span><span class="o">=</span><span class="n">follow_symlinks</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 </pre></div>

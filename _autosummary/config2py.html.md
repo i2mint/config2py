@@ -380,7 +380,7 @@ Return the whole config as a `{section: {key: value}}` dict.
 
 alias of [`SecureTextFiles`](config2py.tools.html.md#config2py.tools.SecureTextFiles)
 
-### *class* config2py.FileStore(filepath, , key_path=None, loader=None, dumper=None, mode='r', dump_kwargs=None, create_file_content=None, create_key_path_content=None)
+### *class* config2py.FileStore(filepath, , key_path=None, loader=None, dumper=None, mode='r', dump_kwargs=None, create_file_content=None, create_key_path_content=None, follow_symlinks=True)
 
 Bases: [`SyncStore`](config2py.sync_store.html.md#config2py.sync_store.SyncStore)
 
@@ -399,6 +399,9 @@ Supports nested key paths for working with specific sections.
     for missing files. If None, FileNotFoundError is raised for missing files.
   * **create_key_path_content** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]) – Optional factory callable that returns initial content
     for missing key_path. If None, KeyError is raised for missing key paths.
+  * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If False, writing refuses (`OSError`) to go through a symlink
+    at `filepath` (or a file with several hard links), instead of writing
+    to its target (see i2mint/config2py#45). Default True, like `open`.
 
 ### Example
 
@@ -439,7 +442,7 @@ A folder used to store config values (which may be secrets) is owned by another
 user or writable by others, who could plant a symlink or file there to redirect or
 read those values (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
-### *class* config2py.JsonStore(filepath, , key_path=None, indent=2, ensure_ascii=False, \*\*dump_kwargs)
+### *class* config2py.JsonStore(filepath, , key_path=None, indent=2, ensure_ascii=False, follow_symlinks=True, \*\*dump_kwargs)
 
 Bases: [`FileStore`](config2py.sync_store.html.md#config2py.sync_store.FileStore)
 
@@ -451,7 +454,9 @@ Pre-configured with json.loads/dumps and sensible defaults.
   * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
   * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
   * **indent** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – JSON indentation (default: 2)
+  * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – See `FileStore`.
   * **ensure_ascii** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to escape non-ASCII (default: False)
+  * **follow_symlinks** – See `FileStore`.
   * **\*\*dump_kwargs** – Additional kwargs for json.dumps
 
 ### *exception* config2py.MissingConfigFileWarning
@@ -964,7 +969,8 @@ Get the local store of configs.
     (or ini) file’s path. `False` refuses to
     (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
   * **on_unsafe_folder** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (default), `"raise"` or `"ignore"` when
-    a folder store’s root is owned by another user or writable by its group or by
+    a folder store’s root (or, for an ini file, its folder; a sticky one like
+    `/tmp` is fine) is owned by another user or writable by its group or by
     others (see `SecureTextFiles`).
 
 #### NOTE

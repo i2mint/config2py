@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=07ed7713"></script>
+    <script src="../../_static/documentation_options.js?v=3015fd79"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.65" />
+  <meta name="docsearch:version" content="0.1.66" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -779,12 +779,13 @@ window.runMermaid = runMermaid;</script>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :param follow_symlinks: ``False`` refuses (``KeyError``) to write through a</span>
-<span class="sd">            symlink at a value file's path (``O_NOFOLLOW``: only the last path</span>
-<span class="sd">            component is checked). ``True`` (the default) keeps ``open``'s behavior.</span>
+<span class="sd">            symlink at a value file's path, or at any sub-folder of a key such as</span>
+<span class="sd">            ``sub/KEY`` (the root folder itself may be one: it is your choice).</span>
+<span class="sd">            ``True`` (the default) keeps ``open``'s behavior.</span>
 <span class="sd">        :param on_unsafe_folder: What to do if the root folder is owned by another</span>
 <span class="sd">            user or writable by its group or by others (as ssh's ``StrictModes``</span>
-<span class="sd">            checks): ``"warn"`` (the default, once per folder), ``"raise"``</span>
-<span class="sd">            (``PermissionError``) or ``"ignore"``.</span>
+<span class="sd">            checks, folders above it included): ``"warn"`` (the default, once per</span>
+<span class="sd">            folder), ``"raise"`` (``PermissionError``) or ``"ignore"``.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_follow_symlinks</span> <span class="o">=</span> <span class="n">follow_symlinks</span>
@@ -809,7 +810,12 @@ window.runMermaid = runMermaid;</script>
         <span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="o">.</span><span class="n">validate_key</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_of_obj</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
-            <span class="k">with</span> <span class="n">secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_follow_symlinks</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">secure_open</span><span class="p">(</span>
+                <span class="n">path</span><span class="p">,</span>
+                <span class="s2">"wb"</span><span class="p">,</span>
+                <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_follow_symlinks</span><span class="p">,</span>
+                <span class="n">beneath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span><span class="p">,</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">UnicodeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
             <span class="c1"># Its text quotes the offending character of the (possibly secret) value.</span>
@@ -851,7 +857,8 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        (or ini) file's path. ``False`` refuses to</span>
 <span class="sd">        (see https://github.com/i2mint/config2py/issues/45).</span>
 <span class="sd">    :param on_unsafe_folder: ``"warn"`` (default), ``"raise"`` or ``"ignore"`` when</span>
-<span class="sd">        a folder store's root is owned by another user or writable by its group or by</span>
+<span class="sd">        a folder store's root (or, for an ini file, its folder; a sticky one like</span>
+<span class="sd">        ``/tmp`` is fine) is owned by another user or writable by its group or by</span>
 <span class="sd">        others (see ``SecureTextFiles``).</span>
 
 <span class="sd">    Note: a directory is only recognized as such if ``config_src`` contains</span>
@@ -889,6 +896,13 @@ window.runMermaid = runMermaid;</script>
         <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">".ini"</span><span class="p">,</span> <span class="s2">".cfg"</span><span class="p">}:</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.s_configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigStore</span>
 
+            <span class="c1"># A file in a shared sticky folder (``/tmp``) can't be swapped by others</span>
+            <span class="n">check_folder_is_private</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config_src</span><span class="p">)),</span>
+                <span class="n">on_unsafe</span><span class="o">=</span><span class="n">on_unsafe_folder</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">ignore_sticky</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="k">return</span> <span class="n">ConfigStore</span><span class="p">(</span><span class="n">config_src</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="n">follow_symlinks</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_src</span><span class="p">:</span>  <span class="c1"># it's just a string</span>
         <span class="c1"># TODO: is "get" the right word, since it makes the folder too</span>

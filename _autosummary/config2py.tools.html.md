@@ -103,7 +103,8 @@ Get the local store of configs.
     (or ini) file’s path. `False` refuses to
     (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
   * **on_unsafe_folder** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (default), `"raise"` or `"ignore"` when
-    a folder store’s root is owned by another user or writable by its group or by
+    a folder store’s root (or, for an ini file, its folder; a sticky one like
+    `/tmp` is fine) is owned by another user or writable by its group or by
     others (see `SecureTextFiles`).
 
 #### NOTE

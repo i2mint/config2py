@@ -1,4 +1,4 @@
-> built 2026-10-13 07:34 UTC from 7ac8726 (master) · config2py 0.1.65. Details: build_info.json
+> built 2026-10-13 08:43 UTC from 2887853 (master) · config2py 0.1.66. Details: build_info.json
 
 # index.html.md
 
@@ -1614,7 +1614,7 @@ Return the whole config as a `{section: {key: value}}` dict.
 
 alias of [`SecureTextFiles`](_autosummary/config2py.tools.html.md#config2py.tools.SecureTextFiles)
 
-### *class* config2py.FileStore(filepath, , key_path=None, loader=None, dumper=None, mode='r', dump_kwargs=None, create_file_content=None, create_key_path_content=None)
+### *class* config2py.FileStore(filepath, , key_path=None, loader=None, dumper=None, mode='r', dump_kwargs=None, create_file_content=None, create_key_path_content=None, follow_symlinks=True)
 
 Bases: [`SyncStore`](_autosummary/config2py.sync_store.html.md#config2py.sync_store.SyncStore)
 
@@ -1633,6 +1633,9 @@ Supports nested key paths for working with specific sections.
     for missing files. If None, FileNotFoundError is raised for missing files.
   * **create_key_path_content** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]) – Optional factory callable that returns initial content
     for missing key_path. If None, KeyError is raised for missing key paths.
+  * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If False, writing refuses (`OSError`) to go through a symlink
+    at `filepath` (or a file with several hard links), instead of writing
+    to its target (see i2mint/config2py#45). Default True, like `open`.
 
 ### Example
 
@@ -1673,7 +1676,7 @@ A folder used to store config values (which may be secrets) is owned by another
 user or writable by others, who could plant a symlink or file there to redirect or
 read those values (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
-### *class* config2py.JsonStore(filepath, , key_path=None, indent=2, ensure_ascii=False, \*\*dump_kwargs)
+### *class* config2py.JsonStore(filepath, , key_path=None, indent=2, ensure_ascii=False, follow_symlinks=True, \*\*dump_kwargs)
 
 Bases: [`FileStore`](_autosummary/config2py.sync_store.html.md#config2py.sync_store.FileStore)
 
@@ -1685,7 +1688,9 @@ Pre-configured with json.loads/dumps and sensible defaults.
   * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
   * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
   * **indent** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – JSON indentation (default: 2)
+  * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – See `FileStore`.
   * **ensure_ascii** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to escape non-ASCII (default: False)
+  * **follow_symlinks** – See `FileStore`.
   * **\*\*dump_kwargs** – Additional kwargs for json.dumps
 
 ### *exception* config2py.MissingConfigFileWarning
@@ -2198,7 +2203,8 @@ Get the local store of configs.
     (or ini) file’s path. `False` refuses to
     (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
   * **on_unsafe_folder** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (default), `"raise"` or `"ignore"` when
-    a folder store’s root is owned by another user or writable by its group or by
+    a folder store’s root (or, for an ini file, its folder; a sticky one like
+    `/tmp` is fine) is owned by another user or writable by its group or by
     others (see `SecureTextFiles`).
 
 #### NOTE
@@ -2770,7 +2776,7 @@ storage. Supports deferred sync via context manager for batch operations.
 | [`FileStore`](_autosummary/config2py.sync_store.html.md#config2py.sync_store.FileStore)(filepath, \*[, key_path, loader, ...]) | A SyncStore backed by a file with automatic format detection.           |
 | [`JsonStore`](_autosummary/config2py.sync_store.html.md#config2py.sync_store.JsonStore)(filepath, \*[, key_path, indent, ...]) | A FileStore specialized for JSON files.                                 |
 
-### *class* config2py.sync_store.FileStore(filepath, , key_path=None, loader=None, dumper=None, mode='r', dump_kwargs=None, create_file_content=None, create_key_path_content=None)
+### *class* config2py.sync_store.FileStore(filepath, , key_path=None, loader=None, dumper=None, mode='r', dump_kwargs=None, create_file_content=None, create_key_path_content=None, follow_symlinks=True)
 
 Bases: [`SyncStore`](_autosummary/config2py.sync_store.html.md#config2py.sync_store.SyncStore)
 
@@ -2789,6 +2795,9 @@ Supports nested key paths for working with specific sections.
     for missing files. If None, FileNotFoundError is raised for missing files.
   * **create_key_path_content** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]]) – Optional factory callable that returns initial content
     for missing key_path. If None, KeyError is raised for missing key paths.
+  * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – If False, writing refuses (`OSError`) to go through a symlink
+    at `filepath` (or a file with several hard links), instead of writing
+    to its target (see i2mint/config2py#45). Default True, like `open`.
 
 ### Example
 
@@ -2821,7 +2830,7 @@ Supports nested key paths for working with specific sections.
 True
 ```
 
-### *class* config2py.sync_store.JsonStore(filepath, , key_path=None, indent=2, ensure_ascii=False, \*\*dump_kwargs)
+### *class* config2py.sync_store.JsonStore(filepath, , key_path=None, indent=2, ensure_ascii=False, follow_symlinks=True, \*\*dump_kwargs)
 
 Bases: [`FileStore`](_autosummary/config2py.sync_store.html.md#config2py.sync_store.FileStore)
 
@@ -2833,7 +2842,9 @@ Pre-configured with json.loads/dumps and sensible defaults.
   * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
   * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
   * **indent** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – JSON indentation (default: 2)
+  * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – See `FileStore`.
   * **ensure_ascii** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to escape non-ASCII (default: False)
+  * **follow_symlinks** – See `FileStore`.
   * **\*\*dump_kwargs** – Additional kwargs for json.dumps
 
 ### *class* config2py.sync_store.SyncStore(loader, dumper)
@@ -2999,7 +3010,8 @@ Get the local store of configs.
     (or ini) file’s path. `False` refuses to
     (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
   * **on_unsafe_folder** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (default), `"raise"` or `"ignore"` when
-    a folder store’s root is owned by another user or writable by its group or by
+    a folder store’s root (or, for an ini file, its folder; a sticky one like
+    `/tmp` is fine) is owned by another user or writable by its group or by
     others (see `SecureTextFiles`).
 
 #### NOTE
@@ -3121,11 +3133,11 @@ Utility functions for config2py.
 | [`owner_only_opener`](_autosummary/config2py.util.html.md#config2py.util.owner_only_opener)(path, flags, \*[, ...])         | An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.                                                                                                                 |
 | [`parse_assignments_from_py_source`](_autosummary/config2py.util.html.md#config2py.util.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                                                              |
 | [`secure_makedirs`](_autosummary/config2py.util.html.md#config2py.util.secure_makedirs)(dirpath, \*[, exist_ok])          | `os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.                                                                                                        |
-| [`secure_open`](_autosummary/config2py.util.html.md#config2py.util.secure_open)(path[, mode, follow_symlinks])        | `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.                                                                                                                |
+| [`secure_open`](_autosummary/config2py.util.html.md#config2py.util.secure_open)(path[, mode, follow_symlinks, ...])   | `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.                                                                                                                |
 | [`setup_configs_folder`](_autosummary/config2py.util.html.md#config2py.util.setup_configs_folder)(configs_dir, \*[, ...])      | Create `configs_dir` (via `setup_callback`) and return it.                                                                                                                              |
 | [`system_default_for_app_data_folder`](_autosummary/config2py.util.html.md#config2py.util.system_default_for_app_data_folder)([...])         | Get the system default folder for `folder_kind`.                                                                                                                                        |
 | [`tighten_mode`](_autosummary/config2py.util.html.md#config2py.util.tighten_mode)(path, mode, \*[, strict])            | Set `path`'s permission bits to `mode`, only if they differ.                                                                                                                            |
-| [`unsafe_folder_reason`](_autosummary/config2py.util.html.md#config2py.util.unsafe_folder_reason)(dirpath)                     | Why a folder isn't safe to keep secrets in, or `None` if it looks fine.                                                                                                                 |
+| [`unsafe_folder_reason`](_autosummary/config2py.util.html.md#config2py.util.unsafe_folder_reason)(dirpath, \*[, ...])          | Why a folder isn't safe to keep secrets in, or `None` if it looks fine.                                                                                                                 |
 
 ### Classes
 
@@ -3310,16 +3322,18 @@ Ask the user for input, optionally masking, validating and transforming the inpu
 * **Returns:**
   The user’s response (or the default value if the user entered nothing)
 
-### config2py.util.check_folder_is_private(dirpath, , on_unsafe='warn', stacklevel=2)
+### config2py.util.check_folder_is_private(dirpath, , on_unsafe='warn', stacklevel=2, check_ancestors=True, ignore_sticky=False)
 
 Check `dirpath` with `unsafe_folder_reason`, and act on a problem.
 
 * **Parameters:**
-  **on_unsafe** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (the default) issues an
-  `InsecureConfigFolderWarning` (once per folder), `"raise"` raises
-  `PermissionError`, `"ignore"` skips the check. Fix a folder you own with
-  `chmod 700`
-  (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
+  * **on_unsafe** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (the default) issues an
+    `InsecureConfigFolderWarning` (once per folder), `"raise"` raises
+    `PermissionError`, `"ignore"` skips the check. Fix a folder you own with
+    `chmod 700`
+    (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
+  * **check_ancestors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Also check the folders above `dirpath`.
+  * **ignore_sticky** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Accept `dirpath` itself being sticky (like `/tmp`).
 
 ### config2py.util.create_directories(dirpath, max_dirs_to_make=None)
 
@@ -3931,14 +3945,15 @@ True
 False
 ```
 
-### config2py.util.owner_only_opener(path, flags, , follow_symlinks=True)
+### config2py.util.owner_only_opener(path, flags, , follow_symlinks=True, dir_fd=None)
 
 An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.
 
 With `follow_symlinks=False` a symlink at `path` is refused (`OSError`,
 `ELOOP`) instead of followed – through `O_NOFOLLOW` where the platform has
 it (which only covers the last path component), else by an `islink` check; a file
-with several hard links is refused too, and left untouched.
+with several hard links is refused too, and left untouched. `dir_fd` makes
+`path` relative to that open folder (POSIX; see `secure_open`’s `beneath`).
 Opening a symlink *you* control is fine; one planted by someone else in a folder
 they can write to would redirect (and `chmod`) a file of theirs choosing
 (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
@@ -3975,7 +3990,7 @@ directory’s mode, so this follows up with `tighten_mode` (which warns, rather
 than raises, if that isn’t possible). Intended for directories that may hold
 config/secret files (see i2mint/config2py#15).
 
-### config2py.util.secure_open(path, mode='w', , follow_symlinks=True, \*\*open_kwargs)
+### config2py.util.secure_open(path, mode='w', , follow_symlinks=True, beneath=None, \*\*open_kwargs)
 
 `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.
 
@@ -3987,7 +4002,13 @@ The `mode` is honored as is (`"a"` appends; before #35 every mode truncated).
 Any mode, including `"r"`, sets the file’s permissions to `0o600`.
 
 A symlink at `path` is followed (like `open`) unless `follow_symlinks=False`,
-which raises `OSError` instead (see `owner_only_opener`).
+which raises `OSError` instead (see `owner_only_opener`). With
+`follow_symlinks=False` and `beneath=<folder>` (a folder `path` is inside),
+a symlink at *any* folder between `beneath` and the file is refused too (not
+`beneath` itself, nor the folders above it: those are yours to choose). On POSIX
+each folder is opened relative to its parent with `O_NOFOLLOW`, so the check
+can’t be raced; elsewhere it is an `islink` check
+(see [https://github.com/i2mint/config2py/issues/51](https://github.com/i2mint/config2py/issues/51)).
 
 Intended for files that may hold secrets (see i2mint/config2py#15).
 
@@ -4042,16 +4063,19 @@ make, for example, `import config2py` crash
 * **Return type:**
   [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
-### config2py.util.unsafe_folder_reason(dirpath)
+### config2py.util.unsafe_folder_reason(dirpath, , check_ancestors=True, ignore_sticky=False)
 
 Why a folder isn’t safe to keep secrets in, or `None` if it looks fine.
 
 Like ssh’s `StrictModes`: a folder owned by someone other than the current user
 (or root), or writable by its group or by others, lets those users plant a
 symlink or a file there to redirect or read what config2py writes. A group the
-current user is alone in does not count as “its group”. Only the folder itself is
-looked at, not its parents. POSIX only (`None` elsewhere); a missing folder is
-`None` too.
+current user is alone in does not count as “its group”. With `check_ancestors`
+(the default) the folders above it are checked the same way (those who can write
+to a parent can swap the folder itself for a symlink), except that a sticky
+parent, such as `/tmp`, is fine. `ignore_sticky` also accepts the folder
+itself being sticky (as `/tmp` is), for a file kept directly in a shared folder.
+POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 * **Return type:**
   [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
@@ -4059,7 +4083,7 @@ looked at, not its parents. POSIX only (`None` elsewhere); a missing folder is
 ```pycon
 >>> import tempfile
 >>> with tempfile.TemporaryDirectory() as d:  # created 0o700
-...     unsafe_folder_reason(d)
+...     unsafe_folder_reason(d, check_ancestors=False)
 >>> unsafe_folder_reason("/no/such/folder")
 ```
 
@@ -4070,18 +4094,18 @@ looked at, not its parents. POSIX only (`None` elsewhere); a missing folder is
 
 # About this build
 
-This documentation was built on **2026-10-13 07:34 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/7ac8726d5ff32227295db3a60d1472b684438cb7"><code>7ac8726</code></a> on branch <code>master</code>, for **config2py 0.1.65** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 08:43 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/2887853d57aa851d68325a04fb129f25f1c897e2"><code>2887853</code></a> on branch <code>master</code>, for **config2py 0.1.66** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.65) is behind the latest release on PyPI (0.1.66): `pip install config2py` gives newer code than these docs describe.
+- The documented version (0.1.66) is behind the latest release on PyPI (0.1.67): `pip install config2py` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/7ac8726d5ff32227295db3a60d1472b684438cb7"><code>7ac8726d5ff32227295db3a60d1472b684438cb7</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/2887853d57aa851d68325a04fb129f25f1c897e2"><code>2887853d57aa851d68325a04fb129f25f1c897e2</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4092,9 +4116,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38363296780">38363296780</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38370993850">38370993850</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>7ac8726d5ff32227295db3a60d1472b684438cb7</code> (in the history of the built commit) |
+| Event commit | <code>2887853d57aa851d68325a04fb129f25f1c897e2</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4119,13 +4143,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.66/">0.1.66</a>, newer than the documented version (0.1.65).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.67/">0.1.67</a>, newer than the documented version (0.1.66).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 7ac8726d5ff32227295db3a60d1472b684438cb7
+git checkout 2887853d57aa851d68325a04fb129f25f1c897e2
 pip install "epythet==0.2.15"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
