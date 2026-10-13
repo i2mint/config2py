@@ -2,7 +2,6 @@
 Data Object Layer for configparser standard lib.
 """
 
-import errno as _errno
 import locale as _locale
 import os as _os
 from configparser import ConfigParser
@@ -138,15 +137,6 @@ def _decode_config_text(data: bytes) -> str:
         return data.decode("utf-8-sig")
     except UnicodeDecodeError:
         return data.decode(_locale_encoding())
-
-
-def _is_not_a_file(error: OSError) -> bool:
-    """Whether opening a source failed because it is no file at all (a folder, a path
-    through a file, or a content string too long to be a name), not because a real
-    file could not be read: such a source holds nothing a write could lose."""
-    return isinstance(error, (IsADirectoryError, NotADirectoryError)) or (
-        error.errno == _errno.ENAMETOOLONG
-    )
 
 
 class ConfigStore(ConfigParserStore):
@@ -340,8 +330,12 @@ class ConfigStore(ConfigParserStore):
                     data = fp.read()
             except FileNotFoundError:
                 continue
-            except OSError as error:
-                if self._tolerates_unreadable_sources or _is_not_a_file(error):
+            except OSError:
+                # Only an existing file a store couldn't read is at risk: its next
+                # write would replace it. A folder, a path through a file, a content
+                # string mistaken for a name -- their errors differ by platform --
+                # hold nothing to lose.
+                if self._tolerates_unreadable_sources or not _os.path.isfile(filepath):
                     continue
                 raise
             self.read_file(StringIO(_decode_config_text(data)), source=filepath)
