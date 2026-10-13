@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=d127aa6e"></script>
+    <script src="../_static/documentation_options.js?v=755f2e77"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.58" />
+  <meta name="docsearch:version" content="0.1.59" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -320,8 +320,8 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="config2py.html">config2py</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="config2py.util.html">config2py.util</a></li>
-<li class="toctree-l2"><a class="reference internal" href="config2py.s_configparser.html">config2py.s_configparser</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.errors.html">config2py.errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.s_configparser.html">config2py.s_configparser</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.base.html">config2py.base</a></li>
 <li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">config2py.tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.sync_store.html">config2py.sync_store</a></li>
@@ -397,7 +397,7 @@
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.tools.extract_exports" title="config2py.tools.extract_exports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_exports</span></code></a>(exports)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.tools.extract_exports" title="config2py.tools.extract_exports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_exports</span></code></a>(exports, *[, on_missing])</p></td>
 <td><p>Get a dict of <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">value}</span></code> pairs from the <code class="docutils literal notranslate"><span class="pre">name=&quot;value&quot;</span> <span class="pre">pairs</span> <span class="pre">of</span> <span class="pre">unix</span> <span class="pre">export</span> <span class="pre">lines</span> <span class="pre">(that</span> <span class="pre">is,</span> <span class="pre">lines</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">``export</span> <span class="pre">NAME=&quot;VALUE&quot;</span></code> format</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#config2py.tools.get_configs_local_store" title="config2py.tools.get_configs_local_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_local_store</span></code></a>([config_src, ...])</p></td>
@@ -447,12 +447,19 @@ opened, so an unencodable value doesn’t leave an emptied file behind
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.tools.extract_exports">
-<span class="sig-prename descclassname"><span class="pre">config2py.tools.</span></span><span class="sig-name descname"><span class="pre">extract_exports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exports</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/tools.html#extract_exports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.tools.extract_exports" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">config2py.tools.</span></span><span class="sig-name descname"><span class="pre">extract_exports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exports</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/tools.html#extract_exports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.tools.extract_exports" title="Link to this definition">#</a></dt>
 <dd><p>Get a dict of <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">value}</span></code> pairs from the <code class="docutils literal notranslate"><span class="pre">name=&quot;value&quot;</span> <span class="pre">pairs</span> <span class="pre">of</span> <span class="pre">unix</span>
 <span class="pre">export</span> <span class="pre">lines</span> <span class="pre">(that</span> <span class="pre">is,</span> <span class="pre">lines</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">``export</span> <span class="pre">NAME=&quot;VALUE&quot;</span></code> format</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>exports</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Filepath or string contents thereof</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exports</strong> – Filepath (<code class="docutils literal notranslate"><span class="pre">str</span></code> or <code class="docutils literal notranslate"><span class="pre">os.PathLike</span></code>) or string contents thereof</p></li>
+<li><p><strong>on_missing</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – What to do when <code class="docutils literal notranslate"><span class="pre">exports</span></code> looks like a filepath (a single,
+non-blank line with no <code class="docutils literal notranslate"><span class="pre">export</span></code> in it) that is not an existing file:
+<code class="docutils literal notranslate"><span class="pre">&quot;warn&quot;</span></code> (the default) issues a <code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code> and returns
+<code class="docutils literal notranslate"><span class="pre">{}</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> returns <code class="docutils literal notranslate"><span class="pre">{}</span></code>
+(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
@@ -463,13 +470,15 @@ opened, so an unencodable value doesn’t leave an emptied file behind
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extract_exports</span><span class="p">(</span><span class="s1">'export KEY="secret"</span><span class="se">\n</span><span class="s1">export TOKEN="arbitrary"'</span><span class="p">)</span>
 <span class="go">{'KEY': 'secret', 'TOKEN': 'arbitrary'}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">extract_exports</span><span class="p">(</span><span class="s1">'export KEY="secret"'</span><span class="p">)</span>  <span class="c1"># a single line of content works too</span>
+<span class="go">{'KEY': 'secret'}</span>
 </pre></div>
 </div>
-<p>Note that a single-line argument that is not an existing file is parsed as
-content, not as a path. A mistyped path therefore silently gives an empty dict
-(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>):</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extract_exports</span><span class="p">(</span><span class="s1">'no/such/path/.env'</span><span class="p">)</span>
-<span class="go">{}</span>
+<p>A mistyped path is not silently read as empty content:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extract_exports</span><span class="p">(</span><span class="s1">'no/such/path/.env'</span><span class="p">,</span> <span class="n">on_missing</span><span class="o">=</span><span class="s1">'raise'</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">  </span><span class="c">...</span>
+<span class="gr">FileNotFoundError</span>: <span class="n">[Errno 2] No such config file: 'no/such/path/.env'</span>
 </pre></div>
 </div>
 <section id="use-case">

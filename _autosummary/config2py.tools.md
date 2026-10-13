@@ -4,11 +4,11 @@ Various tools
 
 ### Functions
 
-| [`extract_exports`](#config2py.tools.extract_exports)(exports)                   | Get a dict of `{name: value}` pairs from the `name="value" pairs of unix export lines (that is, lines of the ``export NAME="VALUE"` format        |
-|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`get_configs_local_store`](#config2py.tools.get_configs_local_store)([config_src, ...]) | Get the local store of configs.                                                                                                                   |
-| [`simple_config_getter`](#config2py.tools.simple_config_getter)([configs_src, ...])   | Make a simple config getter from a "central" config source specification.                                                                         |
-| [`source_config_params`](#config2py.tools.source_config_params)(\*config_params)      | A decorator factory that sources config params, based on their names, to a config getter that will be provided when calling the wrapped function. |
+| [`extract_exports`](#config2py.tools.extract_exports)(exports, \*[, on_missing])   | Get a dict of `{name: value}` pairs from the `name="value" pairs of unix export lines (that is, lines of the ``export NAME="VALUE"` format        |
+|-----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`get_configs_local_store`](#config2py.tools.get_configs_local_store)([config_src, ...])   | Get the local store of configs.                                                                                                                   |
+| [`simple_config_getter`](#config2py.tools.simple_config_getter)([configs_src, ...])     | Make a simple config getter from a "central" config source specification.                                                                         |
+| [`source_config_params`](#config2py.tools.source_config_params)(\*config_params)        | A decorator factory that sources config params, based on their names, to a config getter that will be provided when calling the wrapped function. |
 
 ### Classes
 
@@ -36,13 +36,18 @@ write raises `KeyError`. Unlike it, the value is encoded before the file is
 opened, so an unencodable value doesn’t leave an emptied file behind
 (see [https://github.com/i2mint/config2py/issues/35](https://github.com/i2mint/config2py/issues/35)).
 
-### config2py.tools.extract_exports(exports)
+### config2py.tools.extract_exports(exports, , on_missing='warn')
 
 Get a dict of `{name: value}` pairs from the `name="value" pairs of unix
 export lines (that is, lines of the ``export NAME="VALUE"` format
 
 * **Parameters:**
-  **exports** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Filepath or string contents thereof
+  * **exports** – Filepath (`str` or `os.PathLike`) or string contents thereof
+  * **on_missing** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – What to do when `exports` looks like a filepath (a single,
+    non-blank line with no `export` in it) that is not an existing file:
+    `"warn"` (the default) issues a `MissingConfigFileWarning` and returns
+    `{}`, `"raise"` raises `FileNotFoundError`, `"ignore"` returns `{}`
+    (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
 * **Return type:**
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
 * **Returns:**
@@ -51,15 +56,17 @@ export lines (that is, lines of the ``export NAME="VALUE"` format
 ```pycon
 >>> extract_exports('export KEY="secret"\nexport TOKEN="arbitrary"')
 {'KEY': 'secret', 'TOKEN': 'arbitrary'}
+>>> extract_exports('export KEY="secret"')  # a single line of content works too
+{'KEY': 'secret'}
 ```
 
-Note that a single-line argument that is not an existing file is parsed as
-content, not as a path. A mistyped path therefore silently gives an empty dict
-(see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)):
+A mistyped path is not silently read as empty content:
 
 ```pycon
->>> extract_exports('no/such/path/.env')
-{}
+>>> extract_exports('no/such/path/.env', on_missing='raise')
+Traceback (most recent call last):
+  ...
+FileNotFoundError: [Errno 2] No such config file: 'no/such/path/.env'
 ```
 
 ## Use case:

@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=d127aa6e"></script>
+    <script src="../_static/documentation_options.js?v=755f2e77"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,12 +52,12 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="config2py.errors" href="config2py.errors.html" />
-    <link rel="prev" title="config2py.util" href="config2py.util.html" />
+    <link rel="next" title="config2py.base" href="config2py.base.html" />
+    <link rel="prev" title="config2py.errors" href="config2py.errors.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.58" />
+  <meta name="docsearch:version" content="0.1.59" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -320,8 +320,8 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="config2py.html">config2py</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="config2py.util.html">config2py.util</a></li>
-<li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">config2py.s_configparser</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.errors.html">config2py.errors</a></li>
+<li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">config2py.s_configparser</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.base.html">config2py.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.tools.html">config2py.tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.sync_store.html">config2py.sync_store</a></li>
@@ -415,7 +415,7 @@
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.s_configparser.ConfigReader" title="config2py.s_configparser.ConfigReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigReader</span></code></a>([defaults, dict_type, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.s_configparser.ConfigReader" title="config2py.s_configparser.ConfigReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigReader</span></code></a>(source, *[, on_missing])</p></td>
 <td><p>A KvReader to read config files</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#config2py.s_configparser.ConfigStore" title="config2py.s_configparser.ConfigStore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigStore</span></code></a>([defaults, dict_type, ...])</p></td>
@@ -426,7 +426,7 @@
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="config2py.s_configparser.ConfigReader">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.s_configparser.</span></span><span class="sig-name descname"><span class="pre">ConfigReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'dict'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_no_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('='</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_prefixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('#'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">';')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inline_comment_prefixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_lines_in_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DEFAULT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#ConfigReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.s_configparser.ConfigReader" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.s_configparser.</span></span><span class="sig-name descname"><span class="pre">ConfigReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#ConfigReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.s_configparser.ConfigReader" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#config2py.s_configparser.ConfigStore" title="config2py.s_configparser.ConfigStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigStore</span></code></a></p>
 <p>A KvReader to read config files</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py.s_configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigReader</span>
@@ -477,6 +477,21 @@
 <span class="go">['DEFAULT', 'Simple Values', 'All Values Are Strings', 'Multiline Values', 'No Values', 'You can use comments', 'Sections Can Be Indented']</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">'Simple Values'</span><span class="p">])</span>
 <span class="go">['key', 'spaces in keys', 'spaces in values', 'spaces around the delimiter', 'you can also use']</span>
+</pre></div>
+</div>
+<p>######## A filepath that doesn’t exist ########</p>
+<p>A filepath (a single-line <code class="docutils literal notranslate"><span class="pre">str</span></code>, an <code class="docutils literal notranslate"><span class="pre">os.PathLike</span></code>, or several of them in a list
+or tuple) that is not an existing file reads as empty, as <code class="docutils literal notranslate"><span class="pre">configparser</span></code> does.
+<code class="docutils literal notranslate"><span class="pre">on_missing</span></code> says what else happens: <code class="docutils literal notranslate"><span class="pre">&quot;warn&quot;</span></code> (the default) issues a
+<code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> does nothing (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">(</span><span class="s1">'no/such/file.ini'</span><span class="p">,</span> <span class="n">on_missing</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">['DEFAULT']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ConfigReader</span><span class="p">(</span><span class="s1">'no/such/file.ini'</span><span class="p">,</span> <span class="n">on_missing</span><span class="o">=</span><span class="s1">'raise'</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">  </span><span class="c">...</span>
+<span class="gr">FileNotFoundError</span>: <span class="n">[Errno 2] No such config file: 'no/such/file.ini'</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -722,20 +737,20 @@ so I prefer open code.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="config2py.util.html"
+       href="config2py.errors.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">config2py.util</p>
+        <p class="prev-next-title">config2py.errors</p>
       </div>
     </a>
     <a class="right-next"
-       href="config2py.errors.html"
+       href="config2py.base.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">config2py.errors</p>
+        <p class="prev-next-title">config2py.base</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

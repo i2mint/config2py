@@ -7,8 +7,8 @@
 
 - [config2py](config2py.html.md): Tools to read and write configurations from various sources and formats
 - [config2py.util](config2py.util.html.md): Utility functions for config2py.
-- [config2py.s_configparser](config2py.s_configparser.html.md): Data Object Layer for configparser standard lib.
 - [config2py.errors](config2py.errors.html.md): Error classes for config2py.
+- [config2py.s_configparser](config2py.s_configparser.html.md): Data Object Layer for configparser standard lib.
 - [config2py.base](config2py.base.html.md): Base for getting configs from various sources and formats
 - [config2py.tools](config2py.tools.html.md): Various tools
 - [config2py.sync_store](config2py.sync_store.html.md): Synchronized key-value stores with automatic persistence.

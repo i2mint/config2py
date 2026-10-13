@@ -38,6 +38,15 @@
       FileStore
       JsonStore
    
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      Config2PyError
+      Config2PyWarning
+      ConfigNotFound
+      MissingConfigFileWarning
+   
 .. rubric:: Modules
 
 .. autosummary::
@@ -45,8 +54,8 @@
    :recursive:
 
    util
-   s_configparser
    errors
+   s_configparser
    base
    tools
    sync_store

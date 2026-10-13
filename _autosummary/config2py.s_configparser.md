@@ -12,11 +12,11 @@ Data Object Layer for configparser standard lib.
 
 ### Classes
 
-| [`ConfigReader`](#config2py.s_configparser.ConfigReader)([defaults, dict_type, ...])   | A KvReader to read config files                  |
-|---------------------------------------------------------------------------------------------|--------------------------------------------------|
-| [`ConfigStore`](#config2py.s_configparser.ConfigStore)([defaults, dict_type, ...])    | Persister (read, write, delete) for ini configs. |
+| [`ConfigReader`](#config2py.s_configparser.ConfigReader)(source, \*[, on_missing])   | A KvReader to read config files                  |
+|-------------------------------------------------------------------------------------------|--------------------------------------------------|
+| [`ConfigStore`](#config2py.s_configparser.ConfigStore)([defaults, dict_type, ...])  | Persister (read, write, delete) for ini configs. |
 
-### *class* config2py.s_configparser.ConfigReader(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
+### *class* config2py.s_configparser.ConfigReader(source, , on_missing='warn', \*\*kwargs)
 
 Bases: [`ConfigStore`](#config2py.s_configparser.ConfigStore)
 
@@ -73,6 +73,24 @@ A KvReader to read config files
 ['DEFAULT', 'Simple Values', 'All Values Are Strings', 'Multiline Values', 'No Values', 'You can use comments', 'Sections Can Be Indented']
 >>> list(c['Simple Values'])
 ['key', 'spaces in keys', 'spaces in values', 'spaces around the delimiter', 'you can also use']
+```
+
+######## A filepath that doesn’t exist ########
+
+A filepath (a single-line `str`, an `os.PathLike`, or several of them in a list
+or tuple) that is not an existing file reads as empty, as `configparser` does.
+`on_missing` says what else happens: `"warn"` (the default) issues a
+`MissingConfigFileWarning`, `"raise"` raises `FileNotFoundError`, and
+`"ignore"` does nothing (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
+
+```pycon
+>>> c = ConfigReader('no/such/file.ini', on_missing='ignore')
+>>> list(c)
+['DEFAULT']
+>>> ConfigReader('no/such/file.ini', on_missing='raise')
+Traceback (most recent call last):
+  ...
+FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 ```
 
 #### persist()

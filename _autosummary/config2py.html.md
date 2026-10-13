@@ -4,7 +4,7 @@ Tools to read and write configurations from various sources and formats
 
 ### Functions
 
-| [`extract_exports`](#config2py.extract_exports)(exports)                          | Get a dict of `{name: value}` pairs from the `name="value" pairs of unix export lines (that is, lines of the ``export NAME="VALUE"` format   |
+| [`extract_exports`](#config2py.extract_exports)(exports, \*[, on_missing])        | Get a dict of `{name: value}` pairs from the `name="value" pairs of unix export lines (that is, lines of the ``export NAME="VALUE"` format   |
 |----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | [`get_configs_local_store`](#config2py.get_configs_local_store)([config_src, ...])        | Get the local store of configs.                                                                                                              |
 | [`simple_config_getter`](#config2py.simple_config_getter)([configs_src, ...])          | Make a simple config getter from a "central" config source specification.                                                                    |
@@ -27,12 +27,20 @@ Tools to read and write configurations from various sources and formats
 
 | [`ConfigStore`](#config2py.ConfigStore)([defaults, dict_type, ...])          | Persister (read, write, delete) for ini configs.                      |
 |---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
-| [`ConfigReader`](#config2py.ConfigReader)([defaults, dict_type, ...])         | A KvReader to read config files                                       |
+| [`ConfigReader`](#config2py.ConfigReader)(source, \*[, on_missing])           | A KvReader to read config files                                       |
 | [`Configs`](#config2py.Configs)                                          |                                                                       |
 | [`AppData`](#config2py.AppData)(app_name, \*[, package_name, ...])       | Per-user data directory facade for a Python application.              |
 | [`SyncStore`](#config2py.SyncStore)(loader, dumper)                        | A MutableMapping that automatically syncs changes to backing storage. |
 | [`FileStore`](#config2py.FileStore)(filepath, \*[, key_path, loader, ...]) | A SyncStore backed by a file with automatic format detection.         |
 | [`JsonStore`](#config2py.JsonStore)(filepath, \*[, key_path, indent, ...]) | A FileStore specialized for JSON files.                               |
+
+### Exceptions
+
+| [`Config2PyError`](#config2py.Config2PyError)           | Base class for config2py errors.                                                                                                                                                       |
+|---------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`Config2PyWarning`](#config2py.Config2PyWarning)         | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                  |
+| [`ConfigNotFound`](#config2py.ConfigNotFound)           | Raised when a config file is not found.                                                                                                                                                |
+| [`MissingConfigFileWarning`](#config2py.MissingConfigFileWarning) | A path given as a config source is not an existing file, so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)). |
 
 ### *class* config2py.AppData(app_name, , package_name=None, seed_data_dir='_seed_data')
 
@@ -97,7 +105,25 @@ Return a user resource path, seeding from package data if missing.
 * **Return type:**
   [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)
 
-### *class* config2py.ConfigReader(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
+### *exception* config2py.Config2PyError
+
+Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exception)
+
+Base class for config2py errors.
+
+### *exception* config2py.Config2PyWarning
+
+Bases: [`UserWarning`](https://docs.python.org/3/builtins/exceptions.html#UserWarning)
+
+Warnings issued by config2py (e.g. permissions it could not tighten).
+
+### *exception* config2py.ConfigNotFound
+
+Bases: [`Config2PyError`](config2py.errors.html.md#config2py.errors.Config2PyError)
+
+Raised when a config file is not found.
+
+### *class* config2py.ConfigReader(source, , on_missing='warn', \*\*kwargs)
 
 Bases: [`ConfigStore`](config2py.s_configparser.html.md#config2py.s_configparser.ConfigStore)
 
@@ -154,6 +180,24 @@ A KvReader to read config files
 ['DEFAULT', 'Simple Values', 'All Values Are Strings', 'Multiline Values', 'No Values', 'You can use comments', 'Sections Can Be Indented']
 >>> list(c['Simple Values'])
 ['key', 'spaces in keys', 'spaces in values', 'spaces around the delimiter', 'you can also use']
+```
+
+######## A filepath that doesn’t exist ########
+
+A filepath (a single-line `str`, an `os.PathLike`, or several of them in a list
+or tuple) that is not an existing file reads as empty, as `configparser` does.
+`on_missing` says what else happens: `"warn"` (the default) issues a
+`MissingConfigFileWarning`, `"raise"` raises `FileNotFoundError`, and
+`"ignore"` does nothing (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
+
+```pycon
+>>> c = ConfigReader('no/such/file.ini', on_missing='ignore')
+>>> list(c)
+['DEFAULT']
+>>> ConfigReader('no/such/file.ini', on_missing='raise')
+Traceback (most recent call last):
+  ...
+FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 ```
 
 #### persist()
@@ -399,6 +443,13 @@ Pre-configured with json.loads/dumps and sensible defaults.
   * **ensure_ascii** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to escape non-ASCII (default: False)
   * **\*\*dump_kwargs** – Additional kwargs for json.dumps
 
+### *exception* config2py.MissingConfigFileWarning
+
+Bases: [`Config2PyWarning`](config2py.errors.html.md#config2py.errors.Config2PyWarning)
+
+A path given as a config source is not an existing file, so it was read as
+empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
+
 ### *class* config2py.SyncStore(loader, dumper)
 
 Bases: [`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping)
@@ -493,13 +544,18 @@ a no-op (user edits are preserved).
 >>> # ensure_seeded("/tmp/myfile.txt", "mypkg", "resources", "myfile.txt")
 ```
 
-### config2py.extract_exports(exports)
+### config2py.extract_exports(exports, , on_missing='warn')
 
 Get a dict of `{name: value}` pairs from the `name="value" pairs of unix
 export lines (that is, lines of the ``export NAME="VALUE"` format
 
 * **Parameters:**
-  **exports** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Filepath or string contents thereof
+  * **exports** – Filepath (`str` or `os.PathLike`) or string contents thereof
+  * **on_missing** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – What to do when `exports` looks like a filepath (a single,
+    non-blank line with no `export` in it) that is not an existing file:
+    `"warn"` (the default) issues a `MissingConfigFileWarning` and returns
+    `{}`, `"raise"` raises `FileNotFoundError`, `"ignore"` returns `{}`
+    (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)).
 * **Return type:**
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
 * **Returns:**
@@ -508,15 +564,17 @@ export lines (that is, lines of the ``export NAME="VALUE"` format
 ```pycon
 >>> extract_exports('export KEY="secret"\nexport TOKEN="arbitrary"')
 {'KEY': 'secret', 'TOKEN': 'arbitrary'}
+>>> extract_exports('export KEY="secret"')  # a single line of content works too
+{'KEY': 'secret'}
 ```
 
-Note that a single-line argument that is not an existing file is parsed as
-content, not as a path. A mistyped path therefore silently gives an empty dict
-(see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27)):
+A mistyped path is not silently read as empty content:
 
 ```pycon
->>> extract_exports('no/such/path/.env')
-{}
+>>> extract_exports('no/such/path/.env', on_missing='raise')
+Traceback (most recent call last):
+  ...
+FileNotFoundError: [Errno 2] No such config file: 'no/such/path/.env'
 ```
 
 ## Use case:
@@ -1072,8 +1130,8 @@ places), `save_to` can be a `(key, value)` function instead:
 
 | [`util`](config2py.util.html.md#module-config2py.util)                     | Utility functions for config2py.                                 |
 |-------------------------------------------------------------------------------------------------|------------------------------------------------------------------|
-| [`s_configparser`](config2py.s_configparser.html.md#module-config2py.s_configparser) | Data Object Layer for configparser standard lib.                 |
 | [`errors`](config2py.errors.html.md#module-config2py.errors)                 | Error classes for config2py.                                     |
+| [`s_configparser`](config2py.s_configparser.html.md#module-config2py.s_configparser) | Data Object Layer for configparser standard lib.                 |
 | [`base`](config2py.base.html.md#module-config2py.base)                     | Base for getting configs from various sources and formats        |
 | [`tools`](config2py.tools.html.md#module-config2py.tools)                   | Various tools                                                    |
 | [`sync_store`](config2py.sync_store.html.md#module-config2py.sync_store)         | Synchronized key-value stores with automatic persistence.        |

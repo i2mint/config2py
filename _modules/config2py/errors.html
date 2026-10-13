@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=d127aa6e"></script>
+    <script src="../../_static/documentation_options.js?v=755f2e77"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.58" />
+  <meta name="docsearch:version" content="0.1.59" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -715,23 +715,73 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="Config2PyError">
-<a class="viewcode-back" href="../../_autosummary/config2py.errors.html#config2py.errors.Config2PyError">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.errors.html#config2py.Config2PyError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Config2PyError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Base class for config2py errors."""</span></div>
 
 
 
 <div class="viewcode-block" id="ConfigNotFound">
-<a class="viewcode-back" href="../../_autosummary/config2py.errors.html#config2py.errors.ConfigNotFound">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.errors.html#config2py.ConfigNotFound">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConfigNotFound</span><span class="p">(</span><span class="n">Config2PyError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Raised when a config file is not found."""</span></div>
 
 
 
 <div class="viewcode-block" id="Config2PyWarning">
-<a class="viewcode-back" href="../../_autosummary/config2py.errors.html#config2py.errors.Config2PyWarning">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.errors.html#config2py.Config2PyWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Config2PyWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Warnings issued by config2py (e.g. permissions it could not tighten)."""</span></div>
+
+
+
+<div class="viewcode-block" id="MissingConfigFileWarning">
+<a class="viewcode-back" href="../../_autosummary/config2py.errors.html#config2py.MissingConfigFileWarning">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingConfigFileWarning</span><span class="p">(</span><span class="n">Config2PyWarning</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A path given as a config source is not an existing file, so it was read as</span>
+<span class="sd">    empty (see https://github.com/i2mint/config2py/issues/27)."""</span></div>
+
+
+
+<span class="n">ON_MISSING_OPTIONS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"warn"</span><span class="p">,</span> <span class="s2">"raise"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="validate_on_missing">
+<a class="viewcode-back" href="../../_autosummary/config2py.errors.html#config2py.validate_on_missing">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_on_missing</span><span class="p">(</span><span class="n">on_missing</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Check that ``on_missing`` is one of ``ON_MISSING_OPTIONS`` and return it."""</span>
+    <span class="k">if</span> <span class="n">on_missing</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ON_MISSING_OPTIONS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"on_missing must be one of </span><span class="si">{</span><span class="n">ON_MISSING_OPTIONS</span><span class="si">}</span><span class="s2">. Was: </span><span class="si">{</span><span class="n">on_missing</span><span class="si">!r}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">on_missing</span></div>
+
+
+
+<div class="viewcode-block" id="report_missing_config_file">
+<a class="viewcode-back" href="../../_autosummary/config2py.errors.html#config2py.report_missing_config_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">report_missing_config_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">on_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"warn"</span><span class="p">,</span> <span class="n">stacklevel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Act on a config source ``path`` that is not an existing file.</span>
+
+<span class="sd">    :param on_missing: ``"warn"`` issues a ``MissingConfigFileWarning``,</span>
+<span class="sd">        ``"raise"`` raises ``FileNotFoundError``, ``"ignore"`` does nothing.</span>
+<span class="sd">    :param stacklevel: Passed to ``warnings.warn``, so the warning points at the</span>
+<span class="sd">        caller's code (``2`` is the caller of this function).</span>
+<span class="sd">    """</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+    <span class="n">validate_on_missing</span><span class="p">(</span><span class="n">on_missing</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">on_missing</span> <span class="o">==</span> <span class="s2">"ignore"</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"No such config file: </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">!r}</span><span class="s2">, so it reads as empty. Pass "</span>
+        <span class="s2">"on_missing='ignore' if an absent file is expected, or 'raise' to fail."</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">on_missing</span> <span class="o">==</span> <span class="s2">"raise"</span><span class="p">:</span>  <span class="c1"># str(error): "[Errno 2] No such config file: 'path'"</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="s2">"No such config file"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">MissingConfigFileWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
 
 </pre></div>
 

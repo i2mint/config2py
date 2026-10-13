@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=d127aa6e"></script>
+    <script src="../_static/documentation_options.js?v=755f2e77"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.58" />
+  <meta name="docsearch:version" content="0.1.59" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -320,8 +320,8 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a aria-current="page" class="current reference internal" href="#">config2py</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="config2py.util.html">config2py.util</a></li>
-<li class="toctree-l2"><a class="reference internal" href="config2py.s_configparser.html">config2py.s_configparser</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.errors.html">config2py.errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config2py.s_configparser.html">config2py.s_configparser</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.base.html">config2py.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.tools.html">config2py.tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config2py.sync_store.html">config2py.sync_store</a></li>
@@ -394,7 +394,7 @@
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.extract_exports" title="config2py.extract_exports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_exports</span></code></a>(exports)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.extract_exports" title="config2py.extract_exports"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_exports</span></code></a>(exports, *[, on_missing])</p></td>
 <td><p>Get a dict of <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">value}</span></code> pairs from the <code class="docutils literal notranslate"><span class="pre">name=&quot;value&quot;</span> <span class="pre">pairs</span> <span class="pre">of</span> <span class="pre">unix</span> <span class="pre">export</span> <span class="pre">lines</span> <span class="pre">(that</span> <span class="pre">is,</span> <span class="pre">lines</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">``export</span> <span class="pre">NAME=&quot;VALUE&quot;</span></code> format</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#config2py.get_configs_local_store" title="config2py.get_configs_local_store"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_local_store</span></code></a>([config_src, ...])</p></td>
@@ -454,7 +454,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#config2py.ConfigStore" title="config2py.ConfigStore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigStore</span></code></a>([defaults, dict_type, ...])</p></td>
 <td><p>Persister (read, write, delete) for ini configs.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.ConfigReader" title="config2py.ConfigReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigReader</span></code></a>([defaults, dict_type, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.ConfigReader" title="config2py.ConfigReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigReader</span></code></a>(source, *[, on_missing])</p></td>
 <td><p>A KvReader to read config files</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#config2py.Configs" title="config2py.Configs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Configs</span></code></a></p></td>
@@ -471,6 +471,24 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#config2py.JsonStore" title="config2py.JsonStore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JsonStore</span></code></a>(filepath, *[, key_path, indent, ...])</p></td>
 <td><p>A FileStore specialized for JSON files.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Exceptions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.Config2PyError" title="config2py.Config2PyError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Config2PyError</span></code></a></p></td>
+<td><p>Base class for config2py errors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.Config2PyWarning" title="config2py.Config2PyWarning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Config2PyWarning</span></code></a></p></td>
+<td><p>Warnings issued by config2py (e.g. permissions it could not tighten).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.ConfigNotFound" title="config2py.ConfigNotFound"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigNotFound</span></code></a></p></td>
+<td><p>Raised when a config file is not found.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.MissingConfigFileWarning" title="config2py.MissingConfigFileWarning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code></a></p></td>
+<td><p>A path given as a config source is not an existing file, so it was read as empty (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p></td>
 </tr>
 </tbody>
 </table>
@@ -556,9 +574,30 @@ Python package (default <code class="docutils literal notranslate"><span class="
 
 </dd></dl>
 
+<dl class="py exception">
+<dt class="sig sig-object py" id="config2py.Config2PyError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.</span></span><span class="sig-name descname"><span class="pre">Config2PyError</span></span><a class="reference internal" href="../_modules/config2py/errors.html#Config2PyError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.Config2PyError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Base class for config2py errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="config2py.Config2PyWarning">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.</span></span><span class="sig-name descname"><span class="pre">Config2PyWarning</span></span><a class="reference internal" href="../_modules/config2py/errors.html#Config2PyWarning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.Config2PyWarning" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#UserWarning" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserWarning</span></code></a></p>
+<p>Warnings issued by config2py (e.g. permissions it could not tighten).</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="config2py.ConfigNotFound">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.</span></span><span class="sig-name descname"><span class="pre">ConfigNotFound</span></span><a class="reference internal" href="../_modules/config2py/errors.html#ConfigNotFound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.ConfigNotFound" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="config2py.errors.html#config2py.errors.Config2PyError" title="config2py.errors.Config2PyError"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config2PyError</span></code></a></p>
+<p>Raised when a config file is not found.</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="config2py.ConfigReader">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.</span></span><span class="sig-name descname"><span class="pre">ConfigReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;class</span> <span class="pre">'dict'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_no_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('='</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_prefixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('#'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">';')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inline_comment_prefixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empty_lines_in_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DEFAULT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;object</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#ConfigReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.ConfigReader" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.</span></span><span class="sig-name descname"><span class="pre">ConfigReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/s_configparser.html#ConfigReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.ConfigReader" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="config2py.s_configparser.html#config2py.s_configparser.ConfigStore" title="config2py.s_configparser.ConfigStore"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigStore</span></code></a></p>
 <p>A KvReader to read config files</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py.s_configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigReader</span>
@@ -609,6 +648,21 @@ Python package (default <code class="docutils literal notranslate"><span class="
 <span class="go">['DEFAULT', 'Simple Values', 'All Values Are Strings', 'Multiline Values', 'No Values', 'You can use comments', 'Sections Can Be Indented']</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">'Simple Values'</span><span class="p">])</span>
 <span class="go">['key', 'spaces in keys', 'spaces in values', 'spaces around the delimiter', 'you can also use']</span>
+</pre></div>
+</div>
+<p>######## A filepath that doesn’t exist ########</p>
+<p>A filepath (a single-line <code class="docutils literal notranslate"><span class="pre">str</span></code>, an <code class="docutils literal notranslate"><span class="pre">os.PathLike</span></code>, or several of them in a list
+or tuple) that is not an existing file reads as empty, as <code class="docutils literal notranslate"><span class="pre">configparser</span></code> does.
+<code class="docutils literal notranslate"><span class="pre">on_missing</span></code> says what else happens: <code class="docutils literal notranslate"><span class="pre">&quot;warn&quot;</span></code> (the default) issues a
+<code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> does nothing (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ConfigReader</span><span class="p">(</span><span class="s1">'no/such/file.ini'</span><span class="p">,</span> <span class="n">on_missing</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">['DEFAULT']</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ConfigReader</span><span class="p">(</span><span class="s1">'no/such/file.ini'</span><span class="p">,</span> <span class="n">on_missing</span><span class="o">=</span><span class="s1">'raise'</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">  </span><span class="c">...</span>
+<span class="gr">FileNotFoundError</span>: <span class="n">[Errno 2] No such config file: 'no/such/file.ini'</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -852,6 +906,14 @@ for missing key_path. If None, KeyError is raised for missing key paths.</p></li
 </dl>
 </dd></dl>
 
+<dl class="py exception">
+<dt class="sig sig-object py" id="config2py.MissingConfigFileWarning">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.</span></span><span class="sig-name descname"><span class="pre">MissingConfigFileWarning</span></span><a class="reference internal" href="../_modules/config2py/errors.html#MissingConfigFileWarning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.MissingConfigFileWarning" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="config2py.errors.html#config2py.errors.Config2PyWarning" title="config2py.errors.Config2PyWarning"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config2PyWarning</span></code></a></p>
+<p>A path given as a config source is not an existing file, so it was read as
+empty (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="config2py.SyncStore">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.</span></span><span class="sig-name descname"><span class="pre">SyncStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dumper</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/sync_store.html#SyncStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.SyncStore" title="Link to this definition">#</a></dt>
@@ -965,12 +1027,19 @@ or <code class="docutils literal notranslate"><span class="pre">&quot;config&quo
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.extract_exports">
-<span class="sig-prename descclassname"><span class="pre">config2py.</span></span><span class="sig-name descname"><span class="pre">extract_exports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exports</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/tools.html#extract_exports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.extract_exports" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">config2py.</span></span><span class="sig-name descname"><span class="pre">extract_exports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exports</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/tools.html#extract_exports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.extract_exports" title="Link to this definition">#</a></dt>
 <dd><p>Get a dict of <code class="docutils literal notranslate"><span class="pre">{name:</span> <span class="pre">value}</span></code> pairs from the <code class="docutils literal notranslate"><span class="pre">name=&quot;value&quot;</span> <span class="pre">pairs</span> <span class="pre">of</span> <span class="pre">unix</span>
 <span class="pre">export</span> <span class="pre">lines</span> <span class="pre">(that</span> <span class="pre">is,</span> <span class="pre">lines</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">``export</span> <span class="pre">NAME=&quot;VALUE&quot;</span></code> format</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>exports</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Filepath or string contents thereof</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exports</strong> – Filepath (<code class="docutils literal notranslate"><span class="pre">str</span></code> or <code class="docutils literal notranslate"><span class="pre">os.PathLike</span></code>) or string contents thereof</p></li>
+<li><p><strong>on_missing</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – What to do when <code class="docutils literal notranslate"><span class="pre">exports</span></code> looks like a filepath (a single,
+non-blank line with no <code class="docutils literal notranslate"><span class="pre">export</span></code> in it) that is not an existing file:
+<code class="docutils literal notranslate"><span class="pre">&quot;warn&quot;</span></code> (the default) issues a <code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code> and returns
+<code class="docutils literal notranslate"><span class="pre">{}</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> returns <code class="docutils literal notranslate"><span class="pre">{}</span></code>
+(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>).</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
@@ -981,13 +1050,15 @@ or <code class="docutils literal notranslate"><span class="pre">&quot;config&quo
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extract_exports</span><span class="p">(</span><span class="s1">'export KEY="secret"</span><span class="se">\n</span><span class="s1">export TOKEN="arbitrary"'</span><span class="p">)</span>
 <span class="go">{'KEY': 'secret', 'TOKEN': 'arbitrary'}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">extract_exports</span><span class="p">(</span><span class="s1">'export KEY="secret"'</span><span class="p">)</span>  <span class="c1"># a single line of content works too</span>
+<span class="go">{'KEY': 'secret'}</span>
 </pre></div>
 </div>
-<p>Note that a single-line argument that is not an existing file is parsed as
-content, not as a path. A mistyped path therefore silently gives an empty dict
-(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a>):</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extract_exports</span><span class="p">(</span><span class="s1">'no/such/path/.env'</span><span class="p">)</span>
-<span class="go">{}</span>
+<p>A mistyped path is not silently read as empty content:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">extract_exports</span><span class="p">(</span><span class="s1">'no/such/path/.env'</span><span class="p">,</span> <span class="n">on_missing</span><span class="o">=</span><span class="s1">'raise'</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">  </span><span class="c">...</span>
+<span class="gr">FileNotFoundError</span>: <span class="n">[Errno 2] No such config file: 'no/such/path/.env'</span>
 </pre></div>
 </div>
 <section id="use-case">
@@ -1566,11 +1637,11 @@ places), <code class="docutils literal notranslate"><span class="pre">save_to</s
 <tr class="row-odd"><td><p><a class="reference internal" href="config2py.util.html#module-config2py.util" title="config2py.util"><code class="xref py py-obj docutils literal notranslate"><span class="pre">util</span></code></a></p></td>
 <td><p>Utility functions for config2py.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="config2py.s_configparser.html#module-config2py.s_configparser" title="config2py.s_configparser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s_configparser</span></code></a></p></td>
-<td><p>Data Object Layer for configparser standard lib.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="config2py.errors.html#module-config2py.errors" title="config2py.errors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">errors</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="config2py.errors.html#module-config2py.errors" title="config2py.errors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">errors</span></code></a></p></td>
 <td><p>Error classes for config2py.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="config2py.s_configparser.html#module-config2py.s_configparser" title="config2py.s_configparser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s_configparser</span></code></a></p></td>
+<td><p>Data Object Layer for configparser standard lib.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="config2py.base.html#module-config2py.base" title="config2py.base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">base</span></code></a></p></td>
 <td><p>Base for getting configs from various sources and formats</p></td>
@@ -1643,6 +1714,9 @@ places), <code class="docutils literal notranslate"><span class="pre">save_to</s
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.AppData.get_resource"><code class="docutils literal notranslate"><span class="pre">AppData.get_resource()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.Config2PyError"><code class="docutils literal notranslate"><span class="pre">Config2PyError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.Config2PyWarning"><code class="docutils literal notranslate"><span class="pre">Config2PyWarning</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.ConfigNotFound"><code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.ConfigReader"><code class="docutils literal notranslate"><span class="pre">ConfigReader</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.ConfigReader.persist"><code class="docutils literal notranslate"><span class="pre">ConfigReader.persist()</span></code></a></li>
 </ul>
@@ -1658,6 +1732,7 @@ places), <code class="docutils literal notranslate"><span class="pre">save_to</s
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.Configs"><code class="docutils literal notranslate"><span class="pre">Configs</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.FileStore"><code class="docutils literal notranslate"><span class="pre">FileStore</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.JsonStore"><code class="docutils literal notranslate"><span class="pre">JsonStore</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.MissingConfigFileWarning"><code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.SyncStore"><code class="docutils literal notranslate"><span class="pre">SyncStore</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.SyncStore.flush"><code class="docutils literal notranslate"><span class="pre">SyncStore.flush()</span></code></a></li>
 </ul>

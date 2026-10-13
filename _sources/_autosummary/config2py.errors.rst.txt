@@ -4,6 +4,13 @@ config2py.errors
 .. automodule:: config2py.errors
 
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      report_missing_config_file
+      validate_on_missing
+   
    .. rubric:: Exceptions
 
    .. autosummary::
@@ -11,4 +18,5 @@ config2py.errors
       Config2PyError
       Config2PyWarning
       ConfigNotFound
+      MissingConfigFileWarning
    
