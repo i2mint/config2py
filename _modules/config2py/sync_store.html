@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=393d09ac"></script>
+    <script src="../../_static/documentation_options.js?v=d127aa6e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.57" />
+  <meta name="docsearch:version" content="0.1.58" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -790,7 +790,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="register_extension">
-<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.sync_store.register_extension">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.register_extension">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_extension</span><span class="p">(</span><span class="n">ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">dumper</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Register loader/dumper for a file extension."""</span>
     <span class="n">_extension_registry</span><span class="p">[</span><span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">dumper</span><span class="p">)</span></div>
@@ -798,7 +798,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="get_format_handlers">
-<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.sync_store.get_format_handlers">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.get_format_handlers">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_format_handlers</span><span class="p">(</span>
     <span class="n">filepath</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]:</span>
@@ -905,7 +905,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="SyncStore">
-<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.sync_store.SyncStore">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.SyncStore">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SyncStore</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A MutableMapping that automatically syncs changes to backing storage.</span>
@@ -960,7 +960,7 @@ window.runMermaid = runMermaid;</script>
             <span class="bp">self</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
 <div class="viewcode-block" id="SyncStore.flush">
-<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.sync_store.SyncStore.flush">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.SyncStore.flush">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Sync data to backing storage if changes exist."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_flush</span><span class="p">:</span>
@@ -1001,7 +1001,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="FileStore">
-<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.sync_store.FileStore">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.FileStore">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FileStore</span><span class="p">(</span><span class="n">SyncStore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A SyncStore backed by a file with automatic format detection.</span>
@@ -1151,7 +1151,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="JsonStore">
-<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.sync_store.JsonStore">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.sync_store.html#config2py.JsonStore">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JsonStore</span><span class="p">(</span><span class="n">FileStore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A FileStore specialized for JSON files.</span>

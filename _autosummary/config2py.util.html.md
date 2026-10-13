@@ -15,6 +15,7 @@ Utility functions for config2py.
 | [`app_folder_standards`](#config2py.util.app_folder_standards)([os_name])                   | Return the `{folder_kind: FolderSpec}` table for the given `os.name`.                                                                                                                   |
 | [`ask_user_for_input`](#config2py.util.ask_user_for_input)(prompt[, default, ...])        | Ask the user for input, optionally masking, validating and transforming the input.                                                                                                      |
 | [`create_directories`](#config2py.util.create_directories)(dirpath[, max_dirs_to_make])   | Create directories up to a specified limit.                                                                                                                                             |
+| [`ensure_default_configs_folder`](#config2py.util.ensure_default_configs_folder)()                   | Create config2py's own configs folder if needed, and return its path.                                                                                                                   |
 | [`ensure_seeded`](#config2py.util.ensure_seeded)(target, package_name, ...[, ...])   | Copy a bundled seed file to *target* if it does not already exist.                                                                                                                      |
 | [`extract_variable_declarations`](#config2py.util.extract_variable_declarations)(string[, expand])   | Reads the contents of a config file, extracting Unix-style environment variable declarations of the form `export {NAME}={value}`, returning a dictionary of `{NAME: value, ...}` pairs. |
 | [`get_app_folder`](#config2py.util.get_app_folder)([app_name, setup_callback, ...])   | Retrieve or create the app directory specific to the given app name and folder kind.                                                                                                    |
@@ -22,6 +23,7 @@ Utility functions for config2py.
 | [`get_configs_directory_for_app`](#config2py.util.get_configs_directory_for_app)([app_name, ...])    | Retrieve or create the configs directory specific to the given app name.                                                                                                                |
 | [`get_configs_folder_for_app`](#config2py.util.get_configs_folder_for_app)([app_name, ...])       | Retrieve or create the configs directory specific to the given app name.                                                                                                                |
 | [`identity`](#config2py.util.identity)(x)                                       | Function that just returns its argument.                                                                                                                                                |
+| [`is_default_configs_folder`](#config2py.util.is_default_configs_folder)(path)                   | Whether `path` (however spelled) is config2py's own configs folder.                                                                                                                     |
 | [`is_not_empty`](#config2py.util.is_not_empty)(x)                                   | Function that returns True if x is not empty.                                                                                                                                           |
 | [`is_repl`](#config2py.util.is_repl)()                                         | Determines if the Python interpreter is running in REPL.                                                                                                                                |
 | [`looks_like_secret`](#config2py.util.looks_like_secret)(text)                           | True if `text` (typically a prompt naming a config key) looks secret.                                                                                                                   |
@@ -29,6 +31,7 @@ Utility functions for config2py.
 | [`parse_assignments_from_py_source`](#config2py.util.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                                                              |
 | [`secure_makedirs`](#config2py.util.secure_makedirs)(dirpath, \*[, exist_ok])          | `os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.                                                                                                        |
 | [`secure_open`](#config2py.util.secure_open)(path[, mode])                         | `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.                                                                                                                |
+| [`setup_configs_folder`](#config2py.util.setup_configs_folder)(configs_dir, \*[, ...])      | Create `configs_dir` (via `setup_callback`) and return it.                                                                                                                              |
 | [`system_default_for_app_data_folder`](#config2py.util.system_default_for_app_data_folder)([...])         | Get the system default folder for `folder_kind`.                                                                                                                                        |
 | [`tighten_mode`](#config2py.util.tighten_mode)(path, mode, \*[, strict])            | Set `path`'s permission bits to `mode`, only if they differ.                                                                                                                            |
 
@@ -254,6 +257,16 @@ True
 True
 >>> shutil.rmtree(temp_dir)  # Cleanup
 ```
+
+### config2py.util.ensure_default_configs_folder()
+
+Create config2py’s own configs folder if needed, and return its path.
+
+The folder’s modes are re-tightened (see `setup_configs_folder`) once per
+process; a folder deleted in the meantime is re-created.
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### config2py.util.ensure_seeded(target, package_name, seed_subpackage, filename, , seed_data_dir='_seed_data')
 
@@ -719,7 +732,7 @@ You can override this by setting environment variables:
 '/Users/.../.cache'
 ```
 
-### config2py.util.get_configs_directory_for_app(app_name='config2py', \*, configs_name='configs', app_dir_setup_callback=<function \_default_folder_setup>, config_dir_setup_callback=<function \_default_folder_setup>)
+### config2py.util.get_configs_directory_for_app(app_name='config2py', \*, configs_name='configs', app_dir_setup_callback=<function \_default_folder_setup>, config_dir_setup_callback=<function \_default_folder_setup>, ensure_exists=True)
 
 Retrieve or create the configs directory specific to the given app name.
 
@@ -730,8 +743,10 @@ Retrieve or create the configs directory specific to the given app name.
     initialize the app directory. Default is \_default_folder_setup.
   * **config_dir_setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to
     initialize the configs directory. Default is \_default_folder_setup.
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to create (and set up) the directory. With
+    `False`, only the path is computed: nothing is created or chmod-ed.
 
-### config2py.util.get_configs_folder_for_app(app_name='config2py', \*, configs_name='configs', app_dir_setup_callback=<function \_default_folder_setup>, config_dir_setup_callback=<function \_default_folder_setup>)
+### config2py.util.get_configs_folder_for_app(app_name='config2py', \*, configs_name='configs', app_dir_setup_callback=<function \_default_folder_setup>, config_dir_setup_callback=<function \_default_folder_setup>, ensure_exists=True)
 
 Retrieve or create the configs directory specific to the given app name.
 
@@ -742,6 +757,8 @@ Retrieve or create the configs directory specific to the given app name.
     initialize the app directory. Default is \_default_folder_setup.
   * **config_dir_setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to
     initialize the configs directory. Default is \_default_folder_setup.
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to create (and set up) the directory. With
+    `False`, only the path is computed: nothing is created or chmod-ed.
 
 ### config2py.util.identity(x)
 
@@ -749,6 +766,17 @@ Function that just returns its argument.
 
 * **Return type:**
   [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)
+
+### config2py.util.is_default_configs_folder(path)
+
+Whether `path` (however spelled) is config2py’s own configs folder.
+
+A string without a path separator (that doesn’t start with `~`) is an app name,
+not a path (see [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28)), so it is never
+the default folder, whatever the current directory.
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### config2py.util.is_not_empty(x)
 
@@ -860,6 +888,16 @@ Intended for files that may hold secrets (see i2mint/config2py#15).
 '0o600'
 >>> os.remove(path)
 ```
+
+### config2py.util.setup_configs_folder(configs_dir, \*, setup_callback=<function \_default_folder_setup>)
+
+Create `configs_dir` (via `setup_callback`) and return it.
+
+If the folder is one config2py manages (it holds a `.config2py` marker), its
+modes are also re-tightened, as `get_configs_folder_for_app` does.
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### config2py.util.system_default_for_app_data_folder(folder_kind='config', , standards=None)
 

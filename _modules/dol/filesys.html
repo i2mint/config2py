@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="alternate" type="text/markdown" href="filesys.html.md">
+<link rel="describedby" href="../../llms.txt" type="text/markdown">
+    <title>dol.filesys &#8212; config2py</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/epythet.css?v=54f41860" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../_static/documentation_options.js?v=d127aa6e"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=fd10adb8"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs";
+
+
+
+
+
+const initStyles = () => {
+    const defaultStyle = document.createElement('style');
+    defaultStyle.textContent = "pre.mermaid {\n    /* Same as .mermaid-container > pre */\n    display: block;\n    width: 100%;\n}\n\npre.mermaid > svg {\n    /* Same as .mermaid-container > pre > svg */\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}";
+    document.head.appendChild(defaultStyle);
+
+    const fullscreenStyle = document.createElement('style');
+    fullscreenStyle.textContent = ".mermaid-container {\n    position: relative;\n    display: flex;\n    flex-direction: row;\n    width: 100%;\n}\n\n.mermaid-container > pre {\n    display: block;\n    width: 100%;\n}\n\n.mermaid-container > pre > svg {\n    height: 500px;\n    width: 100%;\n    max-width: 100% !important;\n}\n\n.mermaid-fullscreen-btn {\n    position: absolute;\n    width: 28px;\n    height: 28px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.3);\n    border-radius: 4px;\n    cursor: pointer;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    transition: all 0.2s;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);\n    font-size: 14px;\n    line-height: 1;\n    padding: 0;\n    color: #333;\n}\n\n.mermaid-fullscreen-btn:hover {\n    opacity: 100% !important;\n    background: rgba(255, 255, 255, 1);\n    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-btn.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.3);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-btn.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 3px 10px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal {\n    display: none;\n    position: fixed !important;\n    top: 0 !important;\n    left: 0 !important;\n    width: 95vw;\n    height: 100vh;\n    background: rgba(255, 255, 255, 0.98);\n    z-index: 9999;\n    padding: 20px;\n    overflow: auto;\n}\n\n.mermaid-fullscreen-modal.dark-theme {\n    background: rgba(0, 0, 0, 0.98);\n}\n\n.mermaid-fullscreen-modal.active {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen {\n    position: relative;\n    width: 95vw;\n    height: 90vh;\n    max-width: 95vw;\n    max-height: 90vh;\n    background: white;\n    border-radius: 8px;\n    padding: 20px;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);\n    overflow: auto;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen.dark-theme {\n    background: #1a1a1a;\n    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);\n}\n\n.mermaid-container-fullscreen pre.mermaid {\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}\n\n.mermaid-container-fullscreen .mermaid svg {\n    height: 100% !important;\n    width: 100% !important;\n    cursor: grab;\n}\n\n.mermaid-fullscreen-close {\n    position: fixed !important;\n    top: 20px !important;\n    right: 20px !important;\n    width: 40px;\n    height: 40px;\n    background: rgba(255, 255, 255, 0.95);\n    border: 1px solid rgba(0, 0, 0, 0.2);\n    border-radius: 50%;\n    cursor: pointer;\n    z-index: 10000;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n    transition: all 0.2s;\n    font-size: 24px;\n    line-height: 1;\n    color: #333;\n}\n\n.mermaid-fullscreen-close:hover {\n    background: white;\n    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);\n    transform: scale(1.1);\n}\n\n.mermaid-fullscreen-close.dark-theme {\n    background: rgba(50, 50, 50, 0.95);\n    border: 1px solid rgba(255, 255, 255, 0.2);\n    color: #e0e0e0;\n}\n\n.mermaid-fullscreen-close.dark-theme:hover {\n    background: rgba(60, 60, 60, 1);\n    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.2);\n}\n\n.mermaid-fullscreen-modal .mermaid-fullscreen-btn {\n    display: none !important;\n}";
+    document.head.appendChild(fullscreenStyle);
+}
+
+// Detect if page has dark background
+const isDarkTheme = () => {
+    // We use a set of heuristics:
+    // 1. Check for common dark mode classes or attributes
+    // 2. Check computed background color brightness
+    if (document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        document.body.classList.contains('dark') ||
+        document.body.getAttribute('data-theme') === 'dark') {
+        // console.log("Dark theme detected via class/attribute");
+        return true;
+    }
+    if (document.documentElement.classList.contains('light') ||
+        document.documentElement.getAttribute('data-theme') === 'light' ||
+        document.body.classList.contains('light') ||
+        document.body.getAttribute('data-theme') === 'light') {
+        // console.log("Light theme detected via class/attribute");
+        return false;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // console.log("Dark theme detected via prefers-color-scheme");
+        return true;
+    }
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+    if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // console.log("Background color brightness:", brightness);
+        return brightness < 128;
+    }
+    // console.log("No dark or light theme detected, defaulting to light theme");
+    return false;
+};
+
+let darkTheme = isDarkTheme();
+let modal = null;
+let modalContent = null;
+let previousScrollOffset = [window.scrollX, window.scrollY];
+let _lazyObserver = null;
+let _renderQueue = Promise.resolve();
+let closeModal = () => {};
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
+
+// Apply d3 zoom to each SVG. Idempotent: an SVG already wrapped is skipped,
+// so this is safe to call both for the initial batch and for diagrams that
+// render lazily once they become visible.
+const addZoomToSvgs = (svgs) => {
+    svgs.each(function() {
+        if (this.getAttribute('data-zoom-applied') === 'true') return;
+        var svg = d3.select(this);
+        svg.html("<g class='wrapper'>" + svg.html() + "</g>");
+        var inner = svg.select("g");
+        var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+        });
+        svg.call(zoom);
+        this.setAttribute('data-zoom-applied', 'true');
+    });
+};
+
+const runMermaid = async (rerun) => {
+    console.log("Running mermaid diagrams, rerun =", rerun);
+    // clear all existing mermaid charts
+    let all_mermaids = document.querySelectorAll(".mermaid");
+
+    if (rerun) {
+        // Disconnect any previous lazy rendering observer
+        if (_lazyObserver) {
+            _lazyObserver.disconnect();
+            _lazyObserver = null;
+        }
+
+        all_mermaids.forEach((el) => {
+            el.removeAttribute('data-mermaid-deferred');
+            el.removeAttribute('data-mermaid-render-failed');
+            if(!el.hasAttribute("data-original-code")) {
+                // store original code
+                // console.log(`Storing original code for first run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+            if(el.getAttribute("data-processed") === "true") {
+                // remove and restore original
+                el.removeAttribute("data-processed");
+                // console.log(`Restoring original code for re-run: `, el.getAttribute('data-original-code'));
+                el.innerHTML = el.getAttribute('data-original-code');
+            } else {
+                // store original code
+                // console.log(`Storing original code for re-run: `, el.innerHTML);
+                el.setAttribute('data-original-code', el.innerHTML);
+            }
+        });
+
+        // Separate visible and hidden elements. Mermaid's layout engine measures
+        // text dimensions via the DOM, which fails for elements hidden by a parent
+        // (e.g., Reveal.js non-active slides, sphinx-design unopened tabs),
+        // producing broken SVGs. Render visible elements now, defer hidden ones.
+        const visible = [];
+        const hidden = [];
+        all_mermaids.forEach((el) => {
+            // offsetParent is null for display:none ancestors.
+            // getClientRects().length > 0 catches position:fixed elements
+            // (which also have null offsetParent but are still visible).
+            if (el.offsetParent !== null || el.getClientRects().length > 0) {
+                visible.push(el);
+            } else {
+                hidden.push(el);
+                el.setAttribute('data-mermaid-deferred', 'true');
+            }
+        });
+
+        if (visible.length > 0) {
+            try {
+                await mermaid.run({ nodes: visible });
+            } catch (e) {
+                console.error("Mermaid rendering failed:", e);
+            }
+        }
+
+        // Lazily render hidden elements when they become visible.
+        // Uses a promise chain (_renderQueue) to serialize rendering,
+        // since IntersectionObserver may report multiple entries at once
+        // and mermaid.run() is not safe to call concurrently.
+        if (hidden.length > 0) {
+            if (typeof IntersectionObserver === 'undefined') {
+                console.warn("IntersectionObserver not available; hidden mermaid diagrams will not render.");
+            } else {
+                _renderQueue = Promise.resolve();
+                _lazyObserver = new IntersectionObserver((entries) => {
+                    for (const entry of entries) {
+                        if (entry.isIntersecting && entry.target.getAttribute("data-processed") !== "true") {
+                            _lazyObserver.unobserve(entry.target);
+                            const el = entry.target;
+                            _renderQueue = _renderQueue.then(async () => {
+                                try {
+                                    await mermaid.run({ nodes: [el] });
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    // Apply zoom to the now-rendered diagram, matching
+                                    // the decoration visible diagrams receive.
+                                    if (false) {
+                                        addZoomToSvgs(d3.selectAll("").select(function() {
+                                            return this.querySelector("svg");
+                                        }));
+                                    }
+                                } catch (e) {
+                                    console.error("Mermaid deferred rendering failed:", e);
+                                    el.removeAttribute('data-mermaid-deferred');
+                                    el.setAttribute('data-mermaid-render-failed', 'true');
+                                }
+                            });
+                        }
+                    }
+                });
+                hidden.forEach((el) => _lazyObserver.observe(el));
+            }
+        }
+    }
+
+    all_mermaids = document.querySelectorAll(".mermaid");
+    // Exclude deferred (hidden) and render-failed elements from completion checks
+    const mermaids_active = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])");
+    const mermaids_processed = document.querySelectorAll(".mermaid:not([data-mermaid-deferred]):not([data-mermaid-render-failed])[data-processed='true']");
+
+    if (false) {
+        const mermaids_to_add_zoom = 0 === -1 ? mermaids_active.length : 0;
+        if(mermaids_to_add_zoom > 0) {
+            var svgs = d3.selectAll("").select(function() {
+                return this.querySelector("svg");
+            });
+            // Wait until every active (visible) diagram has rendered. Deferred
+            // diagrams are excluded, so a fixed d3_node_count that counts a
+            // hidden diagram no longer loops forever waiting for its SVG.
+            if(mermaids_active.length !== mermaids_processed.length) {
+                setTimeout(() => runMermaid(false), 200);
+                return;
+            }
+            addZoomToSvgs(svgs);
+        }
+    } else if(mermaids_active.length !== mermaids_processed.length) {
+        // Wait for mermaid to process all diagrams
+        setTimeout(() => runMermaid(false), 200);
+        return;
+    }
+
+    // Stop here if not adding fullscreen capability
+    if (!true) return;
+
+    if (modal !== null ) {
+        // Destroy existing modal
+        modal.remove();
+        modal = null;
+        modalContent = null;
+    }
+
+    modal = document.createElement('div');
+    modal.className = 'mermaid-fullscreen-modal' + (darkTheme ? ' dark-theme' : '');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Fullscreen diagram viewer');
+    modal.innerHTML = `
+        <button class="mermaid-fullscreen-close${darkTheme ? ' dark-theme' : ''}" aria-label="Close fullscreen">✕</button>
+        <div class="mermaid-container-fullscreen${darkTheme ? ' dark-theme' : ''}"></div>
+    `;
+    document.body.appendChild(modal);
+
+    modalContent = modal.querySelector('.mermaid-container-fullscreen');
+    const closeBtn = modal.querySelector('.mermaid-fullscreen-close');
+
+    closeModal = () => {
+        modal.classList.remove('active');
+        modalContent.innerHTML = '';
+        document.body.style.overflow = ''
+        window.scrollTo({left: previousScrollOffset[0], top: previousScrollOffset[1], behavior: 'instant'});
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.querySelectorAll('.mermaid').forEach((mermaidDiv) => {
+        if (mermaidDiv.parentNode.classList.contains('mermaid-container') ||
+            mermaidDiv.closest('.mermaid-fullscreen-modal')) {
+            // Already processed, adjust button class if needed
+            const existingBtn = mermaidDiv.parentNode.querySelector('.mermaid-fullscreen-btn');
+            if (existingBtn) {
+                existingBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+            }
+            return;
+        }
+
+        const container = document.createElement('div');
+        container.className = 'mermaid-container';
+        mermaidDiv.parentNode.insertBefore(container, mermaidDiv);
+        container.appendChild(mermaidDiv);
+
+        const fullscreenBtn = document.createElement('button');
+        fullscreenBtn.className = 'mermaid-fullscreen-btn' + (darkTheme ? ' dark-theme' : '');
+        fullscreenBtn.setAttribute('aria-label', 'View diagram in fullscreen');
+        fullscreenBtn.textContent = "\u26f6";
+        fullscreenBtn.style.opacity = "50%";
+
+        // Calculate dynamic position based on diagram's margin and padding
+        const diagramStyle = window.getComputedStyle(mermaidDiv);
+        const marginTop = parseFloat(diagramStyle.marginTop) || 0;
+        const marginRight = parseFloat(diagramStyle.marginRight) || 0;
+        const paddingTop = parseFloat(diagramStyle.paddingTop) || 0;
+        const paddingRight = parseFloat(diagramStyle.paddingRight) || 0;
+        fullscreenBtn.style.top = `${marginTop + paddingTop + 4}px`;
+        fullscreenBtn.style.right = `${marginRight + paddingRight + 4}px`;
+
+        fullscreenBtn.addEventListener('click', () => {
+            previousScrollOffset = [window.scrollX, window.scrollY];
+            const clone = mermaidDiv.cloneNode(true);
+            modalContent.innerHTML = '';
+            modalContent.appendChild(clone);
+
+            const svg = clone.querySelector('svg');
+            if (svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = '100%';
+                svg.style.height = 'auto';
+                svg.style.maxWidth = '100%';
+                svg.style.display = 'block';
+
+                if (false) {
+                    setTimeout(() => {
+                        const g = svg.querySelector('g');
+                        if (g) {
+                            var svgD3 = d3.select(svg);
+                            svgD3.html("<g class='wrapper'>" + svgD3.html() + "</g>");
+                            var inner = svgD3.select("g");
+                            var zoom = d3.zoom().on("zoom", function(event) {
+                                inner.attr("transform", event.transform);
+                            });
+                            svgD3.call(zoom);
+                        }
+                    }, 100);
+                }
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        container.appendChild(fullscreenBtn);
+    });
+};
+
+
+
+const load = async () => {
+    initStyles();
+
+
+    await runMermaid(true);
+
+    const reRunIfThemeChanges = async () => {
+        const newDarkTheme = isDarkTheme();
+        if (newDarkTheme !== darkTheme) {
+            darkTheme = newDarkTheme;
+            console.log("Theme change detected, re-running mermaid with", darkTheme ? "dark" : "default", "theme");
+            await mermaid.initialize(
+                {...{"startOnLoad": false},
+                ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+                }
+            );
+            await runMermaid(true);
+        }
+    };
+
+    // Update theme classes when theme changes
+    const themeObserver = new MutationObserver(reRunIfThemeChanges);
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+    themeObserver.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style', 'data-theme']
+    });
+};
+
+
+
+
+
+console.log("Initializing mermaid with", darkTheme ? "dark" : "default", "theme");
+mermaid.initialize(
+    {...{"startOnLoad": false},
+    ...{ darkMode: darkTheme, theme: darkTheme ? "dark" : "default" },
+    }
+);
+
+window.addEventListener("load", load);
+window.runMermaid = runMermaid;</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/dol/filesys';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.58" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">config2py</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../ai-agents.html">
+    For AI agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/config2py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../ai-agents.html">
+    For AI agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/i2mint/config2py" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">dol.filesys</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for dol.filesys</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""File system access: dict-like stores over folders and files.</span>
+
+<span class="sd">``Files`` gives a folder a ``MutableMapping`` interface: keys are paths relative to the</span>
+<span class="sd">root folder, values are the files' bytes. ``TextFiles``, ``JsonFiles`` and ``PickleFiles``</span>
+<span class="sd">add the corresponding value codecs. Writing under a sub-folder that does not exist raises</span>
+<span class="sd">``KeyError``; wrap the store with ``mk_dirs_if_missing`` to create folders on write.</span>
+
+<span class="sd">Main entry points:</span>
+
+<span class="sd">- ``Files``: bytes of the files under a root folder</span>
+<span class="sd">- ``TextFiles``: same, with text values</span>
+<span class="sd">- ``JsonFiles``: same, with JSON-decoded values</span>
+<span class="sd">- ``PickleFiles``: same, with pickled values</span>
+<span class="sd">- ``mk_dirs_if_missing``: make a file store create missing directories on write</span>
+
+<span class="sd">    &gt;&gt;&gt; import tempfile</span>
+<span class="sd">    &gt;&gt;&gt; s = Files(tempfile.mkdtemp())</span>
+<span class="sd">    &gt;&gt;&gt; s['hello.txt'] = b'world'</span>
+<span class="sd">    &gt;&gt;&gt; s['hello.txt']</span>
+<span class="sd">    b'world'</span>
+<span class="sd">    &gt;&gt;&gt; list(s)</span>
+<span class="sd">    ['hello.txt']</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">stat</span> <span class="k">as</span> <span class="n">os_stat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dol.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">KvReader</span><span class="p">,</span> <span class="n">KvPersister</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dol.trans</span><span class="w"> </span><span class="kn">import</span> <span class="n">wrap_kvs</span><span class="p">,</span> <span class="n">store_decorator</span><span class="p">,</span> <span class="n">filt_iter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dol.naming</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_pattern_from_template_and_format_dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dol.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">mk_relative_path_store</span>
+
+<span class="n">file_sep</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+<span class="n">inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"infinity"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_slash_suffix</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Add a file separation (/ or \) at the end of path str, if not already present.</span>
+
+<span class="sd">    An empty path stays empty: an empty prefix has no slash to "ensure", and turning</span>
+<span class="sd">    it into a bare separator anchors otherwise-absolute keys to the filesystem root.</span>
+<span class="sd">    On Windows that produces invalid paths like ``\C:\Users\...`` (a separator before</span>
+<span class="sd">    the drive letter -&gt; ``OSError: [Errno 22]``); e.g. ``Files("")`` used with</span>
+<span class="sd">    absolute keys, as in ``dol.misc.get_obj``.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">file_sep</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">path</span> <span class="o">+</span> <span class="n">file_sep</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">path</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">paths_in_dir</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Yield the paths of the entries of ``rootdir`` (directories with a trailing separator), skipping hidden ones unless ``include_hidden``."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">rootdir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">include_hidden</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="s2">"."</span>
+            <span class="p">):</span>  <span class="c1"># TODO: is dot a platform independent marker for hidden file?</span>
+                <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">ensure_slash_suffix</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">filepath</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">NotADirectoryError</span><span class="p">,</span> <span class="ne">PermissionError</span><span class="p">):</span>
+        <span class="c1"># Skip directories that vanished, aren't directories, or aren't readable rather</span>
+        <span class="c1"># than crashing the (recursive) walk. Notably, OS-protected directories such as</span>
+        <span class="c1"># macOS's ``.../com.apple.*/TemporaryItems/`` under the temp dir raise</span>
+        <span class="c1"># PermissionError from ``os.listdir`` (Issue #3).</span>
+        <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">iter_filepaths_in_folder_recursively</span><span class="p">(</span>
+    <span class="n">root_folder</span><span class="p">,</span> <span class="n">max_levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_current_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Recursively generates filepaths of folder (and subfolders, etc.) up to a given level"""</span>
+    <span class="k">if</span> <span class="n">max_levels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">max_levels</span> <span class="o">=</span> <span class="n">inf</span>
+    <span class="k">for</span> <span class="n">full_path</span> <span class="ow">in</span> <span class="n">paths_in_dir</span><span class="p">(</span><span class="n">root_folder</span><span class="p">,</span> <span class="n">include_hidden</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_current_level</span> <span class="o">&lt;</span> <span class="n">max_levels</span><span class="p">:</span>
+                <span class="k">yield from</span> <span class="n">iter_filepaths_in_folder_recursively</span><span class="p">(</span>
+                    <span class="n">full_path</span><span class="p">,</span> <span class="n">max_levels</span><span class="p">,</span> <span class="n">_current_level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">include_hidden</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">full_path</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">iter_dirpaths_in_folder_recursively</span><span class="p">(</span>
+    <span class="n">root_folder</span><span class="p">,</span> <span class="n">max_levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_current_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Recursively generates dirpaths of folder (and subfolders, etc.) up to a given level"""</span>
+    <span class="k">if</span> <span class="n">max_levels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">max_levels</span> <span class="o">=</span> <span class="n">inf</span>
+    <span class="k">for</span> <span class="n">full_path</span> <span class="ow">in</span> <span class="n">paths_in_dir</span><span class="p">(</span><span class="n">root_folder</span><span class="p">,</span> <span class="n">include_hidden</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">full_path</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">full_path</span>
+            <span class="k">if</span> <span class="n">_current_level</span> <span class="o">&lt;</span> <span class="n">max_levels</span><span class="p">:</span>
+                <span class="k">yield from</span> <span class="n">iter_dirpaths_in_folder_recursively</span><span class="p">(</span>
+                    <span class="n">full_path</span><span class="p">,</span> <span class="n">max_levels</span><span class="p">,</span> <span class="n">_current_level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">include_hidden</span>
+                <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_directories</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">max_dirs_to_make</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Create directories up to a specified limit.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dirpath: The directory path to create.</span>
+<span class="sd">        max_dirs_to_make: The maximum number of directories to create. If None,</span>
+<span class="sd">            there's no limit.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the directory exists (already, or after creation); False if creating</span>
+<span class="sd">        it would need more than ``max_dirs_to_make`` new directories (none are made).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If max_dirs_to_make is negative.</span>
+
+<span class="sd">    .. rubric:: Examples</span>
+
+<span class="sd">    &gt;&gt;&gt; import tempfile, shutil</span>
+<span class="sd">    &gt;&gt;&gt; temp_dir = tempfile.mkdtemp()</span>
+<span class="sd">    &gt;&gt;&gt; target_dir = os.path.join(temp_dir, 'a', 'b', 'c')</span>
+<span class="sd">    &gt;&gt;&gt; create_directories(target_dir, max_dirs_to_make=2)</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; create_directories(target_dir, max_dirs_to_make=3)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; os.path.isdir(target_dir)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; shutil.rmtree(temp_dir)  # Cleanup</span>
+
+<span class="sd">    &gt;&gt;&gt; temp_dir = tempfile.mkdtemp()</span>
+<span class="sd">    &gt;&gt;&gt; target_dir = os.path.join(temp_dir, 'a', 'b', 'c', 'd')</span>
+<span class="sd">    &gt;&gt;&gt; create_directories(target_dir)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; os.path.isdir(target_dir)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; shutil.rmtree(temp_dir)  # Cleanup</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">max_dirs_to_make</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_dirs_to_make</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"max_dirs_to_make must be non-negative or None"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dirpath</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="n">max_dirs_to_make</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># Calculate the number of directories to create</span>
+    <span class="n">dirs_to_make</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">current_path</span> <span class="o">=</span> <span class="n">dirpath</span>
+
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">current_path</span><span class="p">):</span>
+        <span class="n">dirs_to_make</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
+        <span class="n">current_path</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">current_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dirs_to_make</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_dirs_to_make</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Create directories from the top level down</span>
+    <span class="k">for</span> <span class="n">dir_to_make</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">dirs_to_make</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">dir_to_make</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="process_path">
+<a class="viewcode-back" href="../../_autosummary/config2py.html#config2py.process_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_path</span><span class="p">(</span>
+    <span class="o">*</span><span class="n">path</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">ensure_dir_exists</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">assert_exists</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">ensure_endswith_slash</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">ensure_does_not_end_with_slash</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">expanduser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">expandvars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">abspath</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">rootdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Process a path string, ensuring it exists, and optionally expanding user.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (Iterable[str]): The path to process. Can be multiple components of a path.</span>
+<span class="sd">        ensure_dir_exists (bool): Whether to ensure the path exists.</span>
+<span class="sd">        assert_exists (bool): Whether to assert that the path exists.</span>
+<span class="sd">        ensure_endswith_slash (bool): Whether to ensure the path ends with a slash.</span>
+<span class="sd">        ensure_does_not_end_with_slash (bool): Whether to ensure the path does not end with a slash.</span>
+<span class="sd">        expanduser (bool): Whether to expand the user in the path.</span>
+<span class="sd">        expandvars (bool): Whether to expand environment variables in the path.</span>
+<span class="sd">        abspath (bool): Whether to convert the path to an absolute path.</span>
+<span class="sd">        rootdir (str): The root directory to prepend to the path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The processed path.</span>
+
+<span class="sd">    The result uses the running OS's native separator, so these examples assert</span>
+<span class="sd">    OS-independently (the literal forward-slash form is what you get on POSIX):</span>
+
+<span class="sd">    &gt;&gt;&gt; import os</span>
+<span class="sd">    &gt;&gt;&gt; process_path('a', 'b', 'c').endswith(os.path.join('a', 'b', 'c'))</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; p = process_path(</span>
+<span class="sd">    ...     'a', 'b', 'c', rootdir='root_dir',</span>
+<span class="sd">    ...     ensure_endswith_slash=True, abspath=False, expanduser=False, expandvars=False,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; p == os.path.join('root_dir', 'a', 'b', 'c') + os.sep</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ensure_endswith_slash</span> <span class="ow">and</span> <span class="n">ensure_does_not_end_with_slash</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"Cannot ensure both ends with slash and does not end with slash."</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">rootdir</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">expanduser</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">expandvars</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">abspath</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ensure_endswith_slash</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+    <span class="k">if</span> <span class="n">ensure_does_not_end_with_slash</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">ensure_dir_exists</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ensure_dir_exists</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">ensure_dir_exists</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># max_dirs_to_make</span>
+        <span class="n">create_directories</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">max_dirs_to_make</span><span class="o">=</span><span class="n">ensure_dir_exists</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">assert_exists</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="sa">f</span><span class="s2">"Path does not exist: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">return</span> <span class="n">path</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_dir</span><span class="p">(</span>
+    <span class="n">dirpath</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">max_dirs_to_make</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Ensure that a directory exists, creating it if necessary.</span>
+
+<span class="sd">    :param dirpath: path to the directory to create</span>
+<span class="sd">    :param max_dirs_to_make: the maximum number of directories to create.</span>
+<span class="sd">        If None, there's no limit.</span>
+<span class="sd">    :param verbose: controls verbosity (the noise ensure_dir makes if it make folder)</span>
+<span class="sd">    :return: the path to the directory</span>
+
+<span class="sd">    When the path does not exist, if ``verbose`` is:</span>
+
+<span class="sd">    - a ``bool``' a standard message will be printed</span>
+
+<span class="sd">    - a ``callable``; will be called on dirpath before directory is created -- you</span>
+<span class="sd">      can use this to ask the user for confirmation for example</span>
+
+<span class="sd">    - a ''string``; this string will be printed</span>
+
+
+<span class="sd">    Usage note: If you want to string or the (argument-less) callable to be dependent</span>
+<span class="sd">    on ``dirpath``, you need make them so when calling ensure_dir.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dirpath</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Making the directory: </span><span class="si">{</span><span class="n">dirpath</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+                <span class="n">callaback</span> <span class="o">=</span> <span class="n">verbose</span>
+                <span class="n">callaback</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">string_to_print</span> <span class="o">=</span> <span class="n">verbose</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">string_to_print</span><span class="p">)</span>
+        <span class="n">create_directories</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">max_dirs_to_make</span><span class="o">=</span><span class="n">max_dirs_to_make</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dirpath</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">temp_dir</span><span class="p">(</span><span class="n">dirname</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">make_it_if_necessary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Create and return a path to a temporary directory that's guaranteed to be</span>
+<span class="sd">    accessible to the user.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dirname: Optional subdirectory name to append to the temporary directory path</span>
+<span class="sd">        make_it_if_necessary: Whether to create the directory if it doesn't exist</span>
+<span class="sd">        verbose: Controls verbosity when creating directories</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to a temporary directory that the user has access to</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function creates a user-specific temporary directory to avoid permission</span>
+<span class="sd">        issues with system-wide temporary directories.</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">mkdtemp</span><span class="p">,</span> <span class="n">gettempdir</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">getpass</span>
+
+    <span class="c1"># Create a unique user-specific directory under the system temp dir</span>
+    <span class="n">user_temp_base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">"user_</span><span class="si">{</span><span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dirname</span><span class="p">:</span>
+        <span class="c1"># If a specific dirname is provided, use it</span>
+        <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">user_temp_base</span><span class="p">,</span> <span class="n">dirname</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Otherwise create a unique directory with uuid</span>
+        <span class="n">unique_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())[:</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">user_temp_base</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"dol_temp_</span><span class="si">{</span><span class="n">unique_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">make_it_if_necessary</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ensure_dir</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="c1"># Verify we have write access</span>
+            <span class="n">test_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s2">".write_test"</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">test_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"test"</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">test_file</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">PermissionError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
+            <span class="c1"># Fallback: create a truly temporary directory with mkdtemp</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not access </span><span class="si">{</span><span class="n">tmpdir</span><span class="si">}</span><span class="s2">, falling back to mkdtemp()"</span><span class="p">)</span>
+            <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">"dol_temp_"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tmpdir</span>
+
+
+<span class="n">mk_tmp_dol_dir</span> <span class="o">=</span> <span class="n">temp_dir</span>  <span class="c1"># for backward compatibility</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_absolute_path</span><span class="p">(</span><span class="n">path_format</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Expand a leading ``~``, or make a leading ``.`` path absolute; other paths are returned as is."""</span>
+    <span class="k">if</span> <span class="n">path_format</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"~"</span><span class="p">):</span>
+        <span class="n">path_format</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path_format</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">path_format</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
+        <span class="n">path_format</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path_format</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path_format</span>
+
+
+<span class="c1"># TODO: subpath: Need to be able to allow named and unnamed file format markers (i.e {} and {named})</span>
+
+<span class="n">_dflt_not_valid_error_msg</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"Key not valid (usually because does not exist or access not permitted): </span><span class="si">{}</span><span class="s2">"</span>
+<span class="p">)</span>
+<span class="n">_dflt_not_found_error_msg</span> <span class="o">=</span> <span class="s2">"Key not found: </span><span class="si">{}</span><span class="s2">"</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">KeyValidationError</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A ``KeyError`` for keys that fail a file-system store's validation."""</span>
+
+    <span class="k">pass</span>
+
+
+<span class="c1"># TODO: The validate and try/except is a frequent pattern. Make it a decorator.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_key_and_raise_key_error_on_exception</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Method decorator: validate the key first, and re-raise any exception of the method as a ``KeyError``."""</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">wrapped_method</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">assert_existence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Resolve a path to a full, real, (file or folder) path (opt assert existence).</span>
+<span class="sd">    That is, resolve situations where ~ and . prefix the paths.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"~"</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">assert_existence</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="sa">f</span><span class="s2">"This path (file or folder) wasn't found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">return</span> <span class="n">path</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_dir</span><span class="p">(</span>
+    <span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">assert_existence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ensure_existence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Resolve a path to a full, real, path to a directory"""</span>
+    <span class="n">dirpath</span> <span class="o">=</span> <span class="n">resolve_path</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ensure_existence</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">assert_existence</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dirpath</span><span class="p">),</span> <span class="sa">f</span><span class="s2">"This directory wasn't found: </span><span class="si">{</span><span class="n">dirpath</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">return</span> <span class="n">dirpath</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_for_repr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">quote</span><span class="o">=</span><span class="s2">"'"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    &gt;&gt;&gt; _for_repr('a string')</span>
+<span class="sd">    "'a string'"</span>
+<span class="sd">    &gt;&gt;&gt; _for_repr(10)</span>
+<span class="sd">    10</span>
+<span class="sd">    &gt;&gt;&gt; _for_repr(None)</span>
+<span class="sd">    'None'</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">quote</span><span class="si">}{</span><span class="n">obj</span><span class="si">}{</span><span class="n">quote</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">elif</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="s2">"None"</span>
+    <span class="k">return</span> <span class="n">obj</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">path_is_under</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rootdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Whether ``path``, *lexically* normalized, is ``rootdir`` or lies under it.</span>
+
+<span class="sd">    A ``startswith`` check is not enough: ``'/data/root/../secret'`` starts with</span>
+<span class="sd">    ``'/data/root/'`` but addresses ``/data/secret`` (i2mint/dol#107). The check is</span>
+<span class="sd">    lexical (``os.path.normpath``, not ``realpath``), so a symlinked sub-directory of</span>
+<span class="sd">    the root still counts as inside it.</span>
+
+<span class="sd">    &gt;&gt;&gt; path_is_under('/data/root/a/b.txt', '/data/root/')</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; path_is_under('/data/root/a/../b.txt', '/data/root/')</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; path_is_under('/data/root/../secret.txt', '/data/root/')</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; path_is_under('/data/root/a/../../secret.txt', '/data/root')</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; path_is_under('/data/rootsibling/x', '/data/root')</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; path_is_under('//data/root/a', '//data/root/')</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; path_is_under('root/../a', 'root/..'), path_is_under('root/../../a', 'root/..')</span>
+<span class="sd">    (True, False)</span>
+<span class="sd">    """</span>
+    <span class="n">root</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">rootdir</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">root</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">:</span>  <span class="c1"># commonpath(['x', '.']) is '', so handle '.' apart</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">path</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">pardir</span>
+            <span class="ow">or</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pardir</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># compare against commonpath([root]), not root: commonpath collapses a</span>
+        <span class="c1"># leading '//' that normpath keeps</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonpath</span><span class="p">([</span><span class="n">path</span><span class="p">,</span> <span class="n">root</span><span class="p">])</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonpath</span><span class="p">([</span><span class="n">root</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># mixed absolute/relative paths, or different drives</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FileSysCollection</span><span class="p">(</span><span class="n">Collection</span><span class="p">):</span>
+    <span class="c1"># rootdir = None  # mentioning here so that the attribute is seen as an attribute before instantiation.</span>
+
+<span class="w">    </span><span class="sd">"""Base collection of file-system paths under ``rootdir``, optionally restricted by ``subpath``, ``max_levels`` and hidden-file inclusion.</span>
+
+<span class="sd">    Keys that would leave ``rootdir`` through ``..`` segments (e.g.</span>
+<span class="sd">    ``'&lt;rootdir&gt;/../secret'``) are not valid keys: reading, writing or deleting them</span>
+<span class="sd">    raises ``KeyError``, and ``in`` returns ``False`` (i2mint/dol#107). Pass the</span>
+<span class="sd">    keyword-only ``allow_escape=True`` to address paths outside the root on purpose.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rootdir</span><span class="p">,</span>
+        <span class="n">subpath</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+        <span class="n">pattern_for_field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">assert_rootdir_existence</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">allow_escape</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"self"</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_escape</span><span class="p">:</span>
+            <span class="c1"># keep the repr unchanged for the default (see i2mint/dol#107)</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_kwargs</span><span class="p">[</span><span class="s2">"allow_escape"</span><span class="p">]</span>
+        <span class="n">rootdir</span> <span class="o">=</span> <span class="n">resolve_dir</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">assert_existence</span><span class="o">=</span><span class="n">assert_rootdir_existence</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">max_levels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_levels</span> <span class="o">=</span> <span class="n">inf</span>
+        <span class="n">subpath_implied_min_levels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">subpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="n">max_levels</span> <span class="o">&gt;=</span> <span class="n">subpath_implied_min_levels</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"max_levels is </span><span class="si">{</span><span class="n">max_levels</span><span class="si">}</span><span class="s2">, but subpath </span><span class="si">{</span><span class="n">subpath</span><span class="si">}</span><span class="s2"> would imply at least </span><span class="si">{</span><span class="n">subpath_implied_min_levels</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+        <span class="n">pattern_for_field</span> <span class="o">=</span> <span class="n">pattern_for_field</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span> <span class="o">=</span> <span class="n">ensure_slash_suffix</span><span class="p">(</span><span class="n">rootdir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subpath</span> <span class="o">=</span> <span class="n">subpath</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key_pattern</span> <span class="o">=</span> <span class="n">mk_pattern_from_template_and_format_dict</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootdir</span><span class="p">,</span> <span class="n">subpath</span><span class="p">),</span> <span class="n">pattern_for_field</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_levels</span> <span class="o">=</span> <span class="n">max_levels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_hidden</span> <span class="o">=</span> <span class="n">include_hidden</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_escape</span> <span class="o">=</span> <span class="n">allow_escape</span>
+
+    <span class="n">allow_escape</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># for subclasses whose __init__ skips super().__init__</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_valid_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Whether ``k`` is a key of this collection: it must match the key pattern</span>
+<span class="sd">        and, unless ``allow_escape=True``, stay under ``rootdir`` once ``..``</span>
+<span class="sd">        segments are resolved (see :func:`path_is_under`). An empty ``rootdir``</span>
+<span class="sd">        (as in ``Files('')``, used by ``dol.misc``) confines nothing: its keys are</span>
+<span class="sd">        arbitrary paths by design."""</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_in_root</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_in_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Whether ``k`` stays under ``rootdir`` (always true with</span>
+<span class="sd">        ``allow_escape=True`` or an empty ``rootdir``)."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_escape</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span> <span class="ow">or</span> <span class="n">path_is_under</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_in_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Raise ``KeyValidationError`` if ``k`` leaves ``rootdir`` (i2mint/dol#107).</span>
+
+<span class="sd">        For methods that build a value from ``k`` without a full ``validate_key``.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_in_root</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">KeyValidationError</span><span class="p">(</span><span class="n">_dflt_not_valid_error_msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_key</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">k</span><span class="p">,</span>
+        <span class="n">err_msg_format</span><span class="o">=</span><span class="n">_dflt_not_valid_error_msg</span><span class="p">,</span>
+        <span class="n">err_type</span><span class="o">=</span><span class="n">KeyValidationError</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_key</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">err_type</span><span class="p">(</span><span class="n">err_msg_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">_for_repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">input_str</span><span class="si">}</span><span class="s2">)"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">with_relative_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return a copy of self with relative paths"""</span>
+        <span class="k">return</span> <span class="n">with_relative_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DirCollection</span><span class="p">(</span><span class="n">FileSysCollection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Collection of the directory paths under ``rootdir``."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="nb">filter</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_key</span><span class="p">,</span>
+            <span class="n">iter_dirpaths_in_folder_recursively</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span><span class="p">,</span>
+                <span class="n">max_levels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_levels</span><span class="p">,</span>
+                <span class="n">include_hidden</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">include_hidden</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FileCollection</span><span class="p">(</span><span class="n">FileSysCollection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Collection of the file paths under ``rootdir``."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Iterator of valid filepaths.</span>
+
+<span class="sd">        &gt;&gt;&gt; import os</span>
+<span class="sd">        &gt;&gt;&gt; filepath = __file__  # path to this module</span>
+<span class="sd">        &gt;&gt;&gt; dirpath = os.path.dirname(__file__)  # path of the directory where I (the module file) am</span>
+<span class="sd">        &gt;&gt;&gt; s = FileCollection(dirpath, max_levels=0)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; files_in_this_dir = list(s)</span>
+<span class="sd">        &gt;&gt;&gt; filepath in files_in_this_dir</span>
+<span class="sd">        True</span>
+<span class="sd">        """</span>
+        <span class="k">yield from</span> <span class="nb">filter</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_key</span><span class="p">,</span>
+            <span class="n">iter_filepaths_in_folder_recursively</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span><span class="p">,</span>
+                <span class="n">max_levels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_levels</span><span class="p">,</span>
+                <span class="n">include_hidden</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">include_hidden</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Checks if k is valid and contained in the store</span>
+
+<span class="sd">        &gt;&gt;&gt; import os</span>
+<span class="sd">        &gt;&gt;&gt; filepath = __file__  # path to this module</span>
+<span class="sd">        &gt;&gt;&gt; dirpath = os.path.dirname(__file__)  # path of the directory where I (the module file) am</span>
+<span class="sd">        &gt;&gt;&gt; s = FileCollection(dirpath, max_levels=0)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; filepath in s</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; '_this_filepath_will_never_be_valid_' in s</span>
+<span class="sd">        False</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FileInfoReader</span><span class="p">(</span><span class="n">FileCollection</span><span class="p">,</span> <span class="n">KvReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reader mapping file paths to their ``os.stat`` result."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os_stat</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FileBytesReader</span><span class="p">(</span><span class="n">FileCollection</span><span class="p">,</span> <span class="n">KvReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reader mapping file paths under ``rootdir`` to the files' bytes."""</span>
+
+    <span class="n">_read_open_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">"rb"</span><span class="p">,</span>
+        <span class="n">buffering</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">newline</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">closefd</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">opener</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="nd">@validate_key_and_raise_key_error_on_exception</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''</span>
+<span class="sd">        Gets the bytes contents of the file k.</span>
+
+<span class="sd">        &gt;&gt;&gt; import os</span>
+<span class="sd">        &gt;&gt;&gt; filepath = __file__</span>
+<span class="sd">        &gt;&gt;&gt; dirpath = os.path.dirname(__file__)  # path of the directory where I (the module file) am</span>
+<span class="sd">        &gt;&gt;&gt; s = FileBytesReader(dirpath, max_levels=0)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; ####### Get the first 9 characters (as bytes) of this module #####################</span>
+<span class="sd">        &gt;&gt;&gt; s[filepath][:9]</span>
+<span class="sd">        b'"""File s'</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; ####### Test key validation #####################</span>
+<span class="sd">        &gt;&gt;&gt; # this key is not valid since not under the dirpath folder, so should give an exception</span>
+<span class="sd">        &gt;&gt;&gt; # Skipped because filesys.KeyValidationError vs dol.filesys.KeyValidationError on different systems</span>
+<span class="sd">        &gt;&gt;&gt; s['not_a_valid_key']  # doctest: +SKIP</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">        filesys.KeyValidationError: 'Key not valid (usually because does not exist or access not permitted): not_a_valid_key'</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; ####### Test further exceptions (that should be wrapped in KeyError) #####################</span>
+<span class="sd">        &gt;&gt;&gt; # this key is valid, since under dirpath, but the file itself doesn't exist (hopefully for this test)</span>
+<span class="sd">        &gt;&gt;&gt; non_existing_file = os.path.join(dirpath, 'non_existing_file')</span>
+<span class="sd">        &gt;&gt;&gt; try:</span>
+<span class="sd">        ...     s[non_existing_file]</span>
+<span class="sd">        ... except KeyError:</span>
+<span class="sd">        ...     print("KeyError (not FileNotFoundError) was raised.")</span>
+<span class="sd">        KeyError (not FileNotFoundError) was raised.</span>
+<span class="sd">        '''</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_read_open_kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalFileDeleteMixin</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Mixin providing configurable file deletion.</span>
+
+<span class="sd">    The deletion function can be configured either at class level by setting</span>
+<span class="sd">    the _delete_func class attribute, or at instance level by setting the</span>
+<span class="sd">    _delete_func instance attribute.</span>
+
+<span class="sd">    By default, uses safe deletion that tries to move to trash with fallback</span>
+<span class="sd">    to os.remove (with warning).</span>
+
+<span class="sd">    See dol.trash module for available deletion strategies:</span>
+
+<span class="sd">    - default_delete_func: Safe trash with warning on fallback</span>
+<span class="sd">    - permanent_delete: Direct os.remove (no warnings)</span>
+<span class="sd">    - trash_only: Error if trash unavailable</span>
+<span class="sd">    """</span>
+
+    <span class="n">_delete_func</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Will be set to default_delete_func after import</span>
+
+    <span class="nd">@validate_key_and_raise_key_error_on_exception</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="c1"># Import here to avoid circular import issues</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delete_func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">dol.trash</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_delete_func</span>
+
+            <span class="n">delete_func</span> <span class="o">=</span> <span class="n">default_delete_func</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">delete_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delete_func</span>
+        <span class="n">delete_func</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FileBytesPersister</span><span class="p">(</span><span class="n">LocalFileDeleteMixin</span><span class="p">,</span> <span class="n">FileBytesReader</span><span class="p">,</span> <span class="n">KvPersister</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""File persistence with configurable deletion.</span>
+
+<span class="sd">    Supports custom deletion functions via delete_func parameter in __init__.</span>
+
+<span class="sd">    By default, tries to move files to trash with fallback to os.remove.</span>
+<span class="sd">    See dol.trash module for deletion strategies: permanent_delete, trash_only, etc.</span>
+<span class="sd">    """</span>
+
+    <span class="n">_write_open_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">"wb"</span><span class="p">,</span>
+        <span class="n">buffering</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">errors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">newline</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">closefd</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">opener</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># _make_dirs_if_missing = False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">delete_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize FileBytesPersister.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *args: Passed to parent classes</span>
+<span class="sd">            delete_func: Optional custom deletion function.</span>
+<span class="sd">                If None, uses class default (safe trash with fallback).</span>
+<span class="sd">                Common options from dol.trash:</span>
+
+<span class="sd">                - default_delete_func (safe trash, warning on fallback)</span>
+<span class="sd">                - permanent_delete (os.remove, no warnings)</span>
+<span class="sd">                - trash_only (error if trash unavailable)</span>
+
+<span class="sd">                Note: the default (trash) is a kind choice for a store of a user's</span>
+<span class="sd">                own files, but a surprising one for a store of derived/generated</span>
+<span class="sd">                data -- every deletion leaves a full copy outside the store</span>
+<span class="sd">                indefinitely, and the OS trash is keyed by basename, so same-named</span>
+<span class="sd">                keys from different prefixes/stores can collide there. Pass</span>
+<span class="sd">                ``delete_func=os.remove`` (or ``permanent_delete``) to opt out</span>
+<span class="sd">                (see i2mint/dol#97).</span>
+
+<span class="sd">            **kwargs: Passed to parent classes</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">delete_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delete_func</span> <span class="o">=</span> <span class="n">delete_func</span>
+
+    <span class="nd">@validate_key_and_raise_key_error_on_exception</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="c1"># TODO: Make this work with validate_key_and_raise_key_error_on_exception</span>
+        <span class="c1"># if self._make_dirs_if_missing:</span>
+        <span class="c1">#     dirname = os.path.dirname(k)</span>
+        <span class="c1">#     os.makedirs(dirname, exist_ok=True)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_open_kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
+<span class="c1"># TODO: Once test coverage sufficient, apply this pattern to all other convenience stores</span>
+
+<span class="n">with_relative_paths</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">mk_relative_path_store</span><span class="p">,</span> <span class="n">prefix_attr</span><span class="o">=</span><span class="s2">"rootdir"</span><span class="p">)</span>
+
+
+<span class="nd">@with_relative_paths</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FilesReader</span><span class="p">(</span><span class="n">FileBytesReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""FileBytesReader with relative paths"""</span>
+
+
+<span class="nd">@with_relative_paths</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Files</span><span class="p">(</span><span class="n">FileBytesPersister</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""FileBytesPersister with relative paths"""</span>
+
+
+<span class="n">RelPathFileBytesReader</span> <span class="o">=</span> <span class="n">FilesReader</span>
+<span class="n">RelPathFileBytesPersister</span> <span class="o">=</span> <span class="n">Files</span>  <span class="c1"># back-compatibility alias</span>
+
+<span class="c1"># ---------------------------------------------------------------------------------------</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FileStringReader</span><span class="p">(</span><span class="n">FileBytesReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reader mapping file paths to the files' text (files opened in text mode).</span>
+
+<span class="sd">    Reads as UTF-8 explicitly, rather than inheriting ``locale.getpreferredencoding()``</span>
+<span class="sd">    (see i2mint/dol#97): a store is a serialization boundary, and one whose format</span>
+<span class="sd">    silently depends on an ambient environment variable isn't really specified. This</span>
+<span class="sd">    also matches how ``FileStringPersister`` writes (below), so a round trip is safe</span>
+<span class="sd">    regardless of which locale reads or writes.</span>
+<span class="sd">    """</span>
+
+    <span class="n">_read_open_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">FileBytesReader</span><span class="o">.</span><span class="n">_read_open_kwargs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"rt"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FileStringPersister</span><span class="p">(</span><span class="n">FileBytesPersister</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Persister mapping file paths to the files' text (files opened in text mode).</span>
+
+<span class="sd">    Reads and writes as UTF-8 explicitly, rather than inheriting</span>
+<span class="sd">    ``locale.getpreferredencoding()`` (see i2mint/dol#97): a store is a serialization</span>
+<span class="sd">    boundary, and one whose format silently depends on an ambient environment</span>
+<span class="sd">    variable isn't really specified. Without this, a write can raise on a</span>
+<span class="sd">    non-ASCII-locale machine, or a store synced between two machines with different</span>
+<span class="sd">    locales can silently corrupt on round trip.</span>
+<span class="sd">    """</span>
+
+    <span class="n">_read_open_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">FileBytesReader</span><span class="o">.</span><span class="n">_read_open_kwargs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"rt"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
+    <span class="p">)</span>
+    <span class="n">_write_open_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">FileBytesPersister</span><span class="o">.</span><span class="n">_write_open_kwargs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"wt"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
+    <span class="p">)</span>
+
+
+<span class="nd">@with_relative_paths</span><span class="p">(</span><span class="n">prefix_attr</span><span class="o">=</span><span class="s2">"rootdir"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TextFilesReader</span><span class="p">(</span><span class="n">FileStringReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""FileStringReader with relative paths"""</span>
+
+
+<span class="nd">@with_relative_paths</span><span class="p">(</span><span class="n">prefix_attr</span><span class="o">=</span><span class="s2">"rootdir"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TextFiles</span><span class="p">(</span><span class="n">FileStringPersister</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""FileStringPersister with relative paths"""</span>
+
+
+<span class="n">RelPathFileStringReader</span> <span class="o">=</span> <span class="n">TextFilesReader</span>
+<span class="n">RelPathFileStringPersister</span> <span class="o">=</span> <span class="n">TextFiles</span>
+
+
+<span class="c1"># ------------------------------------ misc --------------------------------------------</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># TODO: Want to replace with use of ValueCodecs but need to resolve circular imports</span>
+<span class="n">pickle_bytes_wrap</span> <span class="o">=</span> <span class="n">wrap_kvs</span><span class="p">(</span><span class="n">value_decoder</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">value_encoder</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">)</span>
+<span class="n">json_bytes_wrap</span> <span class="o">=</span> <span class="n">wrap_kvs</span><span class="p">(</span>
+    <span class="n">value_decoder</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">value_encoder</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="p">)</span>
+
+
+<span class="c1"># And two factories to make the above more configurable:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_pickle_bytes_wrap</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">loads_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dumps_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Make a ``wrap_kvs`` value-codec wrapper for pickle, with kwargs for ``pickle.loads``/``pickle.dumps``."""</span>
+    <span class="k">return</span> <span class="n">wrap_kvs</span><span class="p">(</span>
+        <span class="n">value_decoder</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">loads_kwargs</span> <span class="ow">or</span> <span class="p">{})),</span>
+        <span class="n">value_encoder</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">dumps_kwargs</span> <span class="ow">or</span> <span class="p">{})),</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_json_bytes_wrap</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">loads_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dumps_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Make a ``wrap_kvs`` value-codec wrapper for JSON, with kwargs for ``json.loads``/``json.dumps``."""</span>
+    <span class="k">return</span> <span class="n">wrap_kvs</span><span class="p">(</span>
+        <span class="n">value_decoder</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">loads_kwargs</span> <span class="ow">or</span> <span class="p">{})),</span>
+        <span class="n">value_encoder</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">dumps_kwargs</span> <span class="ow">or</span> <span class="p">{})),</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ReprMixin</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A ``__repr__`` showing the ``_init_kwargs`` the instance was created with."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">_for_repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_init_kwargs"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">input_str</span><span class="si">}</span><span class="s2">)"</span>
+
+
+<span class="nd">@pickle_bytes_wrap</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PickleFiles</span><span class="p">(</span><span class="n">ReprMixin</span><span class="p">,</span> <span class="n">Files</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A store of pickles"""</span>
+
+
+<span class="n">PickleStore</span> <span class="o">=</span> <span class="n">PickleFiles</span>  <span class="c1"># back-compatibility alias</span>
+
+
+<span class="nd">@json_bytes_wrap</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JsonFiles</span><span class="p">(</span><span class="n">ReprMixin</span><span class="p">,</span> <span class="n">TextFiles</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A store of json files"""</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dol.trans</span><span class="w"> </span><span class="kn">import</span> <span class="n">affix_key_codec</span>
+
+
+<span class="nd">@affix_key_codec</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">".json"</span><span class="p">)</span>
+<span class="nd">@filt_iter</span><span class="o">.</span><span class="n">suffixes</span><span class="p">(</span><span class="s2">".json"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Jsons</span><span class="p">(</span><span class="n">ReprMixin</span><span class="p">,</span> <span class="n">JsonFiles</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Like JsonFiles, but with added .json extension handling</span>
+<span class="sd">    Namely: filtering for `.json` extensions but not showing the extension in keys"""</span>
+
+
+<span class="c1"># @wrap_kvs(key_of_id=lambda x: x[:-1], id_of_key=lambda x: x + path_sep)</span>
+<span class="nd">@mk_relative_path_store</span><span class="p">(</span><span class="n">prefix_attr</span><span class="o">=</span><span class="s2">"rootdir"</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PickleStores</span><span class="p">(</span><span class="n">DirCollection</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reader mapping each sub-directory of ``rootdir`` to a ``PickleFiles`` store of it."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_in_root</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PickleFiles</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">('</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rootdir</span><span class="si">}</span><span class="s2">', ...)"</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DirReader</span><span class="p">(</span><span class="n">DirCollection</span><span class="p">,</span> <span class="n">KvReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reader mapping each sub-directory of ``rootdir`` to a ``DirReader`` of it."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_in_root</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DirReader</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+
+<span class="c1"># TODO: This, with mk_dirs_if_missing, should replace uses of AutoMkDirsOnSetitemMixin and MakeMissingDirsStoreMixin</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_dirs_if_missing_preset</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">max_dirs_to_make</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Preset function that will make the store create directories on write as needed.</span>
+<span class="sd">    """</span>
+    <span class="c1"># TODO: I'm not thrilled in the way I'm doing this; find alternatives</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">KeyValidationError</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># invalid key (e.g. outside rootdir): never make dirs for it (#107)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># general on purpose...</span>
+        <span class="c1"># TODO: ... But perhaps a more precise (but sufficient) exception list better?</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">dol.dig</span><span class="w"> </span><span class="kn">import</span> <span class="n">inner_most_key</span>
+
+        <span class="c1"># get the inner most key, which should be a full path</span>
+        <span class="n">_id</span> <span class="o">=</span> <span class="n">inner_most_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="c1"># get the full path of directory needed for this file</span>
+        <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">_id</span><span class="p">)</span>
+        <span class="c1"># make all the directories needed</span>
+        <span class="n">ensure_dir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">max_dirs_to_make</span><span class="o">=</span><span class="n">max_dirs_to_make</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># os.makedirs(dirname, exist_ok=True)  # TODO: ensure_dir does this already, no?</span>
+        <span class="c1"># try writing again</span>
+        <span class="nb">super</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="c1"># TODO: Undesirable here: If the setitem still fails, we created dirs</span>
+        <span class="c1">#  already, for nothing, and are not cleaning up (if clean up need to make</span>
+        <span class="c1">#  sure to not delete dirs that already existed!)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">v</span>
+
+
+<span class="c1"># TODO: Add more control over mk dir condition (e.g. number of levels, or any key cond)</span>
+<span class="c1">#   Also, add a verbose option to print the dirs that are being made</span>
+<span class="c1">#   (see dol.filesys.ensure_dir)</span>
+<span class="nd">@store_decorator</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mk_dirs_if_missing</span><span class="p">(</span>
+    <span class="n">store_cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">max_dirs_to_make</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">key_condition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># TODO: not used! Should use! Add to ensure_dir</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Store decorator that will make the store create directories on write as</span>
+<span class="sd">    needed.</span>
+
+<span class="sd">    Note that it'll only effect paths relative to the rootdir, which needs to be</span>
+<span class="sd">    ensured to exist separatedly.</span>
+<span class="sd">    """</span>
+    <span class="n">_mk_dirs_if_missing_preset</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+        <span class="n">mk_dirs_if_missing_preset</span><span class="p">,</span> <span class="n">max_dirs_to_make</span><span class="o">=</span><span class="n">max_dirs_to_make</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrap_kvs</span><span class="p">(</span><span class="n">store_cls</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">_mk_dirs_if_missing_preset</span><span class="p">)</span>
+
+
+<span class="c1"># DEPRECATED!!</span>
+<span class="c1"># This one really smells. Replace uses with mk_dirs_if_missing</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MakeMissingDirsStoreMixin</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Will make a local file store automatically create the directories needed to create a file.</span>
+<span class="sd">    Should be placed before the concrete perisister in the mro but in such a manner so that it receives full paths.</span>
+<span class="sd">    """</span>
+
+    <span class="n">_verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># eek! Can't set in init.</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Deprecating message: Consider using the mk_dirs_if_missing decorator instead."</span>
+        <span class="p">)</span>
+        <span class="c1"># TODO: I'm not thrilled in the way I'm doing this; find alternatives</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">KeyValidationError</span><span class="p">:</span>
+            <span class="k">raise</span>  <span class="c1"># invalid key (e.g. outside rootdir): never make dirs for it (#107)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># general on purpose...</span>
+            <span class="c1"># TODO: ... But perhaps a more precise (but sufficient) exception list better?</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">dol.dig</span><span class="w"> </span><span class="kn">import</span> <span class="n">inner_most_key</span>
+
+            <span class="c1"># Get the inner most key, which should be a full path.</span>
+            <span class="c1"># ``default=k``: this mixin is normally mixed into a persister whose keys ARE</span>
+            <span class="c1"># full paths and which therefore defines no ``_id_of_key``. Without the default</span>
+            <span class="c1"># the resolution fails, and it used to fail as a silent ``None`` -- turning the</span>
+            <span class="c1"># original write error into ``TypeError: expected str ... not NoneType``.</span>
+            <span class="n">_id</span> <span class="o">=</span> <span class="n">inner_most_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+            <span class="c1"># get the full path of directory needed for this file</span>
+            <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">_id</span><span class="p">)</span>
+            <span class="c1"># Only create directories for an ABSOLUTE path. A relative one means the key</span>
+            <span class="c1"># was never resolved to a filepath (a persister with relative keys and no</span>
+            <span class="c1"># ``_id_of_key``), and creating it would silently mkdir under the process CWD --</span>
+            <span class="c1"># outside the store -- after which the write would still fail. Re-raise instead.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">dirname</span><span class="p">):</span>
+                <span class="k">raise</span>
+            <span class="c1"># make all the directories needed</span>
+            <span class="c1"># ``verbose`` is keyword-only; this was passing it positionally, so the</span>
+            <span class="c1"># recovery path raised TypeError instead of creating the directory.</span>
+            <span class="n">ensure_dir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">)</span>
+            <span class="c1"># try writing again</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="c1"># TODO: Undesirable here: If the setitem still fails, we created dirs</span>
+            <span class="c1">#  already, for nothing, and are not cleaning up (if clean up need to make</span>
+            <span class="c1">#  sure to not delete dirs that already existed!)</span>
+
+
+<span class="c1"># -------------------------------------------------------------------------------------</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dol.kv_codecs</span><span class="w"> </span><span class="kn">import</span> <span class="n">KeyCodecs</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">subfolder_stores</span><span class="p">(</span>
+    <span class="n">root_folder</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">max_levels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">include_hidden</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">relative_paths</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">slash_suffix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">folder_to_store</span><span class="o">=</span><span class="n">Files</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Create a store of subfolders of a given folder, where the keys are the subfolder</span>
+<span class="sd">    paths (by default, relative and slash-less) and the values are stores of these</span>
+<span class="sd">    subfolders.</span>
+
+<span class="sd">    By default, all subfolders will be taken, recursively, but this can be controlled by</span>
+<span class="sd">    the `max_levels` parameter.</span>
+<span class="sd">    """</span>
+    <span class="n">root_folder</span> <span class="o">=</span> <span class="n">ensure_slash_suffix</span><span class="p">(</span><span class="n">root_folder</span><span class="p">)</span>
+    <span class="c1"># Strip the native trailing separator (os.sep), NOT a hardcoded "/": the dir</span>
+    <span class="c1"># paths end with os.sep ('\\' on Windows), so a literal "/" would not match and</span>
+    <span class="c1"># the affix codec would re-add a "/" -&gt; mixed-separator KeyError on Windows.</span>
+    <span class="n">wrap</span> <span class="o">=</span> <span class="n">KeyCodecs</span><span class="o">.</span><span class="n">affixed</span><span class="p">(</span>
+        <span class="n">prefix</span><span class="o">=</span><span class="n">root_folder</span> <span class="k">if</span> <span class="n">relative_paths</span> <span class="k">else</span> <span class="s2">""</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">slash_suffix</span> <span class="k">else</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">folders</span> <span class="o">=</span> <span class="n">iter_dirpaths_in_folder_recursively</span><span class="p">(</span>
+        <span class="n">root_folder</span><span class="p">,</span> <span class="n">max_levels</span><span class="o">=</span><span class="n">max_levels</span><span class="p">,</span> <span class="n">include_hidden</span><span class="o">=</span><span class="n">include_hidden</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrap</span><span class="p">({</span><span class="n">path</span><span class="p">:</span> <span class="n">folder_to_store</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">})</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

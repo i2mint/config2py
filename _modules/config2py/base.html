@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=393d09ac"></script>
+    <script src="../../_static/documentation_options.js?v=d127aa6e"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.57" />
+  <meta name="docsearch:version" content="0.1.58" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -738,7 +738,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="GettableContainer">
-<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.GettableContainer">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.GettableContainer">[docs]</a>
 <span class="nd">@runtime_checkable</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">GettableContainer</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""``Containers`` that are "gettable"".</span>
@@ -796,7 +796,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="is_not_none_nor_empty">
-<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.is_not_none_nor_empty">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.is_not_none_nor_empty">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_not_none_nor_empty</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""True unless ``x`` is ``None`` or the empty string.</span>
 
@@ -817,7 +817,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="get_config">
-<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.get_config">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.get_config">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_config</span><span class="p">(</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">KT</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sources</span><span class="p">:</span> <span class="n">Sources</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -950,7 +950,7 @@ window.runMermaid = runMermaid;</script>
 <span class="c1"># TODO: add/enable an __iter__ method if the function's first arg is annotated with</span>
 <span class="c1">#  an Enum or Literal?</span>
 <div class="viewcode-block" id="FuncBasedGettableContainer">
-<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.FuncBasedGettableContainer">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.FuncBasedGettableContainer">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FuncBasedGettableContainer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A class that wraps a ``Callable[[KT], VT]`` function so it has a (partial)</span>
@@ -1072,7 +1072,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="gettable_containers">
-<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.gettable_containers">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.gettable_containers">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">gettable_containers</span><span class="p">(</span>
     <span class="n">sources</span><span class="p">:</span> <span class="n">Sources</span><span class="p">,</span>
     <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">always_true</span><span class="p">,</span>
@@ -1096,7 +1096,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="sources_chainmap">
-<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.sources_chainmap">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.sources_chainmap">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sources_chainmap</span><span class="p">(</span>
     <span class="n">sources</span><span class="p">:</span> <span class="n">Sources</span><span class="p">,</span>
     <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">always_true</span><span class="p">,</span>
@@ -1173,7 +1173,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="is_not_empty">
-<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.is_not_empty">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.is_not_empty">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_not_empty</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""True unless ``val`` is ``None`` or the empty string.</span>
 
@@ -1194,7 +1194,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="ask_user_for_key">
-<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.ask_user_for_key">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.ask_user_for_key">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">ask_user_for_key</span><span class="p">(</span>
     <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -1263,7 +1263,7 @@ window.runMermaid = runMermaid;</script>
 
 
 <div class="viewcode-block" id="user_gettable">
-<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.base.user_gettable">[docs]</a>
+<a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.user_gettable">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">user_gettable</span><span class="p">(</span>
     <span class="n">save_to</span><span class="p">:</span> <span class="n">SaveTo</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>

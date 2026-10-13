@@ -4,16 +4,50 @@
 .. automodule:: config2py
 
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      extract_exports
+      get_configs_local_store
+      simple_config_getter
+      get_config
+      user_gettable
+      sources_chainmap
+      ask_user_for_input
+      get_app_config_folder
+      get_app_data_folder
+      get_app_folder
+      get_configs_folder_for_app
+      is_repl
+      parse_assignments_from_py_source
+      process_path
+      ensure_seeded
+      register_extension
+      config_getter
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ConfigStore
+      ConfigReader
+      Configs
+      AppData
+      SyncStore
+      FileStore
+      JsonStore
+   
 .. rubric:: Modules
 
 .. autosummary::
    :toctree:
    :recursive:
 
-   base
-   codecs
-   errors
-   s_configparser
-   sync_store
-   tools
    util
+   s_configparser
+   errors
+   base
+   tools
+   sync_store
+   codecs

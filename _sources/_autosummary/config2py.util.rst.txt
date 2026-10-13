@@ -19,6 +19,7 @@ config2py.util
       app_folder_standards
       ask_user_for_input
       create_directories
+      ensure_default_configs_folder
       ensure_seeded
       extract_variable_declarations
       get_app_folder
@@ -26,6 +27,7 @@ config2py.util
       get_configs_directory_for_app
       get_configs_folder_for_app
       identity
+      is_default_configs_folder
       is_not_empty
       is_repl
       looks_like_secret
@@ -33,6 +35,7 @@ config2py.util
       parse_assignments_from_py_source
       secure_makedirs
       secure_open
+      setup_configs_folder
       system_default_for_app_data_folder
       tighten_mode
    

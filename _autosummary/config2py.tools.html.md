@@ -86,6 +86,10 @@ name, even if a directory of that name exists in the current working directory;
 pass `"./configs"` (or an absolute path) to use that directory
 (see [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28)).
 
+The default, `DFLT_CONFIG_FOLDER`, is config2py’s own configs folder. It is
+created here, on first use, rather than at import
+(see [https://github.com/i2mint/config2py/issues/26](https://github.com/i2mint/config2py/issues/26)).
+
 ### config2py.tools.simple_config_getter(configs_src='/home/runner/.config/config2py/configs', \*, first_look_in_env_vars=True, ask_user_if_key_not_found=None, config_store_factory=<function get_configs_local_store>)
 
 Make a simple config getter from a “central” config source specification.
