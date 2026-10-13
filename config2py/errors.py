@@ -19,6 +19,12 @@ class MissingConfigFileWarning(Config2PyWarning):
     (see https://github.com/i2mint/config2py/issues/27 and /43)."""
 
 
+class InsecureConfigFolderWarning(Config2PyWarning):
+    """A folder used to store config values (which may be secrets) is owned by another
+    user or writable by others, who could plant a symlink or file there to redirect or
+    read those values (see https://github.com/i2mint/config2py/issues/45)."""
+
+
 ON_MISSING_OPTIONS = ("warn", "raise", "ignore")
 
 

@@ -5,6 +5,7 @@ from config2py.errors import (
     Config2PyError,
     Config2PyWarning,
     ConfigNotFound,
+    InsecureConfigFolderWarning,
     MissingConfigFileWarning,
 )
 from config2py.tools import (

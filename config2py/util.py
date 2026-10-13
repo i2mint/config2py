@@ -60,8 +60,16 @@ not_found = mk_sentinel("not_found")
 no_default = mk_sentinel("no_default")
 
 
-def owner_only_opener(path, flags):
+def owner_only_opener(path, flags, *, follow_symlinks=True):
     """An ``opener`` for ``open`` that creates (or re-tightens) ``path`` as ``0o600``.
+
+    With ``follow_symlinks=False`` a symlink at ``path`` is refused (``OSError``,
+    ``ELOOP``) instead of followed -- through ``O_NOFOLLOW`` where the platform has
+    it (which only covers the last path component), else by an ``islink`` check; a file
+    with several hard links is refused too, and left untouched.
+    Opening a symlink *you* control is fine; one planted by someone else in a folder
+    they can write to would redirect (and ``chmod``) a file of theirs choosing
+    (see https://github.com/i2mint/config2py/issues/45).
 
     - *New* file: the restrictive mode is applied atomically at creation via
       ``os.open``, so there is no window where the file briefly exists with the
@@ -71,7 +79,28 @@ def owner_only_opener(path, flags):
       created), so an explicit ``os.fchmod`` re-tightens it -- on the open file
       descriptor, not the path, so it's not subject to a TOCTOU swap either.
     """
+    truncate = False
+    if not follow_symlinks:
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        elif os.path.islink(path):  # Windows: no O_NOFOLLOW (check, then open)
+            raise OSError(errno.ELOOP, "Refusing to follow a symlink", os.fspath(path))
+        # Truncate only after checking for a hardlink (a second name for a file
+        # someone else chose), so refusing it leaves the file intact.
+        truncate = bool(flags & os.O_TRUNC)
+        flags &= ~os.O_TRUNC
     fd = os.open(path, flags, 0o600)
+    try:
+        if not follow_symlinks:
+            if os.fstat(fd).st_nlink > 1:
+                raise OSError(
+                    errno.EMLINK, "Refusing a file with several hard links", path
+                )
+            if truncate:
+                os.ftruncate(fd, 0)
+    except BaseException:
+        os.close(fd)
+        raise
     if hasattr(os, "fchmod"):  # POSIX only -- Windows ACLs aren't unix mode bits
         try:
             os.fchmod(fd, 0o600)  # re-tighten if the file already existed
@@ -81,7 +110,7 @@ def owner_only_opener(path, flags):
     return fd
 
 
-def secure_open(path, mode="w", **open_kwargs):
+def secure_open(path, mode="w", *, follow_symlinks=True, **open_kwargs):
     """``open(path, mode, **open_kwargs)`` with owner-only (``0o600``) permissions.
 
     The file is created (or re-tightened) by ``owner_only_opener``. Being the builtin
@@ -90,6 +119,9 @@ def secure_open(path, mode="w", **open_kwargs):
 
     The ``mode`` is honored as is (``"a"`` appends; before #35 every mode truncated).
     Any mode, including ``"r"``, sets the file's permissions to ``0o600``.
+
+    A symlink at ``path`` is followed (like ``open``) unless ``follow_symlinks=False``,
+    which raises ``OSError`` instead (see ``owner_only_opener``).
 
     Intended for files that may hold secrets (see i2mint/config2py#15).
 
@@ -103,7 +135,10 @@ def secure_open(path, mode="w", **open_kwargs):
     '0o600'
     >>> os.remove(path)
     """
-    return open(path, mode, opener=owner_only_opener, **open_kwargs)
+    opener = owner_only_opener
+    if not follow_symlinks:
+        opener = partial(owner_only_opener, follow_symlinks=False)
+    return open(path, mode, opener=opener, **open_kwargs)
 
 
 def tighten_mode(path, mode, *, strict=False) -> bool:
@@ -150,6 +185,93 @@ def secure_makedirs(dirpath, *, exist_ok=True):
     """
     os.makedirs(dirpath, mode=0o700, exist_ok=exist_ok)
     tighten_mode(dirpath, 0o700)
+
+
+_warned_unsafe_folders: Set[str] = set()  # each folder is warned about once
+
+
+def _is_private_group(gid: int) -> bool:
+    """True if only the current user is in group ``gid`` (a "user-private group", as on
+    Debian-style systems, where a ``umask 002`` makes every folder group-writable).
+    Without the ``grp``/``pwd`` modules (not POSIX), nothing is private."""
+    try:
+        import grp
+        import pwd
+
+        me = pwd.getpwuid(os.geteuid()).pw_name
+        members = set(grp.getgrgid(gid).gr_mem) - {me}
+        primary_of_others = {p.pw_name for p in pwd.getpwall() if p.pw_gid == gid} - {
+            me
+        }
+        return gid in (os.getegid(), *os.getgroups()) and not (
+            members or primary_of_others
+        )
+    except (ImportError, KeyError, OSError):
+        return False
+
+
+def unsafe_folder_reason(dirpath) -> Optional[str]:
+    """Why a folder isn't safe to keep secrets in, or ``None`` if it looks fine.
+
+    Like ssh's ``StrictModes``: a folder owned by someone other than the current user
+    (or root), or writable by its group or by others, lets those users plant a
+    symlink or a file there to redirect or read what config2py writes. A group the
+    current user is alone in does not count as "its group". Only the folder itself is
+    looked at, not its parents. POSIX only (``None`` elsewhere); a missing folder is
+    ``None`` too.
+
+    >>> import tempfile
+    >>> with tempfile.TemporaryDirectory() as d:  # created 0o700
+    ...     unsafe_folder_reason(d)
+    >>> unsafe_folder_reason("/no/such/folder")
+    """
+    if not hasattr(os, "geteuid"):
+        return None
+    try:
+        st = os.stat(dirpath)
+    except OSError:
+        return None
+    problems = []
+    if st.st_uid not in (os.geteuid(), 0):
+        problems.append("owned by another user")
+    if st.st_mode & stat.S_IWOTH or (
+        st.st_mode & stat.S_IWGRP and not _is_private_group(st.st_gid)
+    ):
+        problems.append("writable by its group or by others")
+    return " and ".join(problems) or None
+
+
+def check_folder_is_private(dirpath, *, on_unsafe: str = "warn", stacklevel: int = 2):
+    """Check ``dirpath`` with ``unsafe_folder_reason``, and act on a problem.
+
+    :param on_unsafe: ``"warn"`` (the default) issues an
+        ``InsecureConfigFolderWarning`` (once per folder), ``"raise"`` raises
+        ``PermissionError``, ``"ignore"`` skips the check. Fix a folder you own with
+        ``chmod 700``
+        (see https://github.com/i2mint/config2py/issues/45).
+    """
+    from config2py.errors import InsecureConfigFolderWarning, validate_on_missing
+
+    validate_on_missing(on_unsafe)  # same three options as ``on_missing``
+    if on_unsafe == "ignore":
+        return
+    reason = unsafe_folder_reason(dirpath)
+    if reason is None:
+        return
+    msg = (
+        f"Config folder {os.fspath(dirpath)!r} is {reason}, so others could plant "
+        "a symlink or file there and redirect or read the values stored in it. "
+        "Use a folder only you can write to (chmod 700), or pass "
+        "on_unsafe_folder='ignore' if this is intended."
+    )
+    if on_unsafe == "raise":
+        raise PermissionError(msg)
+    key = os.path.realpath(dirpath)
+    if key not in _warned_unsafe_folders:
+        import warnings
+
+        warnings.warn(msg, InsecureConfigFolderWarning, stacklevel=stacklevel + 1)
+        _warned_unsafe_folders.add(key)  # after the warn: under -W error it can repeat
 
 
 def always_true(x: Any) -> bool:
