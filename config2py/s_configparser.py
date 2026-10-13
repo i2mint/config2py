@@ -2,6 +2,7 @@
 Data Object Layer for configparser standard lib.
 """
 
+import os
 from configparser import ConfigParser
 from configparser import BasicInterpolation, ExtendedInterpolation
 from functools import wraps
@@ -10,6 +11,7 @@ from io import StringIO
 from dol import Store
 
 from config2py.util import secure_open
+from config2py.errors import report_missing_config_file, validate_on_missing
 
 # from py2store.signatures import Sig
 
@@ -242,8 +244,10 @@ class ConfigStore(ConfigParserStore):
         ``allow_no_value`` are passed on to ``ConfigParser``.
 
         Note: a filepath that doesn't exist is silently skipped (the semantics of
-        ``ConfigParser.read``), giving an empty config rather than an error
-        (see https://github.com/i2mint/config2py/issues/27)."""
+        ``ConfigParser.read``), giving an empty config, which is what lets
+        ``ConfigStore`` create a new file on its first write. The read-only
+        ``ConfigReader`` warns instead (see its ``on_missing`` argument and
+        https://github.com/i2mint/config2py/issues/27)."""
         super().__init__(
             defaults, dict_type, allow_no_value, **more_config_parser_kwargs
         )
@@ -335,6 +339,24 @@ class ConfigStore(ConfigParserStore):
     # __delitem__ = super_and_persist(ConfigParser, '__delitem__')
 
 
+def _missing_filepaths(source) -> list:
+    """The filepaths in ``source`` that ``ConfigStore`` would read but that are not
+    existing files. A multi-line or blank ``str`` is content, not a filepath."""
+
+    def is_filepath(x):
+        if isinstance(x, str):
+            return "\n" not in x and bool(x.strip())
+        return isinstance(x, os.PathLike)
+
+    if is_filepath(source):
+        candidates = [source]
+    elif isinstance(source, (list, tuple)):  # ``configparser.read`` takes several
+        candidates = [x for x in source if is_filepath(x)]
+    else:
+        candidates = []
+    return [x for x in candidates if not os.path.isfile(x)]
+
+
 class ConfigReader(ConfigStore):
     r"""A KvReader to read config files
 
@@ -386,7 +408,29 @@ class ConfigReader(ConfigStore):
     ['DEFAULT', 'Simple Values', 'All Values Are Strings', 'Multiline Values', 'No Values', 'You can use comments', 'Sections Can Be Indented']
     >>> list(c['Simple Values'])
     ['key', 'spaces in keys', 'spaces in values', 'spaces around the delimiter', 'you can also use']
+
+    ######## A filepath that doesn't exist ########
+
+    A filepath (a single-line ``str``, an ``os.PathLike``, or several of them in a list
+    or tuple) that is not an existing file reads as empty, as ``configparser`` does.
+    ``on_missing`` says what else happens: ``"warn"`` (the default) issues a
+    ``MissingConfigFileWarning``, ``"raise"`` raises ``FileNotFoundError``, and
+    ``"ignore"`` does nothing (see https://github.com/i2mint/config2py/issues/27).
+
+    >>> c = ConfigReader('no/such/file.ini', on_missing='ignore')
+    >>> list(c)
+    ['DEFAULT']
+    >>> ConfigReader('no/such/file.ini', on_missing='raise')
+    Traceback (most recent call last):
+      ...
+    FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
     """
+
+    def __init__(self, source, *, on_missing: str = "warn", **kwargs):
+        validate_on_missing(on_missing)
+        for path in _missing_filepaths(source):
+            report_missing_config_file(path, on_missing=on_missing, stacklevel=2)
+        super().__init__(source, **kwargs)
 
     def persist(self):
         """Disabled: ``ConfigReader`` is read-only."""
