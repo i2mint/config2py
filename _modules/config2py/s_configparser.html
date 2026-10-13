@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=755f2e77"></script>
+    <script src="../../_static/documentation_options.js?v=5fe4e9ad"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.59" />
+  <meta name="docsearch:version" content="0.1.60" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -715,6 +715,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">Data Object Layer for configparser standard lib.</span>
 <span class="sd">"""</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">locale</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_locale</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigParser</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicInterpolation</span><span class="p">,</span> <span class="n">ExtendedInterpolation</span>
@@ -833,6 +834,29 @@ window.runMermaid = runMermaid;</script>
 <span class="c1"># TODO: Extend to a KvPersister (include __setitem__ and __delitem__)</span>
 <span class="c1">#   Relevant methods: add_section, write, remove_section. Need to decide on auto-persistence.</span>
 <span class="c1">#   In fact, the reader is already a writer (from ConfigParser), but need to manage persistence.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_locale_encoding</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""The locale's encoding, also in UTF-8 mode (where ``open``'s default is UTF-8)."""</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_locale</span><span class="p">,</span> <span class="s2">"getencoding"</span><span class="p">):</span>  <span class="c1"># Python 3.11+</span>
+        <span class="k">return</span> <span class="n">_locale</span><span class="o">.</span><span class="n">getencoding</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">_locale</span><span class="o">.</span><span class="n">getpreferredencoding</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_decode_config_text</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Decode an ini file's bytes: as UTF-8 (what ``persist`` writes; a BOM is</span>
+<span class="sd">    tolerated) if they are valid UTF-8, else with the locale's encoding (what</span>
+<span class="sd">    ``persist`` wrote before https://github.com/i2mint/config2py/issues/37).</span>
+
+<span class="sd">    &gt;&gt;&gt; _decode_config_text("café".encode("utf-8"))</span>
+<span class="sd">    'café'</span>
+<span class="sd">    &gt;&gt;&gt; _decode_config_text("café".encode("utf-8-sig"))</span>
+<span class="sd">    'café'</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8-sig"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">_locale_encoding</span><span class="p">())</span>
+
+
 <div class="viewcode-block" id="ConfigStore">
 <a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.ConfigStore">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConfigStore</span><span class="p">(</span><span class="n">ConfigParserStore</span><span class="p">):</span>
@@ -983,7 +1007,7 @@ window.runMermaid = runMermaid;</script>
                 <span class="bp">self</span><span class="o">.</span><span class="n">read_string</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
                 <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">"string"</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_read_filepaths</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
                 <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">"filepath"</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_string</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
@@ -995,11 +1019,30 @@ window.runMermaid = runMermaid;</script>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
             <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">"stream"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read_filepaths</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
             <span class="n">source_kind</span> <span class="o">=</span> <span class="s2">"unknown"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_kind</span> <span class="o">=</span> <span class="n">source_kind</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">=</span> <span class="n">target_kind</span> <span class="ow">or</span> <span class="n">source_kind</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_filepaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepaths</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Like ``self.read(filepaths)``, but each file is read once, as bytes, and</span>
+<span class="sd">        decoded by ``_decode_config_text`` (so pipes such as ``/dev/stdin`` still</span>
+<span class="sd">        work). As with ``read``, files that can't be opened are skipped."""</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filepaths</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">_os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">)):</span>
+            <span class="n">filepaths</span> <span class="o">=</span> <span class="p">[</span><span class="n">filepaths</span><span class="p">]</span>
+        <span class="n">read_ok</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">filepaths</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">_decode_config_text</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span> <span class="n">source</span><span class="o">=</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">_os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
+                <span class="n">filepath</span> <span class="o">=</span> <span class="n">_os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="n">read_ok</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">read_ok</span>
 
 <div class="viewcode-block" id="ConfigStore.to_dict">
 <a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.ConfigStore.to_dict">[docs]</a>
@@ -1029,8 +1072,15 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_within_context_manager</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">"filepath"</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">secure_open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
+                <span class="c1"># Encode it all before opening (which empties the file), so a value</span>
+                <span class="c1"># that can't be encoded doesn't leave a truncated file behind.</span>
+                <span class="n">buffer</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_around_delimiters</span><span class="p">)</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+                <span class="n">text</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span>  <span class="c1"># raises UnicodeEncodeError before truncating</span>
+                <span class="k">with</span> <span class="n">secure_open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                    <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span> <span class="o">==</span> <span class="s2">"stream"</span><span class="p">:</span>
                     <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span>
@@ -1074,9 +1124,9 @@ window.runMermaid = runMermaid;</script>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_missing_filepaths</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""The filepaths in ``source`` that ``ConfigStore`` would read but that are not</span>
-<span class="sd">    existing files. A multi-line, blank, or ``[section]``-starting ``str`` is content,</span>
-<span class="sd">    not a filepath."""</span>
+<span class="w">    </span><span class="sd">"""The filepaths in ``source`` that ``ConfigStore`` would read but that don't</span>
+<span class="sd">    exist (or are folders). Pipes (``/dev/stdin``) count as existing. A multi-line,</span>
+<span class="sd">    blank, or ``[section]``-starting ``str`` is content, not a filepath."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">is_filepath</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -1090,7 +1140,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">source</span> <span class="k">if</span> <span class="n">is_filepath</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
 
 
 <div class="viewcode-block" id="ConfigReader">

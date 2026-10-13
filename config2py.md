@@ -1,4 +1,4 @@
-> built 2026-10-13 03:51 UTC from 3aba5f2 (master) · config2py 0.1.59. Details: build_info.json
+> built 2026-10-13 05:14 UTC from 3845076 (master) · config2py 0.1.60. Details: build_info.json
 
 # index.html.md
 
@@ -2886,6 +2886,19 @@ write raises `KeyError`. Unlike it, the value is encoded before the file is
 opened, so an unencodable value doesn’t leave an emptied file behind
 (see [https://github.com/i2mint/config2py/issues/35](https://github.com/i2mint/config2py/issues/35)).
 
+Like `TextFiles` (and `open`), a value file that is a symlink is followed, and
+its target is the file written (and tightened to `0o600`). That is deliberate:
+it keeps value files symlinked from elsewhere (a dotfiles repo, say) working, and
+in config2py’s own configs folder (`0o700`) only its owner can plant a link
+(see [https://github.com/i2mint/config2py/issues/37](https://github.com/i2mint/config2py/issues/37)). A folder you pass in is not
+checked: if others can write to it, they can plant a link that redirects your
+secrets, so keep such stores in folders only you can write to
+(see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
+
+`__setitem__` relies on three `dol` internals: `_id_of_key`,
+`store.validate_key` and `_data_of_obj`. `dol` is unpinned, so
+`test_secure_text_files_dol_contract` checks they still exist.
+
 ### config2py.tools.extract_exports(exports, , on_missing='warn')
 
 Get a dict of `{name: value}` pairs from the `name="value" pairs of unix
@@ -3959,18 +3972,16 @@ make, for example, `import config2py` crash
 
 # About this build
 
-This documentation was built on **2026-10-13 03:51 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/3aba5f2bda056691967a2a7027c5716258e475bf"><code>3aba5f2</code></a> on branch <code>master</code>, for **config2py 0.1.59** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 05:14 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/3845076267af21068fe4701a65b6818e8c952e39"><code>3845076</code></a> on branch <code>master</code>, for **config2py 0.1.60** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.59) is behind the latest release on PyPI (0.1.60): `pip install config2py` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/3aba5f2bda056691967a2a7027c5716258e475bf"><code>3aba5f2bda056691967a2a7027c5716258e475bf</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/3845076267af21068fe4701a65b6818e8c952e39"><code>3845076267af21068fe4701a65b6818e8c952e39</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -3981,9 +3992,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38343573095">38343573095</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38350218180">38350218180</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>3aba5f2bda056691967a2a7027c5716258e475bf</code> (in the history of the built commit) |
+| Event commit | <code>3845076267af21068fe4701a65b6818e8c952e39</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4008,13 +4019,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.60/">0.1.60</a>, newer than the documented version (0.1.59).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.60/">0.1.60</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 3aba5f2bda056691967a2a7027c5716258e475bf
+git checkout 3845076267af21068fe4701a65b6818e8c952e39
 pip install "epythet==0.2.13"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

@@ -2,18 +2,16 @@
 
 # About this build
 
-This documentation was built on **2026-10-13 03:51 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/3aba5f2bda056691967a2a7027c5716258e475bf"><code>3aba5f2</code></a> on branch <code>master</code>, for **config2py 0.1.59** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 05:14 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/3845076267af21068fe4701a65b6818e8c952e39"><code>3845076</code></a> on branch <code>master</code>, for **config2py 0.1.60** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.59) is behind the latest release on PyPI (0.1.60): `pip install config2py` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/3aba5f2bda056691967a2a7027c5716258e475bf"><code>3aba5f2bda056691967a2a7027c5716258e475bf</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/3845076267af21068fe4701a65b6818e8c952e39"><code>3845076267af21068fe4701a65b6818e8c952e39</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -24,9 +22,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38343573095">38343573095</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38350218180">38350218180</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>3aba5f2bda056691967a2a7027c5716258e475bf</code> (in the history of the built commit) |
+| Event commit | <code>3845076267af21068fe4701a65b6818e8c952e39</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -51,13 +49,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.60/">0.1.60</a>, newer than the documented version (0.1.59).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.60/">0.1.60</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 3aba5f2bda056691967a2a7027c5716258e475bf
+git checkout 3845076267af21068fe4701a65b6818e8c952e39
 pip install "epythet==0.2.13"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
