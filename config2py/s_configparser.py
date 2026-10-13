@@ -265,11 +265,14 @@ class ConfigStore(ConfigParserStore):
         dict_type=dict,
         allow_no_value=False,
         target_kind=None,
+        follow_symlinks: bool = True,
         **more_config_parser_kwargs,
     ):
         """See the class docstring: ``source`` may be a filepath, a config string,
         bytes, a dict, or a readable stream; ``defaults``, ``dict_type`` and
-        ``allow_no_value`` are passed on to ``ConfigParser``.
+        ``allow_no_value`` are passed on to ``ConfigParser``. With
+        ``follow_symlinks=False``, persisting refuses to write through a symlink at
+        the file's path (see https://github.com/i2mint/config2py/issues/45).
 
         Note: a filepath that doesn't exist is silently skipped (the semantics of
         ``ConfigParser.read``), giving an empty config, which is what lets
@@ -281,6 +284,7 @@ class ConfigStore(ConfigParserStore):
         )
 
         self._within_context_manager = False
+        self._follow_symlinks = follow_symlinks
 
         if isinstance(source, str):
             if "\n" in source:
@@ -350,7 +354,12 @@ class ConfigStore(ConfigParserStore):
                 self.write(buffer, self.space_around_delimiters)
                 text = buffer.getvalue()
                 text.encode("utf-8")  # raises UnicodeEncodeError before truncating
-                with secure_open(self.source, "w", encoding="utf-8") as fp:
+                with secure_open(
+                    self.source,
+                    "w",
+                    encoding="utf-8",
+                    follow_symlinks=self._follow_symlinks,
+                ) as fp:
                     fp.write(text)
                 return None
             else:

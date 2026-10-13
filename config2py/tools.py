@@ -17,6 +17,7 @@ from config2py.util import (
     is_repl,
     DFLT_CONFIGS_NAME,
     secure_open,
+    check_folder_is_private,
     setup_configs_folder,
 )
 from config2py.base import get_config, user_gettable
@@ -40,10 +41,11 @@ class SecureTextFiles(TextFiles):
     its target is the file written (and tightened to ``0o600``). That is deliberate:
     it keeps value files symlinked from elsewhere (a dotfiles repo, say) working, and
     in config2py's own configs folder (``0o700``) only its owner can plant a link
-    (see https://github.com/i2mint/config2py/issues/37). A folder you pass in is not
-    checked: if others can write to it, they can plant a link that redirects your
-    secrets, so keep such stores in folders only you can write to
-    (see https://github.com/i2mint/config2py/issues/45).
+    (see https://github.com/i2mint/config2py/issues/37). If others can write to a
+    folder you pass in, they can plant a link that redirects your secrets: the store
+    warns about such a folder (``on_unsafe_folder``), and ``follow_symlinks=False``
+    refuses to write through a link (see
+    https://github.com/i2mint/config2py/issues/45).
 
     ``__setitem__`` relies on three ``dol`` internals: ``_id_of_key``,
     ``store.validate_key`` and ``_data_of_obj``. ``dol`` is unpinned, so
@@ -52,6 +54,28 @@ class SecureTextFiles(TextFiles):
 
     encoding = "utf-8"  # what dol's TextFiles reads with
 
+    def __init__(
+        self,
+        *args,
+        follow_symlinks: bool = True,
+        on_unsafe_folder: str = "warn",
+        **kwargs,
+    ):
+        """
+        :param follow_symlinks: ``False`` refuses (``KeyError``) to write through a
+            symlink at a value file's path (``O_NOFOLLOW``: only the last path
+            component is checked). ``True`` (the default) keeps ``open``'s behavior.
+        :param on_unsafe_folder: What to do if the root folder is owned by another
+            user or writable by its group or by others (as ssh's ``StrictModes``
+            checks): ``"warn"`` (the default, once per folder), ``"raise"``
+            (``PermissionError``) or ``"ignore"``.
+        """
+        super().__init__(*args, **kwargs)
+        self._follow_symlinks = follow_symlinks
+        rootdir = args[0] if args else kwargs.get("rootdir")
+        if rootdir is not None:
+            check_folder_is_private(rootdir, on_unsafe=on_unsafe_folder, stacklevel=2)
+
     def __setitem__(self, k, v):
         # dol's TextFiles wraps an inner persister, so write via the full path here,
         # keeping that persister's key validation and its KeyError contract.
@@ -59,7 +83,7 @@ class SecureTextFiles(TextFiles):
         self.store.validate_key(path)
         try:
             data = self._data_of_obj(v).encode(self.encoding)
-            with secure_open(path, "wb") as fp:
+            with secure_open(path, "wb", follow_symlinks=self._follow_symlinks) as fp:
                 fp.write(data)
         except Exception as error:
             raise KeyError(str(error)) from error
@@ -76,7 +100,11 @@ def _ensure_if_default_configs_folder(src):
 
 # TODO: Make it into an open-closed plug-in using routing
 def get_configs_local_store(
-    config_src=_DFLT_CONFIGS_FOLDER_PATH, *, configs_name=DFLT_CONFIGS_NAME
+    config_src=_DFLT_CONFIGS_FOLDER_PATH,
+    *,
+    configs_name=DFLT_CONFIGS_NAME,
+    follow_symlinks: bool = True,
+    on_unsafe_folder: str = "warn",
 ):
     """Get the local store of configs.
 
@@ -84,6 +112,12 @@ def get_configs_local_store(
         If it's a directory, it's assumed to be a folder of text files.
         If it's a file, it's assumed to be an ini or cfg file.
         If it's a string, it's assumed to be an app name, from which to create a folder
+    :param follow_symlinks: Whether the store may write through a symlink at a value
+        (or ini) file's path. ``False`` refuses to
+        (see https://github.com/i2mint/config2py/issues/45).
+    :param on_unsafe_folder: ``"warn"`` (default), ``"raise"`` or ``"ignore"`` when
+        a folder store's root is owned by another user or writable by its group or by
+        others (see ``SecureTextFiles``).
 
     Note: a directory is only recognized as such if ``config_src`` contains
     ``os.path.sep``. A bare name (e.g. ``"configs"``) is always treated as an app
@@ -108,7 +142,11 @@ def get_configs_local_store(
         #         f"get_configs_local_store function from a directory that doesn't "
         #         "contain a {config_src} folder."
         #     )
-        return SecureTextFiles(config_src)
+        return SecureTextFiles(
+            config_src,
+            follow_symlinks=follow_symlinks,
+            on_unsafe_folder=on_unsafe_folder,
+        )
     elif os.path.isfile(config_src):
         # TODO: Not tested
         # TODO: Make this open-closed plug-in via routing argument
@@ -116,11 +154,13 @@ def get_configs_local_store(
         if extension in {".ini", ".cfg"}:
             from config2py.s_configparser import ConfigStore
 
-            return ConfigStore(config_src)
+            return ConfigStore(config_src, follow_symlinks=follow_symlinks)
     elif os.path.sep not in config_src:  # it's just a string
         # TODO: is "get" the right word, since it makes the folder too
         path = get_configs_folder_for_app(config_src, configs_name=configs_name)
-        return SecureTextFiles(path)
+        return SecureTextFiles(
+            path, follow_symlinks=follow_symlinks, on_unsafe_folder=on_unsafe_folder
+        )
     else:
         raise ValueError(
             f"config_src must be a directory, ini or cfg file, or app name. "
