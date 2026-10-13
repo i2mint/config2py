@@ -52,6 +52,23 @@ def test_a_private_folder_in_a_world_writable_parent_is_flagged(tmp_path):
 
 
 @posix_only
+@pytest.mark.skipif(
+    not hasattr(os, "geteuid") or os.geteuid() != 0, reason="needs root to chown"
+)
+def test_an_ancestor_merely_owned_by_another_user_is_fine(tmp_path):
+    """A host user's folder bind-mounted into a container, seen by root (#56)."""
+    parent = tmp_path / "hostdir"
+    parent.mkdir()
+    parent.chmod(0o755)
+    os.chown(parent, 65534, -1)
+    child = parent / "store"
+    child.mkdir(mode=0o700)
+    assert unsafe_folder_reason(child) is None
+    os.chown(child, 65534, -1)  # the folder itself being foreign is still flagged
+    assert "owned by another user" in unsafe_folder_reason(child)
+
+
+@posix_only
 def test_a_sticky_parent_is_fine(tmp_path):
     parent = tmp_path / "tmpish"
     parent.mkdir()
