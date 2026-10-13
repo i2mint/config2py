@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=681c63c7"></script>
+    <script src="../_static/documentation_options.js?v=a395f30a"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.63" />
+  <meta name="docsearch:version" content="0.1.64" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -418,65 +418,71 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.ask_user_for_input" title="config2py.util.ask_user_for_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ask_user_for_input</span></code></a>(prompt[, default, ...])</p></td>
 <td><p>Ask the user for input, optionally masking, validating and transforming the input.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.create_directories" title="config2py.util.create_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_directories</span></code></a>(dirpath[, max_dirs_to_make])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.check_folder_is_private" title="config2py.util.check_folder_is_private"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_folder_is_private</span></code></a>(dirpath, *[, ...])</p></td>
+<td><p>Check <code class="docutils literal notranslate"><span class="pre">dirpath</span></code> with <code class="docutils literal notranslate"><span class="pre">unsafe_folder_reason</span></code>, and act on a problem.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.create_directories" title="config2py.util.create_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_directories</span></code></a>(dirpath[, max_dirs_to_make])</p></td>
 <td><p>Create directories up to a specified limit.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.ensure_default_configs_folder" title="config2py.util.ensure_default_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_default_configs_folder</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.ensure_default_configs_folder" title="config2py.util.ensure_default_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_default_configs_folder</span></code></a>()</p></td>
 <td><p>Create config2py's own configs folder if needed, and return its path.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.ensure_seeded" title="config2py.util.ensure_seeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_seeded</span></code></a>(target, package_name, ...[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.ensure_seeded" title="config2py.util.ensure_seeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_seeded</span></code></a>(target, package_name, ...[, ...])</p></td>
 <td><p>Copy a bundled seed file to <em>target</em> if it does not already exist.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.extract_variable_declarations" title="config2py.util.extract_variable_declarations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_variable_declarations</span></code></a>(string[, expand])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.extract_variable_declarations" title="config2py.util.extract_variable_declarations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_variable_declarations</span></code></a>(string[, expand])</p></td>
 <td><p>Reads the contents of a config file, extracting Unix-style environment variable declarations of the form <code class="code docutils literal notranslate"><span class="pre">export</span> <span class="pre">{NAME}={value}</span></code>, returning a dictionary of <code class="code docutils literal notranslate"><span class="pre">{NAME:</span> <span class="pre">value,</span> <span class="pre">...}</span></code> pairs.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.get_app_folder" title="config2py.util.get_app_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_app_folder</span></code></a>([app_name, setup_callback, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.get_app_folder" title="config2py.util.get_app_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_app_folder</span></code></a>([app_name, setup_callback, ...])</p></td>
 <td><p>Retrieve or create the app directory specific to the given app name and folder kind.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.get_app_rootdir" title="config2py.util.get_app_rootdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_app_rootdir</span></code></a>([folder_kind, ensure_exists])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.get_app_rootdir" title="config2py.util.get_app_rootdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_app_rootdir</span></code></a>([folder_kind, ensure_exists])</p></td>
 <td><p>Returns the root directory for a specific folder kind.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.get_configs_directory_for_app" title="config2py.util.get_configs_directory_for_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_directory_for_app</span></code></a>([app_name, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.get_configs_directory_for_app" title="config2py.util.get_configs_directory_for_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_directory_for_app</span></code></a>([app_name, ...])</p></td>
 <td><p>Retrieve or create the configs directory specific to the given app name.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.get_configs_folder_for_app" title="config2py.util.get_configs_folder_for_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_folder_for_app</span></code></a>([app_name, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.get_configs_folder_for_app" title="config2py.util.get_configs_folder_for_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_folder_for_app</span></code></a>([app_name, ...])</p></td>
 <td><p>Retrieve or create the configs directory specific to the given app name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.identity" title="config2py.util.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.identity" title="config2py.util.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(x)</p></td>
 <td><p>Function that just returns its argument.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.is_default_configs_folder" title="config2py.util.is_default_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_default_configs_folder</span></code></a>(path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.is_default_configs_folder" title="config2py.util.is_default_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_default_configs_folder</span></code></a>(path)</p></td>
 <td><p>Whether <code class="docutils literal notranslate"><span class="pre">path</span></code> (however spelled) is config2py's own configs folder.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.is_not_empty" title="config2py.util.is_not_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_not_empty</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.is_not_empty" title="config2py.util.is_not_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_not_empty</span></code></a>(x)</p></td>
 <td><p>Function that returns True if x is not empty.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.is_repl" title="config2py.util.is_repl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_repl</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.is_repl" title="config2py.util.is_repl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_repl</span></code></a>()</p></td>
 <td><p>Determines if the Python interpreter is running in REPL.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.looks_like_secret" title="config2py.util.looks_like_secret"><code class="xref py py-obj docutils literal notranslate"><span class="pre">looks_like_secret</span></code></a>(text)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.looks_like_secret" title="config2py.util.looks_like_secret"><code class="xref py py-obj docutils literal notranslate"><span class="pre">looks_like_secret</span></code></a>(text)</p></td>
 <td><p>True if <code class="docutils literal notranslate"><span class="pre">text</span></code> (typically a prompt naming a config key) looks secret.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.owner_only_opener" title="config2py.util.owner_only_opener"><code class="xref py py-obj docutils literal notranslate"><span class="pre">owner_only_opener</span></code></a>(path, flags)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.owner_only_opener" title="config2py.util.owner_only_opener"><code class="xref py py-obj docutils literal notranslate"><span class="pre">owner_only_opener</span></code></a>(path, flags, *[, ...])</p></td>
 <td><p>An <code class="docutils literal notranslate"><span class="pre">opener</span></code> for <code class="docutils literal notranslate"><span class="pre">open</span></code> that creates (or re-tightens) <code class="docutils literal notranslate"><span class="pre">path</span></code> as <code class="docutils literal notranslate"><span class="pre">0o600</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.parse_assignments_from_py_source" title="config2py.util.parse_assignments_from_py_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_assignments_from_py_source</span></code></a>(source_code, *)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.parse_assignments_from_py_source" title="config2py.util.parse_assignments_from_py_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_assignments_from_py_source</span></code></a>(source_code, *)</p></td>
 <td><p>Parse assignments from python source code.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.secure_makedirs" title="config2py.util.secure_makedirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secure_makedirs</span></code></a>(dirpath, *[, exist_ok])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.secure_makedirs" title="config2py.util.secure_makedirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secure_makedirs</span></code></a>(dirpath, *[, exist_ok])</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">os.makedirs(dirpath,</span> <span class="pre">mode=0o700)</span></code>, re-tightening the mode if it already exists.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.secure_open" title="config2py.util.secure_open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secure_open</span></code></a>(path[, mode])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.secure_open" title="config2py.util.secure_open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secure_open</span></code></a>(path[, mode, follow_symlinks])</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">open(path,</span> <span class="pre">mode,</span> <span class="pre">**open_kwargs)</span></code> with owner-only (<code class="docutils literal notranslate"><span class="pre">0o600</span></code>) permissions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.setup_configs_folder" title="config2py.util.setup_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_configs_folder</span></code></a>(configs_dir, *[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.setup_configs_folder" title="config2py.util.setup_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_configs_folder</span></code></a>(configs_dir, *[, ...])</p></td>
 <td><p>Create <code class="docutils literal notranslate"><span class="pre">configs_dir</span></code> (via <code class="docutils literal notranslate"><span class="pre">setup_callback</span></code>) and return it.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.system_default_for_app_data_folder" title="config2py.util.system_default_for_app_data_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">system_default_for_app_data_folder</span></code></a>([...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.system_default_for_app_data_folder" title="config2py.util.system_default_for_app_data_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">system_default_for_app_data_folder</span></code></a>([...])</p></td>
 <td><p>Get the system default folder for <code class="docutils literal notranslate"><span class="pre">folder_kind</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.tighten_mode" title="config2py.util.tighten_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tighten_mode</span></code></a>(path, mode, *[, strict])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.tighten_mode" title="config2py.util.tighten_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tighten_mode</span></code></a>(path, mode, *[, strict])</p></td>
 <td><p>Set <code class="docutils literal notranslate"><span class="pre">path</span></code>'s permission bits to <code class="docutils literal notranslate"><span class="pre">mode</span></code>, only if they differ.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.unsafe_folder_reason" title="config2py.util.unsafe_folder_reason"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_folder_reason</span></code></a>(dirpath)</p></td>
+<td><p>Why a folder isn't safe to keep secrets in, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if it looks fine.</p></td>
 </tr>
 </tbody>
 </table>
@@ -709,6 +715,21 @@ This can be used to validate the response, for example.</p></li>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The user’s response (or the default value if the user entered nothing)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.check_folder_is_private">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">check_folder_is_private</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirpath</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_unsafe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stacklevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#check_folder_is_private"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.check_folder_is_private" title="Link to this definition">#</a></dt>
+<dd><p>Check <code class="docutils literal notranslate"><span class="pre">dirpath</span></code> with <code class="docutils literal notranslate"><span class="pre">unsafe_folder_reason</span></code>, and act on a problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>on_unsafe</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – <code class="docutils literal notranslate"><span class="pre">&quot;warn&quot;</span></code> (the default) issues an
+<code class="docutils literal notranslate"><span class="pre">InsecureConfigFolderWarning</span></code> (once per folder), <code class="docutils literal notranslate"><span class="pre">&quot;raise&quot;</span></code> raises
+<code class="docutils literal notranslate"><span class="pre">PermissionError</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> skips the check. Fix a folder you own with
+<code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">700</span></code>
+(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/45">i2mint/config2py#45</a>).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1373,8 +1394,15 @@ match, as would a custom prompt template mentioning “key”. Pass an explicit
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.util.owner_only_opener">
-<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">owner_only_opener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#owner_only_opener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.owner_only_opener" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">owner_only_opener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">follow_symlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#owner_only_opener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.owner_only_opener" title="Link to this definition">#</a></dt>
 <dd><p>An <code class="docutils literal notranslate"><span class="pre">opener</span></code> for <code class="docutils literal notranslate"><span class="pre">open</span></code> that creates (or re-tightens) <code class="docutils literal notranslate"><span class="pre">path</span></code> as <code class="docutils literal notranslate"><span class="pre">0o600</span></code>.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">follow_symlinks=False</span></code> a symlink at <code class="docutils literal notranslate"><span class="pre">path</span></code> is refused (<code class="docutils literal notranslate"><span class="pre">OSError</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ELOOP</span></code>) instead of followed – through <code class="docutils literal notranslate"><span class="pre">O_NOFOLLOW</span></code> where the platform has
+it (which only covers the last path component), else by an <code class="docutils literal notranslate"><span class="pre">islink</span></code> check; a file
+with several hard links is refused too, and left untouched.
+Opening a symlink <em>you</em> control is fine; one planted by someone else in a folder
+they can write to would redirect (and <code class="docutils literal notranslate"><span class="pre">chmod</span></code>) a file of theirs choosing
+(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/45">i2mint/config2py#45</a>).</p>
 <ul class="simple">
 <li><p><em>New</em> file: the restrictive mode is applied atomically at creation via
 <code class="docutils literal notranslate"><span class="pre">os.open</span></code>, so there is no window where the file briefly exists with the
@@ -1416,13 +1444,15 @@ config/secret files (see i2mint/config2py#15).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.util.secure_open">
-<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">secure_open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">open_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#secure_open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.secure_open" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">secure_open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">follow_symlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">open_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#secure_open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.secure_open" title="Link to this definition">#</a></dt>
 <dd><p><code class="docutils literal notranslate"><span class="pre">open(path,</span> <span class="pre">mode,</span> <span class="pre">**open_kwargs)</span></code> with owner-only (<code class="docutils literal notranslate"><span class="pre">0o600</span></code>) permissions.</p>
 <p>The file is created (or re-tightened) by <code class="docutils literal notranslate"><span class="pre">owner_only_opener</span></code>. Being the builtin
 <code class="docutils literal notranslate"><span class="pre">open</span></code>, it honors <code class="docutils literal notranslate"><span class="pre">encoding</span></code>, <code class="docutils literal notranslate"><span class="pre">newline</span></code>, and binary modes (<code class="docutils literal notranslate"><span class="pre">O_BINARY</span></code> on
 Windows). Pass <code class="docutils literal notranslate"><span class="pre">encoding=</span></code> explicitly for text: the default is the locale’s.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">mode</span></code> is honored as is (<code class="docutils literal notranslate"><span class="pre">&quot;a&quot;</span></code> appends; before #35 every mode truncated).
 Any mode, including <code class="docutils literal notranslate"><span class="pre">&quot;r&quot;</span></code>, sets the file’s permissions to <code class="docutils literal notranslate"><span class="pre">0o600</span></code>.</p>
+<p>A symlink at <code class="docutils literal notranslate"><span class="pre">path</span></code> is followed (like <code class="docutils literal notranslate"><span class="pre">open</span></code>) unless <code class="docutils literal notranslate"><span class="pre">follow_symlinks=False</span></code>,
+which raises <code class="docutils literal notranslate"><span class="pre">OSError</span></code> instead (see <code class="docutils literal notranslate"><span class="pre">owner_only_opener</span></code>).</p>
 <p>Intended for files that may hold secrets (see i2mint/config2py#15).</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mktemp</span><span class="p">()</span>
@@ -1486,6 +1516,29 @@ make, for example, <code class="docutils literal notranslate"><span class="pre">
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.unsafe_folder_reason">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">unsafe_folder_reason</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirpath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#unsafe_folder_reason"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.unsafe_folder_reason" title="Link to this definition">#</a></dt>
+<dd><p>Why a folder isn’t safe to keep secrets in, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if it looks fine.</p>
+<p>Like ssh’s <code class="docutils literal notranslate"><span class="pre">StrictModes</span></code>: a folder owned by someone other than the current user
+(or root), or writable by its group or by others, lets those users plant a
+symlink or a file there to redirect or read what config2py writes. A group the
+current user is alone in does not count as “its group”. Only the folder itself is
+looked at, not its parents. POSIX only (<code class="docutils literal notranslate"><span class="pre">None</span></code> elsewhere); a missing folder is
+<code class="docutils literal notranslate"><span class="pre">None</span></code> too.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>  <span class="c1"># created 0o700</span>
+<span class="gp">... </span>    <span class="n">unsafe_folder_reason</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">unsafe_folder_reason</span><span class="p">(</span><span class="s2">"/no/such/folder"</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -1555,6 +1608,7 @@ make, for example, <code class="docutils literal notranslate"><span class="pre">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.always_true"><code class="docutils literal notranslate"><span class="pre">always_true()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.app_folder_standards"><code class="docutils literal notranslate"><span class="pre">app_folder_standards()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.ask_user_for_input"><code class="docutils literal notranslate"><span class="pre">ask_user_for_input()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.check_folder_is_private"><code class="docutils literal notranslate"><span class="pre">check_folder_is_private()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.create_directories"><code class="docutils literal notranslate"><span class="pre">create_directories()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.ensure_default_configs_folder"><code class="docutils literal notranslate"><span class="pre">ensure_default_configs_folder()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.ensure_seeded"><code class="docutils literal notranslate"><span class="pre">ensure_seeded()</span></code></a></li>
@@ -1578,6 +1632,7 @@ make, for example, <code class="docutils literal notranslate"><span class="pre">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.setup_configs_folder"><code class="docutils literal notranslate"><span class="pre">setup_configs_folder()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.system_default_for_app_data_folder"><code class="docutils literal notranslate"><span class="pre">system_default_for_app_data_folder()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.tighten_mode"><code class="docutils literal notranslate"><span class="pre">tighten_mode()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.unsafe_folder_reason"><code class="docutils literal notranslate"><span class="pre">unsafe_folder_reason()</span></code></a></li>
 </ul>
   </nav></div>
 

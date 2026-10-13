@@ -5,7 +5,7 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-10-13 05:55 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/1f12f386f793264876e0fa9663f65d9840206211"><code>1f12f38</code></a> on branch <code>master</code>, for **config2py 0.1.63** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 07:09 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/3839f6a16e3015f8d4f6bf487bd427f85a2b1792"><code>3839f6a</code></a> on branch <code>master</code>, for **config2py 0.1.64** (from <code>pyproject.toml</code>).
 
 :::{note}
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -15,7 +15,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/i2mint/config2py/commit/1f12f386f793264876e0fa9663f65d9840206211"><code>1f12f386f793264876e0fa9663f65d9840206211</code></a> |
+| Commit | <a href="https://github.com/i2mint/config2py/commit/3839f6a16e3015f8d4f6bf487bd427f85a2b1792"><code>3839f6a16e3015f8d4f6bf487bd427f85a2b1792</code></a> |
 | Branch | <code>master</code> |
 | Tags at this commit | none |
 | Working tree | clean |
@@ -26,9 +26,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 | | |
 |---|---|
 | Repository | <code>i2mint/config2py</code> |
-| Run | <a href="https://github.com/i2mint/config2py/actions/runs/38353755402">38353755402</a> |
+| Run | <a href="https://github.com/i2mint/config2py/actions/runs/38360765259">38360765259</a> |
 | Ref | <code>refs/heads/master</code> |
-| Event commit | <code>1f12f386f793264876e0fa9663f65d9840206211</code> (in the history of the built commit) |
+| Event commit | <code>3839f6a16e3015f8d4f6bf487bd427f85a2b1792</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -53,13 +53,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.63/">0.1.63</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/config2py/0.1.64/">0.1.64</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 1f12f386f793264876e0fa9663f65d9840206211
+git checkout 3839f6a16e3015f8d4f6bf487bd427f85a2b1792
 pip install "epythet==0.2.14"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

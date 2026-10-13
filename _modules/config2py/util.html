@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=681c63c7"></script>
+    <script src="../../_static/documentation_options.js?v=a395f30a"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -410,7 +410,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.63" />
+  <meta name="docsearch:version" content="0.1.64" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -778,8 +778,16 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="owner_only_opener">
 <a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.owner_only_opener">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">owner_only_opener</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">owner_only_opener</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""An ``opener`` for ``open`` that creates (or re-tightens) ``path`` as ``0o600``.</span>
+
+<span class="sd">    With ``follow_symlinks=False`` a symlink at ``path`` is refused (``OSError``,</span>
+<span class="sd">    ``ELOOP``) instead of followed -- through ``O_NOFOLLOW`` where the platform has</span>
+<span class="sd">    it (which only covers the last path component), else by an ``islink`` check; a file</span>
+<span class="sd">    with several hard links is refused too, and left untouched.</span>
+<span class="sd">    Opening a symlink *you* control is fine; one planted by someone else in a folder</span>
+<span class="sd">    they can write to would redirect (and ``chmod``) a file of theirs choosing</span>
+<span class="sd">    (see https://github.com/i2mint/config2py/issues/45).</span>
 
 <span class="sd">    - *New* file: the restrictive mode is applied atomically at creation via</span>
 <span class="sd">      ``os.open``, so there is no window where the file briefly exists with the</span>
@@ -789,7 +797,28 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">      created), so an explicit ``os.fchmod`` re-tightens it -- on the open file</span>
 <span class="sd">      descriptor, not the path, so it's not subject to a TOCTOU swap either.</span>
 <span class="sd">    """</span>
+    <span class="n">truncate</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">follow_symlinks</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"O_NOFOLLOW"</span><span class="p">):</span>
+            <span class="n">flags</span> <span class="o">|=</span> <span class="n">os</span><span class="o">.</span><span class="n">O_NOFOLLOW</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>  <span class="c1"># Windows: no O_NOFOLLOW (check, then open)</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ELOOP</span><span class="p">,</span> <span class="s2">"Refusing to follow a symlink"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="c1"># Truncate only after checking for a hardlink (a second name for a file</span>
+        <span class="c1"># someone else chose), so refusing it leaves the file intact.</span>
+        <span class="n">truncate</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">flags</span> <span class="o">&amp;</span> <span class="n">os</span><span class="o">.</span><span class="n">O_TRUNC</span><span class="p">)</span>
+        <span class="n">flags</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">os</span><span class="o">.</span><span class="n">O_TRUNC</span>
     <span class="n">fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">follow_symlinks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">fstat</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span><span class="o">.</span><span class="n">st_nlink</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span>
+                    <span class="n">errno</span><span class="o">.</span><span class="n">EMLINK</span><span class="p">,</span> <span class="s2">"Refusing a file with several hard links"</span><span class="p">,</span> <span class="n">path</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">truncate</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">ftruncate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+        <span class="k">raise</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"fchmod"</span><span class="p">):</span>  <span class="c1"># POSIX only -- Windows ACLs aren't unix mode bits</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">fchmod</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="mo">0o600</span><span class="p">)</span>  <span class="c1"># re-tighten if the file already existed</span>
@@ -802,7 +831,7 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="secure_open">
 <a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.secure_open">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"w"</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">secure_open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"w"</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""``open(path, mode, **open_kwargs)`` with owner-only (``0o600``) permissions.</span>
 
 <span class="sd">    The file is created (or re-tightened) by ``owner_only_opener``. Being the builtin</span>
@@ -811,6 +840,9 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    The ``mode`` is honored as is (``"a"`` appends; before #35 every mode truncated).</span>
 <span class="sd">    Any mode, including ``"r"``, sets the file's permissions to ``0o600``.</span>
+
+<span class="sd">    A symlink at ``path`` is followed (like ``open``) unless ``follow_symlinks=False``,</span>
+<span class="sd">    which raises ``OSError`` instead (see ``owner_only_opener``).</span>
 
 <span class="sd">    Intended for files that may hold secrets (see i2mint/config2py#15).</span>
 
@@ -824,7 +856,10 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    '0o600'</span>
 <span class="sd">    &gt;&gt;&gt; os.remove(path)</span>
 <span class="sd">    """</span>
-    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">opener</span><span class="o">=</span><span class="n">owner_only_opener</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">)</span></div>
+    <span class="n">opener</span> <span class="o">=</span> <span class="n">owner_only_opener</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">follow_symlinks</span><span class="p">:</span>
+        <span class="n">opener</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">owner_only_opener</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">opener</span><span class="o">=</span><span class="n">opener</span><span class="p">,</span> <span class="o">**</span><span class="n">open_kwargs</span><span class="p">)</span></div>
 
 
 
@@ -877,6 +912,99 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    """</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o700</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="n">exist_ok</span><span class="p">)</span>
     <span class="n">tighten_mode</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="mo">0o700</span><span class="p">)</span></div>
+
+
+
+<span class="n">_warned_unsafe_folders</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># each folder is warned about once</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_private_group</span><span class="p">(</span><span class="n">gid</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""True if only the current user is in group ``gid`` (a "user-private group", as on</span>
+<span class="sd">    Debian-style systems, where a ``umask 002`` makes every folder group-writable).</span>
+<span class="sd">    Without the ``grp``/``pwd`` modules (not POSIX), nothing is private."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">grp</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pwd</span>
+
+        <span class="n">me</span> <span class="o">=</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwuid</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">())</span><span class="o">.</span><span class="n">pw_name</span>
+        <span class="n">members</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">grp</span><span class="o">.</span><span class="n">getgrgid</span><span class="p">(</span><span class="n">gid</span><span class="p">)</span><span class="o">.</span><span class="n">gr_mem</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">me</span><span class="p">}</span>
+        <span class="n">primary_of_others</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="o">.</span><span class="n">pw_name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwall</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">pw_gid</span> <span class="o">==</span> <span class="n">gid</span><span class="p">}</span> <span class="o">-</span> <span class="p">{</span>
+            <span class="n">me</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">gid</span> <span class="ow">in</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getegid</span><span class="p">(),</span> <span class="o">*</span><span class="n">os</span><span class="o">.</span><span class="n">getgroups</span><span class="p">())</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="n">members</span> <span class="ow">or</span> <span class="n">primary_of_others</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="unsafe_folder_reason">
+<a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.unsafe_folder_reason">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unsafe_folder_reason</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Why a folder isn't safe to keep secrets in, or ``None`` if it looks fine.</span>
+
+<span class="sd">    Like ssh's ``StrictModes``: a folder owned by someone other than the current user</span>
+<span class="sd">    (or root), or writable by its group or by others, lets those users plant a</span>
+<span class="sd">    symlink or a file there to redirect or read what config2py writes. A group the</span>
+<span class="sd">    current user is alone in does not count as "its group". Only the folder itself is</span>
+<span class="sd">    looked at, not its parents. POSIX only (``None`` elsewhere); a missing folder is</span>
+<span class="sd">    ``None`` too.</span>
+
+<span class="sd">    &gt;&gt;&gt; import tempfile</span>
+<span class="sd">    &gt;&gt;&gt; with tempfile.TemporaryDirectory() as d:  # created 0o700</span>
+<span class="sd">    ...     unsafe_folder_reason(d)</span>
+<span class="sd">    &gt;&gt;&gt; unsafe_folder_reason("/no/such/folder")</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">os</span><span class="p">,</span> <span class="s2">"geteuid"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">problems</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">st</span><span class="o">.</span><span class="n">st_uid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">(),</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"owned by another user"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IWOTH</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">st_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IWGRP</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_is_private_group</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">st_gid</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"writable by its group or by others"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">" and "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">problems</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="check_folder_is_private">
+<a class="viewcode-back" href="../../_autosummary/config2py.util.html#config2py.check_folder_is_private">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_folder_is_private</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">on_unsafe</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"warn"</span><span class="p">,</span> <span class="n">stacklevel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Check ``dirpath`` with ``unsafe_folder_reason``, and act on a problem.</span>
+
+<span class="sd">    :param on_unsafe: ``"warn"`` (the default) issues an</span>
+<span class="sd">        ``InsecureConfigFolderWarning`` (once per folder), ``"raise"`` raises</span>
+<span class="sd">        ``PermissionError``, ``"ignore"`` skips the check. Fix a folder you own with</span>
+<span class="sd">        ``chmod 700``</span>
+<span class="sd">        (see https://github.com/i2mint/config2py/issues/45).</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">InsecureConfigFolderWarning</span><span class="p">,</span> <span class="n">validate_on_missing</span>
+
+    <span class="n">validate_on_missing</span><span class="p">(</span><span class="n">on_unsafe</span><span class="p">)</span>  <span class="c1"># same three options as ``on_missing``</span>
+    <span class="k">if</span> <span class="n">on_unsafe</span> <span class="o">==</span> <span class="s2">"ignore"</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">reason</span> <span class="o">=</span> <span class="n">unsafe_folder_reason</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reason</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"Config folder </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span><span class="si">!r}</span><span class="s2"> is </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">, so others could plant "</span>
+        <span class="s2">"a symlink or file there and redirect or read the values stored in it. "</span>
+        <span class="s2">"Use a folder only you can write to (chmod 700), or pass "</span>
+        <span class="s2">"on_unsafe_folder='ignore' if this is intended."</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">on_unsafe</span> <span class="o">==</span> <span class="s2">"raise"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">PermissionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">dirpath</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_warned_unsafe_folders</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">InsecureConfigFolderWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">_warned_unsafe_folders</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>  <span class="c1"># after the warn: under -W error it can repeat</span></div>
 
 
 

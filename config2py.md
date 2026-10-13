@@ -1,4 +1,4 @@
-> built 2026-10-13 05:55 UTC from 1f12f38 (master) · config2py 0.1.63. Details: build_info.json
+> built 2026-10-13 07:09 UTC from 3839f6a (master) · config2py 0.1.64. Details: build_info.json
 
 # index.html.md
 
@@ -1156,11 +1156,12 @@ Error classes for config2py.
 
 ### Exceptions
 
-| [`Config2PyError`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyError)           | Base class for config2py errors.                                                                                                                                                                                                                  |
-|---------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`Config2PyWarning`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyWarning)         | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                                                                             |
-| [`ConfigNotFound`](_autosummary/config2py.errors.html.md#config2py.errors.ConfigNotFound)           | Raised when a config file is not found.                                                                                                                                                                                                           |
-| [`MissingConfigFileWarning`](_autosummary/config2py.errors.html.md#config2py.errors.MissingConfigFileWarning) | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43). |
+| [`Config2PyError`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyError)              | Base class for config2py errors.                                                                                                                                                                                                                                                           |
+|------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`Config2PyWarning`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyWarning)            | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                                                                                                                      |
+| [`ConfigNotFound`](_autosummary/config2py.errors.html.md#config2py.errors.ConfigNotFound)              | Raised when a config file is not found.                                                                                                                                                                                                                                                    |
+| [`InsecureConfigFolderWarning`](_autosummary/config2py.errors.html.md#config2py.errors.InsecureConfigFolderWarning) | A folder used to store config values (which may be secrets) is owned by another user or writable by others, who could plant a symlink or file there to redirect or read those values (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)). |
+| [`MissingConfigFileWarning`](_autosummary/config2py.errors.html.md#config2py.errors.MissingConfigFileWarning)    | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).                                          |
 
 ### *exception* config2py.errors.Config2PyError
 
@@ -1179,6 +1180,14 @@ Warnings issued by config2py (e.g. permissions it could not tighten).
 Bases: [`Config2PyError`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyError)
 
 Raised when a config file is not found.
+
+### *exception* config2py.errors.InsecureConfigFolderWarning
+
+Bases: [`Config2PyWarning`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyWarning)
+
+A folder used to store config values (which may be secrets) is owned by another
+user or writable by others, who could plant a symlink or file there to redirect or
+read those values (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
 ### *exception* config2py.errors.MissingConfigFileWarning
 
@@ -1247,7 +1256,7 @@ Tools to read and write configurations from various sources and formats
 
 ### Classes
 
-| [`ConfigStore`](_autosummary/config2py.html.md#config2py.ConfigStore)([defaults, dict_type, ...])          | Persister (read, write, delete) for ini configs.                      |
+| [`ConfigStore`](_autosummary/config2py.html.md#config2py.ConfigStore)(source, \*[, defaults, ...])         | Persister (read, write, delete) for ini configs.                      |
 |---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
 | [`ConfigReader`](_autosummary/config2py.html.md#config2py.ConfigReader)(source, \*[, on_missing])           | A KvReader to read config files                                       |
 | [`Configs`](_autosummary/config2py.html.md#config2py.Configs)                                          |                                                                       |
@@ -1258,11 +1267,12 @@ Tools to read and write configurations from various sources and formats
 
 ### Exceptions
 
-| [`Config2PyError`](_autosummary/config2py.html.md#config2py.Config2PyError)           | Base class for config2py errors.                                                                                                                                                                                                                  |
-|---------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`Config2PyWarning`](_autosummary/config2py.html.md#config2py.Config2PyWarning)         | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                                                                             |
-| [`ConfigNotFound`](_autosummary/config2py.html.md#config2py.ConfigNotFound)           | Raised when a config file is not found.                                                                                                                                                                                                           |
-| [`MissingConfigFileWarning`](_autosummary/config2py.html.md#config2py.MissingConfigFileWarning) | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43). |
+| [`Config2PyError`](_autosummary/config2py.html.md#config2py.Config2PyError)              | Base class for config2py errors.                                                                                                                                                                                                                                                           |
+|------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`Config2PyWarning`](_autosummary/config2py.html.md#config2py.Config2PyWarning)            | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                                                                                                                      |
+| [`ConfigNotFound`](_autosummary/config2py.html.md#config2py.ConfigNotFound)              | Raised when a config file is not found.                                                                                                                                                                                                                                                    |
+| [`InsecureConfigFolderWarning`](_autosummary/config2py.html.md#config2py.InsecureConfigFolderWarning) | A folder used to store config values (which may be secrets) is owned by another user or writable by others, who could plant a symlink or file there to redirect or read those values (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)). |
+| [`MissingConfigFileWarning`](_autosummary/config2py.html.md#config2py.MissingConfigFileWarning)    | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).                                          |
 
 ### *class* config2py.AppData(app_name, , package_name=None, seed_data_dir='_seed_data')
 
@@ -1428,7 +1438,7 @@ FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 
 Disabled: `ConfigReader` is read-only.
 
-### *class* config2py.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
+### *class* config2py.ConfigStore(source, \*, defaults=None, dict_type=<class 'dict'>, allow_no_value=False, target_kind=None, follow_symlinks=True, \*\*more_config_parser_kwargs)
 
 Bases: `Store`
 
@@ -1651,6 +1661,14 @@ Supports nested key paths for working with specific sections.
 ...     'myserver' in store
 True
 ```
+
+### *exception* config2py.InsecureConfigFolderWarning
+
+Bases: [`Config2PyWarning`](_autosummary/config2py.errors.html.md#config2py.errors.Config2PyWarning)
+
+A folder used to store config values (which may be secrets) is owned by another
+user or writable by others, who could plant a symlink or file there to redirect or
+read those values (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
 ### *class* config2py.JsonStore(filepath, , key_path=None, indent=2, ensure_ascii=False, \*\*dump_kwargs)
 
@@ -2164,15 +2182,21 @@ Retrieve or create the configs directory specific to the given app name.
   * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to create (and set up) the directory. With
     `False`, only the path is computed: nothing is created or chmod-ed.
 
-### config2py.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs')
+### config2py.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs', follow_symlinks=True, on_unsafe_folder='warn')
 
 Get the local store of configs.
 
 * **Parameters:**
-  **config_src** – A specification of the local config store. By default:
-  If it’s a directory, it’s assumed to be a folder of text files.
-  If it’s a file, it’s assumed to be an ini or cfg file.
-  If it’s a string, it’s assumed to be an app name, from which to create a folder
+  * **config_src** – A specification of the local config store. By default:
+    If it’s a directory, it’s assumed to be a folder of text files.
+    If it’s a file, it’s assumed to be an ini or cfg file.
+    If it’s a string, it’s assumed to be an app name, from which to create a folder
+  * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether the store may write through a symlink at a value
+    (or ini) file’s path. `False` refuses to
+    (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
+  * **on_unsafe_folder** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (default), `"raise"` or `"ignore"` when
+    a folder store’s root is owned by another user or writable by its group or by
+    others (see `SecureTextFiles`).
 
 #### NOTE
 a directory is only recognized as such if `config_src` contains
@@ -2381,7 +2405,7 @@ Data Object Layer for configparser standard lib.
 
 | [`ConfigReader`](_autosummary/config2py.s_configparser.html.md#config2py.s_configparser.ConfigReader)(source, \*[, on_missing])   | A KvReader to read config files                  |
 |-------------------------------------------------------------------------------------------|--------------------------------------------------|
-| [`ConfigStore`](_autosummary/config2py.s_configparser.html.md#config2py.s_configparser.ConfigStore)([defaults, dict_type, ...])  | Persister (read, write, delete) for ini configs. |
+| [`ConfigStore`](_autosummary/config2py.s_configparser.html.md#config2py.s_configparser.ConfigStore)(source, \*[, defaults, ...]) | Persister (read, write, delete) for ini configs. |
 
 ### *class* config2py.s_configparser.ConfigReader(source, , on_missing='warn', \*\*kwargs)
 
@@ -2466,7 +2490,7 @@ FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 
 Disabled: `ConfigReader` is read-only.
 
-### *class* config2py.s_configparser.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
+### *class* config2py.s_configparser.ConfigStore(source, \*, defaults=None, dict_type=<class 'dict'>, allow_no_value=False, target_kind=None, follow_symlinks=True, \*\*more_config_parser_kwargs)
 
 Bases: `Store`
 
@@ -2881,15 +2905,15 @@ Various tools
 
 ### Classes
 
-| [`Configs`](_autosummary/config2py.tools.html.md#config2py.tools.Configs)                                |                                                                          |
-|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
-| [`SecureTextFiles`](_autosummary/config2py.tools.html.md#config2py.tools.SecureTextFiles)(\*args[, delete_func]) | A `dol.TextFiles` (one text file per key) whose value files are `0o600`. |
+| [`Configs`](_autosummary/config2py.tools.html.md#config2py.tools.Configs)                                         |                                                                          |
+|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| [`SecureTextFiles`](_autosummary/config2py.tools.html.md#config2py.tools.SecureTextFiles)(\*args[, follow_symlinks, ...]) | A `dol.TextFiles` (one text file per key) whose value files are `0o600`. |
 
 ### config2py.tools.Configs
 
 alias of [`SecureTextFiles`](_autosummary/config2py.tools.html.md#config2py.tools.SecureTextFiles)
 
-### *class* config2py.tools.SecureTextFiles(\*args, delete_func=None, \*\*kwargs)
+### *class* config2py.tools.SecureTextFiles(\*args, follow_symlinks=True, on_unsafe_folder='warn', \*\*kwargs)
 
 Bases: `TextFiles`
 
@@ -2909,10 +2933,11 @@ Like `TextFiles` (and `open`), a value file that is a symlink is followed, and
 its target is the file written (and tightened to `0o600`). That is deliberate:
 it keeps value files symlinked from elsewhere (a dotfiles repo, say) working, and
 in config2py’s own configs folder (`0o700`) only its owner can plant a link
-(see [https://github.com/i2mint/config2py/issues/37](https://github.com/i2mint/config2py/issues/37)). A folder you pass in is not
-checked: if others can write to it, they can plant a link that redirects your
-secrets, so keep such stores in folders only you can write to
-(see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
+(see [https://github.com/i2mint/config2py/issues/37](https://github.com/i2mint/config2py/issues/37)). If others can write to a
+folder you pass in, they can plant a link that redirects your secrets: the store
+warns about such a folder (`on_unsafe_folder`), and `follow_symlinks=False`
+refuses to write through a link (see
+[https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
 `__setitem__` relies on three `dol` internals: `_id_of_key`,
 `store.validate_key` and `_data_of_obj`. `dol` is unpinned, so
@@ -2958,15 +2983,21 @@ if you want to extract exports from only a specific file (env vars are often
 placed in different linked files), or the exports are defined in a string you hold,
 then this simple parser can be useful.
 
-### config2py.tools.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs')
+### config2py.tools.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs', follow_symlinks=True, on_unsafe_folder='warn')
 
 Get the local store of configs.
 
 * **Parameters:**
-  **config_src** – A specification of the local config store. By default:
-  If it’s a directory, it’s assumed to be a folder of text files.
-  If it’s a file, it’s assumed to be an ini or cfg file.
-  If it’s a string, it’s assumed to be an app name, from which to create a folder
+  * **config_src** – A specification of the local config store. By default:
+    If it’s a directory, it’s assumed to be a folder of text files.
+    If it’s a file, it’s assumed to be an ini or cfg file.
+    If it’s a string, it’s assumed to be an app name, from which to create a folder
+  * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether the store may write through a symlink at a value
+    (or ini) file’s path. `False` refuses to
+    (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
+  * **on_unsafe_folder** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (default), `"raise"` or `"ignore"` when
+    a folder store’s root is owned by another user or writable by its group or by
+    others (see `SecureTextFiles`).
 
 #### NOTE
 a directory is only recognized as such if `config_src` contains
@@ -3070,6 +3101,7 @@ Utility functions for config2py.
 | [`always_true`](_autosummary/config2py.util.html.md#config2py.util.always_true)(x)                                    | Function that just returns True.                                                                                                                                                        |
 | [`app_folder_standards`](_autosummary/config2py.util.html.md#config2py.util.app_folder_standards)([os_name])                   | Return the `{folder_kind: FolderSpec}` table for the given `os.name`.                                                                                                                   |
 | [`ask_user_for_input`](_autosummary/config2py.util.html.md#config2py.util.ask_user_for_input)(prompt[, default, ...])        | Ask the user for input, optionally masking, validating and transforming the input.                                                                                                      |
+| [`check_folder_is_private`](_autosummary/config2py.util.html.md#config2py.util.check_folder_is_private)(dirpath, \*[, ...])       | Check `dirpath` with `unsafe_folder_reason`, and act on a problem.                                                                                                                      |
 | [`create_directories`](_autosummary/config2py.util.html.md#config2py.util.create_directories)(dirpath[, max_dirs_to_make])   | Create directories up to a specified limit.                                                                                                                                             |
 | [`ensure_default_configs_folder`](_autosummary/config2py.util.html.md#config2py.util.ensure_default_configs_folder)()                   | Create config2py's own configs folder if needed, and return its path.                                                                                                                   |
 | [`ensure_seeded`](_autosummary/config2py.util.html.md#config2py.util.ensure_seeded)(target, package_name, ...[, ...])   | Copy a bundled seed file to *target* if it does not already exist.                                                                                                                      |
@@ -3083,13 +3115,14 @@ Utility functions for config2py.
 | [`is_not_empty`](_autosummary/config2py.util.html.md#config2py.util.is_not_empty)(x)                                   | Function that returns True if x is not empty.                                                                                                                                           |
 | [`is_repl`](_autosummary/config2py.util.html.md#config2py.util.is_repl)()                                         | Determines if the Python interpreter is running in REPL.                                                                                                                                |
 | [`looks_like_secret`](_autosummary/config2py.util.html.md#config2py.util.looks_like_secret)(text)                           | True if `text` (typically a prompt naming a config key) looks secret.                                                                                                                   |
-| [`owner_only_opener`](_autosummary/config2py.util.html.md#config2py.util.owner_only_opener)(path, flags)                    | An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.                                                                                                                 |
+| [`owner_only_opener`](_autosummary/config2py.util.html.md#config2py.util.owner_only_opener)(path, flags, \*[, ...])         | An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.                                                                                                                 |
 | [`parse_assignments_from_py_source`](_autosummary/config2py.util.html.md#config2py.util.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                                                              |
 | [`secure_makedirs`](_autosummary/config2py.util.html.md#config2py.util.secure_makedirs)(dirpath, \*[, exist_ok])          | `os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.                                                                                                        |
-| [`secure_open`](_autosummary/config2py.util.html.md#config2py.util.secure_open)(path[, mode])                         | `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.                                                                                                                |
+| [`secure_open`](_autosummary/config2py.util.html.md#config2py.util.secure_open)(path[, mode, follow_symlinks])        | `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.                                                                                                                |
 | [`setup_configs_folder`](_autosummary/config2py.util.html.md#config2py.util.setup_configs_folder)(configs_dir, \*[, ...])      | Create `configs_dir` (via `setup_callback`) and return it.                                                                                                                              |
 | [`system_default_for_app_data_folder`](_autosummary/config2py.util.html.md#config2py.util.system_default_for_app_data_folder)([...])         | Get the system default folder for `folder_kind`.                                                                                                                                        |
 | [`tighten_mode`](_autosummary/config2py.util.html.md#config2py.util.tighten_mode)(path, mode, \*[, strict])            | Set `path`'s permission bits to `mode`, only if they differ.                                                                                                                            |
+| [`unsafe_folder_reason`](_autosummary/config2py.util.html.md#config2py.util.unsafe_folder_reason)(dirpath)                     | Why a folder isn't safe to keep secrets in, or `None` if it looks fine.                                                                                                                 |
 
 ### Classes
 
@@ -3273,6 +3306,17 @@ Ask the user for input, optionally masking, validating and transforming the inpu
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 * **Returns:**
   The user’s response (or the default value if the user entered nothing)
+
+### config2py.util.check_folder_is_private(dirpath, , on_unsafe='warn', stacklevel=2)
+
+Check `dirpath` with `unsafe_folder_reason`, and act on a problem.
+
+* **Parameters:**
+  **on_unsafe** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (the default) issues an
+  `InsecureConfigFolderWarning` (once per folder), `"raise"` raises
+  `PermissionError`, `"ignore"` skips the check. Fix a folder you own with
+  `chmod 700`
+  (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
 ### config2py.util.create_directories(dirpath, max_dirs_to_make=None)
 
@@ -3884,9 +3928,17 @@ True
 False
 ```
 
-### config2py.util.owner_only_opener(path, flags)
+### config2py.util.owner_only_opener(path, flags, , follow_symlinks=True)
 
 An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.
+
+With `follow_symlinks=False` a symlink at `path` is refused (`OSError`,
+`ELOOP`) instead of followed – through `O_NOFOLLOW` where the platform has
+it (which only covers the last path component), else by an `islink` check; a file
+with several hard links is refused too, and left untouched.
+Opening a symlink *you* control is fine; one planted by someone else in a folder
+they can write to would redirect (and `chmod`) a file of theirs choosing
+(see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
 - *New* file: the restrictive mode is applied atomically at creation via
   `os.open`, so there is no window where the file briefly exists with the
@@ -3920,7 +3972,7 @@ directory’s mode, so this follows up with `tighten_mode` (which warns, rather
 than raises, if that isn’t possible). Intended for directories that may hold
 config/secret files (see i2mint/config2py#15).
 
-### config2py.util.secure_open(path, mode='w', \*\*open_kwargs)
+### config2py.util.secure_open(path, mode='w', , follow_symlinks=True, \*\*open_kwargs)
 
 `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.
 
@@ -3930,6 +3982,9 @@ Windows). Pass `encoding=` explicitly for text: the default is the locale’s.
 
 The `mode` is honored as is (`"a"` appends; before #35 every mode truncated).
 Any mode, including `"r"`, sets the file’s permissions to `0o600`.
+
+A symlink at `path` is followed (like `open`) unless `follow_symlinks=False`,
+which raises `OSError` instead (see `owner_only_opener`).
 
 Intended for files that may hold secrets (see i2mint/config2py#15).
 
@@ -3984,6 +4039,27 @@ make, for example, `import config2py` crash
 * **Return type:**
   [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
+### config2py.util.unsafe_folder_reason(dirpath)
+
+Why a folder isn’t safe to keep secrets in, or `None` if it looks fine.
+
+Like ssh’s `StrictModes`: a folder owned by someone other than the current user
+(or root), or writable by its group or by others, lets those users plant a
+symlink or a file there to redirect or read what config2py writes. A group the
+current user is alone in does not count as “its group”. Only the folder itself is
+looked at, not its parents. POSIX only (`None` elsewhere); a missing folder is
+`None` too.
+
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
+```pycon
+>>> import tempfile
+>>> with tempfile.TemporaryDirectory() as d:  # created 0o700
+...     unsafe_folder_reason(d)
+>>> unsafe_folder_reason("/no/such/folder")
+```
+
 
 # about-this-build.html.md
 
@@ -3991,7 +4067,7 @@ make, for example, `import config2py` crash
 
 # About this build
 
-This documentation was built on **2026-10-13 05:55 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/1f12f386f793264876e0fa9663f65d9840206211"><code>1f12f38</code></a> on branch <code>master</code>, for **config2py 0.1.63** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 07:09 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/3839f6a16e3015f8d4f6bf487bd427f85a2b1792"><code>3839f6a</code></a> on branch <code>master</code>, for **config2py 0.1.64** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -4000,7 +4076,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/1f12f386f793264876e0fa9663f65d9840206211"><code>1f12f386f793264876e0fa9663f65d9840206211</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/3839f6a16e3015f8d4f6bf487bd427f85a2b1792"><code>3839f6a16e3015f8d4f6bf487bd427f85a2b1792</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4011,9 +4087,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38353755402">38353755402</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38360765259">38360765259</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>1f12f386f793264876e0fa9663f65d9840206211</code> (in the history of the built commit) |
+| Event commit | <code>3839f6a16e3015f8d4f6bf487bd427f85a2b1792</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4038,13 +4114,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.63/">0.1.63</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/config2py/0.1.64/">0.1.64</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 1f12f386f793264876e0fa9663f65d9840206211
+git checkout 3839f6a16e3015f8d4f6bf487bd427f85a2b1792
 pip install "epythet==0.2.14"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

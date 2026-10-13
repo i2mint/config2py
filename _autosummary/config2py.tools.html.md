@@ -12,15 +12,15 @@ Various tools
 
 ### Classes
 
-| [`Configs`](#config2py.tools.Configs)                                |                                                                          |
-|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
-| [`SecureTextFiles`](#config2py.tools.SecureTextFiles)(\*args[, delete_func]) | A `dol.TextFiles` (one text file per key) whose value files are `0o600`. |
+| [`Configs`](#config2py.tools.Configs)                                         |                                                                          |
+|--------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| [`SecureTextFiles`](#config2py.tools.SecureTextFiles)(\*args[, follow_symlinks, ...]) | A `dol.TextFiles` (one text file per key) whose value files are `0o600`. |
 
 ### config2py.tools.Configs
 
 alias of [`SecureTextFiles`](#config2py.tools.SecureTextFiles)
 
-### *class* config2py.tools.SecureTextFiles(\*args, delete_func=None, \*\*kwargs)
+### *class* config2py.tools.SecureTextFiles(\*args, follow_symlinks=True, on_unsafe_folder='warn', \*\*kwargs)
 
 Bases: `TextFiles`
 
@@ -40,10 +40,11 @@ Like `TextFiles` (and `open`), a value file that is a symlink is followed, and
 its target is the file written (and tightened to `0o600`). That is deliberate:
 it keeps value files symlinked from elsewhere (a dotfiles repo, say) working, and
 in config2py’s own configs folder (`0o700`) only its owner can plant a link
-(see [https://github.com/i2mint/config2py/issues/37](https://github.com/i2mint/config2py/issues/37)). A folder you pass in is not
-checked: if others can write to it, they can plant a link that redirects your
-secrets, so keep such stores in folders only you can write to
-(see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
+(see [https://github.com/i2mint/config2py/issues/37](https://github.com/i2mint/config2py/issues/37)). If others can write to a
+folder you pass in, they can plant a link that redirects your secrets: the store
+warns about such a folder (`on_unsafe_folder`), and `follow_symlinks=False`
+refuses to write through a link (see
+[https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
 `__setitem__` relies on three `dol` internals: `_id_of_key`,
 `store.validate_key` and `_data_of_obj`. `dol` is unpinned, so
@@ -89,15 +90,21 @@ if you want to extract exports from only a specific file (env vars are often
 placed in different linked files), or the exports are defined in a string you hold,
 then this simple parser can be useful.
 
-### config2py.tools.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs')
+### config2py.tools.get_configs_local_store(config_src='/home/runner/.config/config2py/configs', , configs_name='configs', follow_symlinks=True, on_unsafe_folder='warn')
 
 Get the local store of configs.
 
 * **Parameters:**
-  **config_src** – A specification of the local config store. By default:
-  If it’s a directory, it’s assumed to be a folder of text files.
-  If it’s a file, it’s assumed to be an ini or cfg file.
-  If it’s a string, it’s assumed to be an app name, from which to create a folder
+  * **config_src** – A specification of the local config store. By default:
+    If it’s a directory, it’s assumed to be a folder of text files.
+    If it’s a file, it’s assumed to be an ini or cfg file.
+    If it’s a string, it’s assumed to be an app name, from which to create a folder
+  * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether the store may write through a symlink at a value
+    (or ini) file’s path. `False` refuses to
+    (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
+  * **on_unsafe_folder** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (default), `"raise"` or `"ignore"` when
+    a folder store’s root is owned by another user or writable by its group or by
+    others (see `SecureTextFiles`).
 
 #### NOTE
 a directory is only recognized as such if `config_src` contains

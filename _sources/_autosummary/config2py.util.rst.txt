@@ -18,6 +18,7 @@ config2py.util
       always_true
       app_folder_standards
       ask_user_for_input
+      check_folder_is_private
       create_directories
       ensure_default_configs_folder
       ensure_seeded
@@ -38,6 +39,7 @@ config2py.util
       setup_configs_folder
       system_default_for_app_data_folder
       tighten_mode
+      unsafe_folder_reason
    
    .. rubric:: Classes
 

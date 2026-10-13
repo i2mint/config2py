@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=681c63c7"></script>
+    <script src="../_static/documentation_options.js?v=a395f30a"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.63" />
+  <meta name="docsearch:version" content="0.1.64" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -421,7 +421,10 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#config2py.errors.ConfigNotFound" title="config2py.errors.ConfigNotFound"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConfigNotFound</span></code></a></p></td>
 <td><p>Raised when a config file is not found.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.errors.MissingConfigFileWarning" title="config2py.errors.MissingConfigFileWarning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.errors.InsecureConfigFolderWarning" title="config2py.errors.InsecureConfigFolderWarning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InsecureConfigFolderWarning</span></code></a></p></td>
+<td><p>A folder used to store config values (which may be secrets) is owned by another user or writable by others, who could plant a symlink or file there to redirect or read those values (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/45">i2mint/config2py#45</a>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.errors.MissingConfigFileWarning" title="config2py.errors.MissingConfigFileWarning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code></a></p></td>
 <td><p>A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a> and /43).</p></td>
 </tr>
 </tbody>
@@ -446,6 +449,15 @@
 <span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.errors.</span></span><span class="sig-name descname"><span class="pre">ConfigNotFound</span></span><a class="reference internal" href="../_modules/config2py/errors.html#ConfigNotFound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.errors.ConfigNotFound" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#config2py.errors.Config2PyError" title="config2py.errors.Config2PyError"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config2PyError</span></code></a></p>
 <p>Raised when a config file is not found.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="config2py.errors.InsecureConfigFolderWarning">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.errors.</span></span><span class="sig-name descname"><span class="pre">InsecureConfigFolderWarning</span></span><a class="reference internal" href="../_modules/config2py/errors.html#InsecureConfigFolderWarning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.errors.InsecureConfigFolderWarning" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#config2py.errors.Config2PyWarning" title="config2py.errors.Config2PyWarning"><code class="xref py py-class docutils literal notranslate"><span class="pre">Config2PyWarning</span></code></a></p>
+<p>A folder used to store config values (which may be secrets) is owned by another
+user or writable by others, who could plant a symlink or file there to redirect or
+read those values (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/45">i2mint/config2py#45</a>).</p>
 </dd></dl>
 
 <dl class="py exception">
@@ -549,6 +561,7 @@ or <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.Config2PyError"><code class="docutils literal notranslate"><span class="pre">Config2PyError</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.Config2PyWarning"><code class="docutils literal notranslate"><span class="pre">Config2PyWarning</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.ConfigNotFound"><code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.InsecureConfigFolderWarning"><code class="docutils literal notranslate"><span class="pre">InsecureConfigFolderWarning</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.MissingConfigFileWarning"><code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.report_missing_config_file"><code class="docutils literal notranslate"><span class="pre">report_missing_config_file()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.unusable_config_file_problem"><code class="docutils literal notranslate"><span class="pre">unusable_config_file_problem()</span></code></a></li>

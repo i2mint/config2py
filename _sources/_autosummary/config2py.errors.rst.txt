@@ -19,5 +19,6 @@ config2py.errors
       Config2PyError
       Config2PyWarning
       ConfigNotFound
+      InsecureConfigFolderWarning
       MissingConfigFileWarning
    

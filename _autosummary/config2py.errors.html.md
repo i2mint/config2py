@@ -11,11 +11,12 @@ Error classes for config2py.
 
 ### Exceptions
 
-| [`Config2PyError`](#config2py.errors.Config2PyError)           | Base class for config2py errors.                                                                                                                                                                                                                  |
-|---------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [`Config2PyWarning`](#config2py.errors.Config2PyWarning)         | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                                                                             |
-| [`ConfigNotFound`](#config2py.errors.ConfigNotFound)           | Raised when a config file is not found.                                                                                                                                                                                                           |
-| [`MissingConfigFileWarning`](#config2py.errors.MissingConfigFileWarning) | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43). |
+| [`Config2PyError`](#config2py.errors.Config2PyError)              | Base class for config2py errors.                                                                                                                                                                                                                                                           |
+|------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`Config2PyWarning`](#config2py.errors.Config2PyWarning)            | Warnings issued by config2py (e.g. permissions it could not tighten).                                                                                                                                                                                                                      |
+| [`ConfigNotFound`](#config2py.errors.ConfigNotFound)              | Raised when a config file is not found.                                                                                                                                                                                                                                                    |
+| [`InsecureConfigFolderWarning`](#config2py.errors.InsecureConfigFolderWarning) | A folder used to store config values (which may be secrets) is owned by another user or writable by others, who could plant a symlink or file there to redirect or read those values (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)). |
+| [`MissingConfigFileWarning`](#config2py.errors.MissingConfigFileWarning)    | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).                                          |
 
 ### *exception* config2py.errors.Config2PyError
 
@@ -34,6 +35,14 @@ Warnings issued by config2py (e.g. permissions it could not tighten).
 Bases: [`Config2PyError`](#config2py.errors.Config2PyError)
 
 Raised when a config file is not found.
+
+### *exception* config2py.errors.InsecureConfigFolderWarning
+
+Bases: [`Config2PyWarning`](#config2py.errors.Config2PyWarning)
+
+A folder used to store config values (which may be secrets) is owned by another
+user or writable by others, who could plant a symlink or file there to redirect or
+read those values (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
 ### *exception* config2py.errors.MissingConfigFileWarning
 

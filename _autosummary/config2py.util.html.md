@@ -14,6 +14,7 @@ Utility functions for config2py.
 | [`always_true`](#config2py.util.always_true)(x)                                    | Function that just returns True.                                                                                                                                                        |
 | [`app_folder_standards`](#config2py.util.app_folder_standards)([os_name])                   | Return the `{folder_kind: FolderSpec}` table for the given `os.name`.                                                                                                                   |
 | [`ask_user_for_input`](#config2py.util.ask_user_for_input)(prompt[, default, ...])        | Ask the user for input, optionally masking, validating and transforming the input.                                                                                                      |
+| [`check_folder_is_private`](#config2py.util.check_folder_is_private)(dirpath, \*[, ...])       | Check `dirpath` with `unsafe_folder_reason`, and act on a problem.                                                                                                                      |
 | [`create_directories`](#config2py.util.create_directories)(dirpath[, max_dirs_to_make])   | Create directories up to a specified limit.                                                                                                                                             |
 | [`ensure_default_configs_folder`](#config2py.util.ensure_default_configs_folder)()                   | Create config2py's own configs folder if needed, and return its path.                                                                                                                   |
 | [`ensure_seeded`](#config2py.util.ensure_seeded)(target, package_name, ...[, ...])   | Copy a bundled seed file to *target* if it does not already exist.                                                                                                                      |
@@ -27,13 +28,14 @@ Utility functions for config2py.
 | [`is_not_empty`](#config2py.util.is_not_empty)(x)                                   | Function that returns True if x is not empty.                                                                                                                                           |
 | [`is_repl`](#config2py.util.is_repl)()                                         | Determines if the Python interpreter is running in REPL.                                                                                                                                |
 | [`looks_like_secret`](#config2py.util.looks_like_secret)(text)                           | True if `text` (typically a prompt naming a config key) looks secret.                                                                                                                   |
-| [`owner_only_opener`](#config2py.util.owner_only_opener)(path, flags)                    | An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.                                                                                                                 |
+| [`owner_only_opener`](#config2py.util.owner_only_opener)(path, flags, \*[, ...])         | An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.                                                                                                                 |
 | [`parse_assignments_from_py_source`](#config2py.util.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                                                              |
 | [`secure_makedirs`](#config2py.util.secure_makedirs)(dirpath, \*[, exist_ok])          | `os.makedirs(dirpath, mode=0o700)`, re-tightening the mode if it already exists.                                                                                                        |
-| [`secure_open`](#config2py.util.secure_open)(path[, mode])                         | `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.                                                                                                                |
+| [`secure_open`](#config2py.util.secure_open)(path[, mode, follow_symlinks])        | `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.                                                                                                                |
 | [`setup_configs_folder`](#config2py.util.setup_configs_folder)(configs_dir, \*[, ...])      | Create `configs_dir` (via `setup_callback`) and return it.                                                                                                                              |
 | [`system_default_for_app_data_folder`](#config2py.util.system_default_for_app_data_folder)([...])         | Get the system default folder for `folder_kind`.                                                                                                                                        |
 | [`tighten_mode`](#config2py.util.tighten_mode)(path, mode, \*[, strict])            | Set `path`'s permission bits to `mode`, only if they differ.                                                                                                                            |
+| [`unsafe_folder_reason`](#config2py.util.unsafe_folder_reason)(dirpath)                     | Why a folder isn't safe to keep secrets in, or `None` if it looks fine.                                                                                                                 |
 
 ### Classes
 
@@ -217,6 +219,17 @@ Ask the user for input, optionally masking, validating and transforming the inpu
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 * **Returns:**
   The user’s response (or the default value if the user entered nothing)
+
+### config2py.util.check_folder_is_private(dirpath, , on_unsafe='warn', stacklevel=2)
+
+Check `dirpath` with `unsafe_folder_reason`, and act on a problem.
+
+* **Parameters:**
+  **on_unsafe** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – `"warn"` (the default) issues an
+  `InsecureConfigFolderWarning` (once per folder), `"raise"` raises
+  `PermissionError`, `"ignore"` skips the check. Fix a folder you own with
+  `chmod 700`
+  (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
 ### config2py.util.create_directories(dirpath, max_dirs_to_make=None)
 
@@ -828,9 +841,17 @@ True
 False
 ```
 
-### config2py.util.owner_only_opener(path, flags)
+### config2py.util.owner_only_opener(path, flags, , follow_symlinks=True)
 
 An `opener` for `open` that creates (or re-tightens) `path` as `0o600`.
+
+With `follow_symlinks=False` a symlink at `path` is refused (`OSError`,
+`ELOOP`) instead of followed – through `O_NOFOLLOW` where the platform has
+it (which only covers the last path component), else by an `islink` check; a file
+with several hard links is refused too, and left untouched.
+Opening a symlink *you* control is fine; one planted by someone else in a folder
+they can write to would redirect (and `chmod`) a file of theirs choosing
+(see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
 
 - *New* file: the restrictive mode is applied atomically at creation via
   `os.open`, so there is no window where the file briefly exists with the
@@ -864,7 +885,7 @@ directory’s mode, so this follows up with `tighten_mode` (which warns, rather
 than raises, if that isn’t possible). Intended for directories that may hold
 config/secret files (see i2mint/config2py#15).
 
-### config2py.util.secure_open(path, mode='w', \*\*open_kwargs)
+### config2py.util.secure_open(path, mode='w', , follow_symlinks=True, \*\*open_kwargs)
 
 `open(path, mode, **open_kwargs)` with owner-only (`0o600`) permissions.
 
@@ -874,6 +895,9 @@ Windows). Pass `encoding=` explicitly for text: the default is the locale’s.
 
 The `mode` is honored as is (`"a"` appends; before #35 every mode truncated).
 Any mode, including `"r"`, sets the file’s permissions to `0o600`.
+
+A symlink at `path` is followed (like `open`) unless `follow_symlinks=False`,
+which raises `OSError` instead (see `owner_only_opener`).
 
 Intended for files that may hold secrets (see i2mint/config2py#15).
 
@@ -927,3 +951,24 @@ make, for example, `import config2py` crash
 
 * **Return type:**
   [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+### config2py.util.unsafe_folder_reason(dirpath)
+
+Why a folder isn’t safe to keep secrets in, or `None` if it looks fine.
+
+Like ssh’s `StrictModes`: a folder owned by someone other than the current user
+(or root), or writable by its group or by others, lets those users plant a
+symlink or a file there to redirect or read what config2py writes. A group the
+current user is alone in does not count as “its group”. Only the folder itself is
+looked at, not its parents. POSIX only (`None` elsewhere); a missing folder is
+`None` too.
+
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
+```pycon
+>>> import tempfile
+>>> with tempfile.TemporaryDirectory() as d:  # created 0o700
+...     unsafe_folder_reason(d)
+>>> unsafe_folder_reason("/no/such/folder")
+```

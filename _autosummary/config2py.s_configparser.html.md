@@ -14,7 +14,7 @@ Data Object Layer for configparser standard lib.
 
 | [`ConfigReader`](#config2py.s_configparser.ConfigReader)(source, \*[, on_missing])   | A KvReader to read config files                  |
 |-------------------------------------------------------------------------------------------|--------------------------------------------------|
-| [`ConfigStore`](#config2py.s_configparser.ConfigStore)([defaults, dict_type, ...])  | Persister (read, write, delete) for ini configs. |
+| [`ConfigStore`](#config2py.s_configparser.ConfigStore)(source, \*[, defaults, ...]) | Persister (read, write, delete) for ini configs. |
 
 ### *class* config2py.s_configparser.ConfigReader(source, , on_missing='warn', \*\*kwargs)
 
@@ -99,7 +99,7 @@ FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 
 Disabled: `ConfigReader` is read-only.
 
-### *class* config2py.s_configparser.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
+### *class* config2py.s_configparser.ConfigStore(source, \*, defaults=None, dict_type=<class 'dict'>, allow_no_value=False, target_kind=None, follow_symlinks=True, \*\*more_config_parser_kwargs)
 
 Bases: `Store`
 

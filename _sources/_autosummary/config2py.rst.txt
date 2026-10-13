@@ -45,6 +45,7 @@
       Config2PyError
       Config2PyWarning
       ConfigNotFound
+      InsecureConfigFolderWarning
       MissingConfigFileWarning
    
 .. rubric:: Modules
