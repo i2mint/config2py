@@ -836,10 +836,19 @@ def _normalized_path(path) -> str:
 
 
 def is_default_configs_folder(path) -> bool:
-    """Whether ``path`` (however spelled) is config2py's own configs folder."""
+    """Whether ``path`` (however spelled) is config2py's own configs folder.
+
+    A string without a path separator (that doesn't start with ``~``) is an app name,
+    not a path (see https://github.com/i2mint/config2py/issues/28), so it is never
+    the default folder, whatever the current directory.
+    """
+    if isinstance(path, str):
+        has_sep = os.path.sep in path or (os.path.altsep and os.path.altsep in path)
+        if not (has_sep or path.startswith("~")):
+            return False
     try:
         return _normalized_path(path) == _normalized_path(_DFLT_CONFIGS_FOLDER_PATH)
-    except TypeError:  # not a path (e.g. a store object)
+    except (TypeError, ValueError, OSError):  # not a path, or no current directory
         return False
 
 
@@ -1077,10 +1086,3 @@ def parse_assignments_from_py_source(
                 if isinstance(target, ast.Name):
                     if name_filt(target.id) and value_filt(node.value):
                         yield target.id, ast.literal_eval(node.value)
-
-
-# What ``from config2py.util import *`` exports: the public names, as without
-# ``__all__``, plus ``DFLT_CONFIG_FOLDER`` (a star import creates that folder).
-__all__ = [name for name in globals() if not name.startswith("_")] + [
-    "DFLT_CONFIG_FOLDER"
-]

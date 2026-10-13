@@ -96,10 +96,9 @@ def test_lazy_instances_keep_their_identities(tmp_path):
 
 
 @posix_only
-@pytest.mark.parametrize("module", ["config2py", "config2py.tools"])
-def test_star_imports_still_export_the_lazy_instances(tmp_path, module):
+def test_star_import_still_exports_the_lazy_instances(tmp_path):
     out = _run_python(
-        f"from {module} import *\n"
+        "from config2py import *\n"
         "print(configs is local_configs, callable(config_getter))\n",
         tmp_path,
     )
@@ -188,3 +187,20 @@ def test_configs_folder_path_without_creating_it(tmp_path, monkeypatch):
     path = get_configs_folder_for_app("app26_test", ensure_exists=False)
     assert path.startswith(str(tmp_path))
     assert _files_under(tmp_path) == []
+
+
+@posix_only
+def test_app_names_work_without_a_current_directory(tmp_path):
+    """Recognizing the default folder must not need ``os.getcwd()``."""
+    _run_python(
+        "import os, tempfile\n"
+        "from config2py import get_configs_local_store, simple_config_getter\n"
+        "from config2py.util import is_default_configs_folder\n"
+        "gone = tempfile.mkdtemp(dir=os.environ['HOME'])\n"
+        "os.chdir(gone); os.rmdir(gone)\n"
+        "get_configs_local_store('app26_test')\n"
+        "simple_config_getter('app26_test', ask_user_if_key_not_found=False)\n"
+        "assert not is_default_configs_folder('configs')\n"
+        "assert not is_default_configs_folder(None)\n",
+        tmp_path,
+    )

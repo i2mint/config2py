@@ -17,6 +17,7 @@ from config2py.util import (
     is_repl,
     DFLT_CONFIGS_NAME,
     secure_open,
+    setup_configs_folder,
 )
 from config2py.base import get_config, user_gettable
 
@@ -50,6 +51,15 @@ class SecureTextFiles(TextFiles):
             raise KeyError(str(error)) from error
 
 
+def _ensure_if_default_configs_folder(src):
+    """Create config2py's own configs folder if ``src`` is it (#26)."""
+    if is_default_configs_folder(src):
+        ensure_default_configs_folder()
+    elif isinstance(src, str) and src == _DFLT_CONFIGS_FOLDER_PATH:
+        # the default bound at import, if ``config2py.util`` was reloaded since
+        setup_configs_folder(src)
+
+
 # TODO: Make it into an open-closed plug-in using routing
 def get_configs_local_store(
     config_src=_DFLT_CONFIGS_FOLDER_PATH, *, configs_name=DFLT_CONFIGS_NAME
@@ -71,8 +81,7 @@ def get_configs_local_store(
     created here, on first use, rather than at import
     (see https://github.com/i2mint/config2py/issues/26).
     """
-    if is_default_configs_folder(config_src):
-        ensure_default_configs_folder()
+    _ensure_if_default_configs_folder(config_src)
     if os.path.sep in config_src and os.path.isdir(config_src):
         # TODO: This was a quick fix to avoid unknowingly making directories in the
         #   wrong place. Broke stuff so leaving this for later.
@@ -132,8 +141,7 @@ def simple_config_getter(
         and returns the central config store
     """
     # TODO: Resource validation block. Refactor! And add tool to config2py if not there
-    if is_default_configs_folder(configs_src):
-        ensure_default_configs_folder()  # it is no longer created at import (#26)
+    _ensure_if_default_configs_folder(configs_src)  # not created at import (#26)
     central_configs = config_store_factory(configs_src)
     sources = []
     if first_look_in_env_vars:
@@ -321,10 +329,3 @@ def source_config_params(*config_params):
         return wrapped_func
 
     return wrapper
-
-
-# What ``from config2py.tools import *`` exports: the public names, as without
-# ``__all__``, plus the lazy instances (a star import builds them).
-__all__ = [
-    name for name in globals() if not name.startswith("_") and name != "threading"
-] + ["DFLT_CONFIG_FOLDER", *_lazy_instance_factories]
