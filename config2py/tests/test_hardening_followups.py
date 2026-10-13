@@ -179,3 +179,27 @@ def test_an_ini_file_in_a_sticky_folder_does_not_warn(tmp_path):
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         get_configs_local_store(str(ini))
+
+
+@posix_only
+def test_a_key_ending_in_a_separator_is_refused_when_not_following(private_dir):
+    store = SecureTextFiles(str(private_dir), follow_symlinks=False)
+    with pytest.raises(KeyError):
+        store["new/"] = "v"
+    assert not (private_dir / "new").exists()
+
+
+@posix_only
+def test_a_traverse_only_subfolder_works_when_not_following(private_dir):
+    sub = private_dir / "sub"
+    sub.mkdir()
+    store = SecureTextFiles(str(private_dir), follow_symlinks=False)
+    store["sub/KEY"] = "v"
+    sub.chmod(0o300)  # search + write, no read
+    try:
+        if os.access(sub, os.R_OK):  # e.g. running as root: can't test this
+            pytest.skip("permissions are not enforced for this user")
+        store["sub/KEY"] = "w"
+    finally:
+        sub.chmod(0o700)
+    assert (sub / "KEY").read_text() == "w"

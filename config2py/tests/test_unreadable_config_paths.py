@@ -91,7 +91,6 @@ def test_a_readable_file_still_does_not_warn(ini_file):
     assert dict(reader["section"]) == {"key": "value"}
 
 
-
 @pytest.mark.skipif(sys.platform == "win32", reason="POSIX devices and pipes")
 def test_extract_exports_does_not_read_a_device_as_silently_empty(tmp_path):
     """An existing, readable path that isn't a regular file (``/dev/null``, a pipe)

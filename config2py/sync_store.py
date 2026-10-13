@@ -74,7 +74,9 @@ def _secure_open(path, mode="w", *, follow_symlinks=True):
         if not follow_symlinks:
             if os.fstat(fd).st_nlink > 1:
                 raise OSError(
-                    errno.EMLINK, "Refusing a file with several hard links", path
+                    errno.EMLINK,
+                    "Refusing a file with several hard links",
+                    os.fspath(path),
                 )
             os.ftruncate(fd, 0)
         if hasattr(os, "fchmod"):  # POSIX only -- Windows ACLs aren't unix mode bits
@@ -464,7 +466,9 @@ class JsonStore(FileStore):
         filepath: Path to JSON file
         key_path: Optional nested path to operate on
         indent: JSON indentation (default: 2)
+        follow_symlinks: See ``FileStore``.
         ensure_ascii: Whether to escape non-ASCII (default: False)
+        follow_symlinks: See ``FileStore``.
         **dump_kwargs: Additional kwargs for json.dumps
     """
 

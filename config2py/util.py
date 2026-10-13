@@ -152,6 +152,8 @@ def secure_open(path, mode="w", *, follow_symlinks=True, beneath=None, **open_kw
 
 def _open_beneath(path, mode, beneath, open_kwargs):
     """``secure_open(path, follow_symlinks=False, beneath=beneath)``."""
+    if os.fspath(path).endswith((os.sep, os.altsep or os.sep)):
+        raise IsADirectoryError(errno.EISDIR, "Not a file path", os.fspath(path))
     relative = os.path.relpath(os.path.abspath(path), os.path.abspath(beneath))
     parts = relative.split(os.sep)
     if parts[0] == os.pardir:
@@ -161,7 +163,7 @@ def _open_beneath(path, mode, beneath, open_kwargs):
         folder = os.path.abspath(beneath)  # no dir_fd (Windows): check, then open
         for part in folders:
             folder = os.path.join(folder, part)
-            if os.path.islink(folder):
+            if os.path.islink(folder) or getattr(os.path, "isjunction", bool)(folder):
                 raise OSError(errno.ELOOP, "Refusing to follow a symlink", folder)
         return open(
             path,
@@ -169,10 +171,10 @@ def _open_beneath(path, mode, beneath, open_kwargs):
             opener=partial(owner_only_opener, follow_symlinks=False),
             **open_kwargs,
         )
-    dir_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | os.O_NOFOLLOW
-    dir_fd = os.open(
-        os.path.abspath(beneath), os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
-    )
+    # O_PATH (Linux): walking a folder needs only search permission, not read
+    dir_flags = getattr(os, "O_PATH", os.O_RDONLY) | os.O_NOFOLLOW
+    dir_flags |= getattr(os, "O_DIRECTORY", 0)
+    dir_fd = os.open(os.path.abspath(beneath), dir_flags & ~os.O_NOFOLLOW)
     try:
         for part in folders:  # ``part`` is a symlink => OSError (ELOOP / ENOTDIR)
             next_fd = os.open(part, dir_flags, dir_fd=dir_fd)

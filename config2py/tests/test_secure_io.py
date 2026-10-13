@@ -21,7 +21,9 @@ from config2py.util import create_directories, secure_makedirs
 from config2py.s_configparser import ConfigStore
 from config2py.sync_store import FileStore
 
-posix_only = pytest.mark.skipif(os.name != "posix", reason="file mode bits are POSIX-only")
+posix_only = pytest.mark.skipif(
+    os.name != "posix", reason="file mode bits are POSIX-only"
+)
 
 
 @posix_only
@@ -110,7 +112,12 @@ def test_existing_managed_configs_folder_is_retightened(tmp_path, monkeypatch):
 def _sandboxed_env(home, **extra):
     """An env whose HOME and XDG folders all point into ``home``, plus ``extra``."""
     env = dict(os.environ, HOME=str(home), **extra)
-    for name in ("XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME", "XDG_STATE_HOME"):
+    for name in (
+        "XDG_CONFIG_HOME",
+        "XDG_DATA_HOME",
+        "XDG_CACHE_HOME",
+        "XDG_STATE_HOME",
+    ):
         env.pop(name, None)
     return env
 
