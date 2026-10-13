@@ -60,13 +60,14 @@ not_found = mk_sentinel("not_found")
 no_default = mk_sentinel("no_default")
 
 
-def owner_only_opener(path, flags, *, follow_symlinks=True):
+def owner_only_opener(path, flags, *, follow_symlinks=True, dir_fd=None):
     """An ``opener`` for ``open`` that creates (or re-tightens) ``path`` as ``0o600``.
 
     With ``follow_symlinks=False`` a symlink at ``path`` is refused (``OSError``,
     ``ELOOP``) instead of followed -- through ``O_NOFOLLOW`` where the platform has
     it (which only covers the last path component), else by an ``islink`` check; a file
-    with several hard links is refused too, and left untouched.
+    with several hard links is refused too, and left untouched. ``dir_fd`` makes
+    ``path`` relative to that open folder (POSIX; see ``secure_open``'s ``beneath``).
     Opening a symlink *you* control is fine; one planted by someone else in a folder
     they can write to would redirect (and ``chmod``) a file of theirs choosing
     (see https://github.com/i2mint/config2py/issues/45).
@@ -83,13 +84,13 @@ def owner_only_opener(path, flags, *, follow_symlinks=True):
     if not follow_symlinks:
         if hasattr(os, "O_NOFOLLOW"):
             flags |= os.O_NOFOLLOW
-        elif os.path.islink(path):  # Windows: no O_NOFOLLOW (check, then open)
+        elif dir_fd is None and os.path.islink(path):  # Windows: no O_NOFOLLOW
             raise OSError(errno.ELOOP, "Refusing to follow a symlink", os.fspath(path))
         # Truncate only after checking for a hardlink (a second name for a file
         # someone else chose), so refusing it leaves the file intact.
         truncate = bool(flags & os.O_TRUNC)
         flags &= ~os.O_TRUNC
-    fd = os.open(path, flags, 0o600)
+    fd = os.open(path, flags, 0o600, dir_fd=dir_fd)
     try:
         if not follow_symlinks:
             if os.fstat(fd).st_nlink > 1:
@@ -110,7 +111,7 @@ def owner_only_opener(path, flags, *, follow_symlinks=True):
     return fd
 
 
-def secure_open(path, mode="w", *, follow_symlinks=True, **open_kwargs):
+def secure_open(path, mode="w", *, follow_symlinks=True, beneath=None, **open_kwargs):
     """``open(path, mode, **open_kwargs)`` with owner-only (``0o600``) permissions.
 
     The file is created (or re-tightened) by ``owner_only_opener``. Being the builtin
@@ -121,7 +122,13 @@ def secure_open(path, mode="w", *, follow_symlinks=True, **open_kwargs):
     Any mode, including ``"r"``, sets the file's permissions to ``0o600``.
 
     A symlink at ``path`` is followed (like ``open``) unless ``follow_symlinks=False``,
-    which raises ``OSError`` instead (see ``owner_only_opener``).
+    which raises ``OSError`` instead (see ``owner_only_opener``). With
+    ``follow_symlinks=False`` and ``beneath=<folder>`` (a folder ``path`` is inside),
+    a symlink at *any* folder between ``beneath`` and the file is refused too (not
+    ``beneath`` itself, nor the folders above it: those are yours to choose). On POSIX
+    each folder is opened relative to its parent with ``O_NOFOLLOW``, so the check
+    can't be raced; elsewhere it is an ``islink`` check
+    (see https://github.com/i2mint/config2py/issues/51).
 
     Intended for files that may hold secrets (see i2mint/config2py#15).
 
@@ -135,10 +142,46 @@ def secure_open(path, mode="w", *, follow_symlinks=True, **open_kwargs):
     '0o600'
     >>> os.remove(path)
     """
-    opener = owner_only_opener
-    if not follow_symlinks:
-        opener = partial(owner_only_opener, follow_symlinks=False)
-    return open(path, mode, opener=opener, **open_kwargs)
+    if follow_symlinks or beneath is None:
+        opener = owner_only_opener
+        if not follow_symlinks:
+            opener = partial(owner_only_opener, follow_symlinks=False)
+        return open(path, mode, opener=opener, **open_kwargs)
+    return _open_beneath(path, mode, beneath, open_kwargs)
+
+
+def _open_beneath(path, mode, beneath, open_kwargs):
+    """``secure_open(path, follow_symlinks=False, beneath=beneath)``."""
+    relative = os.path.relpath(os.path.abspath(path), os.path.abspath(beneath))
+    parts = relative.split(os.sep)
+    if parts[0] == os.pardir:
+        raise ValueError(f"{os.fspath(path)!r} is not inside {os.fspath(beneath)!r}")
+    *folders, name = parts
+    if not (hasattr(os, "O_NOFOLLOW") and os.open in os.supports_dir_fd):
+        folder = os.path.abspath(beneath)  # no dir_fd (Windows): check, then open
+        for part in folders:
+            folder = os.path.join(folder, part)
+            if os.path.islink(folder):
+                raise OSError(errno.ELOOP, "Refusing to follow a symlink", folder)
+        return open(
+            path,
+            mode,
+            opener=partial(owner_only_opener, follow_symlinks=False),
+            **open_kwargs,
+        )
+    dir_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | os.O_NOFOLLOW
+    dir_fd = os.open(
+        os.path.abspath(beneath), os.O_RDONLY | getattr(os, "O_DIRECTORY", 0)
+    )
+    try:
+        for part in folders:  # ``part`` is a symlink => OSError (ELOOP / ENOTDIR)
+            next_fd = os.open(part, dir_flags, dir_fd=dir_fd)
+            os.close(dir_fd)
+            dir_fd = next_fd
+        opener = partial(owner_only_opener, follow_symlinks=False, dir_fd=dir_fd)
+        return open(name, mode, opener=opener, **open_kwargs)
+    finally:
+        os.close(dir_fd)
 
 
 def tighten_mode(path, mode, *, strict=False) -> bool:
@@ -210,19 +253,57 @@ def _is_private_group(gid: int) -> bool:
         return False
 
 
-def unsafe_folder_reason(dirpath) -> Optional[str]:
+def _loose_permissions(st) -> bool:
+    """True if ``st`` (a folder's ``os.stat``) is writable by its group or by others."""
+    return bool(
+        st.st_mode & stat.S_IWOTH
+        or (st.st_mode & stat.S_IWGRP and not _is_private_group(st.st_gid))
+    )
+
+
+def _ancestor_problem(dirpath) -> Optional[str]:
+    """The first ancestor of ``dirpath`` (symlinks resolved) that another user could
+    use to swap the folder for a symlink, or ``None``. Like ssh's ``StrictModes``,
+    which checks every folder up to the root. A sticky folder (``/tmp``) is fine
+    even if others can write to it: they can't rename or remove entries they
+    don't own."""
+    ancestor = os.path.realpath(dirpath)
+    while True:
+        parent = os.path.dirname(ancestor)
+        if parent == ancestor:
+            return None
+        ancestor = parent
+        try:
+            st = os.stat(ancestor)
+        except OSError:
+            continue
+        problems = []
+        if st.st_uid not in (os.geteuid(), 0):
+            problems.append("owned by another user")
+        if _loose_permissions(st) and not st.st_mode & stat.S_ISVTX:
+            problems.append("writable by its group or by others")
+        if problems:
+            return f"under {ancestor!r}, which is {' and '.join(problems)}"
+
+
+def unsafe_folder_reason(
+    dirpath, *, check_ancestors: bool = True, ignore_sticky: bool = False
+) -> Optional[str]:
     """Why a folder isn't safe to keep secrets in, or ``None`` if it looks fine.
 
     Like ssh's ``StrictModes``: a folder owned by someone other than the current user
     (or root), or writable by its group or by others, lets those users plant a
     symlink or a file there to redirect or read what config2py writes. A group the
-    current user is alone in does not count as "its group". Only the folder itself is
-    looked at, not its parents. POSIX only (``None`` elsewhere); a missing folder is
-    ``None`` too.
+    current user is alone in does not count as "its group". With ``check_ancestors``
+    (the default) the folders above it are checked the same way (those who can write
+    to a parent can swap the folder itself for a symlink), except that a sticky
+    parent, such as ``/tmp``, is fine. ``ignore_sticky`` also accepts the folder
+    itself being sticky (as ``/tmp`` is), for a file kept directly in a shared folder.
+    POSIX only (``None`` elsewhere); a missing folder is ``None`` too.
 
     >>> import tempfile
     >>> with tempfile.TemporaryDirectory() as d:  # created 0o700
-    ...     unsafe_folder_reason(d)
+    ...     unsafe_folder_reason(d, check_ancestors=False)
     >>> unsafe_folder_reason("/no/such/folder")
     """
     if not hasattr(os, "geteuid"):
@@ -234,14 +315,21 @@ def unsafe_folder_reason(dirpath) -> Optional[str]:
     problems = []
     if st.st_uid not in (os.geteuid(), 0):
         problems.append("owned by another user")
-    if st.st_mode & stat.S_IWOTH or (
-        st.st_mode & stat.S_IWGRP and not _is_private_group(st.st_gid)
-    ):
+    if _loose_permissions(st) and not (ignore_sticky and st.st_mode & stat.S_ISVTX):
         problems.append("writable by its group or by others")
-    return " and ".join(problems) or None
+    if problems:
+        return " and ".join(problems)
+    return _ancestor_problem(dirpath) if check_ancestors else None
 
 
-def check_folder_is_private(dirpath, *, on_unsafe: str = "warn", stacklevel: int = 2):
+def check_folder_is_private(
+    dirpath,
+    *,
+    on_unsafe: str = "warn",
+    stacklevel: int = 2,
+    check_ancestors: bool = True,
+    ignore_sticky: bool = False,
+):
     """Check ``dirpath`` with ``unsafe_folder_reason``, and act on a problem.
 
     :param on_unsafe: ``"warn"`` (the default) issues an
@@ -249,6 +337,8 @@ def check_folder_is_private(dirpath, *, on_unsafe: str = "warn", stacklevel: int
         ``PermissionError``, ``"ignore"`` skips the check. Fix a folder you own with
         ``chmod 700``
         (see https://github.com/i2mint/config2py/issues/45).
+    :param check_ancestors: Also check the folders above ``dirpath``.
+    :param ignore_sticky: Accept ``dirpath`` itself being sticky (like ``/tmp``).
     """
     from config2py.errors import InsecureConfigFolderWarning, validate_on_missing
 
@@ -258,7 +348,9 @@ def check_folder_is_private(dirpath, *, on_unsafe: str = "warn", stacklevel: int
     key = os.path.realpath(dirpath)
     if on_unsafe == "warn" and key in _warned_unsafe_folders:
         return  # warned once already: don't look again
-    reason = unsafe_folder_reason(dirpath)
+    reason = unsafe_folder_reason(
+        dirpath, check_ancestors=check_ancestors, ignore_sticky=ignore_sticky
+    )
     if reason is None:
         return
     msg = (

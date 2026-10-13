@@ -64,12 +64,13 @@ class SecureTextFiles(TextFiles):
     ):
         """
         :param follow_symlinks: ``False`` refuses (``KeyError``) to write through a
-            symlink at a value file's path (``O_NOFOLLOW``: only the last path
-            component is checked). ``True`` (the default) keeps ``open``'s behavior.
+            symlink at a value file's path, or at any sub-folder of a key such as
+            ``sub/KEY`` (the root folder itself may be one: it is your choice).
+            ``True`` (the default) keeps ``open``'s behavior.
         :param on_unsafe_folder: What to do if the root folder is owned by another
             user or writable by its group or by others (as ssh's ``StrictModes``
-            checks): ``"warn"`` (the default, once per folder), ``"raise"``
-            (``PermissionError``) or ``"ignore"``.
+            checks, folders above it included): ``"warn"`` (the default, once per
+            folder), ``"raise"`` (``PermissionError``) or ``"ignore"``.
         """
         super().__init__(*args, **kwargs)
         self._follow_symlinks = follow_symlinks
@@ -94,7 +95,12 @@ class SecureTextFiles(TextFiles):
         self.store.validate_key(path)
         try:
             data = self._data_of_obj(v).encode(self.encoding)
-            with secure_open(path, "wb", follow_symlinks=self._follow_symlinks) as fp:
+            with secure_open(
+                path,
+                "wb",
+                follow_symlinks=self._follow_symlinks,
+                beneath=self.rootdir,
+            ) as fp:
                 fp.write(data)
         except UnicodeError as error:
             # Its text quotes the offending character of the (possibly secret) value.
@@ -133,7 +139,8 @@ def get_configs_local_store(
         (or ini) file's path. ``False`` refuses to
         (see https://github.com/i2mint/config2py/issues/45).
     :param on_unsafe_folder: ``"warn"`` (default), ``"raise"`` or ``"ignore"`` when
-        a folder store's root is owned by another user or writable by its group or by
+        a folder store's root (or, for an ini file, its folder; a sticky one like
+        ``/tmp`` is fine) is owned by another user or writable by its group or by
         others (see ``SecureTextFiles``).
 
     Note: a directory is only recognized as such if ``config_src`` contains
@@ -171,6 +178,13 @@ def get_configs_local_store(
         if extension in {".ini", ".cfg"}:
             from config2py.s_configparser import ConfigStore
 
+            # A file in a shared sticky folder (``/tmp``) can't be swapped by others
+            check_folder_is_private(
+                os.path.dirname(os.path.abspath(config_src)),
+                on_unsafe=on_unsafe_folder,
+                stacklevel=2,
+                ignore_sticky=True,
+            )
             return ConfigStore(config_src, follow_symlinks=follow_symlinks)
     elif os.path.sep not in config_src:  # it's just a string
         # TODO: is "get" the right word, since it makes the folder too

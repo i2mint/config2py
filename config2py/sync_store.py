@@ -31,6 +31,7 @@ from typing import Callable, Any, Iterator, Union, Tuple, Optional, Dict
 from collections.abc import MutableMapping
 from pathlib import Path
 import json
+import errno
 import os
 from functools import reduce
 
@@ -46,7 +47,7 @@ __all__ = [
 # TODO: Do we want to use more stuff from config2py, dol, etc.?
 
 
-def _secure_open(path, mode="w"):
+def _secure_open(path, mode="w", *, follow_symlinks=True):
     """Open ``path`` for writing with owner-only (``0o600``) permissions.
 
     Local copy of ``config2py.util.secure_open`` -- this module deliberately has no
@@ -56,12 +57,32 @@ def _secure_open(path, mode="w"):
     Re-tightens via ``os.fchmod`` on the open fd (not just relying on ``os.open``'s
     ``mode`` argument, which POSIX only consults when a *new* file is created -- a
     pre-existing, already-loose file would otherwise keep its old permissions).
+
+    With ``follow_symlinks=False`` a symlink at ``path`` (the last component only) and a
+    file with several hard links are refused (``OSError``), the file left untouched;
+    see i2mint/config2py#45 and #51.
     """
     flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    if not follow_symlinks:
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        elif os.path.islink(path):  # Windows: no O_NOFOLLOW (check, then open)
+            raise OSError(errno.ELOOP, "Refusing to follow a symlink", os.fspath(path))
+        flags &= ~os.O_TRUNC  # truncate only after the hard link check
     fd = os.open(path, flags, 0o600)
-    if hasattr(os, "fchmod"):  # POSIX only -- Windows ACLs aren't unix mode bits
-        os.fchmod(fd, 0o600)
-    return os.fdopen(fd, mode)
+    try:
+        if not follow_symlinks:
+            if os.fstat(fd).st_nlink > 1:
+                raise OSError(
+                    errno.EMLINK, "Refusing a file with several hard links", path
+                )
+            os.ftruncate(fd, 0)
+        if hasattr(os, "fchmod"):  # POSIX only -- Windows ACLs aren't unix mode bits
+            os.fchmod(fd, 0o600)
+        return os.fdopen(fd, mode)
+    except BaseException:
+        os.close(fd)
+        raise
 
 
 # Type aliases
@@ -292,6 +313,9 @@ class FileStore(SyncStore):
             for missing files. If None, FileNotFoundError is raised for missing files.
         create_key_path_content: Optional factory callable that returns initial content
             for missing key_path. If None, KeyError is raised for missing key paths.
+        follow_symlinks: If False, writing refuses (``OSError``) to go through a symlink
+            at ``filepath`` (or a file with several hard links), instead of writing
+            to its target (see i2mint/config2py#45). Default True, like ``open``.
 
     Example:
 
@@ -334,9 +358,11 @@ class FileStore(SyncStore):
         dump_kwargs: Optional[dict] = None,
         create_file_content: Optional[Callable[[], dict]] = None,
         create_key_path_content: Optional[Callable[[], Any]] = None,
+        follow_symlinks: bool = True,
     ):
         """See the class docstring for each parameter."""
         self.filepath = Path(filepath).expanduser()
+        self.follow_symlinks = follow_symlinks
         self.key_path = _normalize_key_path(key_path)
         self.mode = mode
         self.dump_kwargs = dump_kwargs or {}
@@ -373,7 +399,9 @@ class FileStore(SyncStore):
             self.filepath.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
             content = self._file_dumper(initial_data, **self.dump_kwargs)
             write_mode = "w" if "b" not in self.mode else "wb"
-            with _secure_open(self.filepath, write_mode) as f:
+            with _secure_open(
+                self.filepath, write_mode, follow_symlinks=self.follow_symlinks
+            ) as f:
                 f.write(content)
             data = initial_data
         else:
@@ -396,7 +424,9 @@ class FileStore(SyncStore):
             # Write back to file
             content = self._file_dumper(full_data, **self.dump_kwargs)
             write_mode = "w" if "b" not in self.mode else "wb"
-            with _secure_open(self.filepath, write_mode) as f:
+            with _secure_open(
+                self.filepath, write_mode, follow_symlinks=self.follow_symlinks
+            ) as f:
                 f.write(content)
 
             return initial_content
@@ -414,7 +444,9 @@ class FileStore(SyncStore):
             content = self._file_dumper(full_data, **self.dump_kwargs)
 
         write_mode = "w" if "b" not in self.mode else "wb"
-        with _secure_open(self.filepath, write_mode) as f:
+        with _secure_open(
+            self.filepath, write_mode, follow_symlinks=self.follow_symlinks
+        ) as f:
             f.write(content)
 
     def __repr__(self):
@@ -443,6 +475,7 @@ class JsonStore(FileStore):
         key_path: KeyPath = None,
         indent: int = 2,
         ensure_ascii: bool = False,
+        follow_symlinks: bool = True,
         **dump_kwargs,
     ):
         """See the class docstring for each parameter."""
@@ -456,4 +489,5 @@ class JsonStore(FileStore):
             key_path=key_path,
             mode="r",
             dump_kwargs=dump_kwargs,
+            follow_symlinks=follow_symlinks,
         )
