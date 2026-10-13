@@ -537,7 +537,9 @@ def system_default_for_app_data_folder(
     if standards is None:
         standards = APP_FOLDER_STANDARDS
     env_var, default, subpath = standards[folder_kind]
-    root = os.path.expanduser(os.getenv(env_var, default))
+    # An empty variable counts as unset (XDG Base Directory spec; i2mint/config2py#38):
+    # ``os.getenv(env_var, default)`` would return "" and root us at the cwd.
+    root = os.path.expanduser(os.getenv(env_var) or default)
     return os.path.join(root, subpath) if subpath else root
 
 
@@ -608,11 +610,11 @@ def get_app_rootdir(
         >>> get_app_rootdir('cache')  # doctest: +SKIP
         '/Users/.../.cache'
     """
-    folderpath = os.getenv(
-        getattr(config2py_env_var, folder_kind),  # Check config2py custom env var first
-        system_default_for_app_data_folder(
-            folder_kind
-        ),  # ... if not, use system default
+    folderpath = (
+        # Check config2py custom env var first (an empty one counts as unset, #38)
+        os.getenv(getattr(config2py_env_var, folder_kind))
+        # ... if not, use system default
+        or system_default_for_app_data_folder(folder_kind)
     )
 
     return process_path(folderpath, ensure_dir_exists=ensure_exists)

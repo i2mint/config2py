@@ -141,3 +141,20 @@ def test_config2py_override_wins_on_every_platform(folder_kind, tmp_path, monkey
     monkeypatch.setenv(getattr(config2py_env_var, folder_kind), str(target))
     rootdir = get_app_rootdir(folder_kind, ensure_exists=True)
     assert os.path.realpath(rootdir) == os.path.realpath(str(target))
+
+
+@pytest.mark.parametrize("folder_kind", FOLDER_KINDS)
+def test_empty_env_var_counts_as_unset(folder_kind, tmp_path, monkeypatch):
+    """An empty ``XDG_*`` (or ``CONFIG2PY_<KIND>_DIR``) is treated as unset, not as the
+    cwd (i2mint/config2py#38; the XDG spec says so for ``XDG_*``)."""
+    monkeypatch.chdir(tmp_path)
+    env_var, default, subpath = APP_FOLDER_STANDARDS[folder_kind]
+    monkeypatch.delenv(env_var, raising=False)
+    expected = system_default_for_app_data_folder(folder_kind)
+    monkeypatch.setenv(env_var, "")
+    resolved = system_default_for_app_data_folder(folder_kind)
+    assert resolved == expected
+    assert os.path.isabs(resolved)
+    monkeypatch.setenv(getattr(config2py_env_var, folder_kind), "")
+    assert os.path.realpath(get_app_rootdir(folder_kind)) == os.path.realpath(expected)
+    assert list(tmp_path.iterdir()) == []  # nothing was created under the cwd
