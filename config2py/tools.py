@@ -11,11 +11,12 @@ from i2 import Sig
 from config2py.util import (
     envvar,
     get_configs_folder_for_app,
-    DFLT_CONFIG_FOLDER,
+    _DFLT_CONFIGS_FOLDER_PATH,  # the path of DFLT_CONFIG_FOLDER, not created (#26)
+    ensure_default_configs_folder,
+    is_default_configs_folder,
     is_repl,
     DFLT_CONFIGS_NAME,
     secure_open,
-    setup_configs_folder,
 )
 from config2py.base import get_config, user_gettable
 
@@ -51,7 +52,7 @@ class SecureTextFiles(TextFiles):
 
 # TODO: Make it into an open-closed plug-in using routing
 def get_configs_local_store(
-    config_src=DFLT_CONFIG_FOLDER, *, configs_name=DFLT_CONFIGS_NAME
+    config_src=_DFLT_CONFIGS_FOLDER_PATH, *, configs_name=DFLT_CONFIGS_NAME
 ):
     """Get the local store of configs.
 
@@ -70,8 +71,8 @@ def get_configs_local_store(
     created here, on first use, rather than at import
     (see https://github.com/i2mint/config2py/issues/26).
     """
-    if config_src == DFLT_CONFIG_FOLDER:
-        setup_configs_folder(DFLT_CONFIG_FOLDER)
+    if is_default_configs_folder(config_src):
+        ensure_default_configs_folder()
     if os.path.sep in config_src and os.path.isdir(config_src):
         # TODO: This was a quick fix to avoid unknowingly making directories in the
         #   wrong place. Broke stuff so leaving this for later.
@@ -106,7 +107,7 @@ def get_configs_local_store(
 
 # TODO: Need tests and demo
 def simple_config_getter(
-    configs_src: str = DFLT_CONFIG_FOLDER,
+    configs_src: str = _DFLT_CONFIGS_FOLDER_PATH,
     *,
     first_look_in_env_vars: bool = True,
     ask_user_if_key_not_found: bool = None,
@@ -131,6 +132,8 @@ def simple_config_getter(
         and returns the central config store
     """
     # TODO: Resource validation block. Refactor! And add tool to config2py if not there
+    if is_default_configs_folder(configs_src):
+        ensure_default_configs_folder()  # it is no longer created at import (#26)
     central_configs = config_store_factory(configs_src)
     sources = []
     if first_look_in_env_vars:
@@ -171,24 +174,36 @@ Configs = SecureTextFiles  # TODO: deprecate
 _lazy_instance_factories = {
     "config_getter": lambda: simple_config_getter(),
     "local_configs": lambda: get_configs_local_store(),
-    "configs": lambda: __getattr__("local_configs"),  # backwards compatibility alias
+    # backwards compatibility alias: the same object as ``local_configs``
+    "configs": lambda: _lazy_instance("local_configs"),
 }
+_lazy_instances = {}  # the built instances, unaffected by patching the attributes
 _lazy_instances_lock = threading.RLock()
+
+
+def _lazy_instance(name):
+    with _lazy_instances_lock:  # so concurrent first accesses get the same object
+        if name not in _lazy_instances:
+            _lazy_instances[name] = _lazy_instance_factories[name]()
+        return _lazy_instances[name]
 
 
 def __getattr__(name):
     """Build, cache and return the lazy instances ``config_getter``,
-    ``local_configs`` and ``configs`` (PEP 562)."""
+    ``local_configs`` and ``configs`` (PEP 562).
+
+    Building them creates the default configs folder, so an ``OSError`` (say, a
+    read-only HOME) surfaces on first access, which ``import config2py`` used to raise.
+    They are deliberately left out of ``dir()``, so that tools that ``getattr`` every
+    listed name (``pydoc``, doctest collection) don't create the folder.
+    """
+    if name == "DFLT_CONFIG_FOLDER":  # re-exported from util, which creates it
+        return ensure_default_configs_folder()
     if name not in _lazy_instance_factories:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-    with _lazy_instances_lock:  # so concurrent first accesses get the same object
-        if name not in globals():
-            globals()[name] = _lazy_instance_factories[name]()
-        return globals()[name]
-
-
-def __dir__():
-    return sorted(set(globals()) | set(_lazy_instance_factories))
+    value = _lazy_instance(name)
+    globals()[name] = value  # later accesses are ordinary attribute lookups
+    return value
 
 
 # --------------------------------------------------------------------
@@ -306,3 +321,10 @@ def source_config_params(*config_params):
         return wrapped_func
 
     return wrapper
+
+
+# What ``from config2py.tools import *`` exports: the public names, as without
+# ``__all__``, plus the lazy instances (a star import builds them).
+__all__ = [
+    name for name in globals() if not name.startswith("_") and name != "threading"
+] + ["DFLT_CONFIG_FOLDER", *_lazy_instance_factories]

@@ -38,5 +38,8 @@ def __getattr__(name):
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
-def __dir__():
-    return sorted(set(globals()) | set(_lazy_tools_attrs))
+# What ``from config2py import *`` exports: the public names, as without ``__all__``,
+# plus the lazy instances (a star import builds them).
+__all__ = [name for name in globals() if not name.startswith("_")] + list(
+    _lazy_tools_attrs
+)

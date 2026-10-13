@@ -52,8 +52,10 @@ def test_importing_config2py_creates_nothing(tmp_path):
         "import config2py\n"
         "from config2py import codecs, s_configparser, sync_store, tools, util, base\n"
         "from config2py import ConfigStore, get_config, simple_config_getter, Configs\n"
-        "from config2py.util import DFLT_CONFIG_FOLDER\n"
-        "dir(config2py)\n",
+        "import inspect, pydoc\n"
+        "for module in (config2py, tools, util):\n"
+        "    inspect.getmembers(module)  # as pydoc and doctest collection do\n"
+        "pydoc.render_doc(config2py)\n",
         tmp_path,
     )
     assert _files_under(tmp_path) == []
@@ -86,12 +88,50 @@ def test_lazy_instances_keep_their_identities(tmp_path):
         "    config_getter.configs is not local_configs,  # as before #26\n"
         "    isinstance(local_configs, SecureTextFiles),\n"
         "    'config_getter' in vars(tools),  # cached as an ordinary attribute\n"
-        "    {'config_getter', 'local_configs', 'configs'} <= set(dir(config2py)),\n"
         "]\n"
         "print(checks)\n",
         tmp_path,
     )
-    assert out.strip() == str([True] * 7)
+    assert out.strip() == str([True] * 6)
+
+
+@posix_only
+@pytest.mark.parametrize("module", ["config2py", "config2py.tools"])
+def test_star_imports_still_export_the_lazy_instances(tmp_path, module):
+    out = _run_python(
+        f"from {module} import *\n"
+        "print(configs is local_configs, callable(config_getter))\n",
+        tmp_path,
+    )
+    assert out.strip() == "True True"
+
+
+@posix_only
+@pytest.mark.parametrize("module", ["config2py.util", "config2py.tools"])
+def test_reading_dflt_config_folder_creates_it(tmp_path, module):
+    """As importing did before #26, so code that lists or writes into it works."""
+    _run_python(
+        "import os\n"
+        f"from {module} import DFLT_CONFIG_FOLDER\n"
+        "assert os.path.isdir(DFLT_CONFIG_FOLDER), DFLT_CONFIG_FOLDER\n"
+        "with open(os.path.join(DFLT_CONFIG_FOLDER, 'KEY'), 'w') as f:\n"
+        "    f.write('v')\n",
+        tmp_path,
+    )
+
+
+@posix_only
+def test_patching_local_configs_does_not_leak_into_configs(tmp_path):
+    out = _run_python(
+        "from unittest import mock\n"
+        "import config2py\n"
+        "with mock.patch('config2py.tools.local_configs', {'MOCK': 1}):\n"
+        "    pass\n"
+        "print(config2py.configs is config2py.local_configs, "
+        "'MOCK' in config2py.configs)\n",
+        tmp_path,
+    )
+    assert out.strip() == "True False"
 
 
 @posix_only
@@ -105,6 +145,25 @@ def test_default_store_works_when_its_folder_is_missing(tmp_path):
         "assert get_configs_local_store(DFLT_CONFIG_FOLDER)['KEY'] == 'value'\n"
         "get = simple_config_getter(ask_user_if_key_not_found=False)\n"
         "assert get('KEY') == 'value'\n",
+        tmp_path,
+    )
+
+
+@posix_only
+def test_other_spellings_of_the_default_folder_create_it(tmp_path):
+    _run_python(
+        "import os, shutil\n"
+        "from dol import TextFiles\n"
+        "from config2py import get_configs_local_store, simple_config_getter\n"
+        "from config2py.util import _DFLT_CONFIGS_FOLDER_PATH as path\n"
+        "for spelling in (path + os.sep, os.path.join(path, '.')):\n"
+        "    shutil.rmtree(path, ignore_errors=True)\n"
+        "    get_configs_local_store(spelling)['KEY'] = 'v'\n"
+        "shutil.rmtree(path, ignore_errors=True)\n"
+        "# a custom store factory also gets an existing folder\n"
+        "get = simple_config_getter(config_store_factory=TextFiles,\n"
+        "                           ask_user_if_key_not_found=False)\n"
+        "get.configs['KEY'] = 'v'\n",
         tmp_path,
     )
 

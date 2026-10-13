@@ -541,7 +541,6 @@ def system_default_for_app_data_folder(
     return os.path.join(root, subpath) if subpath else root
 
 
-DFLT_CONFIG_FOLDER = system_default_for_app_data_folder("config")
 DFLT_DATA_FOLDER = system_default_for_app_data_folder("data")
 DFLT_CACHE_FOLDER = system_default_for_app_data_folder("cache")
 DFLT_STATE_FOLDER = system_default_for_app_data_folder("state")
@@ -824,10 +823,44 @@ get_configs_directory_for_app = (
     get_configs_folder_for_app  # backwards compatibility alias
 )
 
-# The path of config2py's own configs folder. It is computed at import but only
-# created on first use (see ``config2py.tools``), so ``import config2py`` writes
-# nothing to disk (see https://github.com/i2mint/config2py/issues/26).
-DFLT_CONFIG_FOLDER = get_configs_folder_for_app(ensure_exists=False)
+# The path of config2py's own configs folder. It is computed at import, but the folder
+# is only created on first use, so ``import config2py`` writes nothing to disk
+# (see https://github.com/i2mint/config2py/issues/26). Reading ``DFLT_CONFIG_FOLDER``
+# (served by the module ``__getattr__`` below) creates it, as importing did before.
+_DFLT_CONFIGS_FOLDER_PATH = get_configs_folder_for_app(ensure_exists=False)
+_dflt_configs_folder_is_set_up = False
+
+
+def _normalized_path(path) -> str:
+    return os.path.normcase(os.path.normpath(os.path.abspath(os.path.expanduser(path))))
+
+
+def is_default_configs_folder(path) -> bool:
+    """Whether ``path`` (however spelled) is config2py's own configs folder."""
+    try:
+        return _normalized_path(path) == _normalized_path(_DFLT_CONFIGS_FOLDER_PATH)
+    except TypeError:  # not a path (e.g. a store object)
+        return False
+
+
+def ensure_default_configs_folder() -> str:
+    """Create config2py's own configs folder if needed, and return its path.
+
+    The folder's modes are re-tightened (see ``setup_configs_folder``) once per
+    process; a folder deleted in the meantime is re-created.
+    """
+    global _dflt_configs_folder_is_set_up
+    path = _DFLT_CONFIGS_FOLDER_PATH
+    if not (_dflt_configs_folder_is_set_up and os.path.isdir(path)):
+        setup_configs_folder(path)
+        _dflt_configs_folder_is_set_up = True
+    return path
+
+
+def __getattr__(name):
+    if name == "DFLT_CONFIG_FOLDER":
+        return ensure_default_configs_folder()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 # ---------------------------------------------------------------------------
@@ -1044,3 +1077,10 @@ def parse_assignments_from_py_source(
                 if isinstance(target, ast.Name):
                     if name_filt(target.id) and value_filt(node.value):
                         yield target.id, ast.literal_eval(node.value)
+
+
+# What ``from config2py.util import *`` exports: the public names, as without
+# ``__all__``, plus ``DFLT_CONFIG_FOLDER`` (a star import creates that folder).
+__all__ = [name for name in globals() if not name.startswith("_")] + [
+    "DFLT_CONFIG_FOLDER"
+]
