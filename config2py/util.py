@@ -566,7 +566,11 @@ def ask_user_for_input(
     masking_is_inferred = callable(mask_input)
     if masking_is_inferred:
         mask_input = bool(mask_input(prompt))
-    if masking_toggle_str is not None and default and masking_toggle_str in ("", default):
+    if (
+        masking_toggle_str is not None
+        and default
+        and masking_toggle_str in ("", default)
+    ):
         raise ValueError(
             f"masking_toggle_str={masking_toggle_str!r} can't be used with "
             f"default={default!r}: entering it would toggle masking, so the default "
