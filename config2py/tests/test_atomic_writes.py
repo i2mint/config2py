@@ -58,3 +58,36 @@ def test_orphan_temp_file_is_not_listed_as_a_key(tmp_path):
     store["A"] = "1"
     (tmp_path / ".A.deadbeef.tmp").write_text("x")
     assert list(store) == ["A"]
+
+
+def _orphan(folder, name, age):
+    orphan = folder / f".{name}.deadbeef.tmp"
+    orphan.write_bytes(b"x")
+    old = os.stat(orphan).st_mtime - age
+    os.utime(orphan, (old, old))
+    return orphan
+
+
+def test_stale_temp_leftovers_are_swept_fresh_ones_kept(tmp_path):
+    stale, fresh = _orphan(tmp_path, "k", 7200), tmp_path / ".k.cafe0000.tmp"
+    fresh.write_bytes(b"x")
+    atomic_write_bytes(tmp_path / "k", b"v")
+    assert not stale.exists() and fresh.exists()
+
+
+def test_sync_store_writes_are_atomic_and_sweep_leftovers(tmp_path, monkeypatch):
+    from config2py.sync_store import JsonStore
+
+    path = tmp_path / "c.json"
+    path.write_text('{"a": 1}')
+    stale = _orphan(tmp_path, "c.json", 7200)
+    store = JsonStore(path)
+    monkeypatch.setattr(os, "replace", lambda *a: (_ for _ in ()).throw(OSError("x")))
+    with pytest.raises(OSError):
+        store["b"] = 2
+    monkeypatch.undo()
+    assert path.read_text() == '{"a": 1}'  # old content intact, not truncated
+    store["b"] = 2
+    assert JsonStore(path)["b"] == 2
+    assert not stale.exists()
+    assert sorted(os.listdir(tmp_path)) == ["c.json"]
