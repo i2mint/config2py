@@ -524,7 +524,9 @@ Ask the user for input, optionally masking, validating and transforming the inpu
     uses `getpass.getpass`, which reads the terminal even when stdin is piped.
   * **masking_toggle_str** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – String to toggle input masking. If `None`, no toggle
     is available. If not `None` (a common choice is the empty string)
-    the user can enter this string to toggle input masking.
+    the user can enter this string to toggle input masking (so it can’t be an
+    answer: a toggle string that is empty or equal to a non-empty `default`
+    raises `ValueError`, since the default could not then be accepted).
   * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)) – Function to apply to the user’s response before returning it.
     This can be used to validate the response, for example.
 * **Return type:**

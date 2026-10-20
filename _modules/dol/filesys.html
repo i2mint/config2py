@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=3b2b39e9"></script>
+    <script src="../../_static/documentation_options.js?v=9f53bdf0"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -411,7 +411,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.70" />
+  <meta name="docsearch:version" content="0.1.71" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -736,6 +736,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    ['hello.txt']</span>
 <span class="sd">"""</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">locale</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">stat</span> <span class="k">as</span> <span class="n">os_stat</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">partial</span>
@@ -1474,11 +1475,17 @@ window.runMermaid = runMermaid;</script>
     <span class="p">)</span>
     <span class="c1"># _make_dirs_if_missing = False</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">delete_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">delete_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">write_open_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize FileBytesPersister.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            *args: Passed to parent classes</span>
+<span class="sd">            write_open_kwargs: Optional mapping of keyword arguments for the builtin</span>
+<span class="sd">                ``open`` used to write each value file, merged over the class</span>
+<span class="sd">                defaults (``_write_open_kwargs``). Use it for e.g. ``opener=`` (to</span>
+<span class="sd">                create files with ``0o600``), ``encoding=``, ``errors=`` or</span>
+<span class="sd">                ``newline=``. If you override ``mode``, also override the keys that go with</span>
+<span class="sd">                it (a binary mode takes no ``encoding``/``errors``/``newline``).</span>
 <span class="sd">            delete_func: Optional custom deletion function.</span>
 <span class="sd">                If None, uses class default (safe trash with fallback).</span>
 <span class="sd">                Common options from dol.trash:</span>
@@ -1500,6 +1507,21 @@ window.runMermaid = runMermaid;</script>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">delete_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_delete_func</span> <span class="o">=</span> <span class="n">delete_func</span>
+        <span class="k">if</span> <span class="n">write_open_kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_write_open_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_open_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">write_open_kwargs</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_value_before_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Raise if ``v`` can't be written, *before* the file is opened (and so</span>
+<span class="sd">        truncated). The bytes persister has nothing to check; see</span>
+<span class="sd">        ``FileStringPersister``."""</span>
+        <span class="k">if</span> <span class="s2">"b"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_open_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mode"</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">memoryview</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"a bytes-like object is required, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2">"</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
     <span class="nd">@validate_key_and_raise_key_error_on_exception</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
@@ -1507,6 +1529,7 @@ window.runMermaid = runMermaid;</script>
         <span class="c1"># if self._make_dirs_if_missing:</span>
         <span class="c1">#     dirname = os.path.dirname(k)</span>
         <span class="c1">#     os.makedirs(dirname, exist_ok=True)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_value_before_open</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_open_kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 
@@ -1548,6 +1571,13 @@ window.runMermaid = runMermaid;</script>
     <span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_locale_encoding</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""The encoding ``open`` falls back to in text mode (``locale.getencoding`` where</span>
+<span class="sd">    available, i.e. Python &gt;= 3.11)."""</span>
+    <span class="n">get</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">locale</span><span class="p">,</span> <span class="s2">"getencoding"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get</span><span class="p">()</span> <span class="k">if</span> <span class="n">get</span> <span class="k">else</span> <span class="n">locale</span><span class="o">.</span><span class="n">getpreferredencoding</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+
 <span class="k">class</span><span class="w"> </span><span class="nc">FileStringPersister</span><span class="p">(</span><span class="n">FileBytesPersister</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Persister mapping file paths to the files' text (files opened in text mode).</span>
 
@@ -1565,6 +1595,23 @@ window.runMermaid = runMermaid;</script>
     <span class="n">_write_open_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
         <span class="n">FileBytesPersister</span><span class="o">.</span><span class="n">_write_open_kwargs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"wt"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
     <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_value_before_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Encode ``v`` (and discard the result) before the file is opened.</span>
+
+<span class="sd">        Opening for writing truncates, so a value that can't be encoded (a lone</span>
+<span class="sd">        surrogate under utf-8, a non-``str``) used to leave the existing file</span>
+<span class="sd">        emptied before raising. Now it raises with the file untouched.</span>
+<span class="sd">        """</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_open_kwargs</span>
+        <span class="k">if</span> <span class="s2">"b"</span> <span class="ow">in</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mode"</span><span class="p">,</span> <span class="s2">"wt"</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"write() argument must be str, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"encoding"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_locale_encoding</span><span class="p">(),</span>
+            <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"errors"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"strict"</span><span class="p">,</span>
+        <span class="p">)</span>
 
 
 <span class="nd">@with_relative_paths</span><span class="p">(</span><span class="n">prefix_attr</span><span class="o">=</span><span class="s2">"rootdir"</span><span class="p">)</span>

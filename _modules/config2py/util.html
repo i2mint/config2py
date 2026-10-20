@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=3b2b39e9"></script>
+    <script src="../../_static/documentation_options.js?v=9f53bdf0"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -411,7 +411,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.70" />
+  <meta name="docsearch:version" content="0.1.71" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -1308,7 +1308,9 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        uses ``getpass.getpass``, which reads the terminal even when stdin is piped.</span>
 <span class="sd">    :param masking_toggle_str: String to toggle input masking. If ``None``, no toggle</span>
 <span class="sd">        is available. If not ``None`` (a common choice is the empty string)</span>
-<span class="sd">        the user can enter this string to toggle input masking.</span>
+<span class="sd">        the user can enter this string to toggle input masking (so it can't be an</span>
+<span class="sd">        answer: a toggle string that is empty or equal to a non-empty ``default``</span>
+<span class="sd">        raises ``ValueError``, since the default could not then be accepted).</span>
 <span class="sd">    :param egress: Function to apply to the user's response before returning it.</span>
 <span class="sd">        This can be used to validate the response, for example.</span>
 <span class="sd">    :return: The user's response (or the default value if the user entered nothing)</span>
@@ -1316,37 +1318,44 @@ window.runMermaid = runMermaid;</script>
     <span class="n">masking_is_inferred</span> <span class="o">=</span> <span class="nb">callable</span><span class="p">(</span><span class="n">mask_input</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">masking_is_inferred</span><span class="p">:</span>
         <span class="n">mask_input</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">mask_input</span><span class="p">(</span><span class="n">prompt</span><span class="p">))</span>
-    <span class="n">_original_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+    <span class="k">if</span> <span class="n">masking_toggle_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">default</span> <span class="ow">and</span> <span class="n">masking_toggle_str</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"masking_toggle_str=</span><span class="si">{</span><span class="n">masking_toggle_str</span><span class="si">!r}</span><span class="s2"> can't be used with "</span>
+            <span class="sa">f</span><span class="s2">"default=</span><span class="si">{</span><span class="n">default</span><span class="si">!r}</span><span class="s2">: entering it would toggle masking, so the default "</span>
+            <span class="s2">"could not be accepted that way. Choose another toggle string."</span>
+        <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">prompt</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">" "</span><span class="p">):</span>  <span class="c1"># an empty prompt has no last character (#30)</span>
         <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">+</span> <span class="s2">" "</span>
-    <span class="k">if</span> <span class="n">masking_toggle_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
-            <span class="sa">f</span><span class="s2">"    (Input masking is </span><span class="si">{</span><span class="s1">'ENABLED'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">mask_input</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'DISABLED'</span><span class="si">}</span><span class="s2">. "</span>
-            <span class="sa">f</span><span class="s2">"Enter '</span><span class="si">{</span><span class="n">masking_toggle_str</span><span class="si">}</span><span class="s2">' (without quotes) to toggle input masking)</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="p">)</span>
-    <span class="k">if</span> <span class="n">default</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">""</span><span class="p">}:</span>
-        <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">" [</span><span class="si">{</span><span class="n">default</span><span class="si">}</span><span class="s2">]: "</span>
-    <span class="k">if</span> <span class="n">mask_input</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">masking_is_inferred</span><span class="p">:</span>
-            <span class="n">_prompt_func</span> <span class="o">=</span> <span class="n">_inferred_masked_prompt_func</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">_prompt_func</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">_prompt_func</span> <span class="o">=</span> <span class="nb">input</span>
 
-    <span class="n">response</span> <span class="o">=</span> <span class="n">_prompt_func</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prompt_func_for</span><span class="p">(</span><span class="n">masked</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">masked</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">input</span>
+        <span class="k">if</span> <span class="n">masking_is_inferred</span><span class="p">:</span>  <span class="c1"># (stays so across toggles: piped stdin is still piped)</span>
+            <span class="k">return</span> <span class="n">_inferred_masked_prompt_func</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span>
 
-    <span class="k">if</span> <span class="n">masking_toggle_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">response</span> <span class="o">==</span> <span class="n">masking_toggle_str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">ask_user_for_input</span><span class="p">(</span>
-            <span class="n">_original_prompt</span><span class="p">,</span>
-            <span class="n">default</span><span class="p">,</span>
-            <span class="n">mask_input</span><span class="o">=</span><span class="ow">not</span> <span class="n">mask_input</span><span class="p">,</span>
-            <span class="n">masking_toggle_str</span><span class="o">=</span><span class="n">masking_toggle_str</span><span class="p">,</span>
-            <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">,</span>  <span class="c1"># the toggled answer is the answer: it gets the egress too (#30)</span>
-        <span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  <span class="c1"># (a loop, so that any number of toggles is fine)</span>
+        <span class="n">_prompt_func</span> <span class="o">=</span> <span class="n">_prompt_func_for</span><span class="p">(</span><span class="n">mask_input</span><span class="p">)</span>
+        <span class="n">full_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+        <span class="k">if</span> <span class="n">masking_toggle_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># (what the banner says is what happens: piped stdin is read with input)</span>
+            <span class="n">is_masked</span> <span class="o">=</span> <span class="n">mask_input</span> <span class="ow">and</span> <span class="n">_prompt_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">input</span>
+            <span class="n">full_prompt</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">full_prompt</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"    (Input masking is </span><span class="si">{</span><span class="s1">'ENABLED'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">is_masked</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'DISABLED'</span><span class="si">}</span><span class="s2">. "</span>
+                <span class="sa">f</span><span class="s2">"Enter '</span><span class="si">{</span><span class="n">masking_toggle_str</span><span class="si">}</span><span class="s2">' (without quotes) to toggle input "</span>
+                <span class="s2">"masking)</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">""</span><span class="p">}:</span>
+            <span class="n">full_prompt</span> <span class="o">=</span> <span class="n">full_prompt</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">" [</span><span class="si">{</span><span class="n">default</span><span class="si">}</span><span class="s2">]: "</span>
 
-    <span class="k">return</span> <span class="n">egress</span><span class="p">(</span><span class="n">response</span> <span class="ow">or</span> <span class="n">default</span><span class="p">)</span></div>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">_prompt_func</span><span class="p">(</span><span class="n">full_prompt</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">masking_toggle_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">response</span> <span class="o">==</span> <span class="n">masking_toggle_str</span><span class="p">:</span>
+            <span class="n">mask_input</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">mask_input</span>
+            <span class="k">continue</span>
+        <span class="c1"># the answer, toggled or not, gets the egress (#30)</span>
+        <span class="k">return</span> <span class="n">egress</span><span class="p">(</span><span class="n">response</span> <span class="ow">or</span> <span class="n">default</span><span class="p">)</span></div>
 
 
 

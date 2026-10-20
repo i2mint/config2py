@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=3b2b39e9"></script>
+    <script src="../_static/documentation_options.js?v=9f53bdf0"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -58,7 +58,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.70" />
+  <meta name="docsearch:version" content="0.1.71" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -712,7 +712,9 @@ stdin, as it was before this default existed. An explicit <code class="docutils 
 uses <code class="docutils literal notranslate"><span class="pre">getpass.getpass</span></code>, which reads the terminal even when stdin is piped.</p></li>
 <li><p><strong>masking_toggle_str</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – String to toggle input masking. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, no toggle
 is available. If not <code class="docutils literal notranslate"><span class="pre">None</span></code> (a common choice is the empty string)
-the user can enter this string to toggle input masking.</p></li>
+the user can enter this string to toggle input masking (so it can’t be an
+answer: a toggle string that is empty or equal to a non-empty <code class="docutils literal notranslate"><span class="pre">default</span></code>
+raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>, since the default could not then be accepted).</p></li>
 <li><p><strong>egress</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a></span>) – Function to apply to the user’s response before returning it.
 This can be used to validate the response, for example.</p></li>
 </ul>
