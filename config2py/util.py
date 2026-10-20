@@ -556,7 +556,9 @@ def ask_user_for_input(
         uses ``getpass.getpass``, which reads the terminal even when stdin is piped.
     :param masking_toggle_str: String to toggle input masking. If ``None``, no toggle
         is available. If not ``None`` (a common choice is the empty string)
-        the user can enter this string to toggle input masking.
+        the user can enter this string to toggle input masking (so it can't be an
+        answer: a toggle string that is empty or equal to a non-empty ``default``
+        raises ``ValueError``, since the default could not then be accepted).
     :param egress: Function to apply to the user's response before returning it.
         This can be used to validate the response, for example.
     :return: The user's response (or the default value if the user entered nothing)
@@ -564,37 +566,44 @@ def ask_user_for_input(
     masking_is_inferred = callable(mask_input)
     if masking_is_inferred:
         mask_input = bool(mask_input(prompt))
-    _original_prompt = prompt
+    if masking_toggle_str is not None and default and masking_toggle_str in ("", default):
+        raise ValueError(
+            f"masking_toggle_str={masking_toggle_str!r} can't be used with "
+            f"default={default!r}: entering it would toggle masking, so the default "
+            "could not be accepted that way. Choose another toggle string."
+        )
     if not prompt.endswith(" "):  # an empty prompt has no last character (#30)
         prompt = prompt + " "
-    if masking_toggle_str is not None:
-        prompt = (
-            f"{prompt}\n"
-            f"    (Input masking is {'ENABLED' if mask_input else 'DISABLED'}. "
-            f"Enter '{masking_toggle_str}' (without quotes) to toggle input masking)\n"
-        )
-    if default not in {""}:
-        prompt = prompt + f" [{default}]: "
-    if mask_input:
-        if masking_is_inferred:
-            _prompt_func = _inferred_masked_prompt_func()
-        else:
-            _prompt_func = getpass.getpass
-    else:
-        _prompt_func = input
 
-    response = _prompt_func(prompt)
+    def _prompt_func_for(masked):
+        if not masked:
+            return input
+        if masking_is_inferred:  # (stays so across toggles: piped stdin is still piped)
+            return _inferred_masked_prompt_func()
+        return getpass.getpass
 
-    if masking_toggle_str is not None and response == masking_toggle_str:
-        return ask_user_for_input(
-            _original_prompt,
-            default,
-            mask_input=not mask_input,
-            masking_toggle_str=masking_toggle_str,
-            egress=egress,  # the toggled answer is the answer: it gets the egress too (#30)
-        )
+    while True:  # (a loop, so that any number of toggles is fine)
+        _prompt_func = _prompt_func_for(mask_input)
+        full_prompt = prompt
+        if masking_toggle_str is not None:
+            # (what the banner says is what happens: piped stdin is read with input)
+            is_masked = mask_input and _prompt_func is not input
+            full_prompt = (
+                f"{full_prompt}\n"
+                f"    (Input masking is {'ENABLED' if is_masked else 'DISABLED'}. "
+                f"Enter '{masking_toggle_str}' (without quotes) to toggle input "
+                "masking)\n"
+            )
+        if default not in {""}:
+            full_prompt = full_prompt + f" [{default}]: "
 
-    return egress(response or default)
+        response = _prompt_func(full_prompt)
+
+        if masking_toggle_str is not None and response == masking_toggle_str:
+            mask_input = not mask_input
+            continue
+        # the answer, toggled or not, gets the egress (#30)
+        return egress(response or default)
 
 
 # Note: Could be made more efficient, but this is good enough (for now)
