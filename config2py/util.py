@@ -232,7 +232,9 @@ def atomic_write_bytes(path, data: bytes, *, follow_symlinks=True, beneath=None)
             tmp_path,
             "xb",
             follow_symlinks=False,
-            beneath=None if follow_symlinks else beneath,  # a followed link may leave it
+            beneath=None
+            if follow_symlinks
+            else beneath,  # a followed link may leave it
         ) as fp:
             fp.write(data)
             fp.flush()
