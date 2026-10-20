@@ -14,6 +14,7 @@ Utility functions for config2py.
 | [`always_true`](#config2py.util.always_true)(x)                                    | Function that just returns True.                                                                                                                                                        |
 | [`app_folder_standards`](#config2py.util.app_folder_standards)([os_name])                   | Return the `{folder_kind: FolderSpec}` table for the given `os.name`.                                                                                                                   |
 | [`ask_user_for_input`](#config2py.util.ask_user_for_input)(prompt[, default, ...])        | Ask the user for input, optionally masking, validating and transforming the input.                                                                                                      |
+| [`atomic_write_bytes`](#config2py.util.atomic_write_bytes)(path, data, \*[, ...])         | Write `data` to `path` (`0o600`) so a crash never leaves it empty or partial.                                                                                                           |
 | [`check_folder_is_private`](#config2py.util.check_folder_is_private)(dirpath, \*[, ...])       | Check `dirpath` with `unsafe_folder_reason`, and act on a problem.                                                                                                                      |
 | [`create_directories`](#config2py.util.create_directories)(dirpath[, max_dirs_to_make])   | Create directories up to a specified limit.                                                                                                                                             |
 | [`ensure_default_configs_folder`](#config2py.util.ensure_default_configs_folder)()                   | Create config2py's own configs folder if needed, and return its path.                                                                                                                   |
@@ -118,9 +119,6 @@ plain substring match on the whole prompt, so `KEYS_DIR` or `AUTHOR` also
 match, as would a custom prompt template mentioning “key”. Pass an explicit
 `mask_input` (or your own predicate) when that matters.
 
-* **Return type:**
-  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
-
 ```pycon
 >>> looks_like_secret("Enter a value for OPENAI_API_KEY: ")
 True
@@ -129,6 +127,9 @@ True
 >>> looks_like_secret("Enter a value for DATA_DIR: ")
 False
 ```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### *class* config2py.util.EnvironmentVariables
 
@@ -221,6 +222,34 @@ Ask the user for input, optionally masking, validating and transforming the inpu
 * **Returns:**
   The user’s response (or the default value if the user entered nothing)
 
+### config2py.util.atomic_write_bytes(path, data, , follow_symlinks=True, beneath=None)
+
+Write `data` to `path` (`0o600`) so a crash never leaves it empty or partial.
+
+The bytes go to a `0o600` temp file in the same folder (through `secure_open`,
+with the same `follow_symlinks` and `beneath` guarantees), are `fsync`-ed, and
+then `os.replace` d over `path`: atomic on POSIX, and on Windows within one
+volume. On any failure the temp file is removed and the old content is untouched
+(see [https://github.com/i2mint/config2py/issues/52](https://github.com/i2mint/config2py/issues/52)).
+
+With `follow_symlinks=False` a symlink at `path` is refused (never replaced), as
+is a file with several hard links (the rename would silently detach them). With
+`follow_symlinks=True` a symlink is followed: its target is what gets replaced,
+and hard links to the old file are detached (the new file is a new inode). The
+symlink check is by path, so a symlink planted in the instant before the rename is
+replaced rather than written through: no data leaks, but the guarantee is not
+race-proof. The temp file is hidden (`.<name>.<hex>.tmp`), so key listings skip it.
+
+```pycon
+>>> import tempfile, os
+>>> path = os.path.join(tempfile.mkdtemp(), "secret")
+>>> atomic_write_bytes(path, b"one"); atomic_write_bytes(path, b"two")
+>>> open(path, "rb").read()
+b'two'
+>>> os.listdir(os.path.dirname(path))
+['secret']
+```
+
 ### config2py.util.check_folder_is_private(dirpath, , on_unsafe='warn', stacklevel=2, check_ancestors=True, ignore_sticky=False)
 
 Check `dirpath` with `unsafe_folder_reason`, and act on a problem.
@@ -294,7 +323,7 @@ and writes its bytes to *target*.  If *target* already exists, this is
 a no-op (user edits are preserved).
 
 * **Parameters:**
-  * **target** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Destination path for the seeded file.
+  * **target** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Destination path for the seeded file.
   * **package_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Top-level Python package that ships the seed data.
   * **seed_subpackage** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Subdirectory inside `_seed_data` (e.g. `"resources"`
     or `"config"`).
@@ -402,16 +431,16 @@ explanations for each folder kind:
   state = logs/history, runtime = process files.
 
 * **Parameters:**
-  * **app_name** – Name of the app for which the directory is needed.
-  * **setup_callback** – A callback function to initialize the directory.
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the directory is needed.
+  * **setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to initialize the directory.
     Default is \_default_folder_setup.
-  * **ensure_exists** – Whether to ensure the directory exists.
-  * **folder_kind** – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to ensure the directory exists.
+  * **folder_kind** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'config'`, `'data'`, `'cache'`, `'state'`, `'runtime'`]) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
     Default is ‘config’ for backward compatibility.
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -480,16 +509,16 @@ explanations for each folder kind:
   state = logs/history, runtime = process files.
 
 * **Parameters:**
-  * **app_name** – Name of the app for which the directory is needed.
-  * **setup_callback** – A callback function to initialize the directory.
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the directory is needed.
+  * **setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to initialize the directory.
     Default is \_default_folder_setup.
-  * **ensure_exists** – Whether to ensure the directory exists.
-  * **folder_kind** – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to ensure the directory exists.
+  * **folder_kind** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'config'`, `'data'`, `'cache'`, `'state'`, `'runtime'`]) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
     Default is ‘config’ for backward compatibility.
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -558,16 +587,16 @@ explanations for each folder kind:
   state = logs/history, runtime = process files.
 
 * **Parameters:**
-  * **app_name** – Name of the app for which the directory is needed.
-  * **setup_callback** – A callback function to initialize the directory.
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the directory is needed.
+  * **setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to initialize the directory.
     Default is \_default_folder_setup.
-  * **ensure_exists** – Whether to ensure the directory exists.
-  * **folder_kind** – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to ensure the directory exists.
+  * **folder_kind** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'config'`, `'data'`, `'cache'`, `'state'`, `'runtime'`]) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
     Default is ‘config’ for backward compatibility.
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -831,9 +860,6 @@ containing `os.sep` or `os.altsep` (so `"C:/work/configs"` on Windows) is a
 path. A bare name such as `"configs"` is not, whether or not a directory of that
 name exists (see [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28)).
 
-* **Return type:**
-  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
-
 ```pycon
 >>> looks_like_path("my_app")
 False
@@ -843,6 +869,9 @@ True
 >>> looks_like_path(Path("configs"))
 True
 ```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### config2py.util.looks_like_secret(text)
 
@@ -854,9 +883,6 @@ plain substring match on the whole prompt, so `KEYS_DIR` or `AUTHOR` also
 match, as would a custom prompt template mentioning “key”. Pass an explicit
 `mask_input` (or your own predicate) when that matters.
 
-* **Return type:**
-  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
-
 ```pycon
 >>> looks_like_secret("Enter a value for OPENAI_API_KEY: ")
 True
@@ -865,6 +891,9 @@ True
 >>> looks_like_secret("Enter a value for DATA_DIR: ")
 False
 ```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### config2py.util.owner_only_opener(path, flags, , follow_symlinks=True, dir_fd=None)
 
@@ -999,12 +1028,12 @@ owned by another user. `ignore_sticky` also accepts the folder
 itself being sticky (as `/tmp` is), for a file kept directly in a shared folder.
 POSIX only (`None` elsewhere); a missing folder is `None` too.
 
-* **Return type:**
-  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
-
 ```pycon
 >>> import tempfile
 >>> with tempfile.TemporaryDirectory() as d:  # created 0o700
 ...     unsafe_folder_reason(d, check_ancestors=False)
 >>> unsafe_folder_reason("/no/such/folder")
 ```
+
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]

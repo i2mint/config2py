@@ -5,19 +5,19 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-10-13 22:37 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/da96f8a38c1a1d88e63aee358710459ffc570c15"><code>da96f8a</code></a> on branch <code>master</code>, for **config2py 0.1.68** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-20 02:50 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/6f45d04db75483309ad9469bbdf6bd0e2f6d3db7"><code>6f45d04</code></a> on branch <code>master</code>, for **config2py 0.1.69** (from <code>pyproject.toml</code>).
 
 :::{warning}
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.68) is behind the latest release on PyPI (0.1.69): `pip install config2py` gives newer code than these docs describe.
+- The documented version (0.1.69) is behind the latest release on PyPI (0.1.70): `pip install config2py` gives newer code than these docs describe.
 :::
 
 ## Source
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/i2mint/config2py/commit/da96f8a38c1a1d88e63aee358710459ffc570c15"><code>da96f8a38c1a1d88e63aee358710459ffc570c15</code></a> |
+| Commit | <a href="https://github.com/i2mint/config2py/commit/6f45d04db75483309ad9469bbdf6bd0e2f6d3db7"><code>6f45d04db75483309ad9469bbdf6bd0e2f6d3db7</code></a> |
 | Branch | <code>master</code> |
 | Tags at this commit | none |
 | Working tree | clean |
@@ -28,16 +28,16 @@ The documentation and the package may be misaligned:
 | | |
 |---|---|
 | Repository | <code>i2mint/config2py</code> |
-| Run | <a href="https://github.com/i2mint/config2py/actions/runs/38478886531">38478886531</a> |
+| Run | <a href="https://github.com/i2mint/config2py/actions/runs/39360962504">39360962504</a> |
 | Ref | <code>refs/heads/master</code> |
-| Event commit | <code>da96f8a38c1a1d88e63aee358710459ffc570c15</code> (in the history of the built commit) |
+| Event commit | <code>6f45d04db75483309ad9469bbdf6bd0e2f6d3db7</code> (in the history of the built commit) |
 
 ## Tools
 
 | | |
 |---|---|
-| epythet | 0.2.17 |
-| Sphinx | 9.1.0 |
+| epythet | 0.2.18 |
+| Sphinx | 9.1.1 |
 | docutils | 0.22.4 |
 | Python | 3.12.15 |
 
@@ -55,14 +55,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.69/">0.1.69</a>, newer than the documented version (0.1.68).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.70/">0.1.70</a>, newer than the documented version (0.1.69).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout da96f8a38c1a1d88e63aee358710459ffc570c15
-pip install "epythet==0.2.17"
+git checkout 6f45d04db75483309ad9469bbdf6bd0e2f6d3db7
+pip install "epythet==0.2.18"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

@@ -51,8 +51,8 @@ A SyncStore backed by a file with automatic format detection.
 Supports nested key paths for working with specific sections.
 
 * **Parameters:**
-  * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to file (supports ~ expansion)
-  * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
+  * **filepath** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to file (supports ~ expansion)
+  * **key_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
   * **loader** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]]) – Optional custom loader (auto-detected from extension if not provided)
   * **dumper** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – Optional custom dumper (auto-detected from extension if not provided)
   * **mode** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File read mode (‘r’ for text, ‘rb’ for binary)
@@ -105,8 +105,8 @@ A FileStore specialized for JSON files.
 Pre-configured with json.loads/dumps and sensible defaults.
 
 * **Parameters:**
-  * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
-  * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
+  * **filepath** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
+  * **key_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
   * **indent** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – JSON indentation (default: 2)
   * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – See `FileStore`.
   * **ensure_ascii** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to escape non-ASCII (default: False)

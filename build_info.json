@@ -1,37 +1,37 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-13T22:37:38Z",
+  "built_at": "2026-10-20T02:50:46Z",
   "package": {
     "name": "config2py",
-    "version": "0.1.68",
+    "version": "0.1.69",
     "display_name": "config2py",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "da96f8a38c1a1d88e63aee358710459ffc570c15",
-    "short_commit": "da96f8a",
+    "commit": "6f45d04db75483309ad9469bbdf6bd0e2f6d3db7",
+    "short_commit": "6f45d04",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/config2py",
-    "commit_url": "https://github.com/i2mint/config2py/commit/da96f8a38c1a1d88e63aee358710459ffc570c15",
+    "commit_url": "https://github.com/i2mint/config2py/commit/6f45d04db75483309ad9469bbdf6bd0e2f6d3db7",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/config2py",
-    "sha": "da96f8a38c1a1d88e63aee358710459ffc570c15",
+    "sha": "6f45d04db75483309ad9469bbdf6bd0e2f6d3db7",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "38478886531",
-    "run_url": "https://github.com/i2mint/config2py/actions/runs/38478886531",
+    "run_id": "39360962504",
+    "run_url": "https://github.com/i2mint/config2py/actions/runs/39360962504",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.17",
-    "sphinx": "9.1.0",
+    "epythet": "0.2.18",
+    "sphinx": "9.1.1",
     "docutils": "0.22.4",
     "python": "3.12.15"
   },
@@ -56,20 +56,20 @@
   },
   "site": {
     "modules_documented": 8,
-    "objects_documented": 132
+    "objects_documented": 133
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.69",
+    "latest": "0.1.70",
     "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout da96f8a38c1a1d88e63aee358710459ffc570c15\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout 6f45d04db75483309ad9469bbdf6bd0e2f6d3db7\npip install \"epythet==0.2.18\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": false,
     "notes": [
-      "The documented version (0.1.68) is behind the latest release on PyPI (0.1.69): `pip install config2py` gives newer code than these docs describe."
+      "The documented version (0.1.69) is behind the latest release on PyPI (0.1.70): `pip install config2py` gives newer code than these docs describe."
     ]
   }
 }

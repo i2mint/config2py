@@ -18,6 +18,7 @@ config2py.util
       always_true
       app_folder_standards
       ask_user_for_input
+      atomic_write_bytes
       check_folder_is_private
       create_directories
       ensure_default_configs_folder

@@ -12,11 +12,11 @@ Data Object Layer for configparser standard lib.
 
 ### Classes
 
-| [`ConfigReader`](#config2py.s_configparser.ConfigReader)(source, \*[, on_missing])   | A KvReader to read config files                  |
-|-------------------------------------------------------------------------------------------|--------------------------------------------------|
-| [`ConfigStore`](#config2py.s_configparser.ConfigStore)(source, \*[, defaults, ...]) | Persister (read, write, delete) for ini configs. |
+| [`ConfigReader`](#config2py.s_configparser.ConfigReader)([defaults, dict_type, ...])   | A KvReader to read config files                  |
+|---------------------------------------------------------------------------------------------|--------------------------------------------------|
+| [`ConfigStore`](#config2py.s_configparser.ConfigStore)([defaults, dict_type, ...])    | Persister (read, write, delete) for ini configs. |
 
-### *class* config2py.s_configparser.ConfigReader(source, , on_missing='warn', \*\*kwargs)
+### *class* config2py.s_configparser.ConfigReader(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
 Bases: [`ConfigStore`](#config2py.s_configparser.ConfigStore)
 
@@ -99,7 +99,7 @@ FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 
 Disabled: `ConfigReader` is read-only.
 
-### *class* config2py.s_configparser.ConfigStore(source, \*, defaults=None, dict_type=<class 'dict'>, allow_no_value=False, target_kind=None, follow_symlinks=True, \*\*more_config_parser_kwargs)
+### *class* config2py.s_configparser.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
 Bases: `Store`
 
@@ -282,9 +282,6 @@ the serialized data without touching disk.
 
 Transform newline-separated string values into actual list of strings (assuming that intent)
 
-* **Return type:**
-  [`Generator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator)
-
 ```pycon
 >>> section_from_ini = {
 ...     'name': 'aspyre',
@@ -295,12 +292,12 @@ Transform newline-separated string values into actual list of strings (assuming 
 {'name': 'aspyre', 'keywords': ['documentation', 'packaging', 'publishing']}
 ```
 
+* **Return type:**
+  [`Generator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator)
+
 ### config2py.s_configparser.preprocess_ini_section_items(items)
 
 Transform list values into newline-separated strings, in view of writing the value to a ini formatted section
-
-* **Return type:**
-  [`Generator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator)
 
 ```pycon
 >>> section = {
@@ -314,6 +311,9 @@ keywords =
     packaging
     publishing
 ```
+
+* **Return type:**
+  [`Generator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator)
 
 ### config2py.s_configparser.super_and_persist(super_cls, method_name)
 

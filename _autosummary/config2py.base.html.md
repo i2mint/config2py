@@ -165,7 +165,7 @@ Ask the user for the value of `key`, optionally saving it.
     `ask_user_for_key` is returned, so you can specify the key later.
   * **prompt_template** – A template string to prompt the user with. It should
     contain a placeholder for the key, e.g. `"Enter a value for {}: "`.
-  * **save_to** (`Union`[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
+  * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the response is not saved. See `_resolve_saver`.
   * **save_condition** – A function of the value, deciding whether to save it.
@@ -316,9 +316,6 @@ Convert an iterable of sources into `GettableContainers`
 
 True unless `val` is `None` or the empty string.
 
-* **Return type:**
-  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
-
 ```pycon
 >>> is_not_empty(None)
 False
@@ -329,6 +326,9 @@ True
 >>> is_not_empty(0)
 True
 ```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### config2py.base.is_not_none_nor_empty(x)
 
@@ -357,7 +357,7 @@ Create a `ChainMap` from a list of sources
 Create a `GettableContainer` that asks the user for a value, optionally saving it.
 
 * **Parameters:**
-  * **save_to** (`Union`[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
+  * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the user’s response is not saved.
   * **prompt_template** – A template string to prompt the user with. It should
@@ -366,7 +366,7 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
     This can be used to validate the response, for example.
   * **user_asker** – A function that asks the user for input. It should take a
     prompt string and return the user’s response.
-  * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
+  * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`VT`], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
     returns `False`, the user will be asked for a new value.
   * **config_not_found_exceptions** ([`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`type`](https://docs.python.org/3/builtins/functions.html#type)[[`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exception)], [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)]) – An iterable of exceptions that should be
     considered as “config not found” exceptions. If the user’s response

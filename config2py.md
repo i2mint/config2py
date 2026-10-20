@@ -1,4 +1,4 @@
-> built 2026-10-13 22:37 UTC from da96f8a (master) · config2py 0.1.68. Details: build_info.json
+> built 2026-10-20 02:50 UTC from 6f45d04 (master) · config2py 0.1.69. Details: build_info.json
 
 # index.html.md
 
@@ -646,7 +646,7 @@ Ask the user for the value of `key`, optionally saving it.
     `ask_user_for_key` is returned, so you can specify the key later.
   * **prompt_template** – A template string to prompt the user with. It should
     contain a placeholder for the key, e.g. `"Enter a value for {}: "`.
-  * **save_to** (`Union`[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
+  * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the response is not saved. See `_resolve_saver`.
   * **save_condition** – A function of the value, deciding whether to save it.
@@ -797,9 +797,6 @@ Convert an iterable of sources into `GettableContainers`
 
 True unless `val` is `None` or the empty string.
 
-* **Return type:**
-  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
-
 ```pycon
 >>> is_not_empty(None)
 False
@@ -810,6 +807,9 @@ True
 >>> is_not_empty(0)
 True
 ```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### config2py.base.is_not_none_nor_empty(x)
 
@@ -838,7 +838,7 @@ Create a `ChainMap` from a list of sources
 Create a `GettableContainer` that asks the user for a value, optionally saving it.
 
 * **Parameters:**
-  * **save_to** (`Union`[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
+  * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the user’s response is not saved.
   * **prompt_template** – A template string to prompt the user with. It should
@@ -847,7 +847,7 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
     This can be used to validate the response, for example.
   * **user_asker** – A function that asks the user for input. It should take a
     prompt string and return the user’s response.
-  * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
+  * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`VT`], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
     returns `False`, the user will be asked for a new value.
   * **config_not_found_exceptions** ([`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`type`](https://docs.python.org/3/builtins/functions.html#type)[[`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exception)], [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)]) – An iterable of exceptions that should be
     considered as “config not found” exceptions. If the user’s response
@@ -1259,9 +1259,9 @@ Tools to read and write configurations from various sources and formats
 
 ### Classes
 
-| [`ConfigStore`](_autosummary/config2py.html.md#config2py.ConfigStore)(source, \*[, defaults, ...])         | Persister (read, write, delete) for ini configs.                      |
+| [`ConfigStore`](_autosummary/config2py.html.md#config2py.ConfigStore)([defaults, dict_type, ...])          | Persister (read, write, delete) for ini configs.                      |
 |---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
-| [`ConfigReader`](_autosummary/config2py.html.md#config2py.ConfigReader)(source, \*[, on_missing])           | A KvReader to read config files                                       |
+| [`ConfigReader`](_autosummary/config2py.html.md#config2py.ConfigReader)([defaults, dict_type, ...])         | A KvReader to read config files                                       |
 | [`Configs`](_autosummary/config2py.html.md#config2py.Configs)                                          |                                                                       |
 | [`AppData`](_autosummary/config2py.html.md#config2py.AppData)(app_name, \*[, package_name, ...])       | Per-user data directory facade for a Python application.              |
 | [`SyncStore`](_autosummary/config2py.html.md#config2py.SyncStore)(loader, dumper)                        | A MutableMapping that automatically syncs changes to backing storage. |
@@ -1358,7 +1358,7 @@ Bases: [`Config2PyError`](_autosummary/config2py.errors.html.md#config2py.errors
 
 Raised when a config file is not found.
 
-### *class* config2py.ConfigReader(source, , on_missing='warn', \*\*kwargs)
+### *class* config2py.ConfigReader(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
 Bases: [`ConfigStore`](_autosummary/config2py.s_configparser.html.md#config2py.s_configparser.ConfigStore)
 
@@ -1441,7 +1441,7 @@ FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 
 Disabled: `ConfigReader` is read-only.
 
-### *class* config2py.ConfigStore(source, \*, defaults=None, dict_type=<class 'dict'>, allow_no_value=False, target_kind=None, follow_symlinks=True, \*\*more_config_parser_kwargs)
+### *class* config2py.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
 Bases: `Store`
 
@@ -1623,8 +1623,8 @@ A SyncStore backed by a file with automatic format detection.
 Supports nested key paths for working with specific sections.
 
 * **Parameters:**
-  * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to file (supports ~ expansion)
-  * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
+  * **filepath** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to file (supports ~ expansion)
+  * **key_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
   * **loader** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]]) – Optional custom loader (auto-detected from extension if not provided)
   * **dumper** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – Optional custom dumper (auto-detected from extension if not provided)
   * **mode** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File read mode (‘r’ for text, ‘rb’ for binary)
@@ -1685,8 +1685,8 @@ A FileStore specialized for JSON files.
 Pre-configured with json.loads/dumps and sensible defaults.
 
 * **Parameters:**
-  * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
-  * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
+  * **filepath** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
+  * **key_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
   * **indent** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – JSON indentation (default: 2)
   * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – See `FileStore`.
   * **ensure_ascii** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to escape non-ASCII (default: False)
@@ -1776,7 +1776,7 @@ and writes its bytes to *target*.  If *target* already exists, this is
 a no-op (user edits are preserved).
 
 * **Parameters:**
-  * **target** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Destination path for the seeded file.
+  * **target** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Destination path for the seeded file.
   * **package_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Top-level Python package that ships the seed data.
   * **seed_subpackage** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Subdirectory inside `_seed_data` (e.g. `"resources"`
     or `"config"`).
@@ -1861,16 +1861,16 @@ explanations for each folder kind:
   state = logs/history, runtime = process files.
 
 * **Parameters:**
-  * **app_name** – Name of the app for which the directory is needed.
-  * **setup_callback** – A callback function to initialize the directory.
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the directory is needed.
+  * **setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to initialize the directory.
     Default is \_default_folder_setup.
-  * **ensure_exists** – Whether to ensure the directory exists.
-  * **folder_kind** – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to ensure the directory exists.
+  * **folder_kind** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'config'`, `'data'`, `'cache'`, `'state'`, `'runtime'`]) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
     Default is ‘config’ for backward compatibility.
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -1939,16 +1939,16 @@ explanations for each folder kind:
   state = logs/history, runtime = process files.
 
 * **Parameters:**
-  * **app_name** – Name of the app for which the directory is needed.
-  * **setup_callback** – A callback function to initialize the directory.
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the directory is needed.
+  * **setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to initialize the directory.
     Default is \_default_folder_setup.
-  * **ensure_exists** – Whether to ensure the directory exists.
-  * **folder_kind** – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to ensure the directory exists.
+  * **folder_kind** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'config'`, `'data'`, `'cache'`, `'state'`, `'runtime'`]) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
     Default is ‘config’ for backward compatibility.
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -2331,7 +2331,7 @@ Create a `ChainMap` from a list of sources
 Create a `GettableContainer` that asks the user for a value, optionally saving it.
 
 * **Parameters:**
-  * **save_to** (`Union`[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`KT`), [`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
+  * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the user’s response is not saved.
   * **prompt_template** – A template string to prompt the user with. It should
@@ -2340,7 +2340,7 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
     This can be used to validate the response, for example.
   * **user_asker** – A function that asks the user for input. It should take a
     prompt string and return the user’s response.
-  * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`TypeVar`](https://docs.python.org/3/library/typing.html#typing.TypeVar)(`VT`)], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
+  * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`VT`], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
     returns `False`, the user will be asked for a new value.
   * **config_not_found_exceptions** ([`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`type`](https://docs.python.org/3/builtins/functions.html#type)[[`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exception)], [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)]) – An iterable of exceptions that should be
     considered as “config not found” exceptions. If the user’s response
@@ -2415,11 +2415,11 @@ Data Object Layer for configparser standard lib.
 
 ### Classes
 
-| [`ConfigReader`](_autosummary/config2py.s_configparser.html.md#config2py.s_configparser.ConfigReader)(source, \*[, on_missing])   | A KvReader to read config files                  |
-|-------------------------------------------------------------------------------------------|--------------------------------------------------|
-| [`ConfigStore`](_autosummary/config2py.s_configparser.html.md#config2py.s_configparser.ConfigStore)(source, \*[, defaults, ...]) | Persister (read, write, delete) for ini configs. |
+| [`ConfigReader`](_autosummary/config2py.s_configparser.html.md#config2py.s_configparser.ConfigReader)([defaults, dict_type, ...])   | A KvReader to read config files                  |
+|---------------------------------------------------------------------------------------------|--------------------------------------------------|
+| [`ConfigStore`](_autosummary/config2py.s_configparser.html.md#config2py.s_configparser.ConfigStore)([defaults, dict_type, ...])    | Persister (read, write, delete) for ini configs. |
 
-### *class* config2py.s_configparser.ConfigReader(source, , on_missing='warn', \*\*kwargs)
+### *class* config2py.s_configparser.ConfigReader(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
 Bases: [`ConfigStore`](_autosummary/config2py.s_configparser.html.md#config2py.s_configparser.ConfigStore)
 
@@ -2502,7 +2502,7 @@ FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 
 Disabled: `ConfigReader` is read-only.
 
-### *class* config2py.s_configparser.ConfigStore(source, \*, defaults=None, dict_type=<class 'dict'>, allow_no_value=False, target_kind=None, follow_symlinks=True, \*\*more_config_parser_kwargs)
+### *class* config2py.s_configparser.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
 Bases: `Store`
 
@@ -2685,9 +2685,6 @@ the serialized data without touching disk.
 
 Transform newline-separated string values into actual list of strings (assuming that intent)
 
-* **Return type:**
-  [`Generator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator)
-
 ```pycon
 >>> section_from_ini = {
 ...     'name': 'aspyre',
@@ -2698,12 +2695,12 @@ Transform newline-separated string values into actual list of strings (assuming 
 {'name': 'aspyre', 'keywords': ['documentation', 'packaging', 'publishing']}
 ```
 
+* **Return type:**
+  [`Generator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator)
+
 ### config2py.s_configparser.preprocess_ini_section_items(items)
 
 Transform list values into newline-separated strings, in view of writing the value to a ini formatted section
-
-* **Return type:**
-  [`Generator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator)
 
 ```pycon
 >>> section = {
@@ -2717,6 +2714,9 @@ keywords =
     packaging
     publishing
 ```
+
+* **Return type:**
+  [`Generator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Generator)
 
 ### config2py.s_configparser.super_and_persist(super_cls, method_name)
 
@@ -2788,8 +2788,8 @@ A SyncStore backed by a file with automatic format detection.
 Supports nested key paths for working with specific sections.
 
 * **Parameters:**
-  * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to file (supports ~ expansion)
-  * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
+  * **filepath** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to file (supports ~ expansion)
+  * **key_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
   * **loader** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)]]) – Optional custom loader (auto-detected from extension if not provided)
   * **dumper** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`Callable`](https://docs.python.org/3/library/typing.html#typing.Callable)[[[`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]) – Optional custom dumper (auto-detected from extension if not provided)
   * **mode** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – File read mode (‘r’ for text, ‘rb’ for binary)
@@ -2842,8 +2842,8 @@ A FileStore specialized for JSON files.
 Pre-configured with json.loads/dumps and sensible defaults.
 
 * **Parameters:**
-  * **filepath** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
-  * **key_path** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
+  * **filepath** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Path to JSON file
+  * **key_path** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Tuple`](https://docs.python.org/3/library/typing.html#typing.Tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Optional nested path to operate on
   * **indent** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – JSON indentation (default: 2)
   * **follow_symlinks** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – See `FileStore`.
   * **ensure_ascii** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to escape non-ASCII (default: False)
@@ -3122,6 +3122,7 @@ Utility functions for config2py.
 | [`always_true`](_autosummary/config2py.util.html.md#config2py.util.always_true)(x)                                    | Function that just returns True.                                                                                                                                                        |
 | [`app_folder_standards`](_autosummary/config2py.util.html.md#config2py.util.app_folder_standards)([os_name])                   | Return the `{folder_kind: FolderSpec}` table for the given `os.name`.                                                                                                                   |
 | [`ask_user_for_input`](_autosummary/config2py.util.html.md#config2py.util.ask_user_for_input)(prompt[, default, ...])        | Ask the user for input, optionally masking, validating and transforming the input.                                                                                                      |
+| [`atomic_write_bytes`](_autosummary/config2py.util.html.md#config2py.util.atomic_write_bytes)(path, data, \*[, ...])         | Write `data` to `path` (`0o600`) so a crash never leaves it empty or partial.                                                                                                           |
 | [`check_folder_is_private`](_autosummary/config2py.util.html.md#config2py.util.check_folder_is_private)(dirpath, \*[, ...])       | Check `dirpath` with `unsafe_folder_reason`, and act on a problem.                                                                                                                      |
 | [`create_directories`](_autosummary/config2py.util.html.md#config2py.util.create_directories)(dirpath[, max_dirs_to_make])   | Create directories up to a specified limit.                                                                                                                                             |
 | [`ensure_default_configs_folder`](_autosummary/config2py.util.html.md#config2py.util.ensure_default_configs_folder)()                   | Create config2py's own configs folder if needed, and return its path.                                                                                                                   |
@@ -3226,9 +3227,6 @@ plain substring match on the whole prompt, so `KEYS_DIR` or `AUTHOR` also
 match, as would a custom prompt template mentioning “key”. Pass an explicit
 `mask_input` (or your own predicate) when that matters.
 
-* **Return type:**
-  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
-
 ```pycon
 >>> looks_like_secret("Enter a value for OPENAI_API_KEY: ")
 True
@@ -3237,6 +3235,9 @@ True
 >>> looks_like_secret("Enter a value for DATA_DIR: ")
 False
 ```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### *class* config2py.util.EnvironmentVariables
 
@@ -3329,6 +3330,34 @@ Ask the user for input, optionally masking, validating and transforming the inpu
 * **Returns:**
   The user’s response (or the default value if the user entered nothing)
 
+### config2py.util.atomic_write_bytes(path, data, , follow_symlinks=True, beneath=None)
+
+Write `data` to `path` (`0o600`) so a crash never leaves it empty or partial.
+
+The bytes go to a `0o600` temp file in the same folder (through `secure_open`,
+with the same `follow_symlinks` and `beneath` guarantees), are `fsync`-ed, and
+then `os.replace` d over `path`: atomic on POSIX, and on Windows within one
+volume. On any failure the temp file is removed and the old content is untouched
+(see [https://github.com/i2mint/config2py/issues/52](https://github.com/i2mint/config2py/issues/52)).
+
+With `follow_symlinks=False` a symlink at `path` is refused (never replaced), as
+is a file with several hard links (the rename would silently detach them). With
+`follow_symlinks=True` a symlink is followed: its target is what gets replaced,
+and hard links to the old file are detached (the new file is a new inode). The
+symlink check is by path, so a symlink planted in the instant before the rename is
+replaced rather than written through: no data leaks, but the guarantee is not
+race-proof. The temp file is hidden (`.<name>.<hex>.tmp`), so key listings skip it.
+
+```pycon
+>>> import tempfile, os
+>>> path = os.path.join(tempfile.mkdtemp(), "secret")
+>>> atomic_write_bytes(path, b"one"); atomic_write_bytes(path, b"two")
+>>> open(path, "rb").read()
+b'two'
+>>> os.listdir(os.path.dirname(path))
+['secret']
+```
+
 ### config2py.util.check_folder_is_private(dirpath, , on_unsafe='warn', stacklevel=2, check_ancestors=True, ignore_sticky=False)
 
 Check `dirpath` with `unsafe_folder_reason`, and act on a problem.
@@ -3402,7 +3431,7 @@ and writes its bytes to *target*.  If *target* already exists, this is
 a no-op (user edits are preserved).
 
 * **Parameters:**
-  * **target** (`Union`[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Destination path for the seeded file.
+  * **target** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path)]) – Destination path for the seeded file.
   * **package_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Top-level Python package that ships the seed data.
   * **seed_subpackage** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Subdirectory inside `_seed_data` (e.g. `"resources"`
     or `"config"`).
@@ -3510,16 +3539,16 @@ explanations for each folder kind:
   state = logs/history, runtime = process files.
 
 * **Parameters:**
-  * **app_name** – Name of the app for which the directory is needed.
-  * **setup_callback** – A callback function to initialize the directory.
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the directory is needed.
+  * **setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to initialize the directory.
     Default is \_default_folder_setup.
-  * **ensure_exists** – Whether to ensure the directory exists.
-  * **folder_kind** – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to ensure the directory exists.
+  * **folder_kind** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'config'`, `'data'`, `'cache'`, `'state'`, `'runtime'`]) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
     Default is ‘config’ for backward compatibility.
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -3588,16 +3617,16 @@ explanations for each folder kind:
   state = logs/history, runtime = process files.
 
 * **Parameters:**
-  * **app_name** – Name of the app for which the directory is needed.
-  * **setup_callback** – A callback function to initialize the directory.
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the directory is needed.
+  * **setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to initialize the directory.
     Default is \_default_folder_setup.
-  * **ensure_exists** – Whether to ensure the directory exists.
-  * **folder_kind** – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to ensure the directory exists.
+  * **folder_kind** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'config'`, `'data'`, `'cache'`, `'state'`, `'runtime'`]) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
     Default is ‘config’ for backward compatibility.
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -3666,16 +3695,16 @@ explanations for each folder kind:
   state = logs/history, runtime = process files.
 
 * **Parameters:**
-  * **app_name** – Name of the app for which the directory is needed.
-  * **setup_callback** – A callback function to initialize the directory.
+  * **app_name** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – Name of the app for which the directory is needed.
+  * **setup_callback** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – A callback function to initialize the directory.
     Default is \_default_folder_setup.
-  * **ensure_exists** – Whether to ensure the directory exists.
-  * **folder_kind** – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+  * **ensure_exists** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Whether to ensure the directory exists.
+  * **folder_kind** ([`Literal`](https://docs.python.org/3/library/typing.html#typing.Literal)[`'config'`, `'data'`, `'cache'`, `'state'`, `'runtime'`]) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
     Default is ‘config’ for backward compatibility.
 * **Returns:**
   Path to the app directory.
 * **Return type:**
-  [*str*](https://docs.python.org/3/builtins/stdtypes.html#str)
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 By default, the app will be “config2py” and folder_kind will be “config”.
 The exact text of the path is platform-specific (`~/.config/config2py` under
@@ -3939,9 +3968,6 @@ containing `os.sep` or `os.altsep` (so `"C:/work/configs"` on Windows) is a
 path. A bare name such as `"configs"` is not, whether or not a directory of that
 name exists (see [https://github.com/i2mint/config2py/issues/28](https://github.com/i2mint/config2py/issues/28)).
 
-* **Return type:**
-  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
-
 ```pycon
 >>> looks_like_path("my_app")
 False
@@ -3951,6 +3977,9 @@ True
 >>> looks_like_path(Path("configs"))
 True
 ```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### config2py.util.looks_like_secret(text)
 
@@ -3962,9 +3991,6 @@ plain substring match on the whole prompt, so `KEYS_DIR` or `AUTHOR` also
 match, as would a custom prompt template mentioning “key”. Pass an explicit
 `mask_input` (or your own predicate) when that matters.
 
-* **Return type:**
-  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
-
 ```pycon
 >>> looks_like_secret("Enter a value for OPENAI_API_KEY: ")
 True
@@ -3973,6 +3999,9 @@ True
 >>> looks_like_secret("Enter a value for DATA_DIR: ")
 False
 ```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 ### config2py.util.owner_only_opener(path, flags, , follow_symlinks=True, dir_fd=None)
 
@@ -4107,15 +4136,15 @@ owned by another user. `ignore_sticky` also accepts the folder
 itself being sticky (as `/tmp` is), for a file kept directly in a shared folder.
 POSIX only (`None` elsewhere); a missing folder is `None` too.
 
-* **Return type:**
-  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
-
 ```pycon
 >>> import tempfile
 >>> with tempfile.TemporaryDirectory() as d:  # created 0o700
 ...     unsafe_folder_reason(d, check_ancestors=False)
 >>> unsafe_folder_reason("/no/such/folder")
 ```
+
+* **Return type:**
+  [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 
 # about-this-build.html.md
@@ -4124,18 +4153,18 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-10-13 22:37 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/da96f8a38c1a1d88e63aee358710459ffc570c15"><code>da96f8a</code></a> on branch <code>master</code>, for **config2py 0.1.68** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-20 02:50 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/6f45d04db75483309ad9469bbdf6bd0e2f6d3db7"><code>6f45d04</code></a> on branch <code>master</code>, for **config2py 0.1.69** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.68) is behind the latest release on PyPI (0.1.69): `pip install config2py` gives newer code than these docs describe.
+- The documented version (0.1.69) is behind the latest release on PyPI (0.1.70): `pip install config2py` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/da96f8a38c1a1d88e63aee358710459ffc570c15"><code>da96f8a38c1a1d88e63aee358710459ffc570c15</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/6f45d04db75483309ad9469bbdf6bd0e2f6d3db7"><code>6f45d04db75483309ad9469bbdf6bd0e2f6d3db7</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4146,16 +4175,16 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/38478886531">38478886531</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/39360962504">39360962504</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>da96f8a38c1a1d88e63aee358710459ffc570c15</code> (in the history of the built commit) |
+| Event commit | <code>6f45d04db75483309ad9469bbdf6bd0e2f6d3db7</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.17  |
-| Sphinx   | 9.1.0   |
+| epythet  | 0.2.18  |
+| Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
 
@@ -4173,14 +4202,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.69/">0.1.69</a>, newer than the documented version (0.1.68).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.70/">0.1.70</a>, newer than the documented version (0.1.69).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout da96f8a38c1a1d88e63aee358710459ffc570c15
-pip install "epythet==0.2.17"
+git checkout 6f45d04db75483309ad9469bbdf6bd0e2f6d3db7
+pip install "epythet==0.2.18"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

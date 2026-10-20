@@ -34,6 +34,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_autodoc_typehints.css?v=057ac668" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/epythet.css?v=54f41860" />
   
@@ -43,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=7c77daa2"></script>
+    <script src="../_static/documentation_options.js?v=d80f5ebb"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +58,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.68" />
+  <meta name="docsearch:version" content="0.1.69" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -418,73 +419,76 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.ask_user_for_input" title="config2py.util.ask_user_for_input"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ask_user_for_input</span></code></a>(prompt[, default, ...])</p></td>
 <td><p>Ask the user for input, optionally masking, validating and transforming the input.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.check_folder_is_private" title="config2py.util.check_folder_is_private"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_folder_is_private</span></code></a>(dirpath, *[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.atomic_write_bytes" title="config2py.util.atomic_write_bytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">atomic_write_bytes</span></code></a>(path, data, *[, ...])</p></td>
+<td><p>Write <code class="docutils literal notranslate"><span class="pre">data</span></code> to <code class="docutils literal notranslate"><span class="pre">path</span></code> (<code class="docutils literal notranslate"><span class="pre">0o600</span></code>) so a crash never leaves it empty or partial.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.check_folder_is_private" title="config2py.util.check_folder_is_private"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_folder_is_private</span></code></a>(dirpath, *[, ...])</p></td>
 <td><p>Check <code class="docutils literal notranslate"><span class="pre">dirpath</span></code> with <code class="docutils literal notranslate"><span class="pre">unsafe_folder_reason</span></code>, and act on a problem.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.create_directories" title="config2py.util.create_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_directories</span></code></a>(dirpath[, max_dirs_to_make])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.create_directories" title="config2py.util.create_directories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_directories</span></code></a>(dirpath[, max_dirs_to_make])</p></td>
 <td><p>Create directories up to a specified limit.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.ensure_default_configs_folder" title="config2py.util.ensure_default_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_default_configs_folder</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.ensure_default_configs_folder" title="config2py.util.ensure_default_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_default_configs_folder</span></code></a>()</p></td>
 <td><p>Create config2py's own configs folder if needed, and return its path.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.ensure_seeded" title="config2py.util.ensure_seeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_seeded</span></code></a>(target, package_name, ...[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.ensure_seeded" title="config2py.util.ensure_seeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_seeded</span></code></a>(target, package_name, ...[, ...])</p></td>
 <td><p>Copy a bundled seed file to <em>target</em> if it does not already exist.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.extract_variable_declarations" title="config2py.util.extract_variable_declarations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_variable_declarations</span></code></a>(string[, expand])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.extract_variable_declarations" title="config2py.util.extract_variable_declarations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_variable_declarations</span></code></a>(string[, expand])</p></td>
 <td><p>Reads the contents of a config file, extracting Unix-style environment variable declarations of the form <code class="code docutils literal notranslate"><span class="pre">export</span> <span class="pre">{NAME}={value}</span></code>, returning a dictionary of <code class="code docutils literal notranslate"><span class="pre">{NAME:</span> <span class="pre">value,</span> <span class="pre">...}</span></code> pairs.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.get_app_folder" title="config2py.util.get_app_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_app_folder</span></code></a>([app_name, setup_callback, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.get_app_folder" title="config2py.util.get_app_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_app_folder</span></code></a>([app_name, setup_callback, ...])</p></td>
 <td><p>Retrieve or create the app directory specific to the given app name and folder kind.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.get_app_rootdir" title="config2py.util.get_app_rootdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_app_rootdir</span></code></a>([folder_kind, ensure_exists])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.get_app_rootdir" title="config2py.util.get_app_rootdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_app_rootdir</span></code></a>([folder_kind, ensure_exists])</p></td>
 <td><p>Returns the root directory for a specific folder kind.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.get_configs_directory_for_app" title="config2py.util.get_configs_directory_for_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_directory_for_app</span></code></a>([app_name, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.get_configs_directory_for_app" title="config2py.util.get_configs_directory_for_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_directory_for_app</span></code></a>([app_name, ...])</p></td>
 <td><p>Retrieve or create the configs directory specific to the given app name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.get_configs_folder_for_app" title="config2py.util.get_configs_folder_for_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_folder_for_app</span></code></a>([app_name, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.get_configs_folder_for_app" title="config2py.util.get_configs_folder_for_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_configs_folder_for_app</span></code></a>([app_name, ...])</p></td>
 <td><p>Retrieve or create the configs directory specific to the given app name.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.identity" title="config2py.util.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(x)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.identity" title="config2py.util.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a>(x)</p></td>
 <td><p>Function that just returns its argument.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.is_default_configs_folder" title="config2py.util.is_default_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_default_configs_folder</span></code></a>(path)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.is_default_configs_folder" title="config2py.util.is_default_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_default_configs_folder</span></code></a>(path)</p></td>
 <td><p>Whether <code class="docutils literal notranslate"><span class="pre">path</span></code> (however spelled) is config2py's own configs folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.is_not_empty" title="config2py.util.is_not_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_not_empty</span></code></a>(x)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.is_not_empty" title="config2py.util.is_not_empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_not_empty</span></code></a>(x)</p></td>
 <td><p>Function that returns True if x is not empty.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.is_repl" title="config2py.util.is_repl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_repl</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.is_repl" title="config2py.util.is_repl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_repl</span></code></a>()</p></td>
 <td><p>Determines if the Python interpreter is running in REPL.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.looks_like_path" title="config2py.util.looks_like_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">looks_like_path</span></code></a>(src)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.looks_like_path" title="config2py.util.looks_like_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">looks_like_path</span></code></a>(src)</p></td>
 <td><p>Whether <code class="docutils literal notranslate"><span class="pre">src</span></code> is spelled as a filesystem path rather than as an app name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.looks_like_secret" title="config2py.util.looks_like_secret"><code class="xref py py-obj docutils literal notranslate"><span class="pre">looks_like_secret</span></code></a>(text)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.looks_like_secret" title="config2py.util.looks_like_secret"><code class="xref py py-obj docutils literal notranslate"><span class="pre">looks_like_secret</span></code></a>(text)</p></td>
 <td><p>True if <code class="docutils literal notranslate"><span class="pre">text</span></code> (typically a prompt naming a config key) looks secret.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.owner_only_opener" title="config2py.util.owner_only_opener"><code class="xref py py-obj docutils literal notranslate"><span class="pre">owner_only_opener</span></code></a>(path, flags, *[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.owner_only_opener" title="config2py.util.owner_only_opener"><code class="xref py py-obj docutils literal notranslate"><span class="pre">owner_only_opener</span></code></a>(path, flags, *[, ...])</p></td>
 <td><p>An <code class="docutils literal notranslate"><span class="pre">opener</span></code> for <code class="docutils literal notranslate"><span class="pre">open</span></code> that creates (or re-tightens) <code class="docutils literal notranslate"><span class="pre">path</span></code> as <code class="docutils literal notranslate"><span class="pre">0o600</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.parse_assignments_from_py_source" title="config2py.util.parse_assignments_from_py_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_assignments_from_py_source</span></code></a>(source_code, *)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.parse_assignments_from_py_source" title="config2py.util.parse_assignments_from_py_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_assignments_from_py_source</span></code></a>(source_code, *)</p></td>
 <td><p>Parse assignments from python source code.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.secure_makedirs" title="config2py.util.secure_makedirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secure_makedirs</span></code></a>(dirpath, *[, exist_ok])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.secure_makedirs" title="config2py.util.secure_makedirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secure_makedirs</span></code></a>(dirpath, *[, exist_ok])</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">os.makedirs(dirpath,</span> <span class="pre">mode=0o700)</span></code>, re-tightening the mode if it already exists.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.secure_open" title="config2py.util.secure_open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secure_open</span></code></a>(path[, mode, follow_symlinks, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.secure_open" title="config2py.util.secure_open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secure_open</span></code></a>(path[, mode, follow_symlinks, ...])</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">open(path,</span> <span class="pre">mode,</span> <span class="pre">**open_kwargs)</span></code> with owner-only (<code class="docutils literal notranslate"><span class="pre">0o600</span></code>) permissions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.setup_configs_folder" title="config2py.util.setup_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_configs_folder</span></code></a>(configs_dir, *[, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.setup_configs_folder" title="config2py.util.setup_configs_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_configs_folder</span></code></a>(configs_dir, *[, ...])</p></td>
 <td><p>Create <code class="docutils literal notranslate"><span class="pre">configs_dir</span></code> (via <code class="docutils literal notranslate"><span class="pre">setup_callback</span></code>) and return it.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.system_default_for_app_data_folder" title="config2py.util.system_default_for_app_data_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">system_default_for_app_data_folder</span></code></a>([...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.system_default_for_app_data_folder" title="config2py.util.system_default_for_app_data_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">system_default_for_app_data_folder</span></code></a>([...])</p></td>
 <td><p>Get the system default folder for <code class="docutils literal notranslate"><span class="pre">folder_kind</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.tighten_mode" title="config2py.util.tighten_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tighten_mode</span></code></a>(path, mode, *[, strict])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.tighten_mode" title="config2py.util.tighten_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tighten_mode</span></code></a>(path, mode, *[, strict])</p></td>
 <td><p>Set <code class="docutils literal notranslate"><span class="pre">path</span></code>'s permission bits to <code class="docutils literal notranslate"><span class="pre">mode</span></code>, only if they differ.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.util.unsafe_folder_reason" title="config2py.util.unsafe_folder_reason"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_folder_reason</span></code></a>(dirpath, *[, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.util.unsafe_folder_reason" title="config2py.util.unsafe_folder_reason"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsafe_folder_reason</span></code></a>(dirpath, *[, ...])</p></td>
 <td><p>Why a folder isn't safe to keep secrets in, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if it looks fine.</p></td>
 </tr>
 </tbody>
@@ -595,11 +599,6 @@ what they type, while a false negative echoes a secret to the terminal. It is a
 plain substring match on the whole prompt, so <code class="docutils literal notranslate"><span class="pre">KEYS_DIR</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHOR</span></code> also
 match, as would a custom prompt template mentioning “key”. Pass an explicit
 <code class="docutils literal notranslate"><span class="pre">mask_input</span></code> (or your own predicate) when that matters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
-</dd>
-</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">looks_like_secret</span><span class="p">(</span><span class="s2">"Enter a value for OPENAI_API_KEY: "</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">looks_like_secret</span><span class="p">(</span><span class="s2">"Enter a value for github_token: "</span><span class="p">)</span>
@@ -608,6 +607,11 @@ match, as would a custom prompt template mentioning “key”. Pass an explicit
 <span class="go">False</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -723,6 +727,35 @@ This can be used to validate the response, for example.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="config2py.util.atomic_write_bytes">
+<span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">atomic_write_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">follow_symlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beneath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#atomic_write_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.atomic_write_bytes" title="Link to this definition">#</a></dt>
+<dd><p>Write <code class="docutils literal notranslate"><span class="pre">data</span></code> to <code class="docutils literal notranslate"><span class="pre">path</span></code> (<code class="docutils literal notranslate"><span class="pre">0o600</span></code>) so a crash never leaves it empty or partial.</p>
+<p>The bytes go to a <code class="docutils literal notranslate"><span class="pre">0o600</span></code> temp file in the same folder (through <code class="docutils literal notranslate"><span class="pre">secure_open</span></code>,
+with the same <code class="docutils literal notranslate"><span class="pre">follow_symlinks</span></code> and <code class="docutils literal notranslate"><span class="pre">beneath</span></code> guarantees), are <code class="docutils literal notranslate"><span class="pre">fsync</span></code>-ed, and
+then <code class="docutils literal notranslate"><span class="pre">os.replace</span></code> d over <code class="docutils literal notranslate"><span class="pre">path</span></code>: atomic on POSIX, and on Windows within one
+volume. On any failure the temp file is removed and the old content is untouched
+(see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/52">i2mint/config2py#52</a>).</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">follow_symlinks=False</span></code> a symlink at <code class="docutils literal notranslate"><span class="pre">path</span></code> is refused (never replaced), as
+is a file with several hard links (the rename would silently detach them). With
+<code class="docutils literal notranslate"><span class="pre">follow_symlinks=True</span></code> a symlink is followed: its target is what gets replaced,
+and hard links to the old file are detached (the new file is a new inode). The
+symlink check is by path, so a symlink planted in the instant before the rename is
+replaced rather than written through: no data leaks, but the guarantee is not
+race-proof. The temp file is hidden (<code class="docutils literal notranslate"><span class="pre">.&lt;name&gt;.&lt;hex&gt;.tmp</span></code>), so key listings skip it.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(),</span> <span class="s2">"secret"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atomic_write_bytes</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"one"</span><span class="p">);</span> <span class="n">atomic_write_bytes</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"two"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="go">b'two'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+<span class="go">['secret']</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="config2py.util.check_folder_is_private">
 <span class="sig-prename descclassname"><span class="pre">config2py.util.</span></span><span class="sig-name descname"><span class="pre">check_folder_is_private</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirpath</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_unsafe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stacklevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_ancestors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_sticky</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/util.html#check_folder_is_private"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.util.check_folder_is_private" title="Link to this definition">#</a></dt>
 <dd><p>Check <code class="docutils literal notranslate"><span class="pre">dirpath</span></code> with <code class="docutils literal notranslate"><span class="pre">unsafe_folder_reason</span></code>, and act on a problem.</p>
@@ -811,7 +844,7 @@ a no-op (user edits are preserved).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>]</span>) – Destination path for the seeded file.</p></li>
+<li><p><strong>target</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>]</span>) – Destination path for the seeded file.</p></li>
 <li><p><strong>package_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Top-level Python package that ships the seed data.</p></li>
 <li><p><strong>seed_subpackage</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Subdirectory inside <code class="docutils literal notranslate"><span class="pre">_seed_data</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;resources&quot;</span></code>
 or <code class="docutils literal notranslate"><span class="pre">&quot;config&quot;</span></code>).</p></li>
@@ -846,7 +879,7 @@ declarations of the form
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>string</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – String to extract variable declarations from</p></li>
-<li><p><strong>expand</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – An optional dictionary of variable names and values to use to
+<li><p><strong>expand</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> | <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a> | <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span>) – An optional dictionary of variable names and values to use to
 expand variables that are referenced (i.e. <code class="docutils literal notranslate"><span class="pre">$NAME</span></code> is a reference to <code class="docutils literal notranslate"><span class="pre">NAME</span></code>
 variable) in the values of config variables.
 If <code class="docutils literal notranslate"><span class="pre">True</span></code>, <code class="docutils literal notranslate"><span class="pre">expand</span></code> is replaced with an empty dictionary, which means we
@@ -923,11 +956,11 @@ state = logs/history, runtime = process files.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>app_name</strong> – Name of the app for which the directory is needed.</p></li>
-<li><p><strong>setup_callback</strong> – A callback function to initialize the directory.
+<li><p><strong>app_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the app for which the directory is needed.</p></li>
+<li><p><strong>setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span>]</span>) – A callback function to initialize the directory.
 Default is _default_folder_setup.</p></li>
-<li><p><strong>ensure_exists</strong> – Whether to ensure the directory exists.</p></li>
-<li><p><strong>folder_kind</strong> – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+<li><p><strong>ensure_exists</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to ensure the directory exists.</p></li>
+<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'config'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'data'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'cache'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'state'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'runtime'</span></span></code></span>]</span>) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
 Default is ‘config’ for backward compatibility.</p></li>
 </ul>
 </dd>
@@ -935,7 +968,7 @@ Default is ‘config’ for backward compatibility.</p></li>
 <dd class="field-even"><p>Path to the app directory.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
 </dd>
 </dl>
 <p>By default, the app will be “config2py” and folder_kind will be “config”.
@@ -1001,11 +1034,11 @@ state = logs/history, runtime = process files.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>app_name</strong> – Name of the app for which the directory is needed.</p></li>
-<li><p><strong>setup_callback</strong> – A callback function to initialize the directory.
+<li><p><strong>app_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the app for which the directory is needed.</p></li>
+<li><p><strong>setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span>]</span>) – A callback function to initialize the directory.
 Default is _default_folder_setup.</p></li>
-<li><p><strong>ensure_exists</strong> – Whether to ensure the directory exists.</p></li>
-<li><p><strong>folder_kind</strong> – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+<li><p><strong>ensure_exists</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to ensure the directory exists.</p></li>
+<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'config'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'data'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'cache'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'state'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'runtime'</span></span></code></span>]</span>) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
 Default is ‘config’ for backward compatibility.</p></li>
 </ul>
 </dd>
@@ -1013,7 +1046,7 @@ Default is ‘config’ for backward compatibility.</p></li>
 <dd class="field-even"><p>Path to the app directory.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
 </dd>
 </dl>
 <p>By default, the app will be “config2py” and folder_kind will be “config”.
@@ -1079,11 +1112,11 @@ state = logs/history, runtime = process files.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>app_name</strong> – Name of the app for which the directory is needed.</p></li>
-<li><p><strong>setup_callback</strong> – A callback function to initialize the directory.
+<li><p><strong>app_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the app for which the directory is needed.</p></li>
+<li><p><strong>setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span>]</span>) – A callback function to initialize the directory.
 Default is _default_folder_setup.</p></li>
-<li><p><strong>ensure_exists</strong> – Whether to ensure the directory exists.</p></li>
-<li><p><strong>folder_kind</strong> – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+<li><p><strong>ensure_exists</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to ensure the directory exists.</p></li>
+<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'config'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'data'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'cache'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'state'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'runtime'</span></span></code></span>]</span>) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
 Default is ‘config’ for backward compatibility.</p></li>
 </ul>
 </dd>
@@ -1091,7 +1124,7 @@ Default is ‘config’ for backward compatibility.</p></li>
 <dd class="field-even"><p>Path to the app directory.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
 </dd>
 </dl>
 <p>By default, the app will be “config2py” and folder_kind will be “config”.
@@ -1158,10 +1191,10 @@ state = logs/history, runtime = process files.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>app_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the app for which the directory is needed.</p></li>
-<li><p><strong>setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – A callback function to initialize the directory.
+<li><p><strong>setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span>]</span>) – A callback function to initialize the directory.
 Default is _default_folder_setup.</p></li>
 <li><p><strong>ensure_exists</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to ensure the directory exists.</p></li>
-<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'config'</span></code>, <code class="docutils literal notranslate"><span class="pre">'data'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cache'</span></code>, <code class="docutils literal notranslate"><span class="pre">'state'</span></code>, <code class="docutils literal notranslate"><span class="pre">'runtime'</span></code>]</span>) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
+<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'config'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'data'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'cache'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'state'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'runtime'</span></span></code></span>]</span>) – Type of folder (‘config’, ‘data’, ‘cache’, ‘state’, or ‘runtime’).
 Default is ‘config’ for backward compatibility.</p></li>
 </ul>
 </dd>
@@ -1230,7 +1263,7 @@ with the setup_callback:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'config'</span></code>, <code class="docutils literal notranslate"><span class="pre">'data'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cache'</span></code>, <code class="docutils literal notranslate"><span class="pre">'state'</span></code>, <code class="docutils literal notranslate"><span class="pre">'runtime'</span></code>]</span>) – The kind of folder to get. One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.
+<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'config'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'data'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'cache'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'state'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'runtime'</span></span></code></span>]</span>) – The kind of folder to get. One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.
 Defaults to ‘config’.
 Here are concise explanations for each folder kind:
 <strong>config</strong>: User preferences and settings files (e.g., API keys, theme preferences, editor settings). Files users might edit manually or that define how the app behaves.
@@ -1284,9 +1317,9 @@ Windows – use the CONFIG2PY_* variables above for platform-neutral overrides.<
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>app_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the app for which the configs directory is needed.</p></li>
 <li><p><strong>configs_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the configs directory.</p></li>
-<li><p><strong>app_dir_setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – A callback function to
+<li><p><strong>app_dir_setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span>]</span>) – A callback function to
 initialize the app directory. Default is _default_folder_setup.</p></li>
-<li><p><strong>config_dir_setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – A callback function to
+<li><p><strong>config_dir_setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span>]</span>) – A callback function to
 initialize the configs directory. Default is _default_folder_setup.</p></li>
 <li><p><strong>ensure_exists</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to create (and set up) the directory. With
 <code class="docutils literal notranslate"><span class="pre">False</span></code>, only the path is computed: nothing is created or chmod-ed.</p></li>
@@ -1304,9 +1337,9 @@ initialize the configs directory. Default is _default_folder_setup.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>app_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the app for which the configs directory is needed.</p></li>
 <li><p><strong>configs_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the configs directory.</p></li>
-<li><p><strong>app_dir_setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – A callback function to
+<li><p><strong>app_dir_setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span>]</span>) – A callback function to
 initialize the app directory. Default is _default_folder_setup.</p></li>
-<li><p><strong>config_dir_setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – A callback function to
+<li><p><strong>config_dir_setup_callback</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span>]</span>) – A callback function to
 initialize the configs directory. Default is _default_folder_setup.</p></li>
 <li><p><strong>ensure_exists</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Whether to create (and set up) the directory. With
 <code class="docutils literal notranslate"><span class="pre">False</span></code>, only the path is computed: nothing is created or chmod-ed.</p></li>
@@ -1383,11 +1416,6 @@ attribute to a new set has no effect, since <code class="docutils literal notran
 containing <code class="docutils literal notranslate"><span class="pre">os.sep</span></code> or <code class="docutils literal notranslate"><span class="pre">os.altsep</span></code> (so <code class="docutils literal notranslate"><span class="pre">&quot;C:/work/configs&quot;</span></code> on Windows) is a
 path. A bare name such as <code class="docutils literal notranslate"><span class="pre">&quot;configs&quot;</span></code> is not, whether or not a directory of that
 name exists (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/28">i2mint/config2py#28</a>).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
-</dd>
-</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">looks_like_path</span><span class="p">(</span><span class="s2">"my_app"</span><span class="p">)</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">looks_like_path</span><span class="p">(</span><span class="s2">"configs/"</span><span class="p">)</span>
@@ -1397,6 +1425,11 @@ name exists (see <a class="github reference external" href="https://github.com/i
 <span class="go">True</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1408,11 +1441,6 @@ what they type, while a false negative echoes a secret to the terminal. It is a
 plain substring match on the whole prompt, so <code class="docutils literal notranslate"><span class="pre">KEYS_DIR</span></code> or <code class="docutils literal notranslate"><span class="pre">AUTHOR</span></code> also
 match, as would a custom prompt template mentioning “key”. Pass an explicit
 <code class="docutils literal notranslate"><span class="pre">mask_input</span></code> (or your own predicate) when that matters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
-</dd>
-</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">looks_like_secret</span><span class="p">(</span><span class="s2">"Enter a value for OPENAI_API_KEY: "</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">looks_like_secret</span><span class="p">(</span><span class="s2">"Enter a value for github_token: "</span><span class="p">)</span>
@@ -1421,6 +1449,11 @@ match, as would a custom prompt template mentioning “key”. Pass an explicit
 <span class="go">False</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1528,7 +1561,7 @@ that kind, falling back to the spec’s <code class="docutils literal notranslat
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<code class="docutils literal notranslate"><span class="pre">'config'</span></code>, <code class="docutils literal notranslate"><span class="pre">'data'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cache'</span></code>, <code class="docutils literal notranslate"><span class="pre">'state'</span></code>, <code class="docutils literal notranslate"><span class="pre">'runtime'</span></code>]</span>) – One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.</p></li>
+<li><p><strong>folder_kind</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code></a>[<span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'config'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'data'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'cache'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'state'</span></span></code></span>, <span class="highlight sphinx_autodoc_typehints-value"><code class="docutils literal notranslate"><span class="s1"><span class="pre">'runtime'</span></span></code></span>]</span>) – One of ‘config’, ‘data’, ‘cache’, ‘state’, ‘runtime’.</p></li>
 <li><p><strong>standards</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>]</span>) – The <code class="docutils literal notranslate"><span class="pre">{folder_kind:</span> <span class="pre">FolderSpec}</span></code> table to resolve against.
 Defaults to the running platform’s (<code class="docutils literal notranslate"><span class="pre">APP_FOLDER_STANDARDS</span></code>);
 pass another platform’s table to resolve as that platform would.</p></li>
@@ -1570,17 +1603,17 @@ parent, such as <code class="docutils literal notranslate"><span class="pre">/tm
 owned by another user. <code class="docutils literal notranslate"><span class="pre">ignore_sticky</span></code> also accepts the folder
 itself being sticky (as <code class="docutils literal notranslate"><span class="pre">/tmp</span></code> is), for a file kept directly in a shared folder.
 POSIX only (<code class="docutils literal notranslate"><span class="pre">None</span></code> elsewhere); a missing folder is <code class="docutils literal notranslate"><span class="pre">None</span></code> too.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
-</dd>
-</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">d</span><span class="p">:</span>  <span class="c1"># created 0o700</span>
 <span class="gp">... </span>    <span class="n">unsafe_folder_reason</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">check_ancestors</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">unsafe_folder_reason</span><span class="p">(</span><span class="s2">"/no/such/folder"</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.15)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -1650,6 +1683,7 @@ POSIX only (<code class="docutils literal notranslate"><span class="pre">None</s
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.always_true"><code class="docutils literal notranslate"><span class="pre">always_true()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.app_folder_standards"><code class="docutils literal notranslate"><span class="pre">app_folder_standards()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.ask_user_for_input"><code class="docutils literal notranslate"><span class="pre">ask_user_for_input()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.atomic_write_bytes"><code class="docutils literal notranslate"><span class="pre">atomic_write_bytes()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.check_folder_is_private"><code class="docutils literal notranslate"><span class="pre">check_folder_is_private()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.create_directories"><code class="docutils literal notranslate"><span class="pre">create_directories()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.util.ensure_default_configs_folder"><code class="docutils literal notranslate"><span class="pre">ensure_default_configs_folder()</span></code></a></li>
