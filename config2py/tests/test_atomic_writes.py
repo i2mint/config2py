@@ -91,3 +91,12 @@ def test_sync_store_writes_are_atomic_and_sweep_leftovers(tmp_path, monkeypatch)
     assert JsonStore(path)["b"] == 2
     assert not stale.exists()
     assert sorted(os.listdir(tmp_path)) == ["c.json"]
+
+
+def test_sweep_leaves_lookalike_files_alone(tmp_path):
+    keep = _orphan(tmp_path, "k.notes", 7200)  # ".k.notes.deadbeef.tmp" is another name's
+    other = tmp_path / ".k.mine.tmp"
+    other.write_bytes(b"x")
+    os.utime(other, (1, 1))
+    atomic_write_bytes(tmp_path / "k", b"v")
+    assert keep.exists() and other.exists()

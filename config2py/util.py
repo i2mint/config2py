@@ -193,16 +193,17 @@ _STALE_TMP_SECONDS = 3600  # older hidden temp files are leftovers of a killed w
 
 def _sweep_stale_tmp(folder, name, *, max_age=_STALE_TMP_SECONDS):
     """Remove ``.<name>.<hex>.tmp`` leftovers (e.g. from a SIGKILL) older than ``max_age``."""
-    prefix = f".{name}."
+    pattern = re.compile(rf"\.{re.escape(name)}\.[0-9a-f]{{8}}\.tmp")
     try:
         entries = os.listdir(folder)
     except OSError:
         return
     for entry in entries:
-        if entry.startswith(prefix) and entry.endswith(".tmp"):
+        if pattern.fullmatch(entry):
             full = os.path.join(folder, entry)
             try:
-                if time.time() - os.lstat(full).st_mtime > max_age:
+                info = os.lstat(full)
+                if stat.S_ISREG(info.st_mode) and time.time() - info.st_mtime > max_age:
                     os.remove(full)
             except OSError:
                 pass

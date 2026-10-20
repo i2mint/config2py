@@ -33,7 +33,9 @@ from pathlib import Path
 import json
 import errno
 import os
+import re
 import secrets
+import stat
 import time
 from functools import reduce
 
@@ -95,17 +97,18 @@ _STALE_TMP_SECONDS = 3600
 
 def _sweep_stale_tmp(folder, name, *, max_age=_STALE_TMP_SECONDS):
     """Remove ``.<name>.<hex>.tmp`` leftovers (e.g. from a SIGKILL) older than ``max_age``."""
-    prefix = f".{name}."
+    pattern = re.compile(rf"\.{re.escape(name)}\.[0-9a-f]{{8}}\.tmp")
     try:
         entries = os.listdir(folder)
     except OSError:
         return
     for entry in entries:
-        if not (entry.startswith(prefix) and entry.endswith(".tmp")):
+        if not pattern.fullmatch(entry):
             continue
         full = os.path.join(folder, entry)
         try:
-            if time.time() - os.lstat(full).st_mtime > max_age:
+            info = os.lstat(full)
+            if stat.S_ISREG(info.st_mode) and time.time() - info.st_mtime > max_age:
                 os.remove(full)
         except OSError:
             pass
@@ -471,7 +474,7 @@ class FileStore(SyncStore):
             data = initial_data
         else:
             # Load existing file
-            with open(self.filepath, self.mode) as f:
+            with open(self.filepath, self.mode, **self._open_kwargs) as f:
                 content = f.read()
             data = self._file_loader(content)
 
@@ -494,6 +497,11 @@ class FileStore(SyncStore):
 
             return initial_content
 
+    @property
+    def _open_kwargs(self) -> dict:
+        # Writes are utf-8 (see ``_atomic_write``); read text the same way.
+        return {} if "b" in self.mode else {"encoding": "utf-8"}
+
     def _dump_to_file(self, section_data: dict) -> None:
         """Write data to file, updating only the section specified by key_path."""
         if not self.key_path:
@@ -501,7 +509,7 @@ class FileStore(SyncStore):
             content = self._file_dumper(section_data, **self.dump_kwargs)
         else:
             # Have key_path, need to merge with full file content
-            with open(self.filepath, self.mode) as f:
+            with open(self.filepath, self.mode, **self._open_kwargs) as f:
                 full_data = self._file_loader(f.read())
             full_data = _set_nested(full_data, self.key_path, section_data)
             content = self._file_dumper(full_data, **self.dump_kwargs)
