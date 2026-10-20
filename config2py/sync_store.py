@@ -468,9 +468,7 @@ class FileStore(SyncStore):
             initial_data = self.create_file_content()
             self.filepath.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
             content = self._file_dumper(initial_data, **self.dump_kwargs)
-            _atomic_write(
-                self.filepath, content, follow_symlinks=self.follow_symlinks
-            )
+            _atomic_write(self.filepath, content, follow_symlinks=self.follow_symlinks)
             data = initial_data
         else:
             # Load existing file
@@ -491,9 +489,7 @@ class FileStore(SyncStore):
 
             # Write back to file
             content = self._file_dumper(full_data, **self.dump_kwargs)
-            _atomic_write(
-                self.filepath, content, follow_symlinks=self.follow_symlinks
-            )
+            _atomic_write(self.filepath, content, follow_symlinks=self.follow_symlinks)
 
             return initial_content
 
@@ -514,9 +510,7 @@ class FileStore(SyncStore):
             full_data = _set_nested(full_data, self.key_path, section_data)
             content = self._file_dumper(full_data, **self.dump_kwargs)
 
-        _atomic_write(
-            self.filepath, content, follow_symlinks=self.follow_symlinks
-        )
+        _atomic_write(self.filepath, content, follow_symlinks=self.follow_symlinks)
 
     def __repr__(self):
         key_path_str = f", key_path={self.key_path!r}" if self.key_path else ""
