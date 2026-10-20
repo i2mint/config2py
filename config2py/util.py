@@ -16,6 +16,7 @@ from typing import Optional, Union, Any, Set, Literal, get_args
 from collections.abc import Callable
 from types import SimpleNamespace
 import getpass
+import secrets
 
 from dol import process_path
 
@@ -184,6 +185,65 @@ def _open_beneath(path, mode, beneath, open_kwargs):
         return open(name, mode, opener=opener, **open_kwargs)
     finally:
         os.close(dir_fd)
+
+
+def atomic_write_bytes(path, data: bytes, *, follow_symlinks=True, beneath=None):
+    """Write ``data`` to ``path`` (``0o600``) so a crash never leaves it empty or partial.
+
+    The bytes go to a ``0o600`` temp file in the same folder (through ``secure_open``,
+    with the same ``follow_symlinks`` and ``beneath`` guarantees), are ``fsync``-ed, and
+    then ``os.replace`` d over ``path``: atomic on POSIX, and on Windows within one
+    volume. On any failure the temp file is removed and the old content is untouched
+    (see https://github.com/i2mint/config2py/issues/52).
+
+    With ``follow_symlinks=False`` a symlink at ``path`` is refused (never replaced), as
+    is a file with several hard links (the rename would silently detach them). With
+    ``follow_symlinks=True`` a symlink is followed: its target is what gets replaced,
+    and hard links to the old file are detached (the new file is a new inode). The
+    symlink check is by path, so a symlink planted in the instant before the rename is
+    replaced rather than written through: no data leaks, but the guarantee is not
+    race-proof. The temp file is hidden (``.<name>.<hex>.tmp``), so key listings skip it.
+
+    >>> import tempfile, os
+    >>> path = os.path.join(tempfile.mkdtemp(), "secret")
+    >>> atomic_write_bytes(path, b"one"); atomic_write_bytes(path, b"two")
+    >>> open(path, "rb").read()
+    b'two'
+    >>> os.listdir(os.path.dirname(path))
+    ['secret']
+    """
+    path = os.fspath(path)
+    if follow_symlinks:
+        path = os.path.realpath(path)
+    else:
+        if os.path.islink(path):
+            raise OSError(errno.ELOOP, "Refusing to replace a symlink", path)
+        try:
+            if os.stat(path).st_nlink > 1:
+                raise OSError(
+                    errno.EMLINK, "Refusing a file with several hard links", path
+                )
+        except FileNotFoundError:
+            pass
+    folder, name = os.path.split(path)
+    tmp_path = os.path.join(folder, f".{name}.{secrets.token_hex(4)}.tmp")
+    try:
+        with secure_open(
+            tmp_path,
+            "xb",
+            follow_symlinks=False,
+            beneath=None if follow_symlinks else beneath,  # a followed link may leave it
+        ) as fp:
+            fp.write(data)
+            fp.flush()
+            os.fsync(fp.fileno())
+        os.replace(tmp_path, path)
+    except BaseException:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        raise
 
 
 def tighten_mode(path, mode, *, strict=False) -> bool:
@@ -1186,8 +1246,7 @@ def ensure_seeded(
 
         ref = files(f"{package_name}.{seed_data_dir}.{seed_subpackage}") / filename
         secure_makedirs(target.parent)
-        with secure_open(target, "wb") as fp:
-            fp.write(ref.read_bytes())
+        atomic_write_bytes(target, ref.read_bytes())
     return target
 
 
