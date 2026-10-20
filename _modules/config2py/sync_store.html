@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../_static/documentation_options.js?v=d80f5ebb"></script>
+    <script src="../../_static/documentation_options.js?v=3b2b39e9"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -411,7 +411,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.69" />
+  <meta name="docsearch:version" content="0.1.70" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -747,6 +747,10 @@ window.runMermaid = runMermaid;</script>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stat</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduce</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -798,6 +802,70 @@ window.runMermaid = runMermaid;</script>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+
+<span class="c1">#: Hidden temp files older than this (seconds) are leftovers of a killed writer.</span>
+<span class="n">_STALE_TMP_SECONDS</span> <span class="o">=</span> <span class="mi">3600</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sweep_stale_tmp</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">max_age</span><span class="o">=</span><span class="n">_STALE_TMP_SECONDS</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Remove ``.&lt;name&gt;.&lt;hex&gt;.tmp`` leftovers (e.g. from a SIGKILL) older than ``max_age``."""</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">rf</span><span class="s2">"\.</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s2">\.[0-9a-f]</span><span class="se">{{</span><span class="s2">8</span><span class="se">}}</span><span class="s2">\.tmp"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pattern</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">entry</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">entry</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">lstat</span><span class="p">(</span><span class="n">full</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_ISREG</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">st_mode</span><span class="p">)</span> <span class="ow">and</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">info</span><span class="o">.</span><span class="n">st_mtime</span> <span class="o">&gt;</span> <span class="n">max_age</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">full</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_atomic_write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Replace ``path`` with ``content`` (``str`` or ``bytes``) atomically, ``0o600``.</span>
+
+<span class="sd">    Writes a hidden ``0o600`` temp file next to ``path``, ``fsync``\ s it, then</span>
+<span class="sd">    ``os.replace``\ s it over ``path``, so a crash never leaves the file empty or</span>
+<span class="sd">    partial (see i2mint/config2py#52, #61). Local copy of</span>
+<span class="sd">    ``config2py.util.atomic_write_bytes`` (this module has no intra-package imports).</span>
+<span class="sd">    With ``follow_symlinks=False`` a symlink at ``path`` or a file with several hard</span>
+<span class="sd">    links is refused (``OSError``) and left untouched.</span>
+<span class="sd">    """</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">content</span>
+    <span class="k">if</span> <span class="n">follow_symlinks</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ELOOP</span><span class="p">,</span> <span class="s2">"Refusing to replace a symlink"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">st_nlink</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span>
+                    <span class="n">errno</span><span class="o">.</span><span class="n">EMLINK</span><span class="p">,</span> <span class="s2">"Refusing a file with several hard links"</span><span class="p">,</span> <span class="n">path</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="n">folder</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">_sweep_stale_tmp</span><span class="p">(</span><span class="n">folder</span> <span class="ow">or</span> <span class="s2">"."</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">tmp_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">".</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">.tmp"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">_secure_open</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="s2">"xb"</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">fp</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">fsync</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">fileno</span><span class="p">())</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">pass</span>
         <span class="k">raise</span>
 
 
@@ -1128,15 +1196,13 @@ window.runMermaid = runMermaid;</script>
             <span class="n">initial_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_file_content</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o700</span><span class="p">)</span>
             <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dumper</span><span class="p">(</span><span class="n">initial_data</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span><span class="p">)</span>
-            <span class="n">write_mode</span> <span class="o">=</span> <span class="s2">"w"</span> <span class="k">if</span> <span class="s2">"b"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s2">"wb"</span>
-            <span class="k">with</span> <span class="n">_secure_open</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follow_symlinks</span>
-            <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">_atomic_write</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follow_symlinks</span>
+            <span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">initial_data</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Load existing file</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_loader</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
 
@@ -1153,13 +1219,16 @@ window.runMermaid = runMermaid;</script>
 
             <span class="c1"># Write back to file</span>
             <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dumper</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span><span class="p">)</span>
-            <span class="n">write_mode</span> <span class="o">=</span> <span class="s2">"w"</span> <span class="k">if</span> <span class="s2">"b"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s2">"wb"</span>
-            <span class="k">with</span> <span class="n">_secure_open</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follow_symlinks</span>
-            <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">_atomic_write</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follow_symlinks</span>
+            <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">initial_content</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_open_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="c1"># Writes are utf-8 (see ``_atomic_write``); read text the same way.</span>
+        <span class="k">return</span> <span class="p">{}</span> <span class="k">if</span> <span class="s2">"b"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="p">{</span><span class="s2">"encoding"</span><span class="p">:</span> <span class="s2">"utf-8"</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_dump_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Write data to file, updating only the section specified by key_path."""</span>
@@ -1168,16 +1237,14 @@ window.runMermaid = runMermaid;</script>
             <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dumper</span><span class="p">(</span><span class="n">section_data</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Have key_path, need to merge with full file content</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">full_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_loader</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
             <span class="n">full_data</span> <span class="o">=</span> <span class="n">_set_nested</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_path</span><span class="p">,</span> <span class="n">section_data</span><span class="p">)</span>
             <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_dumper</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dump_kwargs</span><span class="p">)</span>
 
-        <span class="n">write_mode</span> <span class="o">=</span> <span class="s2">"w"</span> <span class="k">if</span> <span class="s2">"b"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="k">else</span> <span class="s2">"wb"</span>
-        <span class="k">with</span> <span class="n">_secure_open</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follow_symlinks</span>
-        <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">_atomic_write</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">follow_symlinks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">follow_symlinks</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">key_path_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">", key_path=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key_path</span><span class="si">!r}</span><span class="s2">"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_path</span> <span class="k">else</span> <span class="s2">""</span>

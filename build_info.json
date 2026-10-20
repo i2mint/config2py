@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-20T02:50:46Z",
+  "built_at": "2026-10-20T03:17:30Z",
   "package": {
     "name": "config2py",
-    "version": "0.1.69",
+    "version": "0.1.70",
     "display_name": "config2py",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "6f45d04db75483309ad9469bbdf6bd0e2f6d3db7",
-    "short_commit": "6f45d04",
+    "commit": "67643759a474902a8d7743a531e3c2ece8a3db39",
+    "short_commit": "6764375",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/config2py",
-    "commit_url": "https://github.com/i2mint/config2py/commit/6f45d04db75483309ad9469bbdf6bd0e2f6d3db7",
+    "commit_url": "https://github.com/i2mint/config2py/commit/67643759a474902a8d7743a531e3c2ece8a3db39",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/config2py",
-    "sha": "6f45d04db75483309ad9469bbdf6bd0e2f6d3db7",
+    "sha": "67643759a474902a8d7743a531e3c2ece8a3db39",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "39360962504",
-    "run_url": "https://github.com/i2mint/config2py/actions/runs/39360962504",
+    "run_id": "39363373717",
+    "run_url": "https://github.com/i2mint/config2py/actions/runs/39363373717",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -61,15 +61,13 @@
   "pypi": {
     "checked": true,
     "latest": "0.1.70",
-    "relation": "behind",
+    "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout 6f45d04db75483309ad9469bbdf6bd0e2f6d3db7\npip install \"epythet==0.2.18\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout 67643759a474902a8d7743a531e3c2ece8a3db39\npip install \"epythet==0.2.18\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": false,
-    "notes": [
-      "The documented version (0.1.69) is behind the latest release on PyPI (0.1.70): `pip install config2py` gives newer code than these docs describe."
-    ]
+    "aligned": true,
+    "notes": []
   }
 }
