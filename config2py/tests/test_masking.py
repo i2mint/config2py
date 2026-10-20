@@ -243,3 +243,31 @@ def test_an_empty_prompt_is_a_prompt_not_an_indexerror(monkeypatch):
     shown = _scripted_prompts(monkeypatch, ["typed"])
     assert ask_user_for_input("", mask_input=False) == "typed"
     assert shown == [" "]
+
+
+# --- i2mint/config2py#60: the toggle is a loop that keeps what masking was based on ---
+
+
+def test_toggle_keeps_inferred_masking_with_piped_stdin(monkeypatch):
+    """A toggle off then on again must not switch to getpass on a piped stdin."""
+    _scripted_prompts(monkeypatch, ["", "", "typed"])
+    monkeypatch.setattr("config2py.util._stdin_is_a_terminal", lambda: False)
+
+    def no_getpass(prompt=""):
+        raise AssertionError("getpass reads the terminal, not the pipe")
+
+    no_getpass.__module__ = "getpass"
+    monkeypatch.setattr(getpass, "getpass", no_getpass)
+    assert ask_user_for_input("Enter API_KEY", masking_toggle_str="") == "typed"
+
+
+def test_a_toggle_that_would_swallow_the_default_is_refused():
+    with pytest.raises(ValueError, match="default"):
+        ask_user_for_input("q", "dflt", masking_toggle_str="")
+    with pytest.raises(ValueError, match="default"):
+        ask_user_for_input("q", "dflt", masking_toggle_str="dflt")
+
+
+def test_many_toggles_do_not_recurse(monkeypatch):
+    _scripted_prompts(monkeypatch, [""] * 3000 + ["typed"])
+    assert ask_user_for_input("q", masking_toggle_str="") == "typed"
