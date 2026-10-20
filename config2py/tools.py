@@ -18,6 +18,7 @@ from config2py.util import (
     is_repl,
     DFLT_CONFIGS_NAME,
     secure_open,
+    atomic_write_bytes,
     check_folder_is_private,
     setup_configs_folder,
 )
@@ -96,13 +97,12 @@ class SecureTextFiles(TextFiles):
         self.store.validate_key(path)
         try:
             data = self._data_of_obj(v).encode(self.encoding)
-            with secure_open(
+            atomic_write_bytes(
                 path,
-                "wb",
+                data,
                 follow_symlinks=self._follow_symlinks,
                 beneath=self.rootdir,
-            ) as fp:
-                fp.write(data)
+            )
         except UnicodeError as error:
             # Its text quotes the offending character of the (possibly secret) value.
             raise KeyError(

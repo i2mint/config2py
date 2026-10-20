@@ -11,7 +11,7 @@ from io import StringIO
 
 from dol import Store
 
-from config2py.util import secure_open
+from config2py.util import atomic_write_bytes
 from config2py.errors import (  # private names: py2store star-imports this module
     report_missing_config_file as _report_missing_config_file,
     unusable_config_file_problem as _unusable_config_file_problem,
@@ -379,13 +379,11 @@ class ConfigStore(ConfigParserStore):
                         error.end,
                         "a value can't be encoded; nothing was written",
                     ) from None
-                with secure_open(
+                atomic_write_bytes(
                     self.source,
-                    "w",
-                    encoding="utf-8",
+                    text.replace("\n", _os.linesep).encode("utf-8"),
                     follow_symlinks=self._follow_symlinks,
-                ) as fp:
-                    fp.write(text)
+                )
                 return None
             else:
                 if self.target_kind == "stream":
