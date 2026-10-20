@@ -17,6 +17,7 @@ from collections.abc import Callable
 from types import SimpleNamespace
 import getpass
 import secrets
+import time
 
 from dol import process_path
 
@@ -187,6 +188,27 @@ def _open_beneath(path, mode, beneath, open_kwargs):
         os.close(dir_fd)
 
 
+_STALE_TMP_SECONDS = 3600  # older hidden temp files are leftovers of a killed writer
+
+
+def _sweep_stale_tmp(folder, name, *, max_age=_STALE_TMP_SECONDS):
+    """Remove ``.<name>.<hex>.tmp`` leftovers (e.g. from a SIGKILL) older than ``max_age``."""
+    pattern = re.compile(rf"\.{re.escape(name)}\.[0-9a-f]{{8}}\.tmp")
+    try:
+        entries = os.listdir(folder)
+    except OSError:
+        return
+    for entry in entries:
+        if pattern.fullmatch(entry):
+            full = os.path.join(folder, entry)
+            try:
+                info = os.lstat(full)
+                if stat.S_ISREG(info.st_mode) and time.time() - info.st_mtime > max_age:
+                    os.remove(full)
+            except OSError:
+                pass
+
+
 def atomic_write_bytes(path, data: bytes, *, follow_symlinks=True, beneath=None):
     """Write ``data`` to ``path`` (``0o600``) so a crash never leaves it empty or partial.
 
@@ -226,6 +248,7 @@ def atomic_write_bytes(path, data: bytes, *, follow_symlinks=True, beneath=None)
         except FileNotFoundError:
             pass
     folder, name = os.path.split(path)
+    _sweep_stale_tmp(folder or ".", name)
     tmp_path = os.path.join(folder, f".{name}.{secrets.token_hex(4)}.tmp")
     try:
         with secure_open(

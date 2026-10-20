@@ -33,6 +33,10 @@ from pathlib import Path
 import json
 import errno
 import os
+import re
+import secrets
+import stat
+import time
 from functools import reduce
 
 __all__ = [
@@ -84,6 +88,70 @@ def _secure_open(path, mode="w", *, follow_symlinks=True):
         return os.fdopen(fd, mode)
     except BaseException:
         os.close(fd)
+        raise
+
+
+#: Hidden temp files older than this (seconds) are leftovers of a killed writer.
+_STALE_TMP_SECONDS = 3600
+
+
+def _sweep_stale_tmp(folder, name, *, max_age=_STALE_TMP_SECONDS):
+    """Remove ``.<name>.<hex>.tmp`` leftovers (e.g. from a SIGKILL) older than ``max_age``."""
+    pattern = re.compile(rf"\.{re.escape(name)}\.[0-9a-f]{{8}}\.tmp")
+    try:
+        entries = os.listdir(folder)
+    except OSError:
+        return
+    for entry in entries:
+        if not pattern.fullmatch(entry):
+            continue
+        full = os.path.join(folder, entry)
+        try:
+            info = os.lstat(full)
+            if stat.S_ISREG(info.st_mode) and time.time() - info.st_mtime > max_age:
+                os.remove(full)
+        except OSError:
+            pass
+
+
+def _atomic_write(path, content, *, follow_symlinks=True):
+    """Replace ``path`` with ``content`` (``str`` or ``bytes``) atomically, ``0o600``.
+
+    Writes a hidden ``0o600`` temp file next to ``path``, ``fsync``\ s it, then
+    ``os.replace``\ s it over ``path``, so a crash never leaves the file empty or
+    partial (see i2mint/config2py#52, #61). Local copy of
+    ``config2py.util.atomic_write_bytes`` (this module has no intra-package imports).
+    With ``follow_symlinks=False`` a symlink at ``path`` or a file with several hard
+    links is refused (``OSError``) and left untouched.
+    """
+    path = os.fspath(path)
+    data = content.encode("utf-8") if isinstance(content, str) else content
+    if follow_symlinks:
+        path = os.path.realpath(path)
+    else:
+        if os.path.islink(path):
+            raise OSError(errno.ELOOP, "Refusing to replace a symlink", path)
+        try:
+            if os.stat(path).st_nlink > 1:
+                raise OSError(
+                    errno.EMLINK, "Refusing a file with several hard links", path
+                )
+        except FileNotFoundError:
+            pass
+    folder, name = os.path.split(path)
+    _sweep_stale_tmp(folder or ".", name)
+    tmp_path = os.path.join(folder, f".{name}.{secrets.token_hex(4)}.tmp")
+    try:
+        with _secure_open(tmp_path, "xb", follow_symlinks=False) as fp:
+            fp.write(data)
+            fp.flush()
+            os.fsync(fp.fileno())
+        os.replace(tmp_path, path)
+    except BaseException:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
         raise
 
 
@@ -400,15 +468,13 @@ class FileStore(SyncStore):
             initial_data = self.create_file_content()
             self.filepath.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
             content = self._file_dumper(initial_data, **self.dump_kwargs)
-            write_mode = "w" if "b" not in self.mode else "wb"
-            with _secure_open(
-                self.filepath, write_mode, follow_symlinks=self.follow_symlinks
-            ) as f:
-                f.write(content)
+            _atomic_write(
+                self.filepath, content, follow_symlinks=self.follow_symlinks
+            )
             data = initial_data
         else:
             # Load existing file
-            with open(self.filepath, self.mode) as f:
+            with open(self.filepath, self.mode, **self._open_kwargs) as f:
                 content = f.read()
             data = self._file_loader(content)
 
@@ -425,13 +491,16 @@ class FileStore(SyncStore):
 
             # Write back to file
             content = self._file_dumper(full_data, **self.dump_kwargs)
-            write_mode = "w" if "b" not in self.mode else "wb"
-            with _secure_open(
-                self.filepath, write_mode, follow_symlinks=self.follow_symlinks
-            ) as f:
-                f.write(content)
+            _atomic_write(
+                self.filepath, content, follow_symlinks=self.follow_symlinks
+            )
 
             return initial_content
+
+    @property
+    def _open_kwargs(self) -> dict:
+        # Writes are utf-8 (see ``_atomic_write``); read text the same way.
+        return {} if "b" in self.mode else {"encoding": "utf-8"}
 
     def _dump_to_file(self, section_data: dict) -> None:
         """Write data to file, updating only the section specified by key_path."""
@@ -440,16 +509,14 @@ class FileStore(SyncStore):
             content = self._file_dumper(section_data, **self.dump_kwargs)
         else:
             # Have key_path, need to merge with full file content
-            with open(self.filepath, self.mode) as f:
+            with open(self.filepath, self.mode, **self._open_kwargs) as f:
                 full_data = self._file_loader(f.read())
             full_data = _set_nested(full_data, self.key_path, section_data)
             content = self._file_dumper(full_data, **self.dump_kwargs)
 
-        write_mode = "w" if "b" not in self.mode else "wb"
-        with _secure_open(
-            self.filepath, write_mode, follow_symlinks=self.follow_symlinks
-        ) as f:
-            f.write(content)
+        _atomic_write(
+            self.filepath, content, follow_symlinks=self.follow_symlinks
+        )
 
     def __repr__(self):
         key_path_str = f", key_path={self.key_path!r}" if self.key_path else ""
