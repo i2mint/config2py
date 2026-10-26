@@ -41,10 +41,12 @@ SECRET_TEXT_PATTERNS = (
         + r"(?=[^\s\"',;]{0,512}\d)[^\s\"',;]{8,}"
     ),
     re.compile(r"(?i)\b[a-z][a-z0-9+.-]{0,15}://[^/\s:@]{1,64}:[^/\s@]{1,128}@"),
+    re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
     re.compile(r"\beyJ[a-zA-Z0-9_-]{8,}\.[a-zA-Z0-9_-]{8,}"),
     re.compile(
-        r"\b(?:(?:sk|pk|rk)[-_](?:live[-_]|test[-_])?[a-zA-Z0-9]{8,}|gh[pousr]_[a-zA-Z0-9]{20,}"
-        r"|glpat-[a-zA-Z0-9_-]{16,}|AIza[a-zA-Z0-9_-]{30,}|AKIA[0-9A-Z]{16}"
+        r"\b(?:(?:sk|pk|rk)[-_](?:live[-_]|test[-_])?[a-zA-Z0-9]{8,}|sk-[a-zA-Z0-9_-]{20,}"
+        r"|gh[pousr]_[a-zA-Z0-9]{20,}|github_pat_[a-zA-Z0-9_]{20,}|whsec_[a-zA-Z0-9]{16,}"
+        r"|glpat-[a-zA-Z0-9_-]{16,}|AIza[a-zA-Z0-9_-]{30,}|(?:AKIA|ASIA)[0-9A-Z]{16}"
         r"|xox[abposr]-[a-zA-Z0-9-]{10,})"
     ),
     re.compile(

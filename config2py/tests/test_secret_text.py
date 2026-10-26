@@ -21,6 +21,17 @@ from config2py import has_secret
     "x-api-key: abcdefghijklmnop",
     "accessToken=ab12cd34ef56",
     "Basic dXNlcjpwYXNz",
+    "sk-ant-api03-abcdefghijklmnopqrstuvwxyz",
+    "sk-proj-abcdefghijklmnopqrstuvwxyz",
+    "github_pat_11ABCDEFG0abcdefghijkl_mnop",
+    "AKIAABCDEFGHIJKLMNOP",
+    "ASIAABCDEFGHIJKLMNOP",
+    "AIza" + "a" * 35,
+    "xoxb-1234567890-abcdefgh",
+    "glpat-abcdefghijklmnop12",
+    "sk_live_abcdefgh12345678",
+    "whsec_abcdefghijklmnop1234",
+    "-----BEGIN RSA PRIVATE KEY-----",
 ])
 def test_credential_shaped_text_is_flagged(text):
     assert has_secret(text)
