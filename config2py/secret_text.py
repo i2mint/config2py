@@ -72,7 +72,7 @@ PRIVATE_KEY_PATTERN = (
     rf"(?:(?:[A-Z0-9]{{1,{_KEY_TYPE_WORD_MAX}}} ){{0,{_KEY_TYPE_WORDS_MAX}}}PRIVATE KEY"
     r"|PGP PRIVATE KEY BLOCK)-----"
 )
-#: The token shapes of the 0.1 leak scan, each without the word boundary it starts at: the
+#: The token shapes of liaise's 0.1 leak scan, each without the word boundary it starts at: the
 #: GitHub (``ghp_`` and its siblings, ``github_pat_``), ``sk-`` API key, AWS access key,
 #: Hugging Face (``hf_``) and Slack (``xoxb-`` and its siblings) shapes.
 TOKEN_SHAPES = (
@@ -101,6 +101,8 @@ TOKEN_LITERALS = (
     ("hf_",),
     ("xoxb-", "xoxa-", "xoxp-", "xoxr-", "xoxs-"),
 )
+
+
 @dataclass(frozen=True)
 class SecretRule:
     """A secret's shape: ``rule`` names it, ``pattern`` is its expression.
@@ -108,9 +110,10 @@ class SecretRule:
     Data only; the matching engine is the user's (liaise scans message views with it,
     :func:`has_secret` a plain string). ``literals``: strings one of which every match
     contains (in case-folded text, with ``ignore_case``), a cheap pre-filter; empty:
-    always scan. ``word_start``: a match must start a word. ``wrappable``: the rule may
-    also be looked for in text with line breaks and markup removed (a token split by
-    them); such a pattern must not fail after an unbounded repetition.
+    always scan. ``word_start``: a match must start a word. ``wrappable``: a hint for
+    engines that also look for the rule in text with line breaks and markup removed (a
+    token split by them): such a pattern must not fail after an unbounded repetition.
+    :func:`has_secret` scans the text as given and ignores it.
     """
 
     rule: str
@@ -134,7 +137,7 @@ class SecretRule:
         return bool(re.search(rf"\b{self.pattern}" if self.word_start else self.pattern, text))
 
 
-# The rules after the 0.1 shapes adapt gitleaks' default configuration, under this notice:
+# The rules after the token shapes and the private-key header adapt gitleaks' default configuration, under this notice:
 #
 #   MIT License
 #
@@ -158,7 +161,7 @@ class SecretRule:
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #   SOFTWARE.
 
-#: The secret rules :func:`secret_detector` uses by default: the token shapes and
+#: The secret rules (liaise's ``secret_detector`` scans with them by default): the token shapes and
 #: private-key header, then distinctive-prefix rules adapted from gitleaks (the gitleaks id
 #: precedes each).
 SECRET_RULES: tuple[SecretRule, ...] = (
@@ -223,7 +226,7 @@ SECRET_RULES: tuple[SecretRule, ...] = (
     SecretRule("linear-api-key", r"lin_api_[A-Za-z0-9]{40}", ("lin_api_",)),
     # huggingface-organization-api-token
     SecretRule("hugging-face-org-token", r"api_org_[A-Za-z]{34}", ("api_org_",)),
-    # aws-access-token, less the AKIA prefix the 0.1 rule has
+    # aws-access-token, less the AKIA prefix the token-shape rule has
     SecretRule(
         "aws-access-key-id",
         r"(?:A3T[A-Z0-9]|ASIA|ABIA|ACCA)[A-Z2-7]{16}\b",

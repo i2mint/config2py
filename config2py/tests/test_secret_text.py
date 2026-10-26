@@ -4,7 +4,7 @@ import time
 
 import pytest
 
-from config2py import SECRET_RULES, has_secret
+from config2py import SECRET_RULES, SecretRule, has_secret
 
 
 @pytest.mark.parametrize("text", [
@@ -112,3 +112,16 @@ def test_the_rule_and_pattern_seams_are_independent():
     assert not has_secret(token, patterns=(), rules=())
     assert has_secret("password: hunter2", rules=())
     assert not has_secret("password: hunter2", patterns=())
+
+
+def test_a_rule_starts_at_a_word_start_unless_told_otherwise():
+    rule = SECRET_RULES[0]  # github-token
+    token = "ghp_" + "a" * 20
+    assert rule.search("x " + token)
+    assert not rule.search("x" + token)
+    assert SecretRule("loose", "abc", word_start=False).search("xabc")
+
+
+def test_a_case_insensitive_rule_matches_any_case_and_its_literal_prefilter_folds():
+    rule = next(r for r in SECRET_RULES if r.rule == "npm-token")
+    assert rule.ignore_case and rule.search("NPM_" + "A" * 36)
