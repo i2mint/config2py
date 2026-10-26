@@ -20,6 +20,7 @@ Tools to read and write configurations from various sources and formats
 | [`parse_assignments_from_py_source`](#config2py.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                   |
 | [`process_path`](#config2py.process_path)(\*path[, ensure_dir_exists, ...])    | Process a path string, ensuring it exists, and optionally expanding user.                                                                    |
 | [`ensure_seeded`](#config2py.ensure_seeded)(target, package_name, ...[, ...])   | Copy a bundled seed file to *target* if it does not already exist.                                                                           |
+| [`has_secret`](#config2py.has_secret)(text)                                  | Whether `text` looks like it holds a credential (see `SECRET_TEXT_PATTERNS`).                                                                |
 | [`register_extension`](#config2py.register_extension)(ext, loader, dumper)           | Register loader/dumper for a file extension.                                                                                                 |
 | `config_getter`([key, sources, default, ...])                                                      | Get a config value from a list of sources                                                                                                    |
 
@@ -989,6 +990,20 @@ The default, `DFLT_CONFIG_FOLDER`, is config2py’s own configs folder. It is
 created here, on first use, rather than at import
 (see [https://github.com/i2mint/config2py/issues/26](https://github.com/i2mint/config2py/issues/26)).
 
+### config2py.has_secret(text)
+
+Whether `text` looks like it holds a credential (see `SECRET_TEXT_PATTERNS`).
+
+```pycon
+>>> [has_secret(t) for t in ("cursor (size=first, cursor=after)", "10000 results",
+...                          "needs Cookie: sid=abc", "api_key=a1b2c3d4e5",
+...                          "page via ?pageToken=", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0")]
+[False, False, True, True, False, True]
+```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
 ### config2py.is_repl()
 
 Determines if the Python interpreter is running in REPL.
@@ -1163,5 +1178,6 @@ places), `save_to` can be a `(key, value)` function instead:
 | [`s_configparser`](config2py.s_configparser.html.md#module-config2py.s_configparser) | Data Object Layer for configparser standard lib.                 |
 | [`base`](config2py.base.html.md#module-config2py.base)                     | Base for getting configs from various sources and formats        |
 | [`tools`](config2py.tools.html.md#module-config2py.tools)                   | Various tools                                                    |
+| [`secret_text`](config2py.secret_text.html.md#module-config2py.secret_text)       | Value-level detection of credentials in free text.               |
 | [`sync_store`](config2py.sync_store.html.md#module-config2py.sync_store)         | Synchronized key-value stores with automatic persistence.        |
 | [`codecs`](config2py.codecs.html.md#module-config2py.codecs)                 | Extension-based codec registries for configuration file parsing. |

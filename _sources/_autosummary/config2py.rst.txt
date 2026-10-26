@@ -23,6 +23,7 @@
       parse_assignments_from_py_source
       process_path
       ensure_seeded
+      has_secret
       register_extension
       config_getter
    
@@ -59,5 +60,6 @@
    s_configparser
    base
    tools
+   secret_text
    sync_store
    codecs

@@ -1,4 +1,4 @@
-> built 2026-10-20 10:12 UTC from 03544e7 (master) · config2py 0.1.71. Details: build_info.json
+> built 2026-10-26 09:17 UTC from 7f6e205 (master) · config2py 0.1.72. Details: build_info.json
 
 # index.html.md
 
@@ -1254,6 +1254,7 @@ Tools to read and write configurations from various sources and formats
 | [`parse_assignments_from_py_source`](_autosummary/config2py.html.md#config2py.parse_assignments_from_py_source)(source_code, \*) | Parse assignments from python source code.                                                                                                   |
 | [`process_path`](_autosummary/config2py.html.md#config2py.process_path)(\*path[, ensure_dir_exists, ...])    | Process a path string, ensuring it exists, and optionally expanding user.                                                                    |
 | [`ensure_seeded`](_autosummary/config2py.html.md#config2py.ensure_seeded)(target, package_name, ...[, ...])   | Copy a bundled seed file to *target* if it does not already exist.                                                                           |
+| [`has_secret`](_autosummary/config2py.html.md#config2py.has_secret)(text)                                  | Whether `text` looks like it holds a credential (see `SECRET_TEXT_PATTERNS`).                                                                |
 | [`register_extension`](_autosummary/config2py.html.md#config2py.register_extension)(ext, loader, dumper)           | Register loader/dumper for a file extension.                                                                                                 |
 | `config_getter`([key, sources, default, ...])                                                      | Get a config value from a list of sources                                                                                                    |
 
@@ -2223,6 +2224,20 @@ The default, `DFLT_CONFIG_FOLDER`, is config2py’s own configs folder. It is
 created here, on first use, rather than at import
 (see [https://github.com/i2mint/config2py/issues/26](https://github.com/i2mint/config2py/issues/26)).
 
+### config2py.has_secret(text)
+
+Whether `text` looks like it holds a credential (see `SECRET_TEXT_PATTERNS`).
+
+```pycon
+>>> [has_secret(t) for t in ("cursor (size=first, cursor=after)", "10000 results",
+...                          "needs Cookie: sid=abc", "api_key=a1b2c3d4e5",
+...                          "page via ?pageToken=", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0")]
+[False, False, True, True, False, True]
+```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
 ### config2py.is_repl()
 
 Determines if the Python interpreter is running in REPL.
@@ -2397,6 +2412,7 @@ places), `save_to` can be a `(key, value)` function instead:
 | [`s_configparser`](_autosummary/config2py.s_configparser.html.md#module-config2py.s_configparser) | Data Object Layer for configparser standard lib.                 |
 | [`base`](_autosummary/config2py.base.html.md#module-config2py.base)                     | Base for getting configs from various sources and formats        |
 | [`tools`](_autosummary/config2py.tools.html.md#module-config2py.tools)                   | Various tools                                                    |
+| [`secret_text`](_autosummary/config2py.secret_text.html.md#module-config2py.secret_text)       | Value-level detection of credentials in free text.               |
 | [`sync_store`](_autosummary/config2py.sync_store.html.md#module-config2py.sync_store)         | Synchronized key-value stores with automatic persistence.        |
 | [`codecs`](_autosummary/config2py.codecs.html.md#module-config2py.codecs)                 | Extension-based codec registries for configuration file parsing. |
 
@@ -2733,6 +2749,54 @@ in your class definition block.
 
 I thought I needed to wrap more method this way, but as it turns out, I might not,
 so I prefer open code.
+
+
+# _autosummary/config2py.secret_text.html.md
+
+# config2py.secret_text
+
+Value-level detection of credentials in free text.
+
+[`config2py.util.looks_like_secret()`](_autosummary/config2py.util.html.md#config2py.util.looks_like_secret) judges a *key name* (`OPENAI_API_KEY`);
+[`has_secret()`](_autosummary/config2py.secret_text.html.md#config2py.secret_text.has_secret) judges a *value*: it is for text about to be written somewhere
+others can read it (a report, an issue body, a log line), where the credential is
+in the text rather than in its label.
+
+### Module Attributes
+
+| [`SECRET_TEXT_PATTERNS`](_autosummary/config2py.secret_text.html.md#config2py.secret_text.SECRET_TEXT_PATTERNS)   | a header or cookie line, a secret-named key with a value (any value for a password, secret or key; an opaque one holding a digit for a token, session or auth key), credentials in a URL, a JWT, a known key prefix, or a long opaque string with at least four digits.   |
+|-------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+### Functions
+
+| [`has_secret`](_autosummary/config2py.secret_text.html.md#config2py.secret_text.has_secret)(text)   | Whether `text` looks like it holds a credential (see [`SECRET_TEXT_PATTERNS`](_autosummary/config2py.secret_text.html.md#config2py.secret_text.SECRET_TEXT_PATTERNS)).   |
+|---------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+
+### config2py.secret_text.SECRET_TEXT_PATTERNS *= (re.compile('(?i)(?<![a-z0-9-])(?:proxy-)?(?:authorization|cookie|set-cookie)\\\\s\*:', re.IGNORECASE), re.compile('(?i)\\\\b(?:bearer|basic)\\\\s+(?=[a-z0-9._~+/=-]{0,512}(?-i:[A-Z0-9]))[a-z0-9._~+/=-]{8,}', re.IGNORECASE), re.compile('(?i)(?<![a-z0-9])(?:[a-z0-9]{1,32}[_.-]|[a-z][a-z0-9]{0,31}(?=(?-i:[A-Z]))){0,4}(?:pass(?:wor)?d|pass|pwd|secret|api[_-]?key|access[_-]?key|private[_-]?key|credentials?)(?:[_.-]?(?:id|key|token))?[\\\\, re.IGNORECASE), re.compile('(?i)(?<![a-z0-9])(?:[a-z0-9]{1,32}[_.-]|[a-z][a-z0-9]{0,31}(?=(?-i:[A-Z]))){0,4}(?:token|session|sid|auth)(?:[_.-]?(?:id|key|token))?[\\\\"\\']?\\\\s\*[=:]\\\\s\*[\\\\"\\']?(?=[^\\\\s\\\\"\\',;]{0,512}\\\\d)[^\\\\s\\\\"\\',, re.IGNORECASE), re.compile('(?i)\\\\b[a-z][a-z0-9+.-]{0,15}://[^/\\\\s:@]{1,64}:[^/\\\\s@]{1,128}@', re.IGNORECASE), re.compile('\\\\beyJ[a-zA-Z0-9_-]{8,}\\\\.[a-zA-Z0-9_-]{8,}'), re.compile('\\\\b(?:(?:sk|pk|rk)[-_](?:live[-_]|test[-_])?[a-zA-Z0-9]{8,}|gh[pousr]_[a-zA-Z0-9]{20,}|glpat-[a-zA-Z0-9_-]{16,}|AIza[a-zA-Z0-9_-]{30,}|AKIA[0-9A-Z]{16}|xox[abposr]-[a-zA-Z0-9-]{10,})'), re.compile('(?<![a-zA-Z0-9_-])(?=(?:[a-zA-Z_-]\*\\\\d){4})(?![a-zA-Z0-9_]\*-[a-zA-Z0-9_]\*-[a-zA-Z0-9_]\*-)[a-zA-Z0-9_-]{32,}'))*
+
+a header or cookie line, a secret-named key
+with a value (any value for a password, secret or key; an opaque one holding a
+digit for a token, session or auth key), credentials in a URL, a JWT, a known key
+prefix, or a long opaque string with at least four digits. Errs on the side of
+flagging: a false positive keeps a harmless fact out of public text, a false
+negative publishes a secret.
+
+* **Type:**
+  Shapes of a credential in free text
+
+### config2py.secret_text.has_secret(text)
+
+Whether `text` looks like it holds a credential (see [`SECRET_TEXT_PATTERNS`](_autosummary/config2py.secret_text.html.md#config2py.secret_text.SECRET_TEXT_PATTERNS)).
+
+```pycon
+>>> [has_secret(t) for t in ("cursor (size=first, cursor=after)", "10000 results",
+...                          "needs Cookie: sid=abc", "api_key=a1b2c3d4e5",
+...                          "page via ?pageToken=", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0")]
+[False, False, True, True, False, True]
+```
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 
 # _autosummary/config2py.sync_store.html.md
@@ -4157,18 +4221,18 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-10-20 10:12 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/03544e749d3dfe64da0cf21561097dcf4754ad26"><code>03544e7</code></a> on branch <code>master</code>, for **config2py 0.1.71** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-26 09:17 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/7f6e2053eba25e9f47cc455b1c4e657d893776e6"><code>7f6e205</code></a> on branch <code>master</code>, for **config2py 0.1.72** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.71) is behind the latest release on PyPI (0.1.72): `pip install config2py` gives newer code than these docs describe.
+- The documented version (0.1.72) is behind the latest release on PyPI (0.1.73): `pip install config2py` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/03544e749d3dfe64da0cf21561097dcf4754ad26"><code>03544e749d3dfe64da0cf21561097dcf4754ad26</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/7f6e2053eba25e9f47cc455b1c4e657d893776e6"><code>7f6e2053eba25e9f47cc455b1c4e657d893776e6</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4179,15 +4243,15 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/39406142443">39406142443</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/40298174103">40298174103</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>03544e749d3dfe64da0cf21561097dcf4754ad26</code> (in the history of the built commit) |
+| Event commit | <code>7f6e2053eba25e9f47cc455b1c4e657d893776e6</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.18  |
+| epythet  | 0.2.22  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
@@ -4206,14 +4270,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.72/">0.1.72</a>, newer than the documented version (0.1.71).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.73/">0.1.73</a>, newer than the documented version (0.1.72).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 03544e749d3dfe64da0cf21561097dcf4754ad26
-pip install "epythet==0.2.18"
+git checkout 7f6e2053eba25e9f47cc455b1c4e657d893776e6
+pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 
