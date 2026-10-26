@@ -59,7 +59,9 @@ def __getattr__(name):
         value = _import_module(f"config2py.{name}")
     else:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-    if name not in _default_instances:  # those stay owned by ``tools``, which caches them
+    if (
+        name not in _default_instances
+    ):  # those stay owned by ``tools``, which caches them
         globals()[name] = value
     return value
 
