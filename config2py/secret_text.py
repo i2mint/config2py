@@ -134,7 +134,9 @@ class SecretRule:
         """Whether the rule matches ``text``."""
         if not self.may_match(text):
             return False
-        return bool(re.search(rf"\b{self.pattern}" if self.word_start else self.pattern, text))
+        return bool(
+            re.search(rf"\b{self.pattern}" if self.word_start else self.pattern, text)
+        )
 
 
 # The rules after the token shapes and the private-key header adapt gitleaks' default configuration, under this notice:
