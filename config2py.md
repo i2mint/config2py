@@ -1,4 +1,4 @@
-> built 2026-10-26 09:17 UTC from 7f6e205 (master) · config2py 0.1.72. Details: build_info.json
+> built 2026-10-26 09:26 UTC from 1f76376 (master) · config2py 0.1.73. Details: build_info.json
 
 # index.html.md
 
@@ -2772,7 +2772,7 @@ in the text rather than in its label.
 | [`has_secret`](_autosummary/config2py.secret_text.html.md#config2py.secret_text.has_secret)(text)   | Whether `text` looks like it holds a credential (see [`SECRET_TEXT_PATTERNS`](_autosummary/config2py.secret_text.html.md#config2py.secret_text.SECRET_TEXT_PATTERNS)).   |
 |---------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
 
-### config2py.secret_text.SECRET_TEXT_PATTERNS *= (re.compile('(?i)(?<![a-z0-9-])(?:proxy-)?(?:authorization|cookie|set-cookie)\\\\s\*:', re.IGNORECASE), re.compile('(?i)\\\\b(?:bearer|basic)\\\\s+(?=[a-z0-9._~+/=-]{0,512}(?-i:[A-Z0-9]))[a-z0-9._~+/=-]{8,}', re.IGNORECASE), re.compile('(?i)(?<![a-z0-9])(?:[a-z0-9]{1,32}[_.-]|[a-z][a-z0-9]{0,31}(?=(?-i:[A-Z]))){0,4}(?:pass(?:wor)?d|pass|pwd|secret|api[_-]?key|access[_-]?key|private[_-]?key|credentials?)(?:[_.-]?(?:id|key|token))?[\\\\, re.IGNORECASE), re.compile('(?i)(?<![a-z0-9])(?:[a-z0-9]{1,32}[_.-]|[a-z][a-z0-9]{0,31}(?=(?-i:[A-Z]))){0,4}(?:token|session|sid|auth)(?:[_.-]?(?:id|key|token))?[\\\\"\\']?\\\\s\*[=:]\\\\s\*[\\\\"\\']?(?=[^\\\\s\\\\"\\',;]{0,512}\\\\d)[^\\\\s\\\\"\\',, re.IGNORECASE), re.compile('(?i)\\\\b[a-z][a-z0-9+.-]{0,15}://[^/\\\\s:@]{1,64}:[^/\\\\s@]{1,128}@', re.IGNORECASE), re.compile('\\\\beyJ[a-zA-Z0-9_-]{8,}\\\\.[a-zA-Z0-9_-]{8,}'), re.compile('\\\\b(?:(?:sk|pk|rk)[-_](?:live[-_]|test[-_])?[a-zA-Z0-9]{8,}|gh[pousr]_[a-zA-Z0-9]{20,}|glpat-[a-zA-Z0-9_-]{16,}|AIza[a-zA-Z0-9_-]{30,}|AKIA[0-9A-Z]{16}|xox[abposr]-[a-zA-Z0-9-]{10,})'), re.compile('(?<![a-zA-Z0-9_-])(?=(?:[a-zA-Z_-]\*\\\\d){4})(?![a-zA-Z0-9_]\*-[a-zA-Z0-9_]\*-[a-zA-Z0-9_]\*-)[a-zA-Z0-9_-]{32,}'))*
+### config2py.secret_text.SECRET_TEXT_PATTERNS *= (re.compile('(?i)(?<![a-z0-9-])(?:proxy-)?(?:authorization|cookie|set-cookie)\\\\s\*:', re.IGNORECASE), re.compile('(?i)\\\\b(?:bearer|basic)\\\\s+(?=[a-z0-9._~+/=-]{0,512}(?-i:[A-Z0-9]))[a-z0-9._~+/=-]{8,}', re.IGNORECASE), re.compile('(?i)(?<![a-z0-9])(?:[a-z0-9]{1,32}[_.-]|[a-z][a-z0-9]{0,31}(?=(?-i:[A-Z]))){0,4}(?:pass(?:wor)?d|pass|pwd|secret|api[_-]?key|access[_-]?key|private[_-]?key|credentials?)(?:[_.-]?(?:id|key|token))?[\\\\, re.IGNORECASE), re.compile('(?i)(?<![a-z0-9])(?:[a-z0-9]{1,32}[_.-]|[a-z][a-z0-9]{0,31}(?=(?-i:[A-Z]))){0,4}(?:token|session|sid|auth)(?:[_.-]?(?:id|key|token))?[\\\\"\\']?\\\\s\*[=:]\\\\s\*[\\\\"\\']?(?=[^\\\\s\\\\"\\',;]{0,512}\\\\d)[^\\\\s\\\\"\\',, re.IGNORECASE), re.compile('(?i)\\\\b[a-z][a-z0-9+.-]{0,15}://[^/\\\\s:@]{1,64}:[^/\\\\s@]{1,128}@', re.IGNORECASE), re.compile('-----BEGIN [A-Z ]\*PRIVATE KEY-----'), re.compile('\\\\beyJ[a-zA-Z0-9_-]{8,}\\\\.[a-zA-Z0-9_-]{8,}'), re.compile('\\\\b(?:(?:sk|pk|rk)[-_](?:live[-_]|test[-_])?[a-zA-Z0-9]{8,}|sk-[a-zA-Z0-9_-]{20,}|gh[pousr]_[a-zA-Z0-9]{20,}|github_pat_[a-zA-Z0-9_]{20,}|whsec_[a-zA-Z0-9]{16,}|glpat-[a-zA-Z0-9_-]{16,}|AIza[a-zA-Z0-), re.compile('(?<![a-zA-Z0-9_-])(?=(?:[a-zA-Z_-]\*\\\\d){4})(?![a-zA-Z0-9_]\*-[a-zA-Z0-9_]\*-[a-zA-Z0-9_]\*-)[a-zA-Z0-9_-]{32,}'))*
 
 a header or cookie line, a secret-named key
 with a value (any value for a password, secret or key; an opaque one holding a
@@ -4221,18 +4221,16 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-10-26 09:17 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/7f6e2053eba25e9f47cc455b1c4e657d893776e6"><code>7f6e205</code></a> on branch <code>master</code>, for **config2py 0.1.72** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-26 09:26 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/1f763766016aed0c91b77db8403d46b6e0faced1"><code>1f76376</code></a> on branch <code>master</code>, for **config2py 0.1.73** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.72) is behind the latest release on PyPI (0.1.73): `pip install config2py` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/7f6e2053eba25e9f47cc455b1c4e657d893776e6"><code>7f6e2053eba25e9f47cc455b1c4e657d893776e6</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/1f763766016aed0c91b77db8403d46b6e0faced1"><code>1f763766016aed0c91b77db8403d46b6e0faced1</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4243,9 +4241,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/40298174103">40298174103</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/40299329832">40299329832</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>7f6e2053eba25e9f47cc455b1c4e657d893776e6</code> (in the history of the built commit) |
+| Event commit | <code>1f763766016aed0c91b77db8403d46b6e0faced1</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4270,13 +4268,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.73/">0.1.73</a>, newer than the documented version (0.1.72).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.73/">0.1.73</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 7f6e2053eba25e9f47cc455b1c4e657d893776e6
+git checkout 1f763766016aed0c91b77db8403d46b6e0faced1
 pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
