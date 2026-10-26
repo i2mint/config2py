@@ -228,3 +228,36 @@ def test_lazy_names_resolve_and_unknown_ones_raise(tmp_path):
         tmp_path,
     )
     assert out.split() == ["True", "True", "True", "False", "False"]
+
+
+def test_the_type_checking_imports_list_the_same_names_as_the_lazy_map():
+    """The names are written twice (run time map, static imports); keep them in step."""
+    import ast
+    import pathlib
+
+    import config2py
+
+    tree = ast.parse(pathlib.Path(config2py.__file__).read_text())
+    (guard,) = [
+        n for n in tree.body if isinstance(n, ast.If) and "_TYPE_CHECKING" in ast.dump(n.test)
+    ]
+    static = {}
+    for node in guard.body:
+        if isinstance(node, ast.ImportFrom) and node.module != "config2py":
+            for alias in node.names:
+                static[alias.name] = node.module.split(".")[1]
+    assert static == config2py._module_of
+    assert any(
+        isinstance(n, ast.ImportFrom) and n.module == "config2py" and n.names[0].name == "codecs"
+        for n in guard.body
+    )
+
+
+def test_a_default_instance_reassigned_in_tools_is_seen_by_the_package(tmp_path):
+    out = _run_python(
+        "import config2py, config2py.tools as tools\n"
+        "tools.configs = 'replaced'\n"
+        "print(config2py.configs)\n",
+        tmp_path,
+    )
+    assert out.strip() == "replaced"
