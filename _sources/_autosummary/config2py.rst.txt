@@ -11,6 +11,7 @@
       extract_exports
       get_configs_local_store
       simple_config_getter
+      config_getter
       get_config
       user_gettable
       sources_chainmap
@@ -25,7 +26,6 @@
       ensure_seeded
       has_secret
       register_extension
-      config_getter
    
    .. rubric:: Classes
 
@@ -56,11 +56,11 @@
    :toctree:
    :recursive:
 
-   util
-   errors
    s_configparser
-   base
+   errors
    tools
+   base
+   util
    secret_text
    sync_store
    codecs

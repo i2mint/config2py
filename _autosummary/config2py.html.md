@@ -8,6 +8,7 @@ Tools to read and write configurations from various sources and formats
 |----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | [`get_configs_local_store`](#config2py.get_configs_local_store)([config_src, ...])        | Get the local store of configs.                                                                                                              |
 | [`simple_config_getter`](#config2py.simple_config_getter)([configs_src, ...])          | Make a simple config getter from a "central" config source specification.                                                                    |
+| `config_getter`([key, sources, default, ...])                                                      | Get a config value from a list of sources                                                                                                    |
 | [`get_config`](#config2py.get_config)([key, sources, default, egress, ...])  | Get a config value from a list of sources                                                                                                    |
 | [`user_gettable`](#config2py.user_gettable)([save_to, prompt_template, ...])    | Create a `GettableContainer` that asks the user for a value, optionally saving it.                                                           |
 | [`sources_chainmap`](#config2py.sources_chainmap)(sources[, val_is_valid, ...])    | Create a `ChainMap` from a list of sources                                                                                                   |
@@ -22,7 +23,6 @@ Tools to read and write configurations from various sources and formats
 | [`ensure_seeded`](#config2py.ensure_seeded)(target, package_name, ...[, ...])   | Copy a bundled seed file to *target* if it does not already exist.                                                                           |
 | [`has_secret`](#config2py.has_secret)(text, \*[, rules, word_start, ...])    | Whether `text` looks like it holds a credential.                                                                                             |
 | [`register_extension`](#config2py.register_extension)(ext, loader, dumper)           | Register loader/dumper for a file extension.                                                                                                 |
-| `config_getter`([key, sources, default, ...])                                                      | Get a config value from a list of sources                                                                                                    |
 
 ### Classes
 
@@ -1206,12 +1206,12 @@ places), `save_to` can be a `(key, value)` function instead:
 
 ### Modules
 
-| [`util`](config2py.util.html.md#module-config2py.util)                     | Utility functions for config2py.                                 |
-|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------|
-| [`errors`](config2py.errors.html.md#module-config2py.errors)                 | Error classes for config2py.                                     |
-| [`s_configparser`](config2py.s_configparser.html.md#module-config2py.s_configparser) | Data Object Layer for configparser standard lib.                 |
-| [`base`](config2py.base.html.md#module-config2py.base)                     | Base for getting configs from various sources and formats        |
-| [`tools`](config2py.tools.html.md#module-config2py.tools)                   | Various tools                                                    |
-| [`secret_text`](config2py.secret_text.html.md#module-config2py.secret_text)       | Value-level detection of credentials in free text.               |
-| [`sync_store`](config2py.sync_store.html.md#module-config2py.sync_store)         | Synchronized key-value stores with automatic persistence.        |
-| [`codecs`](config2py.codecs.html.md#module-config2py.codecs)                 | Extension-based codec registries for configuration file parsing. |
+| [`s_configparser`](config2py.s_configparser.html.md#module-config2py.s_configparser)   | Data Object Layer for configparser standard lib.                 |
+|---------------------------------------------------------------------------------------------------|------------------------------------------------------------------|
+| [`errors`](config2py.errors.html.md#module-config2py.errors)                   | Error classes for config2py.                                     |
+| [`tools`](config2py.tools.html.md#module-config2py.tools)                     | Various tools                                                    |
+| [`base`](config2py.base.html.md#module-config2py.base)                       | Base for getting configs from various sources and formats        |
+| [`util`](config2py.util.html.md#module-config2py.util)                       | Utility functions for config2py.                                 |
+| [`secret_text`](config2py.secret_text.html.md#module-config2py.secret_text)         | Value-level detection of credentials in free text.               |
+| [`sync_store`](config2py.sync_store.html.md#module-config2py.sync_store)           | Synchronized key-value stores with automatic persistence.        |
+| [`codecs`](config2py.codecs.html.md#module-config2py.codecs)                   | Extension-based codec registries for configuration file parsing. |

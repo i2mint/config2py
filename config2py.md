@@ -1,4 +1,4 @@
-> built 2026-10-26 09:44 UTC from 3116fbc (master) · config2py 0.1.74. Details: build_info.json
+> built 2026-10-26 10:48 UTC from 27b6a45 (master) · config2py 0.1.75. Details: build_info.json
 
 # index.html.md
 
@@ -1242,6 +1242,7 @@ Tools to read and write configurations from various sources and formats
 |----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | [`get_configs_local_store`](_autosummary/config2py.html.md#config2py.get_configs_local_store)([config_src, ...])        | Get the local store of configs.                                                                                                              |
 | [`simple_config_getter`](_autosummary/config2py.html.md#config2py.simple_config_getter)([configs_src, ...])          | Make a simple config getter from a "central" config source specification.                                                                    |
+| `config_getter`([key, sources, default, ...])                                                      | Get a config value from a list of sources                                                                                                    |
 | [`get_config`](_autosummary/config2py.html.md#config2py.get_config)([key, sources, default, egress, ...])  | Get a config value from a list of sources                                                                                                    |
 | [`user_gettable`](_autosummary/config2py.html.md#config2py.user_gettable)([save_to, prompt_template, ...])    | Create a `GettableContainer` that asks the user for a value, optionally saving it.                                                           |
 | [`sources_chainmap`](_autosummary/config2py.html.md#config2py.sources_chainmap)(sources[, val_is_valid, ...])    | Create a `ChainMap` from a list of sources                                                                                                   |
@@ -1256,7 +1257,6 @@ Tools to read and write configurations from various sources and formats
 | [`ensure_seeded`](_autosummary/config2py.html.md#config2py.ensure_seeded)(target, package_name, ...[, ...])   | Copy a bundled seed file to *target* if it does not already exist.                                                                           |
 | [`has_secret`](_autosummary/config2py.html.md#config2py.has_secret)(text, \*[, rules, word_start, ...])    | Whether `text` looks like it holds a credential.                                                                                             |
 | [`register_extension`](_autosummary/config2py.html.md#config2py.register_extension)(ext, loader, dumper)           | Register loader/dumper for a file extension.                                                                                                 |
-| `config_getter`([key, sources, default, ...])                                                      | Get a config value from a list of sources                                                                                                    |
 
 ### Classes
 
@@ -2440,15 +2440,15 @@ places), `save_to` can be a `(key, value)` function instead:
 
 ### Modules
 
-| [`util`](_autosummary/config2py.util.html.md#module-config2py.util)                     | Utility functions for config2py.                                 |
-|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------|
-| [`errors`](_autosummary/config2py.errors.html.md#module-config2py.errors)                 | Error classes for config2py.                                     |
-| [`s_configparser`](_autosummary/config2py.s_configparser.html.md#module-config2py.s_configparser) | Data Object Layer for configparser standard lib.                 |
-| [`base`](_autosummary/config2py.base.html.md#module-config2py.base)                     | Base for getting configs from various sources and formats        |
-| [`tools`](_autosummary/config2py.tools.html.md#module-config2py.tools)                   | Various tools                                                    |
-| [`secret_text`](_autosummary/config2py.secret_text.html.md#module-config2py.secret_text)       | Value-level detection of credentials in free text.               |
-| [`sync_store`](_autosummary/config2py.sync_store.html.md#module-config2py.sync_store)         | Synchronized key-value stores with automatic persistence.        |
-| [`codecs`](_autosummary/config2py.codecs.html.md#module-config2py.codecs)                 | Extension-based codec registries for configuration file parsing. |
+| [`s_configparser`](_autosummary/config2py.s_configparser.html.md#module-config2py.s_configparser)   | Data Object Layer for configparser standard lib.                 |
+|---------------------------------------------------------------------------------------------------|------------------------------------------------------------------|
+| [`errors`](_autosummary/config2py.errors.html.md#module-config2py.errors)                   | Error classes for config2py.                                     |
+| [`tools`](_autosummary/config2py.tools.html.md#module-config2py.tools)                     | Various tools                                                    |
+| [`base`](_autosummary/config2py.base.html.md#module-config2py.base)                       | Base for getting configs from various sources and formats        |
+| [`util`](_autosummary/config2py.util.html.md#module-config2py.util)                       | Utility functions for config2py.                                 |
+| [`secret_text`](_autosummary/config2py.secret_text.html.md#module-config2py.secret_text)         | Value-level detection of credentials in free text.               |
+| [`sync_store`](_autosummary/config2py.sync_store.html.md#module-config2py.sync_store)           | Synchronized key-value stores with automatic persistence.        |
+| [`codecs`](_autosummary/config2py.codecs.html.md#module-config2py.codecs)                   | Extension-based codec registries for configuration file parsing. |
 
 
 # _autosummary/config2py.s_configparser.html.md
@@ -4330,18 +4330,18 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-10-26 09:44 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/3116fbc08e7c11bda88e9d4d6b184ce3e5263ae5"><code>3116fbc</code></a> on branch <code>master</code>, for **config2py 0.1.74** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-26 10:48 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/27b6a45aaaa51add155542688259f52378971d8f"><code>27b6a45</code></a> on branch <code>master</code>, for **config2py 0.1.75** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.74) is behind the latest release on PyPI (0.1.75): `pip install config2py` gives newer code than these docs describe.
+- The documented version (0.1.75) is behind the latest release on PyPI (0.1.76): `pip install config2py` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/3116fbc08e7c11bda88e9d4d6b184ce3e5263ae5"><code>3116fbc08e7c11bda88e9d4d6b184ce3e5263ae5</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/27b6a45aaaa51add155542688259f52378971d8f"><code>27b6a45aaaa51add155542688259f52378971d8f</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4352,9 +4352,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/40301690017">40301690017</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/40310043527">40310043527</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>3116fbc08e7c11bda88e9d4d6b184ce3e5263ae5</code> (in the history of the built commit) |
+| Event commit | <code>27b6a45aaaa51add155542688259f52378971d8f</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4379,13 +4379,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.75/">0.1.75</a>, newer than the documented version (0.1.74).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.76/">0.1.76</a>, newer than the documented version (0.1.75).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 3116fbc08e7c11bda88e9d4d6b184ce3e5263ae5
+git checkout 27b6a45aaaa51add155542688259f52378971d8f
 pip install "epythet==0.2.22"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
