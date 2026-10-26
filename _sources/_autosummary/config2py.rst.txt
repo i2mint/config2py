@@ -35,6 +35,7 @@
       ConfigReader
       Configs
       AppData
+      SecretRule
       SyncStore
       FileStore
       JsonStore
