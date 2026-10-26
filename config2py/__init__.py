@@ -28,6 +28,7 @@ from config2py.util import (
     ensure_seeded,
     AppData,
 )
+from config2py.secret_text import has_secret, SECRET_TEXT_PATTERNS
 from config2py.sync_store import SyncStore, FileStore, JsonStore, register_extension
 from config2py import codecs  # noqa - Make codecs module available
 
