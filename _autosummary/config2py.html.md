@@ -896,7 +896,7 @@ Let’s take two sources: a `dict` and a `Callable`.
 ...     elif k == 'green':
 ...         return 'eggs'
 ...     else:
-...         raise RuntimeError(f"I don't handle that: {k}")
+...         raise KeyError(k)
 >>> dict_ = {'foo': 'bar', 'baz': 'qux'}
 >>> sources = [func, dict_]
 ```
@@ -948,9 +948,12 @@ actually be considered as “config not found” exceptions, through the
 
 Beware that this broad default treats *any* error raised by a callable source
 (a network blip, a bug, a missing import, rejected credentials) as “not found”,
-and silently moves on to the next, possibly less trusted, source. When the
-sources are known, prefer passing something narrower, such as
-`config_not_found_exceptions=(KeyError, LookupError, FileNotFoundError)`
+and silently moves on to the next, possibly less trusted, source. It is
+deprecated: when it swallows an error that is not a lookup error, a
+`DeprecationWarning` says so, and a future release will make
+`DFLT_CONFIG_NOT_FOUND_EXCEPTIONS` (`KeyError`, `LookupError`,
+`FileNotFoundError`, `ConfigNotFound`) the default. Pass
+`config_not_found_exceptions` explicitly to choose either behaviour now
 (see [https://github.com/i2mint/config2py/issues/25](https://github.com/i2mint/config2py/issues/25)).
 
 Further, your sources may return a value, but not one that you consider valid:

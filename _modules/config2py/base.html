@@ -716,6 +716,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">Base for getting configs from various sources and formats</span>
 <span class="sd">"""</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainMap</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Type</span><span class="p">,</span>
@@ -736,6 +737,51 @@ window.runMermaid = runMermaid;</script>
 <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigNotFound</span>
 
 <span class="n">Exceptions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="ne">Exception</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>
+
+<span class="c1">#: The exceptions that mean "this source has no value for the key". It will become the</span>
+<span class="c1">#: default ``config_not_found_exceptions`` in a future release (issue #25); pass it</span>
+<span class="c1">#: explicitly now to get that behaviour (and no deprecation warning).</span>
+<span class="n">DFLT_CONFIG_NOT_FOUND_EXCEPTIONS</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="ne">KeyError</span><span class="p">,</span>
+    <span class="ne">LookupError</span><span class="p">,</span>
+    <span class="ne">FileNotFoundError</span><span class="p">,</span>
+    <span class="n">ConfigNotFound</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_LegacyDefault</span><span class="p">(</span><span class="nb">tuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The current default, ``(Exception,)``, told apart from an explicit</span>
+<span class="sd">    ``(Exception,)`` by identity, so only callers relying on the default are warned."""</span>
+
+
+<span class="c1">#: Still the effective default: any exception from a callable source means "not</span>
+<span class="c1">#: found". Swallowing one that is not in ``DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`` under</span>
+<span class="c1">#: this default emits a ``DeprecationWarning`` (issue #25).</span>
+<span class="n">LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="n">_LegacyDefault</span><span class="p">((</span><span class="ne">Exception</span><span class="p">,))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_warn_if_swallowed_under_legacy_default</span><span class="p">(</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">BaseException</span><span class="p">,</span> <span class="n">key</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Warn when the legacy default turned a real error into "not found".</span>
+
+<span class="sd">    The message names the exception type only, never its text: getters often wrap</span>
+<span class="sd">    credential checks, and SDKs echo rejected secrets in their messages.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">config_not_found_exceptions</span> <span class="ow">is</span> <span class="n">LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">DFLT_CONFIG_NOT_FOUND_EXCEPTIONS</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"A config source raised </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for key </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">, which "</span>
+            <span class="s2">"was treated as 'not found' and the next source was tried. A future "</span>
+            <span class="s2">"config2py will let such errors propagate (the default will become "</span>
+            <span class="s2">"config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS). Pass "</span>
+            <span class="s2">"config_not_found_exceptions explicitly: (Exception,) to keep falling "</span>
+            <span class="s2">"through, or DFLT_CONFIG_NOT_FOUND_EXCEPTIONS to adopt the new behaviour "</span>
+            <span class="s2">"(https://github.com/i2mint/config2py/issues/25)."</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="p">)</span>
 
 
 <div class="viewcode-block" id="GettableContainer">
@@ -828,7 +874,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">default</span><span class="p">:</span> <span class="n">VT</span> <span class="o">=</span> <span class="n">no_default</span><span class="p">,</span>
     <span class="n">egress</span><span class="p">:</span> <span class="n">GetConfigEgress</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">always_true</span><span class="p">,</span>
-    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="n">LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Get a config value from a list of sources</span>
 
@@ -844,7 +890,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">    ...     elif k == 'green':</span>
 <span class="sd">    ...         return 'eggs'</span>
 <span class="sd">    ...     else:</span>
-<span class="sd">    ...         raise RuntimeError(f"I don't handle that: {k}")</span>
+<span class="sd">    ...         raise KeyError(k)</span>
 <span class="sd">    &gt;&gt;&gt; dict_ = {'foo': 'bar', 'baz': 'qux'}</span>
 <span class="sd">    &gt;&gt;&gt; sources = [func, dict_]</span>
 
@@ -888,9 +934,12 @@ window.runMermaid = runMermaid;</script>
 
 <span class="sd">    Beware that this broad default treats *any* error raised by a callable source</span>
 <span class="sd">    (a network blip, a bug, a missing import, rejected credentials) as "not found",</span>
-<span class="sd">    and silently moves on to the next, possibly less trusted, source. When the</span>
-<span class="sd">    sources are known, prefer passing something narrower, such as</span>
-<span class="sd">    ``config_not_found_exceptions=(KeyError, LookupError, FileNotFoundError)``</span>
+<span class="sd">    and silently moves on to the next, possibly less trusted, source. It is</span>
+<span class="sd">    deprecated: when it swallows an error that is not a lookup error, a</span>
+<span class="sd">    ``DeprecationWarning`` says so, and a future release will make</span>
+<span class="sd">    ``DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`` (``KeyError``, ``LookupError``,</span>
+<span class="sd">    ``FileNotFoundError``, ``ConfigNotFound``) the default. Pass</span>
+<span class="sd">    ``config_not_found_exceptions`` explicitly to choose either behaviour now</span>
 <span class="sd">    (see https://github.com/i2mint/config2py/issues/25).</span>
 
 <span class="sd">    Further, your sources may return a value, but not one that you consider valid:</span>
@@ -1025,7 +1074,7 @@ window.runMermaid = runMermaid;</script>
 
     <span class="n">getter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">KT</span><span class="p">],</span> <span class="n">VT</span><span class="p">]</span>
     <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">always_true</span>
-    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,)</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="n">LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span>
     <span class="n">cache_getter</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1043,6 +1092,9 @@ window.runMermaid = runMermaid;</script>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getter</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">except</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_not_found_exceptions</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">_warn_if_swallowed_under_legacy_default</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config_not_found_exceptions</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">k</span>
+            <span class="p">)</span>
             <span class="c1"># Note: The upstream exception text is deliberately NOT interpolated into</span>
             <span class="c1"># the message. Getters here often wrap credential validation, and SDKs</span>
             <span class="c1"># routinely echo the rejected secret back in their exception text</span>
@@ -1083,7 +1135,7 @@ window.runMermaid = runMermaid;</script>
 <span class="k">def</span><span class="w"> </span><span class="nf">gettable_containers</span><span class="p">(</span>
     <span class="n">sources</span><span class="p">:</span> <span class="n">Sources</span><span class="p">,</span>
     <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">always_true</span><span class="p">,</span>
-    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="n">LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">GettableContainer</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Convert an iterable of sources into ``GettableContainers``"""</span>
     <span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
@@ -1107,7 +1159,7 @@ window.runMermaid = runMermaid;</script>
 <span class="k">def</span><span class="w"> </span><span class="nf">sources_chainmap</span><span class="p">(</span>
     <span class="n">sources</span><span class="p">:</span> <span class="n">Sources</span><span class="p">,</span>
     <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">always_true</span><span class="p">,</span>
-    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="n">LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChainMap</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create a ``ChainMap`` from a list of sources"""</span>
     <span class="n">sources</span> <span class="o">=</span> <span class="n">gettable_containers</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">val_is_valid</span><span class="p">,</span> <span class="n">config_not_found_exceptions</span><span class="p">)</span>
@@ -1278,7 +1330,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">egress</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">user_asker</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">ask_user_for_input</span><span class="p">,</span>
     <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_not_empty</span><span class="p">,</span>
-    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
+    <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="n">LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create a ``GettableContainer`` that asks the user for a value, optionally saving it.</span>

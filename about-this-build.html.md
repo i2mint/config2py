@@ -2,7 +2,7 @@
 
 # About this build
 
-This documentation was built on **2026-11-22 21:33 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/ea44d555347d6ba04c9e29880125b07e198b5ce8"><code>ea44d55</code></a> on branch <code>master</code>, for **config2py 0.1.77** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 23:20 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/6be5c839a6bfee803ee8ee72cc93ca9fab4c1350"><code>6be5c83</code></a> on branch <code>master</code>, for **config2py 0.1.77** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -11,7 +11,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/ea44d555347d6ba04c9e29880125b07e198b5ce8"><code>ea44d555347d6ba04c9e29880125b07e198b5ce8</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/6be5c839a6bfee803ee8ee72cc93ca9fab4c1350"><code>6be5c839a6bfee803ee8ee72cc93ca9fab4c1350</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -22,9 +22,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45072567969">45072567969</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45082608157">45082608157</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>ea44d555347d6ba04c9e29880125b07e198b5ce8</code> (in the history of the built commit) |
+| Event commit | <code>6be5c839a6bfee803ee8ee72cc93ca9fab4c1350</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -55,7 +55,7 @@ Latest release: <a href="https://pypi.org/project/config2py/0.1.77/">0.1.77</a>,
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout ea44d555347d6ba04c9e29880125b07e198b5ce8
+git checkout 6be5c839a6bfee803ee8ee72cc93ca9fab4c1350
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

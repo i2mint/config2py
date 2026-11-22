@@ -1,4 +1,4 @@
-> built 2026-11-22 21:33 UTC from ea44d55 (master) · config2py 0.1.77. Details: build_info.json
+> built 2026-11-22 23:20 UTC from 6be5c83 (master) · config2py 0.1.77. Details: build_info.json
 
 # index.html.md
 
@@ -490,6 +490,12 @@ The Python examples in this README, and in the bundled skill, are run by `config
 
 Base for getting configs from various sources and formats
 
+### Module Attributes
+
+| [`DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`](_autosummary/config2py.base.html.md#config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS)   | The exceptions that mean "this source has no value for the key".   |
+|-------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| [`LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS`](_autosummary/config2py.base.html.md#config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS) | any exception from a callable source means "not found".            |
+
 ### Functions
 
 | [`ask_user_for_key`](_autosummary/config2py.base.html.md#config2py.base.ask_user_for_key)([key, prompt_template, ...])     | Ask the user for the value of `key`, optionally saving it.                         |
@@ -506,6 +512,12 @@ Base for getting configs from various sources and formats
 | [`FuncBasedGettableContainer`](_autosummary/config2py.base.html.md#config2py.base.FuncBasedGettableContainer)(getter[, ...])   | A class that wraps a `Callable[[KT], VT]` function so it has a (partial) Mapping[KT, TT] interface.   |
 |----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
 | [`GettableContainer`](_autosummary/config2py.base.html.md#config2py.base.GettableContainer)(\*args, \*\*kwargs)       | `Containers` that are "gettable"".                                                                    |
+
+### config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS *: [tuple](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[type](https://docs.python.org/3/builtins/functions.html#type)[[Exception](https://docs.python.org/3/builtins/exceptions.html#Exception)], ...]* *= (<class 'KeyError'>, <class 'LookupError'>, <class 'FileNotFoundError'>, <class 'config2py.errors.ConfigNotFound'>)*
+
+The exceptions that mean “this source has no value for the key”. It will become the
+default `config_not_found_exceptions` in a future release (issue #25); pass it
+explicitly now to get that behaviour (and no deprecation warning).
 
 ### *class* config2py.base.FuncBasedGettableContainer(getter, val_is_valid=<function always_true>, config_not_found_exceptions=(<class 'Exception'>, ))
 
@@ -644,6 +656,15 @@ Traceback (most recent call last):
 TypeError: 'set' object is not subscriptable
 ```
 
+### config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS *: [tuple](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[type](https://docs.python.org/3/builtins/functions.html#type)[[Exception](https://docs.python.org/3/builtins/exceptions.html#Exception)], ...]* *= (<class 'Exception'>,)*
+
+any exception from a callable source means “not
+found”. Swallowing one that is not in `DFLT_CONFIG_NOT_FOUND_EXCEPTIONS` under
+this default emits a `DeprecationWarning` (issue #25).
+
+* **Type:**
+  Still the effective default
+
 ### config2py.base.ask_user_for_key(key=None, \*, prompt_template='Enter a value for {}: ', save_to=None, save_condition=<function is_not_empty>, user_asker=<function ask_user_for_input>, egress=None)
 
 Ask the user for the value of `key`, optionally saving it.
@@ -703,7 +724,7 @@ Let’s take two sources: a `dict` and a `Callable`.
 ...     elif k == 'green':
 ...         return 'eggs'
 ...     else:
-...         raise RuntimeError(f"I don't handle that: {k}")
+...         raise KeyError(k)
 >>> dict_ = {'foo': 'bar', 'baz': 'qux'}
 >>> sources = [func, dict_]
 ```
@@ -755,9 +776,12 @@ actually be considered as “config not found” exceptions, through the
 
 Beware that this broad default treats *any* error raised by a callable source
 (a network blip, a bug, a missing import, rejected credentials) as “not found”,
-and silently moves on to the next, possibly less trusted, source. When the
-sources are known, prefer passing something narrower, such as
-`config_not_found_exceptions=(KeyError, LookupError, FileNotFoundError)`
+and silently moves on to the next, possibly less trusted, source. It is
+deprecated: when it swallows an error that is not a lookup error, a
+`DeprecationWarning` says so, and a future release will make
+`DFLT_CONFIG_NOT_FOUND_EXCEPTIONS` (`KeyError`, `LookupError`,
+`FileNotFoundError`, `ConfigNotFound`) the default. Pass
+`config_not_found_exceptions` explicitly to choose either behaviour now
 (see [https://github.com/i2mint/config2py/issues/25](https://github.com/i2mint/config2py/issues/25)).
 
 Further, your sources may return a value, but not one that you consider valid:
@@ -2147,7 +2171,7 @@ Let’s take two sources: a `dict` and a `Callable`.
 ...     elif k == 'green':
 ...         return 'eggs'
 ...     else:
-...         raise RuntimeError(f"I don't handle that: {k}")
+...         raise KeyError(k)
 >>> dict_ = {'foo': 'bar', 'baz': 'qux'}
 >>> sources = [func, dict_]
 ```
@@ -2199,9 +2223,12 @@ actually be considered as “config not found” exceptions, through the
 
 Beware that this broad default treats *any* error raised by a callable source
 (a network blip, a bug, a missing import, rejected credentials) as “not found”,
-and silently moves on to the next, possibly less trusted, source. When the
-sources are known, prefer passing something narrower, such as
-`config_not_found_exceptions=(KeyError, LookupError, FileNotFoundError)`
+and silently moves on to the next, possibly less trusted, source. It is
+deprecated: when it swallows an error that is not a lookup error, a
+`DeprecationWarning` says so, and a future release will make
+`DFLT_CONFIG_NOT_FOUND_EXCEPTIONS` (`KeyError`, `LookupError`,
+`FileNotFoundError`, `ConfigNotFound`) the default. Pass
+`config_not_found_exceptions` explicitly to choose either behaviour now
 (see [https://github.com/i2mint/config2py/issues/25](https://github.com/i2mint/config2py/issues/25)).
 
 Further, your sources may return a value, but not one that you consider valid:
@@ -4385,7 +4412,7 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-11-22 21:33 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/ea44d555347d6ba04c9e29880125b07e198b5ce8"><code>ea44d55</code></a> on branch <code>master</code>, for **config2py 0.1.77** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 23:20 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/6be5c839a6bfee803ee8ee72cc93ca9fab4c1350"><code>6be5c83</code></a> on branch <code>master</code>, for **config2py 0.1.77** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -4394,7 +4421,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/ea44d555347d6ba04c9e29880125b07e198b5ce8"><code>ea44d555347d6ba04c9e29880125b07e198b5ce8</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/6be5c839a6bfee803ee8ee72cc93ca9fab4c1350"><code>6be5c839a6bfee803ee8ee72cc93ca9fab4c1350</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4405,9 +4432,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45072567969">45072567969</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45082608157">45082608157</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>ea44d555347d6ba04c9e29880125b07e198b5ce8</code> (in the history of the built commit) |
+| Event commit | <code>6be5c839a6bfee803ee8ee72cc93ca9fab4c1350</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4438,7 +4465,7 @@ Latest release: <a href="https://pypi.org/project/config2py/0.1.77/">0.1.77</a>,
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout ea44d555347d6ba04c9e29880125b07e198b5ce8
+git checkout 6be5c839a6bfee803ee8ee72cc93ca9fab4c1350
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

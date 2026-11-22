@@ -4,6 +4,13 @@ config2py.base
 .. automodule:: config2py.base
 
    
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      DFLT_CONFIG_NOT_FOUND_EXCEPTIONS
+      LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS
+   
    .. rubric:: Functions
 
    .. autosummary::

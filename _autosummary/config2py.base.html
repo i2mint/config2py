@@ -396,6 +396,18 @@
   <section id="module-config2py.base">
 <span id="config2py-base"></span><h1>config2py.base<a class="headerlink" href="#module-config2py.base" title="Link to this heading">#</a></h1>
 <p>Base for getting configs from various sources and formats</p>
+<p class="rubric">Module Attributes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS" title="config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DFLT_CONFIG_NOT_FOUND_EXCEPTIONS</span></code></a></p></td>
+<td><p>The exceptions that mean &quot;this source has no value for the key&quot;.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS" title="config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span></code></a></p></td>
+<td><p>any exception from a callable source means &quot;not found&quot;.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p class="rubric">Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -435,6 +447,14 @@
 </tbody>
 </table>
 </div>
+<dl class="py data">
+<dt class="sig sig-object py" id="config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS">
+<span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">DFLT_CONFIG_NOT_FOUND_EXCEPTIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#type" title="(in Python v3.15)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.15)"><span class="pre">Exception</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;class</span> <span class="pre">'KeyError'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'LookupError'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'FileNotFoundError'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'config2py.errors.ConfigNotFound'&gt;)</span></span><a class="headerlink" href="#config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS" title="Link to this definition">#</a></dt>
+<dd><p>The exceptions that mean “this source has no value for the key”. It will become the
+default <code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions</span></code> in a future release (issue #25); pass it
+explicitly now to get that behaviour (and no deprecation warning).</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="config2py.base.FuncBasedGettableContainer">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">FuncBasedGettableContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">getter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_is_valid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">always_true&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_not_found_exceptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(&lt;class</span> <span class="pre">'Exception'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/base.html#FuncBasedGettableContainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.base.FuncBasedGettableContainer" title="Link to this definition">#</a></dt>
@@ -562,6 +582,19 @@ expression <code class="docutils literal notranslate"><span class="pre">k</span>
 </div>
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS">
+<span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#type" title="(in Python v3.15)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.15)"><span class="pre">Exception</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(&lt;class</span> <span class="pre">'Exception'&gt;,)</span></span><a class="headerlink" href="#config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS" title="Link to this definition">#</a></dt>
+<dd><p>any exception from a callable source means “not
+found”. Swallowing one that is not in <code class="docutils literal notranslate"><span class="pre">DFLT_CONFIG_NOT_FOUND_EXCEPTIONS</span></code> under
+this default emits a <code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code> (issue #25).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Still the effective default</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="config2py.base.ask_user_for_key">
 <span class="sig-prename descclassname"><span class="pre">config2py.base.</span></span><span class="sig-name descname"><span class="pre">ask_user_for_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Enter</span> <span class="pre">a</span> <span class="pre">value</span> <span class="pre">for</span> <span class="pre">{}:</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_condition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">is_not_empty&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_asker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">ask_user_for_input&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/base.html#ask_user_for_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.base.ask_user_for_key" title="Link to this definition">#</a></dt>
@@ -620,7 +653,7 @@ like <code class="docutils literal notranslate"><span class="pre">dict</span></c
 <span class="gp">... </span>    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">'green'</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="s1">'eggs'</span>
 <span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"I don't handle that: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dict_</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'foo'</span><span class="p">:</span> <span class="s1">'bar'</span><span class="p">,</span> <span class="s1">'baz'</span><span class="p">:</span> <span class="s1">'qux'</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span><span class="p">,</span> <span class="n">dict_</span><span class="p">]</span>
 </pre></div>
@@ -661,9 +694,12 @@ actually be considered as “config not found” exceptions, through the
 <code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions</span></code> argument, which defaults to <code class="docutils literal notranslate"><span class="pre">(Exception,)</span></code>.</p>
 <p>Beware that this broad default treats <em>any</em> error raised by a callable source
 (a network blip, a bug, a missing import, rejected credentials) as “not found”,
-and silently moves on to the next, possibly less trusted, source. When the
-sources are known, prefer passing something narrower, such as
-<code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions=(KeyError,</span> <span class="pre">LookupError,</span> <span class="pre">FileNotFoundError)</span></code>
+and silently moves on to the next, possibly less trusted, source. It is
+deprecated: when it swallows an error that is not a lookup error, a
+<code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code> says so, and a future release will make
+<code class="docutils literal notranslate"><span class="pre">DFLT_CONFIG_NOT_FOUND_EXCEPTIONS</span></code> (<code class="docutils literal notranslate"><span class="pre">KeyError</span></code>, <code class="docutils literal notranslate"><span class="pre">LookupError</span></code>,
+<code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>, <code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code>) the default. Pass
+<code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions</span></code> explicitly to choose either behaviour now
 (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/25">i2mint/config2py#25</a>).</p>
 <p>Further, your sources may return a value, but not one that you consider valid:
 For example, a sentinel like <code class="docutils literal notranslate"><span class="pre">None</span></code>. In this case you may want the search to
@@ -871,11 +907,13 @@ places), <code class="docutils literal notranslate"><span class="pre">save_to</s
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS"><code class="docutils literal notranslate"><span class="pre">DFLT_CONFIG_NOT_FOUND_EXCEPTIONS</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.base.FuncBasedGettableContainer"><code class="docutils literal notranslate"><span class="pre">FuncBasedGettableContainer</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.base.FuncBasedGettableContainer.val_is_valid"><code class="docutils literal notranslate"><span class="pre">FuncBasedGettableContainer.val_is_valid()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.base.GettableContainer"><code class="docutils literal notranslate"><span class="pre">GettableContainer</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS"><code class="docutils literal notranslate"><span class="pre">LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.base.ask_user_for_key"><code class="docutils literal notranslate"><span class="pre">ask_user_for_key()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.base.get_config"><code class="docutils literal notranslate"><span class="pre">get_config()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.base.gettable_containers"><code class="docutils literal notranslate"><span class="pre">gettable_containers()</span></code></a></li>

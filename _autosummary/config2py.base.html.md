@@ -2,6 +2,12 @@
 
 Base for getting configs from various sources and formats
 
+### Module Attributes
+
+| [`DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`](#config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS)   | The exceptions that mean "this source has no value for the key".   |
+|-------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| [`LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS`](#config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS) | any exception from a callable source means "not found".            |
+
 ### Functions
 
 | [`ask_user_for_key`](#config2py.base.ask_user_for_key)([key, prompt_template, ...])     | Ask the user for the value of `key`, optionally saving it.                         |
@@ -18,6 +24,12 @@ Base for getting configs from various sources and formats
 | [`FuncBasedGettableContainer`](#config2py.base.FuncBasedGettableContainer)(getter[, ...])   | A class that wraps a `Callable[[KT], VT]` function so it has a (partial) Mapping[KT, TT] interface.   |
 |----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
 | [`GettableContainer`](#config2py.base.GettableContainer)(\*args, \*\*kwargs)       | `Containers` that are "gettable"".                                                                    |
+
+### config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS *: [tuple](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[type](https://docs.python.org/3/builtins/functions.html#type)[[Exception](https://docs.python.org/3/builtins/exceptions.html#Exception)], ...]* *= (<class 'KeyError'>, <class 'LookupError'>, <class 'FileNotFoundError'>, <class 'config2py.errors.ConfigNotFound'>)*
+
+The exceptions that mean “this source has no value for the key”. It will become the
+default `config_not_found_exceptions` in a future release (issue #25); pass it
+explicitly now to get that behaviour (and no deprecation warning).
 
 ### *class* config2py.base.FuncBasedGettableContainer(getter, val_is_valid=<function always_true>, config_not_found_exceptions=(<class 'Exception'>, ))
 
@@ -156,6 +168,15 @@ Traceback (most recent call last):
 TypeError: 'set' object is not subscriptable
 ```
 
+### config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS *: [tuple](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[type](https://docs.python.org/3/builtins/functions.html#type)[[Exception](https://docs.python.org/3/builtins/exceptions.html#Exception)], ...]* *= (<class 'Exception'>,)*
+
+any exception from a callable source means “not
+found”. Swallowing one that is not in `DFLT_CONFIG_NOT_FOUND_EXCEPTIONS` under
+this default emits a `DeprecationWarning` (issue #25).
+
+* **Type:**
+  Still the effective default
+
 ### config2py.base.ask_user_for_key(key=None, \*, prompt_template='Enter a value for {}: ', save_to=None, save_condition=<function is_not_empty>, user_asker=<function ask_user_for_input>, egress=None)
 
 Ask the user for the value of `key`, optionally saving it.
@@ -215,7 +236,7 @@ Let’s take two sources: a `dict` and a `Callable`.
 ...     elif k == 'green':
 ...         return 'eggs'
 ...     else:
-...         raise RuntimeError(f"I don't handle that: {k}")
+...         raise KeyError(k)
 >>> dict_ = {'foo': 'bar', 'baz': 'qux'}
 >>> sources = [func, dict_]
 ```
@@ -267,9 +288,12 @@ actually be considered as “config not found” exceptions, through the
 
 Beware that this broad default treats *any* error raised by a callable source
 (a network blip, a bug, a missing import, rejected credentials) as “not found”,
-and silently moves on to the next, possibly less trusted, source. When the
-sources are known, prefer passing something narrower, such as
-`config_not_found_exceptions=(KeyError, LookupError, FileNotFoundError)`
+and silently moves on to the next, possibly less trusted, source. It is
+deprecated: when it swallows an error that is not a lookup error, a
+`DeprecationWarning` says so, and a future release will make
+`DFLT_CONFIG_NOT_FOUND_EXCEPTIONS` (`KeyError`, `LookupError`,
+`FileNotFoundError`, `ConfigNotFound`) the default. Pass
+`config_not_found_exceptions` explicitly to choose either behaviour now
 (see [https://github.com/i2mint/config2py/issues/25](https://github.com/i2mint/config2py/issues/25)).
 
 Further, your sources may return a value, but not one that you consider valid:

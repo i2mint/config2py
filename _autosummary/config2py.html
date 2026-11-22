@@ -1406,7 +1406,7 @@ like <code class="docutils literal notranslate"><span class="pre">dict</span></c
 <span class="gp">... </span>    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">'green'</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="s1">'eggs'</span>
 <span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
-<span class="gp">... </span>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"I don't handle that: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dict_</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'foo'</span><span class="p">:</span> <span class="s1">'bar'</span><span class="p">,</span> <span class="s1">'baz'</span><span class="p">:</span> <span class="s1">'qux'</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span><span class="p">,</span> <span class="n">dict_</span><span class="p">]</span>
 </pre></div>
@@ -1447,9 +1447,12 @@ actually be considered as “config not found” exceptions, through the
 <code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions</span></code> argument, which defaults to <code class="docutils literal notranslate"><span class="pre">(Exception,)</span></code>.</p>
 <p>Beware that this broad default treats <em>any</em> error raised by a callable source
 (a network blip, a bug, a missing import, rejected credentials) as “not found”,
-and silently moves on to the next, possibly less trusted, source. When the
-sources are known, prefer passing something narrower, such as
-<code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions=(KeyError,</span> <span class="pre">LookupError,</span> <span class="pre">FileNotFoundError)</span></code>
+and silently moves on to the next, possibly less trusted, source. It is
+deprecated: when it swallows an error that is not a lookup error, a
+<code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code> says so, and a future release will make
+<code class="docutils literal notranslate"><span class="pre">DFLT_CONFIG_NOT_FOUND_EXCEPTIONS</span></code> (<code class="docutils literal notranslate"><span class="pre">KeyError</span></code>, <code class="docutils literal notranslate"><span class="pre">LookupError</span></code>,
+<code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>, <code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code>) the default. Pass
+<code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions</span></code> explicitly to choose either behaviour now
 (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/25">i2mint/config2py#25</a>).</p>
 <p>Further, your sources may return a value, but not one that you consider valid:
 For example, a sentinel like <code class="docutils literal notranslate"><span class="pre">None</span></code>. In this case you may want the search to
