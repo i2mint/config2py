@@ -68,9 +68,11 @@ class GettableContainer(Protocol):
     """
 
     def __getitem__(self, k: KT) -> VT:
+        """Return the value stored under ``k``."""
         pass
 
     def __contains__(self, k: KT) -> bool:
+        """Return whether ``k`` is a key (that is, whether getting it succeeds)."""
         pass
 
 
@@ -302,6 +304,7 @@ class FuncBasedGettableContainer:
     cache_getter = False
 
     def __post_init__(self):
+        """Set up the (optional) cache after the dataclass fields are assigned."""
         if self.cache_getter:
             # Note: The only purpose of the cache is to avoid calling the getter function
             # twice when doing a ``in`` check before doing a ``[]`` lookup, for instance,
@@ -311,6 +314,7 @@ class FuncBasedGettableContainer:
             self.getter = lru_cache(maxsize=1)(self.getter)
 
     def __getitem__(self, k: KT) -> VT:
+        """Return the value stored under ``k``."""
         try:
             v = self.getter(k)
         except self.config_not_found_exceptions as e:
@@ -329,6 +333,7 @@ class FuncBasedGettableContainer:
 
     # TODO: Is this used to indicate that the getter couldn't find a key.
     def __contains__(self, k):
+        """Return whether ``k`` is a key (that is, whether getting it succeeds)."""
         try:
             self[k]
         except KeyError:
@@ -337,6 +342,7 @@ class FuncBasedGettableContainer:
             return True
 
     def __iter__(self):
+        """Iterate over the keys."""
         raise TypeError(
             f"Iteration is NOT ACTUALLY implemented for {type(self).__name__}. "
             "The reason we still stuck it in the class is because python will "

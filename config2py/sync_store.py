@@ -346,23 +346,29 @@ class SyncStore(MutableMapping):
         self._auto_sync = True
 
     def __getitem__(self, key):
+        """Return the value stored under ``key``."""
         return self._data[key]
 
     def __setitem__(self, key, value):
+        """Set ``key`` to the given value."""
         self._data[key] = value
         self._mark_dirty()
 
     def __delitem__(self, key):
+        """Delete ``key``."""
         del self._data[key]
         self._mark_dirty()
 
     def __iter__(self):
+        """Iterate over the keys."""
         return iter(self._data)
 
     def __len__(self):
+        """Return the number of items."""
         return len(self._data)
 
     def __repr__(self):
+        """Return a short representation."""
         return f"{self.__class__.__name__}({len(self._data)} items)"
 
 
@@ -513,6 +519,7 @@ class FileStore(SyncStore):
         _atomic_write(self.filepath, content, follow_symlinks=self.follow_symlinks)
 
     def __repr__(self):
+        """Return a short representation."""
         key_path_str = f", key_path={self.key_path!r}" if self.key_path else ""
         return f"{self.__class__.__name__}({self.filepath!r}{key_path_str})"
 
