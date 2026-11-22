@@ -2,13 +2,15 @@
 
 # config2py
 
-Get configuration values and secrets into Python code through layered sources: environment variables, then a local config folder, then a one-time prompt whose answer is saved for next time. It also gives you per-app config/data/cache folders that follow XDG and Windows conventions, config files you edit as dicts that save on every write, and extension-based codecs.
+Get configuration values and secrets into Python code through layered sources (environment variables, then a local config folder, then a one-time prompt whose answer is saved for next time), instead of hand-rolling `os.environ`, a `.env` file and an `input()` in every script or notebook. It also gives you per-app config, data and cache folders, and config files you edit as dicts.
 
-Still typing code yourself? Skip to [For humans who still hand-edit their dotfiles]().
+```default
+pip install config2py
+```
 
-To install: `pip install config2py` · [Documentation](https://i2mint.github.io/config2py/)
+Two dependencies, `dol` and `i2`. [Documentation](https://i2mint.github.io/config2py/)
 
-# What an agent can do with config2py
+## What it does
 
 - Resolve an API key or setting from environment variables, then a saved local config, and in interactive sessions only, a one-time prompt that masks secret-looking keys and saves the answer.
 - Compose any lookup chain over dicts, callables and [dol](https://github.com/i2mint/dol) stores with `get_config`.
@@ -24,8 +26,6 @@ get = simple_config_getter("myapp", ask_user_if_key_not_found=False)
 get.configs["MYAPP_MODEL"] = "small"  # saved as a file in ~/.config/myapp/configs/
 assert get("MYAPP_MODEL") == "small"  # an env var named MYAPP_MODEL would win
 ```
-
-The consumer skill below also ships inside the wheel. After `pip install config2py`, its folder is `python -c "import config2py, os; print(os.path.join(config2py.__path__[0], 'data', 'skills'))"`, ready to link into your agent’s skills directory (for example with `skill link-skills <that folder>`).
 
 <!-- epythet:agentic-readme:start -->
 
@@ -78,7 +78,7 @@ config_getter("HOME")  # if you are using Linux/MacOS
 ```
 
 ```none
-'/Users/thorwhalen'
+'/Users/alice'
 ```
 
 Now, normally all systems come with a `HOME` environment variable (or a `USERPROFILE` on windows), so the above should always work fine. But see what happens if you ask for a key that is not an environment variable:
@@ -121,10 +121,10 @@ if "_TEST_NON_EXISTING_KEY_" in config_getter.configs:
 This tool allows you to:
 
 * not have to set up any special configs stuff (unless you want/need to)
-* enables you to share your notebooks (CLIs etc.) with others without having to polute the code with configs-setup gunk…
+* enables you to share your notebooks (CLIs etc.) with others without having to pollute the code with configs-setup gunk…
 * … including when you put local file/folder paths (or worse, secrets) in your notebook or code, which others then have to edit (instead, here, just enter a probably-unique name for the needed resource, then enter your filepath in the user input dialog instead)
 
-This is very convenient situation where user input (via things like `__builtins__.input` or `getpass.getpass` etc) is available. But **you should not use this to manage configurations/resources anywhere were there’s not a user to see and respond to the builtin user input dialog**
+This is very convenient in situations where user input (via things like `__builtins__.input` or `getpass.getpass` etc) is available. But **you should not use this to manage configurations/resources anywhere where there’s no a user to see and respond to the builtin user input dialog**
 
 Don’t fret though, this `config_getter` is just our no-BS entry point to much more. Let’s have a slight look under its hood to see what else we can do with it.
 
@@ -134,7 +134,7 @@ And of course, if you’re that type, you can already have a look at [the docume
 
 If you look up for the definition of the `config_getter` function you imported above, you’ll find this: `config_getter = simple_config_getter()`. That is, it was created by `simple_config_getter` with its default arguments. Let’s have a look at what these are.
 
-In fact, `simple_config_getter` is a function to make configuration getters that ressemble the one we’ve seen above:
+In fact, `simple_config_getter` is a function to make configuration getters that resemble the one we’ve seen above:
 
 ![image](https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617)
 

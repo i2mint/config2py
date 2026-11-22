@@ -1,4 +1,4 @@
-> built 2026-11-22 23:20 UTC from 6be5c83 (master) · config2py 0.1.77. Details: build_info.json
+> built 2026-11-22 23:48 UTC from 7b12b81 (master) · config2py 0.1.78. Details: build_info.json
 
 # index.html.md
 
@@ -6,13 +6,15 @@
 
 # config2py
 
-Get configuration values and secrets into Python code through layered sources: environment variables, then a local config folder, then a one-time prompt whose answer is saved for next time. It also gives you per-app config/data/cache folders that follow XDG and Windows conventions, config files you edit as dicts that save on every write, and extension-based codecs.
+Get configuration values and secrets into Python code through layered sources (environment variables, then a local config folder, then a one-time prompt whose answer is saved for next time), instead of hand-rolling `os.environ`, a `.env` file and an `input()` in every script or notebook. It also gives you per-app config, data and cache folders, and config files you edit as dicts.
 
-Still typing code yourself? Skip to [For humans who still hand-edit their dotfiles]().
+```default
+pip install config2py
+```
 
-To install: `pip install config2py` · [Documentation](https://i2mint.github.io/config2py/)
+Two dependencies, `dol` and `i2`. [Documentation](https://i2mint.github.io/config2py/)
 
-# What an agent can do with config2py
+## What it does
 
 - Resolve an API key or setting from environment variables, then a saved local config, and in interactive sessions only, a one-time prompt that masks secret-looking keys and saves the answer.
 - Compose any lookup chain over dicts, callables and [dol](https://github.com/i2mint/dol) stores with `get_config`.
@@ -28,8 +30,6 @@ get = simple_config_getter("myapp", ask_user_if_key_not_found=False)
 get.configs["MYAPP_MODEL"] = "small"  # saved as a file in ~/.config/myapp/configs/
 assert get("MYAPP_MODEL") == "small"  # an env var named MYAPP_MODEL would win
 ```
-
-The consumer skill below also ships inside the wheel. After `pip install config2py`, its folder is `python -c "import config2py, os; print(os.path.join(config2py.__path__[0], 'data', 'skills'))"`, ready to link into your agent’s skills directory (for example with `skill link-skills <that folder>`).
 
 <!-- epythet:agentic-readme:start -->
 
@@ -82,7 +82,7 @@ config_getter("HOME")  # if you are using Linux/MacOS
 ```
 
 ```none
-'/Users/thorwhalen'
+'/Users/alice'
 ```
 
 Now, normally all systems come with a `HOME` environment variable (or a `USERPROFILE` on windows), so the above should always work fine. But see what happens if you ask for a key that is not an environment variable:
@@ -125,10 +125,10 @@ if "_TEST_NON_EXISTING_KEY_" in config_getter.configs:
 This tool allows you to:
 
 * not have to set up any special configs stuff (unless you want/need to)
-* enables you to share your notebooks (CLIs etc.) with others without having to polute the code with configs-setup gunk…
+* enables you to share your notebooks (CLIs etc.) with others without having to pollute the code with configs-setup gunk…
 * … including when you put local file/folder paths (or worse, secrets) in your notebook or code, which others then have to edit (instead, here, just enter a probably-unique name for the needed resource, then enter your filepath in the user input dialog instead)
 
-This is very convenient situation where user input (via things like `__builtins__.input` or `getpass.getpass` etc) is available. But **you should not use this to manage configurations/resources anywhere were there’s not a user to see and respond to the builtin user input dialog**
+This is very convenient in situations where user input (via things like `__builtins__.input` or `getpass.getpass` etc) is available. But **you should not use this to manage configurations/resources anywhere where there’s no a user to see and respond to the builtin user input dialog**
 
 Don’t fret though, this `config_getter` is just our no-BS entry point to much more. Let’s have a slight look under its hood to see what else we can do with it.
 
@@ -138,7 +138,7 @@ And of course, if you’re that type, you can already have a look at [the docume
 
 If you look up for the definition of the `config_getter` function you imported above, you’ll find this: `config_getter = simple_config_getter()`. That is, it was created by `simple_config_getter` with its default arguments. Let’s have a look at what these are.
 
-In fact, `simple_config_getter` is a function to make configuration getters that ressemble the one we’ve seen above:
+In fact, `simple_config_getter` is a function to make configuration getters that resemble the one we’ve seen above:
 
 ![image](https://github.com/i2mint/config2py/assets/1906276/09f287a8-05f9-4590-8664-10feda9ad617)
 
@@ -4412,7 +4412,7 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-11-22 23:20 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/6be5c839a6bfee803ee8ee72cc93ca9fab4c1350"><code>6be5c83</code></a> on branch <code>master</code>, for **config2py 0.1.77** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 23:48 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/7b12b81bc765931aade185313a539173e2bfee95"><code>7b12b81</code></a> on branch <code>master</code>, for **config2py 0.1.78** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -4421,7 +4421,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/6be5c839a6bfee803ee8ee72cc93ca9fab4c1350"><code>6be5c839a6bfee803ee8ee72cc93ca9fab4c1350</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/7b12b81bc765931aade185313a539173e2bfee95"><code>7b12b81bc765931aade185313a539173e2bfee95</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4432,9 +4432,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45082608157">45082608157</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45085056919">45085056919</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>6be5c839a6bfee803ee8ee72cc93ca9fab4c1350</code> (in the history of the built commit) |
+| Event commit | <code>7b12b81bc765931aade185313a539173e2bfee95</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4459,13 +4459,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.77/">0.1.77</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/config2py/0.1.78/">0.1.78</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 6be5c839a6bfee803ee8ee72cc93ca9fab4c1350
+git checkout 7b12b81bc765931aade185313a539173e2bfee95
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
