@@ -161,6 +161,7 @@ def _open_beneath(path, mode, beneath, open_kwargs):
     if parts[0] == os.pardir:
         raise ValueError(f"{os.fspath(path)!r} is not inside {os.fspath(beneath)!r}")
     *folders, name = parts
+
     def check_then_open():  # no dir_fd (Windows), or no way to walk by fd: check, open
         folder = os.path.abspath(beneath)
         for part in folders:
