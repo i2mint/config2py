@@ -63,7 +63,7 @@ class SecureTextFiles(TextFiles):
         follow_symlinks: bool = True,
         on_unsafe_folder: str = "warn",
         **kwargs,
-    ):
+    ) -> None:
         """
         :param follow_symlinks: ``False`` refuses (``KeyError``) to write through a
             symlink at a value file's path, or at any sub-folder of a key such as
@@ -86,13 +86,13 @@ class SecureTextFiles(TextFiles):
         """Return the state to pickle, including the symlink policy."""
         return {**super().__getstate__(), "_follow_symlinks": self._follow_symlinks}
 
-    def __setstate__(self, state: dict):
+    def __setstate__(self, state: dict) -> None:
         """Restore the state, including the symlink policy."""
         state = dict(state)
         self._follow_symlinks = state.pop("_follow_symlinks", True)
         super().__setstate__(state)
 
-    def __setitem__(self, k, v):
+    def __setitem__(self, k, v) -> None:
         """Set ``k`` to the given value."""
         # dol's TextFiles wraps an inner persister, so write via the full path here,
         # keeping that persister's key validation and its KeyError contract.
@@ -116,7 +116,7 @@ class SecureTextFiles(TextFiles):
             raise KeyError(str(error)) from error
 
 
-def _ensure_if_default_configs_folder(src):
+def _ensure_if_default_configs_folder(src) -> None:
     """Create config2py's own configs folder if ``src`` is it (#26)."""
     if is_default_configs_folder(src):
         ensure_default_configs_folder()

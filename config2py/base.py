@@ -81,7 +81,7 @@ Sources = Iterable[Union[GettableContainer, Getter]]
 GetConfigEgress = Callable[[KT, VT], VT]
 
 
-def is_not_none_nor_empty(x):
+def is_not_none_nor_empty(x: object) -> bool:
     """True unless ``x`` is ``None`` or the empty string.
 
     >>> is_not_none_nor_empty(None)
@@ -303,7 +303,7 @@ class FuncBasedGettableContainer:
     config_not_found_exceptions: Exceptions = (Exception,)
     cache_getter = False
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Set up the (optional) cache after the dataclass fields are assigned."""
         if self.cache_getter:
             # Note: The only purpose of the cache is to avoid calling the getter function
@@ -332,7 +332,7 @@ class FuncBasedGettableContainer:
         return v
 
     # TODO: Is this used to indicate that the getter couldn't find a key.
-    def __contains__(self, k):
+    def __contains__(self, k: KT) -> bool:
         """Return whether ``k`` is a key (that is, whether getting it succeeds)."""
         try:
             self[k]
@@ -447,7 +447,7 @@ def _resolve_saver(save_to: SaveTo) -> Optional[KTSaver]:
         )
 
 
-def is_not_empty(val) -> bool:
+def is_not_empty(val: object) -> bool:
     """True unless ``val`` is ``None`` or the empty string.
 
     >>> is_not_empty(None)
@@ -468,10 +468,10 @@ def is_not_empty(val) -> bool:
 def ask_user_for_key(
     key=None,
     *,
-    prompt_template="Enter a value for {}: ",
+    prompt_template: str = "Enter a value for {}: ",
     save_to: SaveTo = None,
-    save_condition=is_not_empty,
-    user_asker=ask_user_for_input,
+    save_condition: Callable[[object], bool] = is_not_empty,
+    user_asker: Callable[[str], str] = ask_user_for_input,
     egress: Callable | None = None,
 ):
     """Ask the user for the value of ``key``, optionally saving it.
@@ -534,9 +534,9 @@ def ask_user_for_key(
 def user_gettable(
     save_to: SaveTo = None,
     *,
-    prompt_template="Enter a value for {}: ",
+    prompt_template: str = "Enter a value for {}: ",
     egress: Callable | None = None,
-    user_asker=ask_user_for_input,
+    user_asker: Callable[[str], str] = ask_user_for_input,
     val_is_valid: Callable[[VT], bool] = is_not_empty,
     config_not_found_exceptions: Exceptions = (Exception,),
 ):

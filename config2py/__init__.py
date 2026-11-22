@@ -52,7 +52,7 @@ _module_of = {
 _submodules = (*_names_by_module, "codecs")
 
 
-def __getattr__(name):
+def __getattr__(name: str) -> object:
     if name in _module_of:
         value = getattr(_import_module(f"config2py.{_module_of[name]}"), name)
     elif name in _submodules:
@@ -66,7 +66,7 @@ def __getattr__(name):
     return value
 
 
-def __dir__():
+def __dir__() -> list[str]:
     # Not the three default instances: ``dir()`` walkers (pydoc, doctest collection) would
     # build them, and importing must create no folder (#26).
     return sorted({*globals(), *_module_of, *_submodules} - set(_default_instances))

@@ -113,7 +113,14 @@ def owner_only_opener(path, flags, *, follow_symlinks=True, dir_fd=None):
     return fd
 
 
-def secure_open(path, mode="w", *, follow_symlinks=True, beneath=None, **open_kwargs):
+def secure_open(
+    path: "str | os.PathLike",
+    mode: str = "w",
+    *,
+    follow_symlinks: bool = True,
+    beneath: "str | os.PathLike | None" = None,
+    **open_kwargs,
+):
     """``open(path, mode, **open_kwargs)`` with owner-only (``0o600``) permissions.
 
     The file is created (or re-tightened) by ``owner_only_opener``. Being the builtin
@@ -203,7 +210,7 @@ def _open_beneath(path, mode, beneath, open_kwargs):
 _STALE_TMP_SECONDS = 3600  # older hidden temp files are leftovers of a killed writer
 
 
-def _sweep_stale_tmp(folder, name, *, max_age=_STALE_TMP_SECONDS):
+def _sweep_stale_tmp(folder, name, *, max_age=_STALE_TMP_SECONDS) -> None:
     """Remove ``.<name>.<hex>.tmp`` leftovers (e.g. from a SIGKILL) older than ``max_age``."""
     pattern = re.compile(rf"\.{re.escape(name)}\.[0-9a-f]{{8}}\.tmp")
     try:
@@ -221,7 +228,13 @@ def _sweep_stale_tmp(folder, name, *, max_age=_STALE_TMP_SECONDS):
                 pass
 
 
-def atomic_write_bytes(path, data: bytes, *, follow_symlinks=True, beneath=None):
+def atomic_write_bytes(
+    path: "str | os.PathLike",
+    data: bytes,
+    *,
+    follow_symlinks: bool = True,
+    beneath: "str | os.PathLike | None" = None,
+) -> None:
     """Write ``data`` to ``path`` (``0o600``) so a crash never leaves it empty or partial.
 
     The bytes go to a ``0o600`` temp file in the same folder (through ``secure_open``,
@@ -283,7 +296,7 @@ def atomic_write_bytes(path, data: bytes, *, follow_symlinks=True, beneath=None)
         raise
 
 
-def tighten_mode(path, mode, *, strict=False) -> bool:
+def tighten_mode(path: "str | os.PathLike", mode: int, *, strict: bool = False) -> bool:
     """Set ``path``'s permission bits to ``mode``, only if they differ. POSIX only.
 
     Returns ``True`` if ``path`` ends up with ``mode``. A failing ``chmod`` (read-only
@@ -306,7 +319,7 @@ def tighten_mode(path, mode, *, strict=False) -> bool:
         return False
 
 
-def _warn_not_tightened(what):
+def _warn_not_tightened(what) -> None:
     import warnings
     from config2py.errors import Config2PyWarning
 
@@ -317,7 +330,7 @@ def _warn_not_tightened(what):
     )
 
 
-def secure_makedirs(dirpath, *, exist_ok=True):
+def secure_makedirs(dirpath: "str | os.PathLike", *, exist_ok: bool = True) -> None:
     """``os.makedirs(dirpath, mode=0o700)``, re-tightening the mode if it already exists.
 
     ``os.makedirs(..., mode=0o700, exist_ok=True)`` alone won't re-tighten an existing
@@ -433,7 +446,7 @@ def check_folder_is_private(
     stacklevel: int = 2,
     check_ancestors: bool = True,
     ignore_sticky: bool = False,
-):
+) -> None:
     """Check ``dirpath`` with ``unsafe_folder_reason``, and act on a problem.
 
     :param on_unsafe: ``"warn"`` (the default) issues an
@@ -507,11 +520,11 @@ class EnvironmentVariables(ChainMap):
     i2mint/config2py#16).
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Wrap ``os.environ`` as the (only) mapping in the chain."""
         super().__init__(os.environ)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return a fixed, value-free label so secrets aren't printed."""
         return "EnvironmentVariables"
 
@@ -704,7 +717,7 @@ def extract_variable_declarations(
     return env_vars
 
 
-def create_directories(dirpath, max_dirs_to_make=None):
+def create_directories(dirpath, max_dirs_to_make=None) -> bool:
     """
     Create directories up to a specified limit.
 
@@ -1135,7 +1148,7 @@ def setup_configs_folder(
     return configs_dir
 
 
-def _tighten_managed_configs_folder(configs_dir):
+def _tighten_managed_configs_folder(configs_dir) -> None:
     """Re-tighten a config2py-managed configs folder created with looser modes.
 
     The folder becomes ``0o700`` and the files in it lose their group and other
@@ -1337,7 +1350,7 @@ class AppData:
         *,
         package_name: Optional[str] = None,
         seed_data_dir: str = "_seed_data",
-    ):
+    ) -> None:
         """See the class docstring for each parameter."""
         self.app_name = app_name
         self.package_name = package_name or app_name
@@ -1395,14 +1408,14 @@ def _get_ipython_in_globals():
     return "get_ipython" in globals()
 
 
-def _main_does_not_have_file_attribute():
+def _main_does_not_have_file_attribute() -> bool:
     return not hasattr(sys.modules["__main__"], "__file__")
 
 
 _repl_conditions = {_get_ipython_in_globals, _main_does_not_have_file_attribute}
 
 
-def is_repl():
+def is_repl() -> bool:
     """
     Determines if the Python interpreter is running in REPL.
 
