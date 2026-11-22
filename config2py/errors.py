@@ -1,5 +1,7 @@
 """Error classes for config2py."""
 
+import os
+
 
 class Config2PyError(Exception):
     """Base class for config2py errors."""
@@ -40,7 +42,9 @@ def validate_on_missing(on_missing: str, *, name: str = "on_missing") -> str:
     return on_missing
 
 
-def unusable_config_file_problem(path):
+def unusable_config_file_problem(
+    path: "str | os.PathLike",
+) -> "tuple[type[OSError], int, str] | None":
     """Why ``path`` can't be read as a config file, as ``(error_class, errno, reason)``,
     or ``None`` if it is an existing, readable, non-folder path."""
     import errno
@@ -56,8 +60,12 @@ def unusable_config_file_problem(path):
 
 
 def report_missing_config_file(
-    path, *, on_missing: str = "warn", stacklevel: int = 2, resolved_path=None
-):
+    path: "str | os.PathLike",
+    *,
+    on_missing: str = "warn",
+    stacklevel: int = 2,
+    resolved_path: "str | os.PathLike | None" = None,
+) -> None:
     """Act on a config source ``path`` that is not an existing, readable file.
 
     The problem is told apart: missing, a directory, or unreadable (permission

@@ -6,6 +6,8 @@ import locale as _locale
 import os as _os
 from configparser import ConfigParser
 from configparser import BasicInterpolation, ExtendedInterpolation
+from collections.abc import Callable, Mapping
+from typing import NoReturn
 from functools import wraps
 from io import StringIO
 
@@ -64,7 +66,7 @@ empty string value here =
 """
 
 
-def persist_after_operation(method_func):
+def persist_after_operation(method_func: Callable) -> Callable:
     """Wrap a mutating method so it calls ``self.persist()`` after running.
 
     Used to make ``ConfigStore`` methods like ``__setitem__`` and
@@ -83,7 +85,7 @@ def persist_after_operation(method_func):
     return _method_func
 
 
-def super_and_persist(super_cls, method_name):
+def super_and_persist(super_cls: type, method_name: str) -> Callable:
     """
     To be able to do this:
 
@@ -271,7 +273,7 @@ class ConfigStore(ConfigParserStore):
         target_kind=None,
         follow_symlinks: bool = True,
         **more_config_parser_kwargs,
-    ):
+    ) -> None:
         """See the class docstring: ``source`` may be a filepath, a config string,
         bytes, a dict, or a readable stream; ``defaults``, ``dict_type`` and
         ``allow_no_value`` are passed on to ``ConfigParser``. With
@@ -344,14 +346,14 @@ class ConfigStore(ConfigParserStore):
             read_ok.append(filepath)
         return read_ok
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, dict[str, str]]:
         """Return the whole config as a ``{section: {key: value}}`` dict."""
         return {
             section: dict(section_contents)
             for section, section_contents in self.items()
         }
 
-    def get(self, k, default=None):
+    def get(self, k: str, default: object = None) -> object:
         """Needed because the Store.get didn't catch the NoSectionError"""
         try:
             return self[k]
@@ -405,7 +407,7 @@ class ConfigStore(ConfigParserStore):
                 else:
                     raise ValueError(f"Unknown target_kind: {self.target_kind}")
 
-    def __enter__(self):
+    def __enter__(self) -> "ConfigStore":
         """Enter a context in which changes are persisted once, on exit."""
         self._within_context_manager = True
         return self
@@ -416,12 +418,12 @@ class ConfigStore(ConfigParserStore):
         return self.persist()
 
     @persist_after_operation
-    def __setitem__(self, k, v):
+    def __setitem__(self, k: str, v: Mapping) -> None:
         """Set ``k`` to the given value."""
         super().__setitem__(k, v)
 
     @persist_after_operation
-    def __delitem__(self, k):
+    def __delitem__(self, k: str) -> None:
         """Delete ``k``."""
         super().__delitem__(k)
 
@@ -523,22 +525,22 @@ class ConfigReader(ConfigStore):
     # Read-only, and it reports an unusable source itself (``on_missing``).
     _tolerates_unreadable_sources = True
 
-    def __init__(self, source, *, on_missing: str = "warn", **kwargs):
+    def __init__(self, source, *, on_missing: str = "warn", **kwargs) -> None:
         """Validate ``on_missing`` and warn or raise for missing source files, then initialize."""
         _validate_on_missing(on_missing)
         for path in _missing_filepaths(source):
             _report_missing_config_file(path, on_missing=on_missing, stacklevel=2)
         super().__init__(source, **kwargs)
 
-    def persist(self):
+    def persist(self) -> NoReturn:
         """Disabled: ``ConfigReader`` is read-only."""
         raise NotImplementedError("persist disabled for ConfigReader")
 
-    def __setitem__(self, k, v):
+    def __setitem__(self, k: str, v: Mapping) -> None:
         """``ConfigReader`` is read-only."""
         raise NotImplementedError("__setitem__ disabled for ConfigReader")
 
-    def __delitem__(self, k):
+    def __delitem__(self, k: str) -> None:
         """``ConfigReader`` is read-only."""
         raise NotImplementedError("__delitem__ disabled for ConfigReader")
 

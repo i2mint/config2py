@@ -95,7 +95,9 @@ def _secure_open(path, mode="w", *, follow_symlinks=True):
 _STALE_TMP_SECONDS = 3600
 
 
-def _sweep_stale_tmp(folder, name, *, max_age=_STALE_TMP_SECONDS):
+def _sweep_stale_tmp(
+    folder: "str | os.PathLike", name: str, *, max_age: float = _STALE_TMP_SECONDS
+) -> None:
     """Remove ``.<name>.<hex>.tmp`` leftovers (e.g. from a SIGKILL) older than ``max_age``."""
     pattern = re.compile(rf"\.{re.escape(name)}\.[0-9a-f]{{8}}\.tmp")
     try:
@@ -114,7 +116,9 @@ def _sweep_stale_tmp(folder, name, *, max_age=_STALE_TMP_SECONDS):
             pass
 
 
-def _atomic_write(path, content, *, follow_symlinks=True):
+def _atomic_write(
+    path: "str | os.PathLike", content: "str | bytes", *, follow_symlinks: bool = True
+) -> None:
     """Replace ``path`` with ``content`` (``str`` or ``bytes``) atomically, ``0o600``.
 
     Writes a hidden ``0o600`` temp file next to ``path``, ``fsync``\ s it, then
@@ -310,7 +314,7 @@ class SyncStore(MutableMapping):
         {'x': 1, 'y': 2, 'a': 1, 'b': 2}
     """
 
-    def __init__(self, loader: Loader, dumper: Dumper):
+    def __init__(self, loader: Loader, dumper: Dumper) -> None:
         """See the class docstring for ``loader`` and ``dumper``."""
         self._loader = loader
         self._dumper = dumper
@@ -319,28 +323,28 @@ class SyncStore(MutableMapping):
         self._needs_flush = False
         self._load()
 
-    def _load(self):
+    def _load(self) -> None:
         """Load data from backing storage."""
         self._data = self._loader()
 
-    def _mark_dirty(self):
+    def _mark_dirty(self) -> None:
         """Mark data as changed and sync if auto_sync is enabled."""
         self._needs_flush = True
         if self._auto_sync:
             self.flush()
 
-    def flush(self):
+    def flush(self) -> None:
         """Sync data to backing storage if changes exist."""
         if self._needs_flush:
             self._dumper(self._data)
             self._needs_flush = False
 
-    def __enter__(self):
+    def __enter__(self) -> "SyncStore":
         """Enter deferred sync mode."""
         self._auto_sync = False
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         """Exit deferred sync mode and flush changes."""
         self.flush()
         self._auto_sync = True
@@ -349,12 +353,12 @@ class SyncStore(MutableMapping):
         """Return the value stored under ``key``."""
         return self._data[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         """Set ``key`` to the given value."""
         self._data[key] = value
         self._mark_dirty()
 
-    def __delitem__(self, key):
+    def __delitem__(self, key) -> None:
         """Delete ``key``."""
         del self._data[key]
         self._mark_dirty()
@@ -363,11 +367,11 @@ class SyncStore(MutableMapping):
         """Iterate over the keys."""
         return iter(self._data)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Return the number of items."""
         return len(self._data)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return a short representation."""
         return f"{self.__class__.__name__}({len(self._data)} items)"
 
@@ -435,7 +439,7 @@ class FileStore(SyncStore):
         create_file_content: Optional[Callable[[], dict]] = None,
         create_key_path_content: Optional[Callable[[], Any]] = None,
         follow_symlinks: bool = True,
-    ):
+    ) -> None:
         """See the class docstring for each parameter."""
         self.filepath = Path(filepath).expanduser()
         self.follow_symlinks = follow_symlinks
@@ -518,7 +522,7 @@ class FileStore(SyncStore):
 
         _atomic_write(self.filepath, content, follow_symlinks=self.follow_symlinks)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return a short representation."""
         key_path_str = f", key_path={self.key_path!r}" if self.key_path else ""
         return f"{self.__class__.__name__}({self.filepath!r}{key_path_str})"
@@ -549,7 +553,7 @@ class JsonStore(FileStore):
         ensure_ascii: bool = False,
         follow_symlinks: bool = True,
         **dump_kwargs,
-    ):
+    ) -> None:
         """See the class docstring for each parameter."""
         dump_kwargs.setdefault("indent", indent)
         dump_kwargs.setdefault("ensure_ascii", ensure_ascii)

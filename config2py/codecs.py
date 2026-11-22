@@ -188,7 +188,7 @@ def register_codec(
     decoder: Optional[Callable[[bytes], Any]] = None,
     overwrite: bool = False,
     dependency: Optional[str] = None,
-):
+) -> None:
     """Register encoder and/or decoder for an extension.
 
     Args:
