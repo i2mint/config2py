@@ -76,6 +76,7 @@ config_getter("HOME")  # if you are using Linux/MacOS
 Now, normally all systems come with a `HOME` environment variable (or a `USERPROFILE` on windows), so the above should always work fine. But see what happens if you ask for a key that is not an environment variable:
 
 <!-- no-test -->
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 ```python
 my_config_val = config_getter("_TEST_NON_EXISTING_KEY_")  # triggers a user input dialog
 # ... I enter 'my config value' in the dialog, and then...
@@ -89,6 +90,7 @@ When the key looks like a secret (its name mentions `key`, `token`, `password`, 
 But if I do that again (even on a different day, somewhere else (on my same computer), in a different session), it will get me the value I entered in the user input dialog.
 
 <!-- no-test -->
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 ```python
 # This time, no input dialog:
 my_config_val = config_getter("_TEST_NON_EXISTING_KEY_")
@@ -156,6 +158,7 @@ The default `config_store_factory` is `get_configs_local_store` which will give 
 If you check out the code for `simple_config_getter`, you'll find that all it it is simply setting the `sources` argument for the `get_config` function. Something more or less like:
 
 <!-- no-test -->
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 ```python
 configs = config_store_factory(configs_src)
 source = [
@@ -187,6 +190,7 @@ config_getter = get_config(
 Now let's see what happens when we do:
 
 <!-- no-test -->
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 ```python
 config_getter("SOME_CONFIG_KEY")
 ```
@@ -202,6 +206,7 @@ But there's more!
 Now look at what's in `my_configs`! If you've used `TextFiles`, look in the folder to see that there's a new file. Either way, if you do:
 
 <!-- no-test -->
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 ```python
 my_configs["SOME_CONFIG_KEY"]
 ```
@@ -211,6 +216,7 @@ You'll now see the value the user entered.
 This means what? This means that the next time you try to get the config:
 
 <!-- no-test -->
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 ```python
 config_getter("SOME_CONFIG_KEY")
 ```
@@ -393,6 +399,7 @@ So, what's that `user_gettable`?
 It's a way for you to specify that the system should ask the user for a key, and optionally save it somewhere, plus many other parameters (like what to ask the user, etc.)
 
 <!-- no-test -->
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 ```python
 from config2py.base import user_gettable
 
