@@ -83,14 +83,17 @@ class SecureTextFiles(TextFiles):
     # dol's ``Store.__getstate__`` (used by ``copy`` and ``pickle``) keeps only its own
     # attributes, so carry ours along (a copy must not quietly start following links).
     def __getstate__(self) -> dict:
+        """Return the state to pickle, including the symlink policy."""
         return {**super().__getstate__(), "_follow_symlinks": self._follow_symlinks}
 
     def __setstate__(self, state: dict):
+        """Restore the state, including the symlink policy."""
         state = dict(state)
         self._follow_symlinks = state.pop("_follow_symlinks", True)
         super().__setstate__(state)
 
     def __setitem__(self, k, v):
+        """Set ``k`` to the given value."""
         # dol's TextFiles wraps an inner persister, so write via the full path here,
         # keeping that persister's key validation and its KeyError contract.
         path = self._id_of_key(k)

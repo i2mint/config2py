@@ -406,19 +406,23 @@ class ConfigStore(ConfigParserStore):
                     raise ValueError(f"Unknown target_kind: {self.target_kind}")
 
     def __enter__(self):
+        """Enter a context in which changes are persisted once, on exit."""
         self._within_context_manager = True
         return self
 
     def __exit__(self, *exc_details):
+        """Leave the context and persist the changes."""
         self._within_context_manager = False
         return self.persist()
 
     @persist_after_operation
     def __setitem__(self, k, v):
+        """Set ``k`` to the given value."""
         super().__setitem__(k, v)
 
     @persist_after_operation
     def __delitem__(self, k):
+        """Delete ``k``."""
         super().__delitem__(k)
 
     # __setitem__ = super_and_persist(ConfigParser, '__setitem__')
@@ -520,6 +524,7 @@ class ConfigReader(ConfigStore):
     _tolerates_unreadable_sources = True
 
     def __init__(self, source, *, on_missing: str = "warn", **kwargs):
+        """Validate ``on_missing`` and warn or raise for missing source files, then initialize."""
         _validate_on_missing(on_missing)
         for path in _missing_filepaths(source):
             _report_missing_config_file(path, on_missing=on_missing, stacklevel=2)
