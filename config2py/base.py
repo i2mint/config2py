@@ -2,6 +2,7 @@
 Base for getting configs from various sources and formats
 """
 
+import warnings
 from collections import ChainMap
 from typing import (
     Type,
@@ -22,6 +23,51 @@ from config2py.util import always_true, ask_user_for_input, no_default, not_foun
 from config2py.errors import ConfigNotFound
 
 Exceptions = tuple[type[Exception], ...]
+
+#: The exceptions that mean "this source has no value for the key". It will become the
+#: default ``config_not_found_exceptions`` in a future release (issue #25); pass it
+#: explicitly now to get that behaviour (and no deprecation warning).
+DFLT_CONFIG_NOT_FOUND_EXCEPTIONS: Exceptions = (
+    KeyError,
+    LookupError,
+    FileNotFoundError,
+    ConfigNotFound,
+)
+
+
+class _LegacyDefault(tuple):
+    """The current default, ``(Exception,)``, told apart from an explicit
+    ``(Exception,)`` by identity, so only callers relying on the default are warned."""
+
+
+#: Still the effective default: any exception from a callable source means "not
+#: found". Swallowing one that is not in ``DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`` under
+#: this default emits a ``DeprecationWarning`` (issue #25).
+LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS: Exceptions = _LegacyDefault((Exception,))
+
+
+def _warn_if_swallowed_under_legacy_default(
+    config_not_found_exceptions: Exceptions, error: BaseException, key
+) -> None:
+    """Warn when the legacy default turned a real error into "not found".
+
+    The message names the exception type only, never its text: getters often wrap
+    credential checks, and SDKs echo rejected secrets in their messages.
+    """
+    if config_not_found_exceptions is LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS and not (
+        isinstance(error, DFLT_CONFIG_NOT_FOUND_EXCEPTIONS)
+    ):
+        warnings.warn(
+            f"A config source raised {type(error).__name__} for key {key!r}, which "
+            "was treated as 'not found' and the next source was tried. A future "
+            "config2py will let such errors propagate (the default will become "
+            "config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS). Pass "
+            "config_not_found_exceptions explicitly: (Exception,) to keep falling "
+            "through, or DFLT_CONFIG_NOT_FOUND_EXCEPTIONS to adopt the new behaviour "
+            "(https://github.com/i2mint/config2py/issues/25).",
+            DeprecationWarning,
+            stacklevel=4,
+        )
 
 
 @runtime_checkable
@@ -106,7 +152,7 @@ def get_config(
     default: VT = no_default,
     egress: GetConfigEgress | None = None,
     val_is_valid: Callable[[VT], bool] | None = always_true,
-    config_not_found_exceptions: Exceptions = (Exception,),
+    config_not_found_exceptions: Exceptions = LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS,
 ):
     """Get a config value from a list of sources
 
@@ -122,7 +168,7 @@ def get_config(
     ...     elif k == 'green':
     ...         return 'eggs'
     ...     else:
-    ...         raise RuntimeError(f"I don't handle that: {k}")
+    ...         raise KeyError(k)
     >>> dict_ = {'foo': 'bar', 'baz': 'qux'}
     >>> sources = [func, dict_]
 
@@ -166,9 +212,12 @@ def get_config(
 
     Beware that this broad default treats *any* error raised by a callable source
     (a network blip, a bug, a missing import, rejected credentials) as "not found",
-    and silently moves on to the next, possibly less trusted, source. When the
-    sources are known, prefer passing something narrower, such as
-    ``config_not_found_exceptions=(KeyError, LookupError, FileNotFoundError)``
+    and silently moves on to the next, possibly less trusted, source. It is
+    deprecated: when it swallows an error that is not a lookup error, a
+    ``DeprecationWarning`` says so, and a future release will make
+    ``DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`` (``KeyError``, ``LookupError``,
+    ``FileNotFoundError``, ``ConfigNotFound``) the default. Pass
+    ``config_not_found_exceptions`` explicitly to choose either behaviour now
     (see https://github.com/i2mint/config2py/issues/25).
 
     Further, your sources may return a value, but not one that you consider valid:
@@ -300,7 +349,7 @@ class FuncBasedGettableContainer:
 
     getter: Callable[[KT], VT]
     val_is_valid: Callable[[VT], bool] = always_true
-    config_not_found_exceptions: Exceptions = (Exception,)
+    config_not_found_exceptions: Exceptions = LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS
     cache_getter = False
 
     def __post_init__(self) -> None:
@@ -318,6 +367,9 @@ class FuncBasedGettableContainer:
         try:
             v = self.getter(k)
         except self.config_not_found_exceptions as e:
+            _warn_if_swallowed_under_legacy_default(
+                self.config_not_found_exceptions, e, k
+            )
             # Note: The upstream exception text is deliberately NOT interpolated into
             # the message. Getters here often wrap credential validation, and SDKs
             # routinely echo the rejected secret back in their exception text
@@ -355,7 +407,7 @@ class FuncBasedGettableContainer:
 def gettable_containers(
     sources: Sources,
     val_is_valid: Callable[[VT], bool] = always_true,
-    config_not_found_exceptions: Exceptions = (Exception,),
+    config_not_found_exceptions: Exceptions = LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS,
 ) -> Iterable[GettableContainer]:
     """Convert an iterable of sources into ``GettableContainers``"""
     for src in sources:
@@ -376,7 +428,7 @@ def gettable_containers(
 def sources_chainmap(
     sources: Sources,
     val_is_valid: Callable[[VT], bool] = always_true,
-    config_not_found_exceptions: Exceptions = (Exception,),
+    config_not_found_exceptions: Exceptions = LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS,
 ) -> ChainMap:
     """Create a ``ChainMap`` from a list of sources"""
     sources = gettable_containers(sources, val_is_valid, config_not_found_exceptions)
@@ -538,7 +590,7 @@ def user_gettable(
     egress: Callable | None = None,
     user_asker: Callable[[str], str] = ask_user_for_input,
     val_is_valid: Callable[[VT], bool] = is_not_empty,
-    config_not_found_exceptions: Exceptions = (Exception,),
+    config_not_found_exceptions: Exceptions = LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS,
 ):
     """
     Create a ``GettableContainer`` that asks the user for a value, optionally saving it.

@@ -159,3 +159,81 @@ def test_contains_still_works_with_leak_free_errors():
     )
     assert "there" in gc
     assert "not_there" not in gc
+
+
+# --------------------------------------------------------------------------------------
+# config_not_found_exceptions: deprecating the broad default (issue #25)
+
+
+def _flaky_source(k):
+    raise RuntimeError("network blip")
+
+
+def _lookup_source(k):
+    raise KeyError(k)
+
+
+def test_legacy_default_falls_through_but_warns_on_real_errors():
+    import pytest
+
+    from config2py.base import get_config
+
+    with pytest.warns(DeprecationWarning, match="RuntimeError"):
+        assert get_config("k", [_flaky_source, {"k": "v"}]) == "v"
+
+
+def test_legacy_default_does_not_warn_on_lookup_errors():
+    import warnings
+
+    from config2py.base import get_config
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        assert get_config("k", [_lookup_source, {"k": "v"}]) == "v"
+
+
+def test_explicit_broad_exceptions_fall_through_silently():
+    import warnings
+
+    from config2py.base import get_config
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        got = get_config(
+            "k", [_flaky_source, {"k": "v"}], config_not_found_exceptions=(Exception,)
+        )
+    assert got == "v"
+
+
+def test_the_future_default_lets_real_errors_propagate():
+    import pytest
+
+    from config2py.base import DFLT_CONFIG_NOT_FOUND_EXCEPTIONS, get_config
+
+    with pytest.raises(RuntimeError, match="network blip"):
+        get_config(
+            "k",
+            [_flaky_source, {"k": "v"}],
+            config_not_found_exceptions=DFLT_CONFIG_NOT_FOUND_EXCEPTIONS,
+        )
+    assert (
+        get_config(
+            "k",
+            [_lookup_source, {"k": "v"}],
+            config_not_found_exceptions=DFLT_CONFIG_NOT_FOUND_EXCEPTIONS,
+        )
+        == "v"
+    )
+
+
+def test_the_warning_never_carries_the_exception_text():
+    import pytest
+
+    from config2py.base import get_config
+
+    def leaky(k):
+        raise RuntimeError("token sk-SECRET rejected")
+
+    with pytest.warns(DeprecationWarning) as record:
+        get_config("k", [leaky, {"k": "v"}])
+    assert all("sk-SECRET" not in str(w.message) for w in record)
