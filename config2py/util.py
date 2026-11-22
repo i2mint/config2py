@@ -161,8 +161,8 @@ def _open_beneath(path, mode, beneath, open_kwargs):
     if parts[0] == os.pardir:
         raise ValueError(f"{os.fspath(path)!r} is not inside {os.fspath(beneath)!r}")
     *folders, name = parts
-    if not (hasattr(os, "O_NOFOLLOW") and os.open in os.supports_dir_fd):
-        folder = os.path.abspath(beneath)  # no dir_fd (Windows): check, then open
+    def check_then_open():  # no dir_fd (Windows), or no way to walk by fd: check, open
+        folder = os.path.abspath(beneath)
         for part in folders:
             folder = os.path.join(folder, part)
             if os.path.islink(folder) or getattr(os.path, "isjunction", bool)(folder):
@@ -173,13 +173,24 @@ def _open_beneath(path, mode, beneath, open_kwargs):
             opener=partial(owner_only_opener, follow_symlinks=False),
             **open_kwargs,
         )
+
+    if not (hasattr(os, "O_NOFOLLOW") and os.open in os.supports_dir_fd):
+        return check_then_open()
     # O_PATH (Linux): walking a folder needs only search permission, not read
     dir_flags = getattr(os, "O_PATH", os.O_RDONLY) | os.O_NOFOLLOW
     dir_flags |= getattr(os, "O_DIRECTORY", 0)
     dir_fd = os.open(os.path.abspath(beneath), dir_flags & ~os.O_NOFOLLOW)
     try:
         for part in folders:  # ``part`` is a symlink => OSError (ELOOP / ENOTDIR)
-            next_fd = os.open(part, dir_flags, dir_fd=dir_fd)
+            try:
+                next_fd = os.open(part, dir_flags, dir_fd=dir_fd)
+            except PermissionError:
+                if hasattr(os, "O_PATH"):
+                    raise
+                # No O_PATH (macOS): opening a folder needs read permission, which a
+                # search-only (e.g. 0o300) folder lacks. Fall back to the path check
+                # (https://github.com/i2mint/config2py/issues/72).
+                return check_then_open()
             os.close(dir_fd)
             dir_fd = next_fd
         opener = partial(owner_only_opener, follow_symlinks=False, dir_fd=dir_fd)
