@@ -1,8 +1,6 @@
 # config2py
 
-Get configuration values and secrets into Python code through layered sources: environment variables, then a local config folder, then a one-time prompt whose answer is saved for next time. It also gives you per-app config/data/cache folders that follow XDG and Windows conventions, config files you edit as dicts that save on every write, and extension-based codecs.
-
-Still typing code yourself? Skip to [For humans who still hand-edit their dotfiles](#for-humans-who-still-hand-edit-their-dotfiles).
+Get configuration values and secrets into Python code through layered sources (environment variables, then a local config folder, then a one-time prompt whose answer is saved for next time), instead of hand-rolling `os.environ`, a `.env` file and an `input()` in every script or notebook. It also gives you per-app config, data and cache folders, and config files you edit as dicts.
 
 ```
 pip install config2py
@@ -26,8 +24,6 @@ get = simple_config_getter("myapp", ask_user_if_key_not_found=False)
 get.configs["MYAPP_MODEL"] = "small"  # saved as a file in ~/.config/myapp/configs/
 assert get("MYAPP_MODEL") == "small"  # an env var named MYAPP_MODEL would win
 ```
-
-The consumer skill below also ships inside the wheel. After `pip install config2py`, its folder is `python -c "import config2py, os; print(os.path.join(config2py.__path__[0], 'data', 'skills'))"`, ready to link into your agent's skills directory (for example with `skill link-skills <that folder>`).
 
 <!-- epythet:agentic-readme:start -->
 # For AI agents
