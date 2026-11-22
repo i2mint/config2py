@@ -66,13 +66,18 @@ reported as not a regular file.
     `PermissionError` for an unreadable file), `"ignore"` does nothing.
   * **stacklevel** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Passed to `warnings.warn`, so the warning points at the
     caller’s code (`2` is the caller of this function).
-  * **resolved_path** – What `path` resolves to (`~` expanded, …), when that is
+  * **resolved_path** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str) | [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – What `path` resolves to (`~` expanded, …), when that is
     what was actually looked at. `path` is what the messages show.
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.errors.unusable_config_file_problem(path)
 
 Why `path` can’t be read as a config file, as `(error_class, errno, reason)`,
 or `None` if it is an existing, readable, non-folder path.
+
+* **Return type:**
+  [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`type`](https://docs.python.org/3/builtins/functions.html#type)[[`OSError`](https://docs.python.org/3/builtins/exceptions.html#OSError)], [`int`](https://docs.python.org/3/builtins/functions.html#int), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.errors.validate_on_missing(on_missing, , name='on_missing')
 

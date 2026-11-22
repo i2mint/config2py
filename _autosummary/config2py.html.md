@@ -209,6 +209,9 @@ FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 
 Disabled: `ConfigReader` is read-only.
 
+* **Return type:**
+  [`NoReturn`](https://docs.python.org/3/library/typing.html#typing.NoReturn)
+
 ### *class* config2py.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
 Bases: `Store`
@@ -369,6 +372,9 @@ Advanced variant of interpolation, supports the syntax used by
 
 Needed because the Store.get didn’t catch the NoSectionError
 
+* **Return type:**
+  [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
 #### persist()
 
 Persists the data (if not in a context manager).
@@ -377,6 +383,9 @@ Persists means to call
 #### to_dict()
 
 Return the whole config as a `{section: {key: value}}` dict.
+
+* **Return type:**
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]
 
 ### config2py.Configs
 
@@ -537,6 +546,9 @@ Supports deferred sync via context manager for efficient batch operations.
 #### flush()
 
 Sync data to backing storage if changes exist.
+
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.ask_user_for_input(prompt, default='', \*, mask_input=<function looks_like_secret>, masking_toggle_str=None, egress=<function identity>)
 
@@ -1050,7 +1062,7 @@ notebook, it should return `True`.
 * **Returns:**
   True if running in a REPL, False otherwise.
 * **Return type:**
-  [*bool*](https://docs.python.org/3/builtins/functions.html#bool)
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 `is_repl` returns `True` if any function in `is_repl.repl_conditions`
 (a set of no-argument callables) returns `True`. By default that set checks
@@ -1151,11 +1163,11 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
   * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the user’s response is not saved.
-  * **prompt_template** – A template string to prompt the user with. It should
+  * **prompt_template** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – A template string to prompt the user with. It should
     contain a placeholder for the key, e.g. `"Enter a value for {}: "`.
   * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – A function to apply to the user’s response before returning it.
     This can be used to validate the response, for example.
-  * **user_asker** – A function that asks the user for input. It should take a
+  * **user_asker** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – A function that asks the user for input. It should take a
     prompt string and return the user’s response.
   * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`VT`], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
     returns `False`, the user will be asked for a new value.

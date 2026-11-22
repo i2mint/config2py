@@ -252,6 +252,9 @@ b'two'
 ['secret']
 ```
 
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
 ### config2py.util.check_folder_is_private(dirpath, , on_unsafe='warn', stacklevel=2, check_ancestors=True, ignore_sticky=False)
 
 Check `dirpath` with `unsafe_folder_reason`, and act on a problem.
@@ -264,6 +267,8 @@ Check `dirpath` with `unsafe_folder_reason`, and act on a problem.
     (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
   * **check_ancestors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Also check the folders above `dirpath`.
   * **ignore_sticky** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Accept `dirpath` itself being sticky (like `/tmp`).
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.util.create_directories(dirpath, max_dirs_to_make=None)
 
@@ -276,7 +281,7 @@ Create directories up to a specified limit.
 * **Returns:**
   True if the directory was created successfully, False otherwise.
 * **Return type:**
-  [*bool*](https://docs.python.org/3/builtins/functions.html#bool)
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 * **Raises:**
   [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – If max_dirs_to_make is negative.
 
@@ -844,7 +849,7 @@ notebook, it should return `True`.
 * **Returns:**
   True if running in a REPL, False otherwise.
 * **Return type:**
-  [*bool*](https://docs.python.org/3/builtins/functions.html#bool)
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 `is_repl` returns `True` if any function in `is_repl.repl_conditions`
 (a set of no-argument callables) returns `True`. By default that set checks
@@ -941,6 +946,9 @@ Parse assignments from python source code.
 directory’s mode, so this follows up with `tighten_mode` (which warns, rather
 than raises, if that isn’t possible). Intended for directories that may hold
 config/secret files (see i2mint/config2py#15).
+
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.util.secure_open(path, mode='w', , follow_symlinks=True, beneath=None, \*\*open_kwargs)
 

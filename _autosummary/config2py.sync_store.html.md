@@ -154,6 +154,9 @@ Supports deferred sync via context manager for efficient batch operations.
 
 Sync data to backing storage if changes exist.
 
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
 ### config2py.sync_store.get_format_handlers(filepath)
 
 Get loader/dumper for a file based on extension.

@@ -163,13 +163,13 @@ Ask the user for the value of `key`, optionally saving it.
 * **Parameters:**
   * **key** – The key to ask the user for. If `None`, a “curried” version of
     `ask_user_for_key` is returned, so you can specify the key later.
-  * **prompt_template** – A template string to prompt the user with. It should
+  * **prompt_template** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – A template string to prompt the user with. It should
     contain a placeholder for the key, e.g. `"Enter a value for {}: "`.
   * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the response is not saved. See `_resolve_saver`.
-  * **save_condition** – A function of the value, deciding whether to save it.
-  * **user_asker** – A function that takes a prompt string and returns the user’s
+  * **save_condition** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`object`](https://docs.python.org/3/builtins/functions.html#object)], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function of the value, deciding whether to save it.
+  * **user_asker** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – A function that takes a prompt string and returns the user’s
     response.
   * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – A `(key, value)` function to apply to the user’s response before
     returning (and saving) it.
@@ -345,6 +345,9 @@ True
 True
 ```
 
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
 ### config2py.base.sources_chainmap(sources, val_is_valid=<function always_true>, config_not_found_exceptions=(<class 'Exception'>, ))
 
 Create a `ChainMap` from a list of sources
@@ -360,11 +363,11 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
   * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the user’s response is not saved.
-  * **prompt_template** – A template string to prompt the user with. It should
+  * **prompt_template** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – A template string to prompt the user with. It should
     contain a placeholder for the key, e.g. `"Enter a value for {}: "`.
   * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – A function to apply to the user’s response before returning it.
     This can be used to validate the response, for example.
-  * **user_asker** – A function that asks the user for input. It should take a
+  * **user_asker** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – A function that asks the user for input. It should take a
     prompt string and return the user’s response.
   * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`VT`], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
     returns `False`, the user will be asked for a new value.

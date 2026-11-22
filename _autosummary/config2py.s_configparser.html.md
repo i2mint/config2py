@@ -99,6 +99,9 @@ FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 
 Disabled: `ConfigReader` is read-only.
 
+* **Return type:**
+  [`NoReturn`](https://docs.python.org/3/library/typing.html#typing.NoReturn)
+
 ### *class* config2py.s_configparser.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
 Bases: `Store`
@@ -259,6 +262,9 @@ Advanced variant of interpolation, supports the syntax used by
 
 Needed because the Store.get didn’t catch the NoSectionError
 
+* **Return type:**
+  [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
 #### persist()
 
 Persists the data (if not in a context manager).
@@ -267,6 +273,9 @@ Persists means to call
 #### to_dict()
 
 Return the whole config as a `{section: {key: value}}` dict.
+
+* **Return type:**
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]
 
 ### config2py.s_configparser.persist_after_operation(method_func)
 
@@ -277,6 +286,9 @@ Used to make `ConfigStore` methods like `__setitem__` and
 which writes to disk only when `target_kind` is `'filepath'`; for
 `'string'`, `'bytes'` and `'dict'` targets, `persist()` just returns
 the serialized data without touching disk.
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)
 
 ### config2py.s_configparser.postprocess_ini_section_items(items)
 
@@ -328,3 +340,6 @@ in your class definition block.
 
 I thought I needed to wrap more method this way, but as it turns out, I might not,
 so I prefer open code.
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)

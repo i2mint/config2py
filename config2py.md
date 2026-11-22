@@ -1,4 +1,4 @@
-> built 2026-11-22 18:07 UTC from 691849e (master) · config2py 0.1.76. Details: build_info.json
+> built 2026-11-22 19:02 UTC from f0a2c13 (master) · config2py 0.1.77. Details: build_info.json
 
 # index.html.md
 
@@ -644,13 +644,13 @@ Ask the user for the value of `key`, optionally saving it.
 * **Parameters:**
   * **key** – The key to ask the user for. If `None`, a “curried” version of
     `ask_user_for_key` is returned, so you can specify the key later.
-  * **prompt_template** – A template string to prompt the user with. It should
+  * **prompt_template** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – A template string to prompt the user with. It should
     contain a placeholder for the key, e.g. `"Enter a value for {}: "`.
   * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the response is not saved. See `_resolve_saver`.
-  * **save_condition** – A function of the value, deciding whether to save it.
-  * **user_asker** – A function that takes a prompt string and returns the user’s
+  * **save_condition** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`object`](https://docs.python.org/3/builtins/functions.html#object)], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function of the value, deciding whether to save it.
+  * **user_asker** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – A function that takes a prompt string and returns the user’s
     response.
   * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – A `(key, value)` function to apply to the user’s response before
     returning (and saving) it.
@@ -826,6 +826,9 @@ True
 True
 ```
 
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
 ### config2py.base.sources_chainmap(sources, val_is_valid=<function always_true>, config_not_found_exceptions=(<class 'Exception'>, ))
 
 Create a `ChainMap` from a list of sources
@@ -841,11 +844,11 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
   * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the user’s response is not saved.
-  * **prompt_template** – A template string to prompt the user with. It should
+  * **prompt_template** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – A template string to prompt the user with. It should
     contain a placeholder for the key, e.g. `"Enter a value for {}: "`.
   * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – A function to apply to the user’s response before returning it.
     This can be used to validate the response, for example.
-  * **user_asker** – A function that asks the user for input. It should take a
+  * **user_asker** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – A function that asks the user for input. It should take a
     prompt string and return the user’s response.
   * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`VT`], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
     returns `False`, the user will be asked for a new value.
@@ -1095,6 +1098,8 @@ Register encoder and/or decoder for an extension.
   * **dependency** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Optional package name required for this codec
 * **Raises:**
   [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – If codec already registered and overwrite=False
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### Examples
 
@@ -1211,13 +1216,18 @@ reported as not a regular file.
     `PermissionError` for an unreadable file), `"ignore"` does nothing.
   * **stacklevel** ([`int`](https://docs.python.org/3/builtins/functions.html#int)) – Passed to `warnings.warn`, so the warning points at the
     caller’s code (`2` is the caller of this function).
-  * **resolved_path** – What `path` resolves to (`~` expanded, …), when that is
+  * **resolved_path** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str) | [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – What `path` resolves to (`~` expanded, …), when that is
     what was actually looked at. `path` is what the messages show.
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.errors.unusable_config_file_problem(path)
 
 Why `path` can’t be read as a config file, as `(error_class, errno, reason)`,
 or `None` if it is an existing, readable, non-folder path.
+
+* **Return type:**
+  [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`type`](https://docs.python.org/3/builtins/functions.html#type)[[`OSError`](https://docs.python.org/3/builtins/exceptions.html#OSError)], [`int`](https://docs.python.org/3/builtins/functions.html#int), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.errors.validate_on_missing(on_missing, , name='on_missing')
 
@@ -1443,6 +1453,9 @@ FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 
 Disabled: `ConfigReader` is read-only.
 
+* **Return type:**
+  [`NoReturn`](https://docs.python.org/3/library/typing.html#typing.NoReturn)
+
 ### *class* config2py.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
 Bases: `Store`
@@ -1603,6 +1616,9 @@ Advanced variant of interpolation, supports the syntax used by
 
 Needed because the Store.get didn’t catch the NoSectionError
 
+* **Return type:**
+  [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
 #### persist()
 
 Persists the data (if not in a context manager).
@@ -1611,6 +1627,9 @@ Persists means to call
 #### to_dict()
 
 Return the whole config as a `{section: {key: value}}` dict.
+
+* **Return type:**
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]
 
 ### config2py.Configs
 
@@ -1771,6 +1790,9 @@ Supports deferred sync via context manager for efficient batch operations.
 #### flush()
 
 Sync data to backing storage if changes exist.
+
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.ask_user_for_input(prompt, default='', \*, mask_input=<function looks_like_secret>, masking_toggle_str=None, egress=<function identity>)
 
@@ -2284,7 +2306,7 @@ notebook, it should return `True`.
 * **Returns:**
   True if running in a REPL, False otherwise.
 * **Return type:**
-  [*bool*](https://docs.python.org/3/builtins/functions.html#bool)
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 `is_repl` returns `True` if any function in `is_repl.repl_conditions`
 (a set of no-argument callables) returns `True`. By default that set checks
@@ -2385,11 +2407,11 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
   * **save_to** ([`Union`](https://docs.python.org/3/library/typing.html#typing.Union)[[`MutableMapping`](https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping), [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`KT`, `VT`], [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)], [`None`](https://docs.python.org/3/builtins/constants.html#None)]) – Where to save the user’s response: a `MutableMapping` (or
     anything with a `__setitem__`), or a `(key, value)` saver function.
     If `None`, the user’s response is not saved.
-  * **prompt_template** – A template string to prompt the user with. It should
+  * **prompt_template** ([`str`](https://docs.python.org/3/builtins/stdtypes.html#str)) – A template string to prompt the user with. It should
     contain a placeholder for the key, e.g. `"Enter a value for {}: "`.
   * **egress** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable) | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – A function to apply to the user’s response before returning it.
     This can be used to validate the response, for example.
-  * **user_asker** – A function that asks the user for input. It should take a
+  * **user_asker** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)], [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – A function that asks the user for input. It should take a
     prompt string and return the user’s response.
   * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`VT`], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
     returns `False`, the user will be asked for a new value.
@@ -2554,6 +2576,9 @@ FileNotFoundError: [Errno 2] No such config file: 'no/such/file.ini'
 
 Disabled: `ConfigReader` is read-only.
 
+* **Return type:**
+  [`NoReturn`](https://docs.python.org/3/library/typing.html#typing.NoReturn)
+
 ### *class* config2py.s_configparser.ConfigStore(defaults=None, dict_type=<class 'dict'>, allow_no_value=False, \*, delimiters=('=', ': '), comment_prefixes=('#', ';'), inline_comment_prefixes=None, strict=True, empty_lines_in_values=True, default_section='DEFAULT', interpolation=<object object>, converters=<object object>)
 
 Bases: `Store`
@@ -2714,6 +2739,9 @@ Advanced variant of interpolation, supports the syntax used by
 
 Needed because the Store.get didn’t catch the NoSectionError
 
+* **Return type:**
+  [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
 #### persist()
 
 Persists the data (if not in a context manager).
@@ -2722,6 +2750,9 @@ Persists means to call
 #### to_dict()
 
 Return the whole config as a `{section: {key: value}}` dict.
+
+* **Return type:**
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]
 
 ### config2py.s_configparser.persist_after_operation(method_func)
 
@@ -2732,6 +2763,9 @@ Used to make `ConfigStore` methods like `__setitem__` and
 which writes to disk only when `target_kind` is `'filepath'`; for
 `'string'`, `'bytes'` and `'dict'` targets, `persist()` just returns
 the serialized data without touching disk.
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)
 
 ### config2py.s_configparser.postprocess_ini_section_items(items)
 
@@ -2783,6 +2817,9 @@ in your class definition block.
 
 I thought I needed to wrap more method this way, but as it turns out, I might not,
 so I prefer open code.
+
+* **Return type:**
+  [`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)
 
 
 # _autosummary/config2py.secret_text.html.md
@@ -3065,6 +3102,9 @@ Supports deferred sync via context manager for efficient batch operations.
 #### flush()
 
 Sync data to backing storage if changes exist.
+
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.sync_store.get_format_handlers(filepath)
 
@@ -3535,6 +3575,9 @@ b'two'
 ['secret']
 ```
 
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
 ### config2py.util.check_folder_is_private(dirpath, , on_unsafe='warn', stacklevel=2, check_ancestors=True, ignore_sticky=False)
 
 Check `dirpath` with `unsafe_folder_reason`, and act on a problem.
@@ -3547,6 +3590,8 @@ Check `dirpath` with `unsafe_folder_reason`, and act on a problem.
     (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)).
   * **check_ancestors** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Also check the folders above `dirpath`.
   * **ignore_sticky** ([`bool`](https://docs.python.org/3/builtins/functions.html#bool)) – Accept `dirpath` itself being sticky (like `/tmp`).
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.util.create_directories(dirpath, max_dirs_to_make=None)
 
@@ -3559,7 +3604,7 @@ Create directories up to a specified limit.
 * **Returns:**
   True if the directory was created successfully, False otherwise.
 * **Return type:**
-  [*bool*](https://docs.python.org/3/builtins/functions.html#bool)
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 * **Raises:**
   [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – If max_dirs_to_make is negative.
 
@@ -4127,7 +4172,7 @@ notebook, it should return `True`.
 * **Returns:**
   True if running in a REPL, False otherwise.
 * **Return type:**
-  [*bool*](https://docs.python.org/3/builtins/functions.html#bool)
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
 
 `is_repl` returns `True` if any function in `is_repl.repl_conditions`
 (a set of no-argument callables) returns `True`. By default that set checks
@@ -4224,6 +4269,9 @@ Parse assignments from python source code.
 directory’s mode, so this follows up with `tighten_mode` (which warns, rather
 than raises, if that isn’t possible). Intended for directories that may hold
 config/secret files (see i2mint/config2py#15).
+
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### config2py.util.secure_open(path, mode='w', , follow_symlinks=True, beneath=None, \*\*open_kwargs)
 
@@ -4330,18 +4378,16 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-11-22 18:07 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/691849ef52708fb88ead1eddf865ed95b1d462c2"><code>691849e</code></a> on branch <code>master</code>, for **config2py 0.1.76** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 19:02 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/f0a2c134e682fc33268a3b6d87803e541f1f2a16"><code>f0a2c13</code></a> on branch <code>master</code>, for **config2py 0.1.77** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.76) is behind the latest release on PyPI (0.1.77): `pip install config2py` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/691849ef52708fb88ead1eddf865ed95b1d462c2"><code>691849ef52708fb88ead1eddf865ed95b1d462c2</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/f0a2c134e682fc33268a3b6d87803e541f1f2a16"><code>f0a2c134e682fc33268a3b6d87803e541f1f2a16</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4352,9 +4398,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45053116909">45053116909</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45058282203">45058282203</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>691849ef52708fb88ead1eddf865ed95b1d462c2</code> (in the history of the built commit) |
+| Event commit | <code>f0a2c134e682fc33268a3b6d87803e541f1f2a16</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4379,13 +4425,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.77/">0.1.77</a>, newer than the documented version (0.1.76).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.77/">0.1.77</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 691849ef52708fb88ead1eddf865ed95b1d462c2
+git checkout f0a2c134e682fc33268a3b6d87803e541f1f2a16
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

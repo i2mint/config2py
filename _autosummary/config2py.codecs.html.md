@@ -196,6 +196,8 @@ Register encoder and/or decoder for an extension.
   * **dependency** ([`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]) – Optional package name required for this codec
 * **Raises:**
   [**ValueError**](https://docs.python.org/3/builtins/exceptions.html#ValueError) – If codec already registered and overwrite=False
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 ### Examples
 

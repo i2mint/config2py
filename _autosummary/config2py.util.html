@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../_static/documentation_options.js?v=54da2d3d"></script>
+    <script src="../_static/documentation_options.js?v=f0a2a924"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -58,7 +58,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.76" />
+  <meta name="docsearch:version" content="0.1.77" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -625,6 +625,8 @@ are still reachable through normal <code class="docutils literal notranslate"><s
 <code class="docutils literal notranslate"><span class="pre">envvar.items()</span></code>/<code class="docutils literal notranslate"><span class="pre">.values()</span></code>, <code class="docutils literal notranslate"><span class="pre">pickle.dumps(envvar)</span></code>, or a structured logger
 that walks the mapping. Treat this as UI-level redaction, not access control (see
 i2mint/config2py#16).</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -755,6 +757,9 @@ race-proof. The temp file is hidden (<code class="docutils literal notranslate">
 </pre></div>
 </div>
 <dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -773,6 +778,9 @@ race-proof. The temp file is hidden (<code class="docutils literal notranslate">
 <li><p><strong>check_ancestors</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Also check the folders above <code class="docutils literal notranslate"><span class="pre">dirpath</span></code>.</p></li>
 <li><p><strong>ignore_sticky</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>) – Accept <code class="docutils literal notranslate"><span class="pre">dirpath</span></code> itself being sticky (like <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>).</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -793,7 +801,7 @@ create. If None, there’s no limit.</p></li>
 <dd class="field-even"><p>True if the directory was created successfully, False otherwise.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If max_dirs_to_make is negative.</p>
@@ -1400,7 +1408,7 @@ notebook, it should return <code class="docutils literal notranslate"><span clas
 <dd class="field-odd"><p>True if running in a REPL, False otherwise.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
 </dd>
 </dl>
 <p><code class="docutils literal notranslate"><span class="pre">is_repl</span></code> returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if any function in <code class="docutils literal notranslate"><span class="pre">is_repl.repl_conditions</span></code>
@@ -1508,6 +1516,11 @@ descriptor, not the path, so it’s not subject to a TOCTOU swap either.</p></li
 directory’s mode, so this follows up with <code class="docutils literal notranslate"><span class="pre">tighten_mode</span></code> (which warns, rather
 than raises, if that isn’t possible). Intended for directories that may hold
 config/secret files (see i2mint/config2py#15).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1539,6 +1552,8 @@ can’t be raced; elsewhere it is an <code class="docutils literal notranslate">
 <span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py function">

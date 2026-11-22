@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../_static/documentation_options.js?v=54da2d3d"></script>
+    <script src="../../_static/documentation_options.js?v=f0a2a924"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -411,7 +411,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.76" />
+  <meta name="docsearch:version" content="0.1.77" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -800,7 +800,7 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="is_not_none_nor_empty">
 <a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.is_not_none_nor_empty">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">is_not_none_nor_empty</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_not_none_nor_empty</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""True unless ``x`` is ``None`` or the empty string.</span>
 
 <span class="sd">    &gt;&gt;&gt; is_not_none_nor_empty(None)</span>
@@ -1028,7 +1028,7 @@ window.runMermaid = runMermaid;</script>
     <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,)</span>
     <span class="n">cache_getter</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Set up the (optional) cache after the dataclass fields are assigned."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_getter</span><span class="p">:</span>
             <span class="c1"># Note: The only purpose of the cache is to avoid calling the getter function</span>
@@ -1057,7 +1057,7 @@ window.runMermaid = runMermaid;</script>
         <span class="k">return</span> <span class="n">v</span>
 
     <span class="c1"># TODO: Is this used to indicate that the getter couldn't find a key.</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="n">KT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Return whether ``k`` is a key (that is, whether getting it succeeds)."""</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
@@ -1181,7 +1181,7 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="is_not_empty">
 <a class="viewcode-back" href="../../_autosummary/config2py.base.html#config2py.is_not_empty">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">is_not_empty</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_not_empty</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""True unless ``val`` is ``None`` or the empty string.</span>
 
 <span class="sd">    &gt;&gt;&gt; is_not_empty(None)</span>
@@ -1205,10 +1205,10 @@ window.runMermaid = runMermaid;</script>
 <span class="k">def</span><span class="w"> </span><span class="nf">ask_user_for_key</span><span class="p">(</span>
     <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">prompt_template</span><span class="o">=</span><span class="s2">"Enter a value for </span><span class="si">{}</span><span class="s2">: "</span><span class="p">,</span>
+    <span class="n">prompt_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Enter a value for </span><span class="si">{}</span><span class="s2">: "</span><span class="p">,</span>
     <span class="n">save_to</span><span class="p">:</span> <span class="n">SaveTo</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">save_condition</span><span class="o">=</span><span class="n">is_not_empty</span><span class="p">,</span>
-    <span class="n">user_asker</span><span class="o">=</span><span class="n">ask_user_for_input</span><span class="p">,</span>
+    <span class="n">save_condition</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">object</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_not_empty</span><span class="p">,</span>
+    <span class="n">user_asker</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">ask_user_for_input</span><span class="p">,</span>
     <span class="n">egress</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Ask the user for the value of ``key``, optionally saving it.</span>
@@ -1274,9 +1274,9 @@ window.runMermaid = runMermaid;</script>
 <span class="k">def</span><span class="w"> </span><span class="nf">user_gettable</span><span class="p">(</span>
     <span class="n">save_to</span><span class="p">:</span> <span class="n">SaveTo</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">prompt_template</span><span class="o">=</span><span class="s2">"Enter a value for </span><span class="si">{}</span><span class="s2">: "</span><span class="p">,</span>
+    <span class="n">prompt_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Enter a value for </span><span class="si">{}</span><span class="s2">: "</span><span class="p">,</span>
     <span class="n">egress</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">user_asker</span><span class="o">=</span><span class="n">ask_user_for_input</span><span class="p">,</span>
+    <span class="n">user_asker</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">ask_user_for_input</span><span class="p">,</span>
     <span class="n">val_is_valid</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">VT</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_not_empty</span><span class="p">,</span>
     <span class="n">config_not_found_exceptions</span><span class="p">:</span> <span class="n">Exceptions</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
 <span class="p">):</span>

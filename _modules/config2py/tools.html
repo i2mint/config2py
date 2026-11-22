@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../_static/documentation_options.js?v=54da2d3d"></script>
+    <script src="../../_static/documentation_options.js?v=f0a2a924"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -411,7 +411,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.76" />
+  <meta name="docsearch:version" content="0.1.77" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -779,7 +779,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">follow_symlinks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">on_unsafe_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"warn"</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :param follow_symlinks: ``False`` refuses (``KeyError``) to write through a</span>
 <span class="sd">            symlink at a value file's path, or at any sub-folder of a key such as</span>
@@ -802,13 +802,13 @@ window.runMermaid = runMermaid;</script>
 <span class="w">        </span><span class="sd">"""Return the state to pickle, including the symlink policy."""</span>
         <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">(),</span> <span class="s2">"_follow_symlinks"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_follow_symlinks</span><span class="p">}</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Restore the state, including the symlink policy."""</span>
         <span class="n">state</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_follow_symlinks</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"_follow_symlinks"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Set ``k`` to the given value."""</span>
         <span class="c1"># dol's TextFiles wraps an inner persister, so write via the full path here,</span>
         <span class="c1"># keeping that persister's key validation and its KeyError contract.</span>
@@ -833,7 +833,7 @@ window.runMermaid = runMermaid;</script>
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_ensure_if_default_configs_folder</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ensure_if_default_configs_folder</span><span class="p">(</span><span class="n">src</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create config2py's own configs folder if ``src`` is it (#26)."""</span>
     <span class="k">if</span> <span class="n">is_default_configs_folder</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
         <span class="n">ensure_default_configs_folder</span><span class="p">()</span>

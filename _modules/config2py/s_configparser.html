@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../_static/documentation_options.js?v=54da2d3d"></script>
+    <script src="../../_static/documentation_options.js?v=f0a2a924"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -411,7 +411,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.76" />
+  <meta name="docsearch:version" content="0.1.77" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -720,6 +720,8 @@ window.runMermaid = runMermaid;</script>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigParser</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">BasicInterpolation</span><span class="p">,</span> <span class="n">ExtendedInterpolation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoReturn</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
 
@@ -780,7 +782,7 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="persist_after_operation">
 <a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.persist_after_operation">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">persist_after_operation</span><span class="p">(</span><span class="n">method_func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">persist_after_operation</span><span class="p">(</span><span class="n">method_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Wrap a mutating method so it calls ``self.persist()`` after running.</span>
 
 <span class="sd">    Used to make ``ConfigStore`` methods like ``__setitem__`` and</span>
@@ -802,7 +804,7 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="super_and_persist">
 <a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.super_and_persist">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">super_and_persist</span><span class="p">(</span><span class="n">super_cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">super_and_persist</span><span class="p">(</span><span class="n">super_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">method_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    To be able to do this:</span>
 
@@ -993,7 +995,7 @@ window.runMermaid = runMermaid;</script>
         <span class="n">target_kind</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">follow_symlinks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">more_config_parser_kwargs</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""See the class docstring: ``source`` may be a filepath, a config string,</span>
 <span class="sd">        bytes, a dict, or a readable stream; ``defaults``, ``dict_type`` and</span>
 <span class="sd">        ``allow_no_value`` are passed on to ``ConfigParser``. With</span>
@@ -1068,7 +1070,7 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="ConfigStore.to_dict">
 <a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.ConfigStore.to_dict">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Return the whole config as a ``{section: {key: value}}`` dict."""</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="n">section</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">section_contents</span><span class="p">)</span>
@@ -1078,7 +1080,7 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="ConfigStore.get">
 <a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.ConfigStore.get">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Needed because the Store.get didn't catch the NoSectionError"""</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
@@ -1136,7 +1138,7 @@ window.runMermaid = runMermaid;</script>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown target_kind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_kind</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"ConfigStore"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Enter a context in which changes are persisted once, on exit."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_within_context_manager</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="bp">self</span>
@@ -1147,12 +1149,12 @@ window.runMermaid = runMermaid;</script>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">persist</span><span class="p">()</span>
 
     <span class="nd">@persist_after_operation</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Set ``k`` to the given value."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
     <span class="nd">@persist_after_operation</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Delete ``k``."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__delitem__</span><span class="p">(</span><span class="n">k</span><span class="p">)</span></div>
 
@@ -1257,7 +1259,7 @@ window.runMermaid = runMermaid;</script>
     <span class="c1"># Read-only, and it reports an unusable source itself (``on_missing``).</span>
     <span class="n">_tolerates_unreadable_sources</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">on_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"warn"</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">on_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"warn"</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Validate ``on_missing`` and warn or raise for missing source files, then initialize."""</span>
         <span class="n">_validate_on_missing</span><span class="p">(</span><span class="n">on_missing</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">_missing_filepaths</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
@@ -1266,16 +1268,16 @@ window.runMermaid = runMermaid;</script>
 
 <div class="viewcode-block" id="ConfigReader.persist">
 <a class="viewcode-back" href="../../_autosummary/config2py.s_configparser.html#config2py.ConfigReader.persist">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Disabled: ``ConfigReader`` is read-only."""</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"persist disabled for ConfigReader"</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""``ConfigReader`` is read-only."""</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"__setitem__ disabled for ConfigReader"</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""``ConfigReader`` is read-only."""</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"__delitem__ disabled for ConfigReader"</span><span class="p">)</span></div>
 

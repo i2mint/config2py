@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../_static/documentation_options.js?v=54da2d3d"></script>
+    <script src="../_static/documentation_options.js?v=f0a2a924"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -58,7 +58,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.76" />
+  <meta name="docsearch:version" content="0.1.77" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -486,9 +486,12 @@ reported as not a regular file.</p>
 <code class="docutils literal notranslate"><span class="pre">PermissionError</span></code> for an unreadable file), <code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> does nothing.</p></li>
 <li><p><strong>stacklevel</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Passed to <code class="docutils literal notranslate"><span class="pre">warnings.warn</span></code>, so the warning points at the
 caller’s code (<code class="docutils literal notranslate"><span class="pre">2</span></code> is the caller of this function).</p></li>
-<li><p><strong>resolved_path</strong> – What <code class="docutils literal notranslate"><span class="pre">path</span></code> resolves to (<code class="docutils literal notranslate"><span class="pre">~</span></code> expanded, …), when that is
+<li><p><strong>resolved_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathLike</span></code></a> | <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span>) – What <code class="docutils literal notranslate"><span class="pre">path</span></code> resolves to (<code class="docutils literal notranslate"><span class="pre">~</span></code> expanded, …), when that is
 what was actually looked at. <code class="docutils literal notranslate"><span class="pre">path</span></code> is what the messages show.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -498,6 +501,11 @@ what was actually looked at. <code class="docutils literal notranslate"><span cl
 <span class="sig-prename descclassname"><span class="pre">config2py.errors.</span></span><span class="sig-name descname"><span class="pre">unusable_config_file_problem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/config2py/errors.html#unusable_config_file_problem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.errors.unusable_config_file_problem" title="Link to this definition">#</a></dt>
 <dd><p>Why <code class="docutils literal notranslate"><span class="pre">path</span></code> can’t be read as a config file, as <code class="docutils literal notranslate"><span class="pre">(error_class,</span> <span class="pre">errno,</span> <span class="pre">reason)</span></code>,
 or <code class="docutils literal notranslate"><span class="pre">None</span></code> if it is an existing, readable, non-folder path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#type" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a>[<a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#OSError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">OSError</span></code></a>], <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>] | <span class="highlight sphinx_autodoc_typehints-value"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="kc"><span class="pre">None</span></span></code></a></span></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
