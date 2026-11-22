@@ -1,4 +1,4 @@
-> built 2026-11-22 19:02 UTC from f0a2c13 (master) · config2py 0.1.77. Details: build_info.json
+> built 2026-11-22 21:33 UTC from ea44d55 (master) · config2py 0.1.77. Details: build_info.json
 
 # index.html.md
 
@@ -87,6 +87,7 @@ config_getter("HOME")  # if you are using Linux/MacOS
 
 Now, normally all systems come with a `HOME` environment variable (or a `USERPROFILE` on windows), so the above should always work fine. But see what happens if you ask for a key that is not an environment variable:
 
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 ```python
 my_config_val = config_getter("_TEST_NON_EXISTING_KEY_")  # triggers a user input dialog
@@ -102,6 +103,7 @@ When the key looks like a secret (its name mentions `key`, `token`, `password`, 
 
 But if I do that again (even on a different day, somewhere else (on my same computer), in a different session), it will get me the value I entered in the user input dialog.
 
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 ```python
 # This time, no input dialog:
@@ -175,6 +177,7 @@ The default `config_store_factory` is `get_configs_local_store` which will give 
 
 If you check out the code for `simple_config_getter`, you’ll find that all it it is simply setting the `sources` argument for the `get_config` function. Something more or less like:
 
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 ```python
 configs = config_store_factory(configs_src)
@@ -206,6 +209,7 @@ config_getter = get_config(
 
 Now let’s see what happens when we do:
 
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 ```python
 config_getter("SOME_CONFIG_KEY")
@@ -221,6 +225,7 @@ But there’s more!
 
 Now look at what’s in `my_configs`! If you’ve used `TextFiles`, look in the folder to see that there’s a new file. Either way, if you do:
 
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 ```python
 my_configs["SOME_CONFIG_KEY"]
@@ -230,6 +235,7 @@ You’ll now see the value the user entered.
 
 This means what? This means that the next time you try to get the config:
 
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 ```python
 config_getter("SOME_CONFIG_KEY")
@@ -426,6 +432,7 @@ So, what’s that `user_gettable`?
 
 It’s a way for you to specify that the system should ask the user for a key, and optionally save it somewhere, plus many other parameters (like what to ask the user, etc.)
 
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 ```python
 from config2py.base import user_gettable
@@ -4378,7 +4385,7 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-11-22 19:02 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/f0a2c134e682fc33268a3b6d87803e541f1f2a16"><code>f0a2c13</code></a> on branch <code>master</code>, for **config2py 0.1.77** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-22 21:33 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/ea44d555347d6ba04c9e29880125b07e198b5ce8"><code>ea44d55</code></a> on branch <code>master</code>, for **config2py 0.1.77** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -4387,7 +4394,7 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/f0a2c134e682fc33268a3b6d87803e541f1f2a16"><code>f0a2c134e682fc33268a3b6d87803e541f1f2a16</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/ea44d555347d6ba04c9e29880125b07e198b5ce8"><code>ea44d555347d6ba04c9e29880125b07e198b5ce8</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4398,9 +4405,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45058282203">45058282203</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45072567969">45072567969</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>f0a2c134e682fc33268a3b6d87803e541f1f2a16</code> (in the history of the built commit) |
+| Event commit | <code>ea44d555347d6ba04c9e29880125b07e198b5ce8</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4431,7 +4438,7 @@ Latest release: <a href="https://pypi.org/project/config2py/0.1.77/">0.1.77</a>,
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout f0a2c134e682fc33268a3b6d87803e541f1f2a16
+git checkout ea44d555347d6ba04c9e29880125b07e198b5ce8
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

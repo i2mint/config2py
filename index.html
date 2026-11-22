@@ -412,6 +412,7 @@
 </pre></div>
 </div>
 <p>Now, normally all systems come with a <code class="docutils literal notranslate"><span class="pre">HOME</span></code> environment variable (or a <code class="docutils literal notranslate"><span class="pre">USERPROFILE</span></code> on windows), so the above should always work fine. But see what happens if you ask for a key that is not an environment variable:</p>
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_config_val</span> <span class="o">=</span> <span class="n">config_getter</span><span class="p">(</span><span class="s2">"_TEST_NON_EXISTING_KEY_"</span><span class="p">)</span>  <span class="c1"># triggers a user input dialog</span>
 <span class="c1"># ... I enter 'my config value' in the dialog, and then...</span>
@@ -423,6 +424,7 @@
 </div>
 <p>When the key looks like a secret (its name mentions <code class="docutils literal notranslate"><span class="pre">key</span></code>, <code class="docutils literal notranslate"><span class="pre">token</span></code>, <code class="docutils literal notranslate"><span class="pre">password</span></code>, <code class="docutils literal notranslate"><span class="pre">secret</span></code>, <code class="docutils literal notranslate"><span class="pre">api</span></code> and the like), what you type is masked, as with a password prompt. Other values, such as file paths, are echoed so you can see them. You can force either behaviour with <code class="docutils literal notranslate"><span class="pre">ask_user_for_input(...,</span> <span class="pre">mask_input=True)</span></code> (or <code class="docutils literal notranslate"><span class="pre">False</span></code>).</p>
 <p>But if I do that again (even on a different day, somewhere else (on my same computer), in a different session), it will get me the value I entered in the user input dialog.</p>
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This time, no input dialog:</span>
 <span class="n">my_config_val</span> <span class="o">=</span> <span class="n">config_getter</span><span class="p">(</span><span class="s2">"_TEST_NON_EXISTING_KEY_"</span><span class="p">)</span>
@@ -481,6 +483,7 @@
 <section id="setting-the-config-key-search-path">
 <h1>Setting the config key search path<a class="headerlink" href="#setting-the-config-key-search-path" title="Link to this heading">#</a></h1>
 <p>If you check out the code for <code class="docutils literal notranslate"><span class="pre">simple_config_getter</span></code>, you’ll find that all it it is simply setting the <code class="docutils literal notranslate"><span class="pre">sources</span></code> argument for the <code class="docutils literal notranslate"><span class="pre">get_config</span></code> function. Something more or less like:</p>
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">configs</span> <span class="o">=</span> <span class="n">config_store_factory</span><span class="p">(</span><span class="n">configs_src</span><span class="p">)</span>
 <span class="n">source</span> <span class="o">=</span> <span class="p">[</span>
@@ -507,6 +510,7 @@
 </pre></div>
 </div>
 <p>Now let’s see what happens when we do:</p>
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config_getter</span><span class="p">(</span><span class="s2">"SOME_CONFIG_KEY"</span><span class="p">)</span>
 </pre></div>
@@ -516,12 +520,14 @@
 <p>Assuming it doesn’t find it there either (that is, doesn’t find a file with that name in the <code class="docutils literal notranslate"><span class="pre">my_configs</span></code> directory), it will prompt the user to enter the value of that key. The function finally returns with the value that the user entered.</p>
 <p>But there’s more!</p>
 <p>Now look at what’s in <code class="docutils literal notranslate"><span class="pre">my_configs</span></code>! If you’ve used <code class="docutils literal notranslate"><span class="pre">TextFiles</span></code>, look in the folder to see that there’s a new file. Either way, if you do:</p>
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_configs</span><span class="p">[</span><span class="s2">"SOME_CONFIG_KEY"</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>You’ll now see the value the user entered.</p>
 <p>This means what? This means that the next time you try to get the config:</p>
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config_getter</span><span class="p">(</span><span class="s2">"SOME_CONFIG_KEY"</span><span class="p">)</span>
 </pre></div>
@@ -700,6 +706,7 @@ config2py.errors.ConfigNotFound: Could not find config for key: no_a_key
 <span id="user_gettable"></span><h1>user_gettable<a class="headerlink" href="#user-gettable" title="Link to this heading">#</a></h1>
 <p>So, what’s that <code class="docutils literal notranslate"><span class="pre">user_gettable</span></code>?</p>
 <p>It’s a way for you to specify that the system should ask the user for a key, and optionally save it somewhere, plus many other parameters (like what to ask the user, etc.)</p>
+<!-- wads-docs: skip interactive prompt or fragment; not runnable as-is -->
 <!-- no-test -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">config2py.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">user_gettable</span>
 
@@ -744,7 +751,7 @@ ruff<span class="w"> </span>check<span class="w"> </span>.
 </div>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 19:02 UTC from <a href="https://github.com/i2mint/config2py/commit/f0a2c134e682fc33268a3b6d87803e541f1f2a16">f0a2c13</a> (master) · config2py 0.1.77 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 21:33 UTC from <a href="https://github.com/i2mint/config2py/commit/ea44d555347d6ba04c9e29880125b07e198b5ce8">ea44d55</a> (master) · config2py 0.1.77 · <a href="about-this-build.html">about this build</a></p>
 
                 </article>
               
