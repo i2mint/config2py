@@ -169,7 +169,7 @@ source = [
 config_getter = get_config(sources=source)
 ```
 
-So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don't want that "ask the user for the value" thing, you can just remove the `user_gettable(configs)` part. If you wanted instead to add a place to look before the environment variables -- say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.
+So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don't want that "ask the user for the value" thing, you can just remove the `user_gettable(configs)` part. When there is nobody to ask (stdin closed, as under cron or CI), the prompt's `EOFError` counts as "not found", so `get_config` falls back to its `default` (or raises `ConfigNotFound`). If you wanted instead to add a place to look before the environment variables -- say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.
 
 Let's work through a custom-made `config_getter`.
 

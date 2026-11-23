@@ -34,6 +34,14 @@ DFLT_CONFIG_NOT_FOUND_EXCEPTIONS: Exceptions = (
     ConfigNotFound,
 )
 
+#: What the user-prompt source (``user_gettable``) treats as "not found": the lookup
+#: errors, plus ``EOFError``, which ``input()`` raises when there is no one to ask
+#: (stdin closed or at end of file: cron, CI, a subprocess). So a prompt that cannot
+#: be answered falls through to ``get_config``'s ``default`` instead of crashing.
+DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS: Exceptions = DFLT_CONFIG_NOT_FOUND_EXCEPTIONS + (
+    EOFError,
+)
+
 #: The default before config2py 0.1.80: *any* exception from a callable source means
 #: "not found". Pass it as ``config_not_found_exceptions`` to keep falling through on
 #: every error.
@@ -353,6 +361,9 @@ class FuncBasedGettableContainer:
             # ("authentication failed for token sk-..."). These KeyErrors are caught
             # and logged by callers, so anything in the message ends up in logs.
             # The upstream exception remains reachable via ``__cause__``.
+            # Errors *not* in ``config_not_found_exceptions`` are not caught, so they
+            # propagate with their original text: a getter that may echo a secret
+            # in a non-lookup error should catch and re-raise it itself.
             raise KeyError(k) from e
         if not self.val_is_valid(v):
             # Same reasoning: ``v`` is the *rejected* value, which is precisely the
@@ -567,7 +578,7 @@ def user_gettable(
     egress: Callable | None = None,
     user_asker: Callable[[str], str] = ask_user_for_input,
     val_is_valid: Callable[[VT], bool] = is_not_empty,
-    config_not_found_exceptions: Exceptions = DFLT_CONFIG_NOT_FOUND_EXCEPTIONS,
+    config_not_found_exceptions: Exceptions = DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS,
 ):
     """
     Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
@@ -584,9 +595,12 @@ def user_gettable(
             prompt string and return the user's response.
         val_is_valid: A function that takes a value and returns a boolean. If it
             returns ``False``, the user will be asked for a new value.
-        config_not_found_exceptions: An iterable of exceptions that should be
-            considered as "config not found" exceptions. If the user's response
-            raises one of these exceptions, the user will be asked for a new value.
+        config_not_found_exceptions: The exceptions that mean "the user gave no
+            value": the key is then treated as not found, and ``get_config`` moves
+            on (or returns its ``default``). Defaults to
+            ``DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS``: the lookup errors plus
+            ``EOFError``, raised when stdin is closed (nobody to ask). Any other
+            error (from ``egress`` validation, say) propagates, with its own text.
 
     Returns:
         A ``GettableContainer`` that asks the user for a value, optionally saving it.

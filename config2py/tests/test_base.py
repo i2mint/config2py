@@ -231,3 +231,25 @@ def test_func_based_container_hides_the_cause_text():
     with pytest.raises(KeyError) as info:
         gc["k"]
     assert "sk-SECRET" not in str(info.value)
+
+
+def test_user_prompt_with_nobody_to_ask_falls_back_to_default():
+    """A closed stdin (EOFError) is "not found", so ``default=`` still applies."""
+    from config2py.base import get_config
+
+    def no_stdin(prompt):
+        raise EOFError
+
+    src = user_gettable(user_asker=no_stdin)
+    assert get_config("k", [{}, src], default="d") == "d"
+
+
+def test_user_prompt_validation_errors_propagate():
+    from config2py.base import get_config
+
+    def egress(k, v):
+        raise ValueError("bad value")
+
+    src = user_gettable(user_asker=_constant_asker("x"), egress=egress)
+    with pytest.raises(ValueError, match="bad value"):
+        get_config("k", [{}, src], default="d")
