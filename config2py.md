@@ -1,4 +1,4 @@
-> built 2026-11-23 09:57 UTC from 4c319d7 (master) · config2py 0.1.81. Details: build_info.json
+> built 2026-11-23 10:11 UTC from d69ca5f (master) · config2py 0.1.82. Details: build_info.json
 
 # index.html.md
 
@@ -4480,18 +4480,16 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-11-23 09:57 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/4c319d7769849831fce1dba0e8f63fc813bbfe8e"><code>4c319d7</code></a> on branch <code>master</code>, for **config2py 0.1.81** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 10:11 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/d69ca5fbc5cfe50b7c175a253de81be55ef11297"><code>d69ca5f</code></a> on branch <code>master</code>, for **config2py 0.1.82** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.1.81) is behind the latest release on PyPI (0.1.82): `pip install config2py` gives newer code than these docs describe.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/4c319d7769849831fce1dba0e8f63fc813bbfe8e"><code>4c319d7769849831fce1dba0e8f63fc813bbfe8e</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/d69ca5fbc5cfe50b7c175a253de81be55ef11297"><code>d69ca5fbc5cfe50b7c175a253de81be55ef11297</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4502,9 +4500,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45151425365">45151425365</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45153593061">45153593061</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>4c319d7769849831fce1dba0e8f63fc813bbfe8e</code> (in the history of the built commit) |
+| Event commit | <code>d69ca5fbc5cfe50b7c175a253de81be55ef11297</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4529,13 +4527,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.82/">0.1.82</a>, newer than the documented version (0.1.81).
+Latest release: <a href="https://pypi.org/project/config2py/0.1.82/">0.1.82</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout 4c319d7769849831fce1dba0e8f63fc813bbfe8e
+git checkout d69ca5fbc5cfe50b7c175a253de81be55ef11297
 pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
