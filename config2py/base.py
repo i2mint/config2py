@@ -2,6 +2,7 @@
 Base for getting configs from various sources and formats
 """
 
+import sys
 from collections import ChainMap
 from typing import (
     Type,
@@ -19,7 +20,7 @@ from dataclasses import dataclass
 from functools import lru_cache, partial
 
 from config2py.util import always_true, ask_user_for_input, no_default, not_found
-from config2py.errors import ConfigNotFound
+from config2py.errors import ConfigNotFound, UserInputUnavailable
 
 Exceptions = tuple[type[Exception], ...]
 
@@ -599,8 +600,13 @@ def user_gettable(
             value": the key is then treated as not found, and ``get_config`` moves
             on (or returns its ``default``). Defaults to
             ``DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS``: the lookup errors plus
-            ``EOFError``, raised when stdin is closed (nobody to ask). Any other
-            error (from ``egress`` validation, say) propagates, with its own text.
+            ``EOFError``. Any other error (from ``egress`` validation, say)
+            propagates, with its own text.
+
+    When nobody can answer the prompt, the key is "not found" too: an ``EOFError``
+    or ``OSError`` raised by ``user_asker`` (stdin at end of file, unreadable, or
+    captured by pytest), or a ``RuntimeError`` while ``sys.stdin`` is ``None``
+    (stdin closed), is re-raised as ``UserInputUnavailable``, a ``ConfigNotFound``.
 
     Returns:
         A ``GettableContainer`` that asks the user for a value, optionally saving it.
@@ -639,10 +645,21 @@ def user_gettable(
         [('SOME_KEY', 'SOME_VAL')]
 
     """
+
+    def asker_or_unavailable(prompt: str) -> str:
+        try:
+            return user_asker(prompt)
+        except (EOFError, OSError, RuntimeError) as error:
+            if isinstance(error, RuntimeError) and sys.stdin is not None:
+                raise  # a real error, not a missing stdin
+            raise UserInputUnavailable(
+                f"Nobody to ask for a value ({type(error).__name__})"
+            ) from error
+
     getter = ask_user_for_key(
         prompt_template=prompt_template,
         save_to=save_to,
-        user_asker=user_asker,
+        user_asker=asker_or_unavailable,
         egress=egress,
     )
     return FuncBasedGettableContainer(

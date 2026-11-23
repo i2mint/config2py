@@ -244,6 +244,60 @@ def test_user_prompt_with_nobody_to_ask_falls_back_to_default():
     assert get_config("k", [{}, src], default="d") == "d"
 
 
+@pytest.mark.parametrize(
+    "error",
+    [
+        OSError("pytest: reading from stdin while output is captured!"),
+        __import__("io").UnsupportedOperation("not readable"),
+    ],
+)
+def test_user_prompt_unreadable_stdin_falls_back_to_default(error):
+    """An asker that cannot read stdin (pytest capture, a non-readable stream) is
+    "not found", so ``default=`` still applies (issue #83)."""
+    from config2py.base import get_config
+
+    def unreadable(prompt):
+        raise error
+
+    src = user_gettable(user_asker=unreadable)
+    assert get_config("k", [{}, src], default="d") == "d"
+
+
+def test_user_prompt_lost_stdin_falls_back_to_default(monkeypatch):
+    """With stdin closed, ``input()`` raises ``RuntimeError: lost sys.stdin``: that is
+    "not found" too (issue #83)."""
+    import sys
+
+    from config2py.base import get_config
+
+    def lost_stdin(prompt):
+        raise RuntimeError("lost sys.stdin")
+
+    monkeypatch.setattr(sys, "stdin", None)
+    src = user_gettable(user_asker=lost_stdin)
+    assert get_config("k", [{}, src], default="d") == "d"
+
+
+def test_user_prompt_runtime_error_with_stdin_present_propagates():
+    """A ``RuntimeError`` from the asker while stdin exists is a real error."""
+    from config2py.base import get_config
+
+    def broken(prompt):
+        raise RuntimeError("bug in the asker")
+
+    src = user_gettable(user_asker=broken)
+    with pytest.raises(RuntimeError, match="bug in the asker"):
+        get_config("k", [{}, src], default="d")
+
+
+def test_user_prompt_in_pytest_capture_falls_back_to_default():
+    """The real ``input()`` under pytest's capture (issue #83)."""
+    from config2py.base import get_config
+
+    src = user_gettable(user_asker=input)
+    assert get_config("k", [{}, src], default="d") == "d"
+
+
 def test_user_prompt_validation_errors_propagate():
     from config2py.base import get_config
 

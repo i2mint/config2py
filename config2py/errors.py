@@ -11,6 +11,13 @@ class ConfigNotFound(Config2PyError):
     """Raised when a config file is not found."""
 
 
+class UserInputUnavailable(ConfigNotFound):
+    """Raised when a value would be asked of the user but nobody can answer: stdin is
+    closed, at end of file, or unreadable (cron, CI, a subprocess, pytest's output
+    capture). A ``ConfigNotFound``, so ``get_config`` moves on to its next source or
+    returns its ``default`` (see https://github.com/i2mint/config2py/issues/83)."""
+
+
 class Config2PyWarning(UserWarning):
     """Warnings issued by config2py (e.g. permissions it could not tighten)."""
 
