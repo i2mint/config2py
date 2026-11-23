@@ -51,10 +51,7 @@ def from_vault(key):  # any callable works as a source
     raise KeyError(key)  # "not here": move on to the next source
 
 
-get = get_config(
-    sources=[from_vault, os.environ, defaults],
-    config_not_found_exceptions=(KeyError, LookupError),  # see the gotchas
-)
+get = get_config(sources=[from_vault, os.environ, defaults])  # see the gotchas
 assert get("TIMEOUT") == "30"
 ```
 
@@ -177,7 +174,7 @@ assert decode_by_extension("x.upper", encode_by_extension("x.upper", "hi")) == "
 
 - **Prompts in production.** `ask_user_if_key_not_found=None` (the default) prompts whenever `is_repl()` is true, and that includes `python -c` and notebooks. Pass `ask_user_if_key_not_found=False` in services, CI and libraries.
 - **Default folders are resolved at import.** `import config2py` writes nothing to disk, but the default folder paths are computed then; the first access to `config_getter`, `local_configs`, `configs` or `DFLT_CONFIG_FOLDER` creates `~/.config/config2py/configs/`. In tests, point `HOME`/`XDG_CONFIG_HOME` (or `CONFIG2PY_CONFIG_DIR`) at a temp dir *before* the first import.
-- **Broad fallback (deprecated).** `config_not_found_exceptions` defaults to `(Exception,)`, so a bug or network error in a callable source falls through to the next source; it now emits a `DeprecationWarning` when it swallows a non-lookup error, and a future release narrows the default to `config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`. Pass it explicitly: `DFLT_CONFIG_NOT_FOUND_EXCEPTIONS` for the new behaviour, `(Exception,)` to keep the fall-through.
+- **Only lookup errors fall through.** `config_not_found_exceptions` defaults to `config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS` (`KeyError`, `LookupError`, `FileNotFoundError`, `ConfigNotFound`): a callable source must raise one of these to mean "not here, try the next source". Any other error (a bug, a network blip, rejected credentials) propagates. Since 0.1.80; before, the default was `(Exception,)`, still available as `LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS` for callers that want to fall through on every error.
 - **Plain text, not a vault.** Values saved by the prompt flow are plain one-file-per-key text files, currently written with the umask default and protected only by their `0o700` folder when config2py created it (i2mint/config2py#33). `envvar` hides values from `repr()` only, not from iteration or pickling.
 - **Missing files read as empty.** `ConfigReader("typo.ini")` and `extract_exports("typo/.env")` still return empty results, but now issue a `MissingConfigFileWarning` (so does `ConfigReader` for a folder or an unreadable file). Pass `on_missing="raise"` to get a `FileNotFoundError` (`IsADirectoryError` / `PermissionError`) instead, or `on_missing="ignore"` when an absent file is expected. `ConfigStore` (writable) never warns: a new path is how you create a file.
 - **Folders you pass in are checked.** `SecureTextFiles` / `get_configs_local_store(<folder>)` warn once (`InsecureConfigFolderWarning`) if the folder is owned by another user or writable by its group or others, since they could plant a symlink that redirects your secrets (`chmod 700` it, or pass `on_unsafe_folder="raise"`/`"ignore"`). `follow_symlinks=False` (on the stores and `secure_open`) refuses to write through a symlink.

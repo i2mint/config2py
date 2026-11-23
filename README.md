@@ -345,7 +345,7 @@ Let's take two sources: a ``dict`` and a ``Callable``.
     ...     elif k == 'green':
     ...         return 'eggs'
     ...     else:
-    ...         raise RuntimeError(f"I don't handle that: {k}")
+    ...         raise KeyError(k)
     >>> dict_ = {'foo': 'bar', 'baz': 'qux'}
     >>> sources = [func, dict_]
 
@@ -356,7 +356,7 @@ See that ``get_config`` go through the sources in the order they were listed, an
     >>> get_config('foo', sources)
     'quux'
 
-But ``baz`` makes ``func`` raise an error, so it goes to the next source: ``dict_``. There, it finds ``'baz'`` and returns its value:
+But ``baz`` makes ``func`` raise a ``KeyError`` (it doesn't have it), so it goes to the next source: ``dict_``. There, it finds ``'baz'`` and returns its value:
 
     >>> get_config('baz', sources)
     'qux'
@@ -373,7 +373,7 @@ But if you provide a default value, it will return that instead:
     >>> get_config('no_a_key', sources, default='default')
     'default'
 
-This "search the next source if the previous one fails" behavior may not be what you want in some situations, since you'd be hiding some errors that you might want to be aware of. This is why allow you to specify what exceptions should actually be considered as "config not found" exceptions, through the ``config_not_found_exceptions`` argument, which defaults to ``(Exception,)``, that is, *any* error. Narrow it, for instance to ``(KeyError, LookupError)``, when a failing source should raise rather than be skipped.
+This "search the next source if the previous one fails" behavior only applies to errors that mean "not found": the ``config_not_found_exceptions`` argument, which defaults to ``config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`` (``KeyError``, ``LookupError``, ``FileNotFoundError``, ``ConfigNotFound``). Any other error raised by a callable source (a network blip, a bug, rejected credentials) propagates, instead of being hidden by a silent move to the next, possibly less trusted, source. Before config2py 0.1.80 the default was ``(Exception,)``, that is, *any* error; pass ``config_not_found_exceptions=config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS`` to keep that behaviour.
 
 Further, your sources may return a value, but not one that you consider valid: For example, a sentinel like ``None``. In this case you may want the search to continue. This is what the ``val_is_valid`` argument is for. It is a function that takes a value and returns a boolean. If it returns ``False``, the search will continue. If it returns ``True``, the search will stop and the value will be returned.
 
