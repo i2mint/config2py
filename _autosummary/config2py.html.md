@@ -879,7 +879,7 @@ with the setup_callback:
 True
 ```
 
-### config2py.get_config(key=None, sources=None, \*, default=Sentinel('no_default'), egress=None, val_is_valid=<function always_true>, config_not_found_exceptions=(<class 'Exception'>, ))
+### config2py.get_config(key=None, sources=None, \*, default=Sentinel('no_default'), egress=None, val_is_valid=<function always_true>, config_not_found_exceptions=(<class 'KeyError'>, <class 'LookupError'>, <class 'FileNotFoundError'>, <class 'config2py.errors.ConfigNotFound'>))
 
 Get a config value from a list of sources
 
@@ -940,21 +940,32 @@ You can also provide a function that will be called on the value before it is
 returned. This is useful if you want to do some post-processing on the value,
 or if you want to make sure that the value is of a certain type:
 
-This “search the next source if the previous one fails” behavior may not be what
-you want in some situations, since you’d be hiding some errors that you might
-want to be aware of. This is why allow you to specify what exceptions should
-actually be considered as “config not found” exceptions, through the
-`config_not_found_exceptions` argument, which defaults to `(Exception,)`.
+This “search the next source if the previous one fails” behavior only applies to
+errors that mean “not found”: the `config_not_found_exceptions` argument, which
+defaults to `DFLT_CONFIG_NOT_FOUND_EXCEPTIONS` (`KeyError`, `LookupError`,
+`FileNotFoundError`, `ConfigNotFound`). Any other error raised by a callable
+source (a network blip, a bug, a missing import, rejected credentials) propagates,
+rather than being hidden by a silent move to the next, possibly less trusted,
+source:
 
-Beware that this broad default treats *any* error raised by a callable source
-(a network blip, a bug, a missing import, rejected credentials) as “not found”,
-and silently moves on to the next, possibly less trusted, source. It is
-deprecated: when it swallows an error that is not a lookup error, a
-`DeprecationWarning` says so, and a future release will make
-`DFLT_CONFIG_NOT_FOUND_EXCEPTIONS` (`KeyError`, `LookupError`,
-`FileNotFoundError`, `ConfigNotFound`) the default. Pass
-`config_not_found_exceptions` explicitly to choose either behaviour now
-(see [https://github.com/i2mint/config2py/issues/25](https://github.com/i2mint/config2py/issues/25)).
+```pycon
+>>> def flaky(k):
+...     raise RuntimeError("network blip")
+>>> get_config('foo', [flaky, dict_])
+Traceback (most recent call last):
+...
+RuntimeError: network blip
+```
+
+Pass `config_not_found_exceptions=LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS` (that is,
+`(Exception,)`, the default before config2py 0.1.80) to fall through on any
+error (see [https://github.com/i2mint/config2py/issues/25](https://github.com/i2mint/config2py/issues/25)):
+
+```pycon
+>>> get_config('foo', [flaky, dict_],
+...            config_not_found_exceptions=LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS)
+'bar'
+```
 
 Further, your sources may return a value, but not one that you consider valid:
 For example, a sentinel like `None`. In this case you may want the search to
@@ -1151,14 +1162,14 @@ default) asks the user for the value and stores it in the central config store.
   * **config_store_factory** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)) – A function that takes a config source specification
     and returns the central config store
 
-### config2py.sources_chainmap(sources, val_is_valid=<function always_true>, config_not_found_exceptions=(<class 'Exception'>, ))
+### config2py.sources_chainmap(sources, val_is_valid=<function always_true>, config_not_found_exceptions=(<class 'KeyError'>, <class 'LookupError'>, <class 'FileNotFoundError'>, <class 'config2py.errors.ConfigNotFound'>))
 
 Create a `ChainMap` from a list of sources
 
 * **Return type:**
   [`ChainMap`](https://docs.python.org/3/library/collections.html#collections.ChainMap)
 
-### config2py.user_gettable(save_to=None, \*, prompt_template='Enter a value for {}: ', egress=None, user_asker=<function ask_user_for_input>, val_is_valid=<function is_not_empty>, config_not_found_exceptions=(<class 'Exception'>, ))
+### config2py.user_gettable(save_to=None, \*, prompt_template='Enter a value for {}: ', egress=None, user_asker=<function ask_user_for_input>, val_is_valid=<function is_not_empty>, config_not_found_exceptions=(<class 'KeyError'>, <class 'LookupError'>, <class 'FileNotFoundError'>, <class 'config2py.errors.ConfigNotFound'>, <class 'EOFError'>))
 
 Create a `GettableContainer` that asks the user for a value, optionally saving it.
 
@@ -1174,9 +1185,12 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
     prompt string and return the user’s response.
   * **val_is_valid** ([`Callable`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable)[[`VT`], [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]) – A function that takes a value and returns a boolean. If it
     returns `False`, the user will be asked for a new value.
-  * **config_not_found_exceptions** ([`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`type`](https://docs.python.org/3/builtins/functions.html#type)[[`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exception)], [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)]) – An iterable of exceptions that should be
-    considered as “config not found” exceptions. If the user’s response
-    raises one of these exceptions, the user will be asked for a new value.
+  * **config_not_found_exceptions** ([`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`type`](https://docs.python.org/3/builtins/functions.html#type)[[`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exception)], [`...`](https://docs.python.org/3/builtins/constants.html#Ellipsis)]) – The exceptions that mean “the user gave no
+    value”: the key is then treated as not found, and `get_config` moves
+    on (or returns its `default`). Defaults to
+    `DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS`: the lookup errors plus
+    `EOFError`, raised when stdin is closed (nobody to ask). Any other
+    error (from `egress` validation, say) propagates, with its own text.
 * **Returns:**
   A `GettableContainer` that asks the user for a value, optionally saving it.
 

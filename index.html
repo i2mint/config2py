@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="_static/documentation_options.js?v=18b80ae6"></script>
+    <script src="_static/documentation_options.js?v=bcc08eff"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.78" />
+  <meta name="docsearch:version" content="0.1.79" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -495,7 +495,7 @@
 <span class="n">config_getter</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the <code class="docutils literal notranslate"><span class="pre">user_gettable(configs)</span></code> part. If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is <strong>defined</strong> (not called), you can stick <code class="docutils literal notranslate"><span class="pre">locals()</span></code> in front of the <code class="docutils literal notranslate"><span class="pre">os.environ</span></code>.</p>
+<p>So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the <code class="docutils literal notranslate"><span class="pre">user_gettable(configs)</span></code> part. When there is nobody to ask (stdin closed, as under cron or CI), the prompt’s <code class="docutils literal notranslate"><span class="pre">EOFError</span></code> counts as “not found”, so <code class="docutils literal notranslate"><span class="pre">get_config</span></code> falls back to its <code class="docutils literal notranslate"><span class="pre">default</span></code> (or raises <code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code>). If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is <strong>defined</strong> (not called), you can stick <code class="docutils literal notranslate"><span class="pre">locals()</span></code> in front of the <code class="docutils literal notranslate"><span class="pre">os.environ</span></code>.</p>
 <p>Let’s work through a custom-made <code class="docutils literal notranslate"><span class="pre">config_getter</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
@@ -658,7 +658,7 @@
 ...     elif k == 'green':
 ...         return 'eggs'
 ...     else:
-...         raise RuntimeError(f"I don't handle that: {k}")
+...         raise KeyError(k)
 &gt;&gt;&gt; dict_ = {'foo': 'bar', 'baz': 'qux'}
 &gt;&gt;&gt; sources = [func, dict_]
 </pre></div>
@@ -669,7 +669,7 @@
 'quux'
 </pre></div>
 </div>
-<p>But <code class="docutils literal notranslate"><span class="pre">baz</span></code> makes <code class="docutils literal notranslate"><span class="pre">func</span></code> raise an error, so it goes to the next source: <code class="docutils literal notranslate"><span class="pre">dict_</span></code>. There, it finds <code class="docutils literal notranslate"><span class="pre">'baz'</span></code> and returns its value:</p>
+<p>But <code class="docutils literal notranslate"><span class="pre">baz</span></code> makes <code class="docutils literal notranslate"><span class="pre">func</span></code> raise a <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> (it doesn’t have it), so it goes to the next source: <code class="docutils literal notranslate"><span class="pre">dict_</span></code>. There, it finds <code class="docutils literal notranslate"><span class="pre">'baz'</span></code> and returns its value:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; get_config('baz', sources)
 'qux'
 </pre></div>
@@ -686,7 +686,7 @@ config2py.errors.ConfigNotFound: Could not find config for key: no_a_key
 'default'
 </pre></div>
 </div>
-<p>This “search the next source if the previous one fails” behavior may not be what you want in some situations, since you’d be hiding some errors that you might want to be aware of. This is why allow you to specify what exceptions should actually be considered as “config not found” exceptions, through the <code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions</span></code> argument, which defaults to <code class="docutils literal notranslate"><span class="pre">(Exception,)</span></code>, that is, <em>any</em> error. Narrow it, for instance to <code class="docutils literal notranslate"><span class="pre">(KeyError,</span> <span class="pre">LookupError)</span></code>, when a failing source should raise rather than be skipped.</p>
+<p>This “search the next source if the previous one fails” behavior only applies to errors that mean “not found”: the <code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions</span></code> argument, which defaults to <code class="docutils literal notranslate"><span class="pre">config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS</span></code> (<code class="docutils literal notranslate"><span class="pre">KeyError</span></code>, <code class="docutils literal notranslate"><span class="pre">LookupError</span></code>, <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>, <code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code>). Any other error raised by a callable source (a network blip, a bug, rejected credentials) propagates, instead of being hidden by a silent move to the next, possibly less trusted, source. Before config2py 0.1.80 the default was <code class="docutils literal notranslate"><span class="pre">(Exception,)</span></code>, that is, <em>any</em> error; pass <code class="docutils literal notranslate"><span class="pre">config_not_found_exceptions=config2py.base.LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS</span></code> to keep that behaviour.</p>
 <p>Further, your sources may return a value, but not one that you consider valid: For example, a sentinel like <code class="docutils literal notranslate"><span class="pre">None</span></code>. In this case you may want the search to continue. This is what the <code class="docutils literal notranslate"><span class="pre">val_is_valid</span></code> argument is for. It is a function that takes a value and returns a boolean. If it returns <code class="docutils literal notranslate"><span class="pre">False</span></code>, the search will continue. If it returns <code class="docutils literal notranslate"><span class="pre">True</span></code>, the search will stop and the value will be returned.</p>
 <p>Finally, we have <code class="docutils literal notranslate"><span class="pre">egress</span> <span class="pre">:</span> <span class="pre">Callable[[KT,</span> <span class="pre">TT],</span> <span class="pre">VT]</span></code>. This is a function that takes a key and a value, and returns a value. It is called after the value has been found, and its return value is the one that is returned by <code class="docutils literal notranslate"><span class="pre">get_config</span></code>. This is useful if you want to do some post-processing on the value, or before you return the value, or if you want to do some caching.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; config_store = dict()
@@ -752,7 +752,7 @@ ruff<span class="w"> </span>check<span class="w"> </span>.
 </div>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-22 23:48 UTC from <a href="https://github.com/i2mint/config2py/commit/7b12b81bc765931aade185313a539173e2bfee95">7b12b81</a> (master) · config2py 0.1.78 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-23 02:33 UTC from <a href="https://github.com/i2mint/config2py/commit/d712da337f9947b2cab3733a105d21566eea7860">d712da3</a> (master) · config2py 0.1.79 · <a href="about-this-build.html">about this build</a></p>
 
                 </article>
               

@@ -9,6 +9,7 @@ config2py.base
    .. autosummary::
    
       DFLT_CONFIG_NOT_FOUND_EXCEPTIONS
+      DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS
       LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS
    
    .. rubric:: Functions
