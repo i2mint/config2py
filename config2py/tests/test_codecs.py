@@ -57,16 +57,28 @@ class TestJSONCodec:
 
 
 class TestPickleCodec:
-    """Test pickle encoding/decoding."""
+    """Pickle encodes by default; decoding is opt-in (i2mint/config2py#29)."""
 
-    def test_pickle_roundtrip(self):
+    @pytest.fixture
+    def pickle_decoding(self):
+        codecs.enable_pickle_decoding()
+        yield
+        codecs.disable_pickle_decoding()
+
+    @pytest.mark.parametrize("key", ["data.pkl", "data.pickle"])
+    def test_decoding_is_off_by_default_with_a_hint(self, key):
+        encoded = codecs.encode_by_extension(key, {"key": "value"})
+        with pytest.raises(ValueError, match="enable_pickle_decoding"):
+            codecs.decode_by_extension(key, encoded)
+
+    def test_pickle_roundtrip(self, pickle_decoding):
         """Test pickle encode -> decode roundtrip."""
         data = {"list": [1, 2, 3], "tuple": (4, 5, 6), "set": {7, 8, 9}}
         encoded = codecs.encode_by_extension("data.pkl", data)
         decoded = codecs.decode_by_extension("data.pkl", encoded)
         assert decoded == data
 
-    def test_pickle_alias(self):
+    def test_pickle_alias(self, pickle_decoding):
         """Test .pickle extension alias."""
         data = {"key": "value"}
         encoded = codecs.encode_by_extension("data.pickle", data)

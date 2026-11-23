@@ -28,11 +28,10 @@ Examples:
 The module automatically registers codecs for standard formats (json, toml, ini, etc.)
 and conditionally registers codecs that require third-party libraries (yaml, json5, etc.).
 
-Security warning: the ``.pkl`` and ``.pickle`` extensions decode with
-``pickle.loads``, which can execute arbitrary code. Never call
-``decode_by_extension`` with those extensions on bytes you do not fully trust (for
-example, bytes fetched from a remote or shared store).
-See https://github.com/i2mint/config2py/issues/29.
+Security: ``.pkl`` and ``.pickle`` are encoded by default but NOT decoded, because
+``pickle.loads`` can execute arbitrary code. Call ``enable_pickle_decoding()`` to
+decode them, and only on bytes you fully trust (never bytes fetched from a remote or
+shared store). See https://github.com/i2mint/config2py/issues/29.
 """
 
 from typing import Callable, TypeVar, Any, Optional
@@ -124,8 +123,8 @@ def decode_by_extension(key: str, data: bytes) -> Any:
 
     Warning:
         The decoder is chosen by the key's extension alone. ``.pkl`` and
-        ``.pickle`` map to ``pickle.loads``, which can execute arbitrary code, so
-        never decode untrusted bytes under those extensions.
+        ``.pickle`` have no decoder until ``enable_pickle_decoding()`` is called,
+        because ``pickle.loads`` can execute arbitrary code.
 
     Examples:
 
@@ -138,9 +137,16 @@ def decode_by_extension(key: str, data: bytes) -> Any:
     decoder = EXTENSION_TO_DECODER.get(ext_with_dot)
     if decoder is None:
         available = ", ".join(sorted(EXTENSION_TO_DECODER.keys()))
+        hint = (
+            " Pickle decoding is off by default because pickle.loads can execute "
+            "arbitrary code; call config2py.codecs.enable_pickle_decoding() if you "
+            "trust this data."
+            if ext_with_dot in PICKLE_EXTENSIONS
+            else ""
+        )
         raise ValueError(
             f"No decoder registered for extension: '{ext_with_dot}'. "
-            f"Available: {available}"
+            f"Available: {available}.{hint}"
         )
     return decoder(data)
 
@@ -367,15 +373,36 @@ register_codec(
 )
 
 # Pickle - Python object serialization (not text-based, but useful)
-# SECURITY: ``pickle.loads`` executes arbitrary code embedded in the bytes it reads.
-# Only decode ``.pkl``/``.pickle`` data you produced yourself or otherwise fully
-# trust. Making this decoder opt-in is tracked in i2mint/config2py#29.
-register_codec(
-    ".pkl",
-    encoder=pickle.dumps,
-    decoder=pickle.loads,
-)
-register_codec(".pickle", encoder=pickle.dumps, decoder=pickle.loads)
+# SECURITY: ``pickle.loads`` executes arbitrary code embedded in the bytes it reads,
+# so only the encoder is registered by default; decoding is opt-in, through
+# ``enable_pickle_decoding()`` (i2mint/config2py#29).
+PICKLE_EXTENSIONS = (".pkl", ".pickle")
+for _ext in PICKLE_EXTENSIONS:
+    register_codec(_ext, encoder=pickle.dumps)
+
+
+def enable_pickle_decoding() -> None:
+    """Let ``decode_by_extension`` decode ``.pkl`` and ``.pickle`` with ``pickle.loads``.
+
+    Off by default because ``pickle.loads`` can execute arbitrary code: call this
+    only when every ``.pkl``/``.pickle`` byte string you decode is data you produced
+    yourself or otherwise fully trust (never bytes from a remote or shared store).
+
+    >>> import pickle
+    >>> enable_pickle_decoding()
+    >>> decode_by_extension('x.pkl', pickle.dumps({'a': 1}))
+    {'a': 1}
+    >>> disable_pickle_decoding()
+    """
+    for ext in PICKLE_EXTENSIONS:
+        register_codec(ext, decoder=pickle.loads, overwrite=True)
+
+
+def disable_pickle_decoding() -> None:
+    """Undo :func:`enable_pickle_decoding` (the default state)."""
+    for ext in PICKLE_EXTENSIONS:
+        EXTENSION_TO_DECODER.pop(ext, None)
+
 
 # Plain text
 register_codec(
