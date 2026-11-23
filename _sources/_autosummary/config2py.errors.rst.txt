@@ -21,4 +21,5 @@ config2py.errors
       ConfigNotFound
       InsecureConfigFolderWarning
       MissingConfigFileWarning
+      UserInputUnavailable
    

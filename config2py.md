@@ -1,4 +1,4 @@
-> built 2026-11-23 09:32 UTC from d1fda78 (master) · config2py 0.1.80. Details: build_info.json
+> built 2026-11-23 09:57 UTC from 4c319d7 (master) · config2py 0.1.81. Details: build_info.json
 
 # index.html.md
 
@@ -189,7 +189,7 @@ source = [
 config_getter = get_config(sources=source)
 ```
 
-So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the `user_gettable(configs)` part. When there is nobody to ask (stdin closed, as under cron or CI), the prompt’s `EOFError` counts as “not found”, so `get_config` falls back to its `default` (or raises `ConfigNotFound`). If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.
+So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the `user_gettable(configs)` part. When there is nobody to ask (stdin closed or at end of file, as under cron or CI, or captured by pytest), the prompt raises `config2py.errors.UserInputUnavailable`, a `ConfigNotFound`, so `get_config` falls back to its `default` (or raises `ConfigNotFound`). If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is **defined** (not called), you can stick `locals()` in front of the `os.environ`.
 
 Let’s work through a custom-made `config_getter`.
 
@@ -916,8 +916,14 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
     value”: the key is then treated as not found, and `get_config` moves
     on (or returns its `default`). Defaults to
     `DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS`: the lookup errors plus
-    `EOFError`, raised when stdin is closed (nobody to ask). Any other
-    error (from `egress` validation, say) propagates, with its own text.
+    `EOFError`. Any other error (from `egress` validation, say)
+    propagates, with its own text.
+
+When nobody can answer the prompt, the key is “not found” too: an `EOFError`
+or `OSError` raised by `user_asker` (stdin at end of file, unreadable, or
+captured by pytest), or a `RuntimeError` while `sys.stdin` is `None`
+(stdin closed), is re-raised as `UserInputUnavailable`, a `ConfigNotFound`.
+
 * **Returns:**
   A `GettableContainer` that asks the user for a value, optionally saving it.
 
@@ -1230,6 +1236,7 @@ Error classes for config2py.
 | [`ConfigNotFound`](_autosummary/config2py.errors.html.md#config2py.errors.ConfigNotFound)              | Raised when a config file is not found.                                                                                                                                                                                                                                                    |
 | [`InsecureConfigFolderWarning`](_autosummary/config2py.errors.html.md#config2py.errors.InsecureConfigFolderWarning) | A folder used to store config values (which may be secrets) is owned by another user or writable by others, who could plant a symlink or file there to redirect or read those values (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)). |
 | [`MissingConfigFileWarning`](_autosummary/config2py.errors.html.md#config2py.errors.MissingConfigFileWarning)    | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).                                          |
+| [`UserInputUnavailable`](_autosummary/config2py.errors.html.md#config2py.errors.UserInputUnavailable)        | Raised when a value would be asked of the user but nobody can answer: stdin is closed, at end of file, or unreadable (cron, CI, a subprocess, pytest's output capture).                                                                                                                    |
 
 ### *exception* config2py.errors.Config2PyError
 
@@ -1264,6 +1271,15 @@ Bases: [`Config2PyWarning`](_autosummary/config2py.errors.html.md#config2py.erro
 A path given as a config source is not an existing, readable file (it is
 missing, a folder, or unreadable), so it was read as empty
 (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).
+
+### *exception* config2py.errors.UserInputUnavailable
+
+Bases: [`ConfigNotFound`](_autosummary/config2py.errors.html.md#config2py.errors.ConfigNotFound)
+
+Raised when a value would be asked of the user but nobody can answer: stdin is
+closed, at end of file, or unreadable (cron, CI, a subprocess, pytest’s output
+capture). A `ConfigNotFound`, so `get_config` moves on to its next source or
+returns its `default` (see [https://github.com/i2mint/config2py/issues/83](https://github.com/i2mint/config2py/issues/83)).
 
 ### config2py.errors.report_missing_config_file(path, , on_missing='warn', stacklevel=2, resolved_path=None)
 
@@ -2496,8 +2512,14 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
     value”: the key is then treated as not found, and `get_config` moves
     on (or returns its `default`). Defaults to
     `DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS`: the lookup errors plus
-    `EOFError`, raised when stdin is closed (nobody to ask). Any other
-    error (from `egress` validation, say) propagates, with its own text.
+    `EOFError`. Any other error (from `egress` validation, say)
+    propagates, with its own text.
+
+When nobody can answer the prompt, the key is “not found” too: an `EOFError`
+or `OSError` raised by `user_asker` (stdin at end of file, unreadable, or
+captured by pytest), or a `RuntimeError` while `sys.stdin` is `None`
+(stdin closed), is re-raised as `UserInputUnavailable`, a `ConfigNotFound`.
+
 * **Returns:**
   A `GettableContainer` that asks the user for a value, optionally saving it.
 
@@ -4458,16 +4480,18 @@ POSIX only (`None` elsewhere); a missing folder is `None` too.
 
 # About this build
 
-This documentation was built on **2026-11-23 09:32 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/d1fda78a9e14b33b58960568e787cb9734ae8db5"><code>d1fda78</code></a> on branch <code>master</code>, for **config2py 0.1.80** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 09:57 UTC** from commit <a href="https://github.com/i2mint/config2py/commit/4c319d7769849831fce1dba0e8f63fc813bbfe8e"><code>4c319d7</code></a> on branch <code>master</code>, for **config2py 0.1.81** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.1.81) is behind the latest release on PyPI (0.1.82): `pip install config2py` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                         |
 |---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/config2py/commit/d1fda78a9e14b33b58960568e787cb9734ae8db5"><code>d1fda78a9e14b33b58960568e787cb9734ae8db5</code></a> |
+| Commit              | <a href="https://github.com/i2mint/config2py/commit/4c319d7769849831fce1dba0e8f63fc813bbfe8e"><code>4c319d7769849831fce1dba0e8f63fc813bbfe8e</code></a> |
 | Branch              | <code>master</code>                                                                                                                                     |
 | Tags at this commit | none                                                                                                                                                    |
 | Working tree        | clean                                                                                                                                                   |
@@ -4478,9 +4502,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/config2py</code>                                                              |
-| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45147784770">45147784770</a>     |
+| Run          | <a href="https://github.com/i2mint/config2py/actions/runs/45151425365">45151425365</a>     |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>d1fda78a9e14b33b58960568e787cb9734ae8db5</code> (in the history of the built commit) |
+| Event commit | <code>4c319d7769849831fce1dba0e8f63fc813bbfe8e</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -4505,13 +4529,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/config2py/0.1.80/">0.1.80</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/config2py/0.1.82/">0.1.82</a>, newer than the documented version (0.1.81).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/config2py && cd config2py
-git checkout d1fda78a9e14b33b58960568e787cb9734ae8db5
+git checkout 4c319d7769849831fce1dba0e8f63fc813bbfe8e
 pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

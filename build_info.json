@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-23T09:32:57Z",
+  "built_at": "2026-11-23T09:57:21Z",
   "package": {
     "name": "config2py",
-    "version": "0.1.80",
+    "version": "0.1.81",
     "display_name": "config2py",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "d1fda78a9e14b33b58960568e787cb9734ae8db5",
-    "short_commit": "d1fda78",
+    "commit": "4c319d7769849831fce1dba0e8f63fc813bbfe8e",
+    "short_commit": "4c319d7",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/config2py",
-    "commit_url": "https://github.com/i2mint/config2py/commit/d1fda78a9e14b33b58960568e787cb9734ae8db5",
+    "commit_url": "https://github.com/i2mint/config2py/commit/4c319d7769849831fce1dba0e8f63fc813bbfe8e",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/config2py",
-    "sha": "d1fda78a9e14b33b58960568e787cb9734ae8db5",
+    "sha": "4c319d7769849831fce1dba0e8f63fc813bbfe8e",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "45147784770",
-    "run_url": "https://github.com/i2mint/config2py/actions/runs/45147784770",
+    "run_id": "45151425365",
+    "run_url": "https://github.com/i2mint/config2py/actions/runs/45151425365",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -56,18 +56,20 @@
   },
   "site": {
     "modules_documented": 9,
-    "objects_documented": 150
+    "objects_documented": 151
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.80",
-    "relation": "same",
+    "latest": "0.1.82",
+    "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout d1fda78a9e14b33b58960568e787cb9734ae8db5\npip install \"epythet==0.2.25\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/config2py && cd config2py\ngit checkout 4c319d7769849831fce1dba0e8f63fc813bbfe8e\npip install \"epythet==0.2.25\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.1.81) is behind the latest release on PyPI (0.1.82): `pip install config2py` gives newer code than these docs describe."
+    ]
   }
 }

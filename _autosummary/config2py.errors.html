@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../_static/documentation_options.js?v=4ea980d6"></script>
+    <script src="../_static/documentation_options.js?v=ead104cf"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -58,7 +58,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.80" />
+  <meta name="docsearch:version" content="0.1.81" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -429,6 +429,9 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#config2py.errors.MissingConfigFileWarning" title="config2py.errors.MissingConfigFileWarning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code></a></p></td>
 <td><p>A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a> and /43).</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#config2py.errors.UserInputUnavailable" title="config2py.errors.UserInputUnavailable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UserInputUnavailable</span></code></a></p></td>
+<td><p>Raised when a value would be asked of the user but nobody can answer: stdin is closed, at end of file, or unreadable (cron, CI, a subprocess, pytest's output capture).</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -469,6 +472,16 @@ read those values (see <a class="github reference external" href="https://github
 <p>A path given as a config source is not an existing, readable file (it is
 missing, a folder, or unreadable), so it was read as empty
 (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/27">i2mint/config2py#27</a> and /43).</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="config2py.errors.UserInputUnavailable">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">config2py.errors.</span></span><span class="sig-name descname"><span class="pre">UserInputUnavailable</span></span><a class="reference internal" href="../_modules/config2py/errors.html#UserInputUnavailable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#config2py.errors.UserInputUnavailable" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#config2py.errors.ConfigNotFound" title="config2py.errors.ConfigNotFound"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigNotFound</span></code></a></p>
+<p>Raised when a value would be asked of the user but nobody can answer: stdin is
+closed, at end of file, or unreadable (cron, CI, a subprocess, pytest’s output
+capture). A <code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code>, so <code class="docutils literal notranslate"><span class="pre">get_config</span></code> moves on to its next source or
+returns its <code class="docutils literal notranslate"><span class="pre">default</span></code> (see <a class="github reference external" href="https://github.com/i2mint/config2py/issues/83">i2mint/config2py#83</a>).</p>
 </dd></dl>
 
 <dl class="py function">
@@ -575,6 +588,7 @@ same three options).</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.ConfigNotFound"><code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.InsecureConfigFolderWarning"><code class="docutils literal notranslate"><span class="pre">InsecureConfigFolderWarning</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.MissingConfigFileWarning"><code class="docutils literal notranslate"><span class="pre">MissingConfigFileWarning</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.UserInputUnavailable"><code class="docutils literal notranslate"><span class="pre">UserInputUnavailable</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.report_missing_config_file"><code class="docutils literal notranslate"><span class="pre">report_missing_config_file()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.unusable_config_file_problem"><code class="docutils literal notranslate"><span class="pre">unusable_config_file_problem()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config2py.errors.validate_on_missing"><code class="docutils literal notranslate"><span class="pre">validate_on_missing()</span></code></a></li>

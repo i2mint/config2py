@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="../../_static/documentation_options.js?v=4ea980d6"></script>
+    <script src="../../_static/documentation_options.js?v=ead104cf"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -411,7 +411,7 @@ window.runMermaid = runMermaid;</script>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.80" />
+  <meta name="docsearch:version" content="0.1.81" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -716,6 +716,7 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">Base for getting configs from various sources and formats</span>
 <span class="sd">"""</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainMap</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Type</span><span class="p">,</span>
@@ -733,7 +734,7 @@ window.runMermaid = runMermaid;</script>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span><span class="p">,</span> <span class="n">partial</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">config2py.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">always_true</span><span class="p">,</span> <span class="n">ask_user_for_input</span><span class="p">,</span> <span class="n">no_default</span><span class="p">,</span> <span class="n">not_found</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">config2py.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigNotFound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config2py.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigNotFound</span><span class="p">,</span> <span class="n">UserInputUnavailable</span>
 
 <span class="n">Exceptions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="ne">Exception</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>
 
@@ -1339,8 +1340,13 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">            value": the key is then treated as not found, and ``get_config`` moves</span>
 <span class="sd">            on (or returns its ``default``). Defaults to</span>
 <span class="sd">            ``DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS``: the lookup errors plus</span>
-<span class="sd">            ``EOFError``, raised when stdin is closed (nobody to ask). Any other</span>
-<span class="sd">            error (from ``egress`` validation, say) propagates, with its own text.</span>
+<span class="sd">            ``EOFError``. Any other error (from ``egress`` validation, say)</span>
+<span class="sd">            propagates, with its own text.</span>
+
+<span class="sd">    When nobody can answer the prompt, the key is "not found" too: an ``EOFError``</span>
+<span class="sd">    or ``OSError`` raised by ``user_asker`` (stdin at end of file, unreadable, or</span>
+<span class="sd">    captured by pytest), or a ``RuntimeError`` while ``sys.stdin`` is ``None``</span>
+<span class="sd">    (stdin closed), is re-raised as ``UserInputUnavailable``, a ``ConfigNotFound``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A ``GettableContainer`` that asks the user for a value, optionally saving it.</span>
@@ -1379,10 +1385,21 @@ window.runMermaid = runMermaid;</script>
 <span class="sd">        [('SOME_KEY', 'SOME_VAL')]</span>
 
 <span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">asker_or_unavailable</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">user_asker</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">EOFError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span>  <span class="c1"># a real error, not a missing stdin</span>
+            <span class="k">raise</span> <span class="n">UserInputUnavailable</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Nobody to ask for a value (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)"</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
+
     <span class="n">getter</span> <span class="o">=</span> <span class="n">ask_user_for_key</span><span class="p">(</span>
         <span class="n">prompt_template</span><span class="o">=</span><span class="n">prompt_template</span><span class="p">,</span>
         <span class="n">save_to</span><span class="o">=</span><span class="n">save_to</span><span class="p">,</span>
-        <span class="n">user_asker</span><span class="o">=</span><span class="n">user_asker</span><span class="p">,</span>
+        <span class="n">user_asker</span><span class="o">=</span><span class="n">asker_or_unavailable</span><span class="p">,</span>
         <span class="n">egress</span><span class="o">=</span><span class="n">egress</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">FuncBasedGettableContainer</span><span class="p">(</span>

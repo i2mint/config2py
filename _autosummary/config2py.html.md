@@ -1189,8 +1189,14 @@ Create a `GettableContainer` that asks the user for a value, optionally saving i
     value”: the key is then treated as not found, and `get_config` moves
     on (or returns its `default`). Defaults to
     `DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS`: the lookup errors plus
-    `EOFError`, raised when stdin is closed (nobody to ask). Any other
-    error (from `egress` validation, say) propagates, with its own text.
+    `EOFError`. Any other error (from `egress` validation, say)
+    propagates, with its own text.
+
+When nobody can answer the prompt, the key is “not found” too: an `EOFError`
+or `OSError` raised by `user_asker` (stdin at end of file, unreadable, or
+captured by pytest), or a `RuntimeError` while `sys.stdin` is `None`
+(stdin closed), is re-raised as `UserInputUnavailable`, a `ConfigNotFound`.
+
 * **Returns:**
   A `GettableContainer` that asks the user for a value, optionally saving it.
 

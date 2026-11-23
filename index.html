@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="_static/documentation_options.js?v=4ea980d6"></script>
+    <script src="_static/documentation_options.js?v=ead104cf"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.80" />
+  <meta name="docsearch:version" content="0.1.81" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -495,7 +495,7 @@
 <span class="n">config_getter</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the <code class="docutils literal notranslate"><span class="pre">user_gettable(configs)</span></code> part. When there is nobody to ask (stdin closed, as under cron or CI), the prompt’s <code class="docutils literal notranslate"><span class="pre">EOFError</span></code> counts as “not found”, so <code class="docutils literal notranslate"><span class="pre">get_config</span></code> falls back to its <code class="docutils literal notranslate"><span class="pre">default</span></code> (or raises <code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code>). If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is <strong>defined</strong> (not called), you can stick <code class="docutils literal notranslate"><span class="pre">locals()</span></code> in front of the <code class="docutils literal notranslate"><span class="pre">os.environ</span></code>.</p>
+<p>So you see that you can easily define your own sources for configs, and in what order they should be searched. If you don’t want that “ask the user for the value” thing, you can just remove the <code class="docutils literal notranslate"><span class="pre">user_gettable(configs)</span></code> part. When there is nobody to ask (stdin closed or at end of file, as under cron or CI, or captured by pytest), the prompt raises <code class="docutils literal notranslate"><span class="pre">config2py.errors.UserInputUnavailable</span></code>, a <code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code>, so <code class="docutils literal notranslate"><span class="pre">get_config</span></code> falls back to its <code class="docutils literal notranslate"><span class="pre">default</span></code> (or raises <code class="docutils literal notranslate"><span class="pre">ConfigNotFound</span></code>). If you wanted instead to add a place to look before the environment variables – say, you want to look in to local variables of the scope the config getter is <strong>defined</strong> (not called), you can stick <code class="docutils literal notranslate"><span class="pre">locals()</span></code> in front of the <code class="docutils literal notranslate"><span class="pre">os.environ</span></code>.</p>
 <p>Let’s work through a custom-made <code class="docutils literal notranslate"><span class="pre">config_getter</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
@@ -752,7 +752,7 @@ ruff<span class="w"> </span>check<span class="w"> </span>.
 </div>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-23 09:32 UTC from <a href="https://github.com/i2mint/config2py/commit/d1fda78a9e14b33b58960568e787cb9734ae8db5">d1fda78</a> (master) · config2py 0.1.80 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-23 09:57 UTC from <a href="https://github.com/i2mint/config2py/commit/4c319d7769849831fce1dba0e8f63fc813bbfe8e">4c319d7</a> (master) · config2py 0.1.81 · <a href="about-this-build.html">about this build</a></p>
 
                 </article>
               

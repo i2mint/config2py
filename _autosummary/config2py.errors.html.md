@@ -17,6 +17,7 @@ Error classes for config2py.
 | [`ConfigNotFound`](#config2py.errors.ConfigNotFound)              | Raised when a config file is not found.                                                                                                                                                                                                                                                    |
 | [`InsecureConfigFolderWarning`](#config2py.errors.InsecureConfigFolderWarning) | A folder used to store config values (which may be secrets) is owned by another user or writable by others, who could plant a symlink or file there to redirect or read those values (see [https://github.com/i2mint/config2py/issues/45](https://github.com/i2mint/config2py/issues/45)). |
 | [`MissingConfigFileWarning`](#config2py.errors.MissingConfigFileWarning)    | A path given as a config source is not an existing, readable file (it is missing, a folder, or unreadable), so it was read as empty (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).                                          |
+| [`UserInputUnavailable`](#config2py.errors.UserInputUnavailable)        | Raised when a value would be asked of the user but nobody can answer: stdin is closed, at end of file, or unreadable (cron, CI, a subprocess, pytest's output capture).                                                                                                                    |
 
 ### *exception* config2py.errors.Config2PyError
 
@@ -51,6 +52,15 @@ Bases: [`Config2PyWarning`](#config2py.errors.Config2PyWarning)
 A path given as a config source is not an existing, readable file (it is
 missing, a folder, or unreadable), so it was read as empty
 (see [https://github.com/i2mint/config2py/issues/27](https://github.com/i2mint/config2py/issues/27) and /43).
+
+### *exception* config2py.errors.UserInputUnavailable
+
+Bases: [`ConfigNotFound`](#config2py.errors.ConfigNotFound)
+
+Raised when a value would be asked of the user but nobody can answer: stdin is
+closed, at end of file, or unreadable (cron, CI, a subprocess, pytest’s output
+capture). A `ConfigNotFound`, so `get_config` moves on to its next source or
+returns its `default` (see [https://github.com/i2mint/config2py/issues/83](https://github.com/i2mint/config2py/issues/83)).
 
 ### config2py.errors.report_missing_config_file(path, , on_missing='warn', stacklevel=2, resolved_path=None)
 
