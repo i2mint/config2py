@@ -265,6 +265,28 @@ SECRET_RULES: tuple[SecretRule, ...] = (
         (".ey",),
         wrappable=False,
     ),
+    # Azure Storage (not in gitleaks as a SAS rule; its account-key rule is the model for the second).
+    # A SAS token or signed URL: `sig=` is the secret and follows `?` or `&`, so no word start.
+    SecretRule(
+        "azure-sas",
+        r"[?&]sig=[A-Za-z0-9%+/=]{40,}",
+        ("sig=",),
+        word_start=False,
+    ),
+    # azure-storage-account-key
+    SecretRule(
+        "azure-storage-account-key",
+        r"AccountKey=[A-Za-z0-9+/=]{80,100}",
+        ("AccountKey=",),
+        word_start=False,
+    ),
+    # a connection string that carries a SAS
+    SecretRule(
+        "azure-connection-sas",
+        r"SharedAccessSignature=[^;\s]{20,}",
+        ("SharedAccessSignature=",),
+        word_start=False,
+    ),
 )
 
 
