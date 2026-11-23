@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=75c7c72ae941e8b558d8" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=75c7c72ae941e8b558d8" />
 
-    <script src="_static/documentation_options.js?v=bcc08eff"></script>
+    <script src="_static/documentation_options.js?v=4ea980d6"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.1.79" />
+  <meta name="docsearch:version" content="0.1.80" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -745,14 +745,14 @@ ruff<span class="w"> </span>check<span class="w"> </span>.
 </div>
 <p>The Python examples in this README, and in the bundled skill, are run by <code class="docutils literal notranslate"><span class="pre">config2py/tests/test_docs_examples.py</span></code> in a sandboxed home directory. If you add an example that prompts, put <code class="docutils literal notranslate"><span class="pre">&lt;!--</span> <span class="pre">no-test</span> <span class="pre">--&gt;</span></code> on the line before its fence.</p>
 <p><strong>Design, in three sentences.</strong> <code class="docutils literal notranslate"><span class="pre">get_config</span></code> is a tiny framework: a source is anything you can index (<code class="docutils literal notranslate"><span class="pre">dict</span></code>, a <a class="reference external" href="https://github.com/i2mint/dol">dol</a> store) or call, and the first source that yields a valid value wins. Everything else (<code class="docutils literal notranslate"><span class="pre">simple_config_getter</span></code>, <code class="docutils literal notranslate"><span class="pre">user_gettable</span></code>, the app folders) is a preset built on that one idea, so you can take any layer apart and recompose it. All platform-specific folder logic sits in one table, <code class="docutils literal notranslate"><span class="pre">config2py.util.app_folder_standards</span></code>, which takes the OS as an argument so both Windows and POSIX behaviour are tested on any machine.</p>
-<p><strong>Contributing.</strong> Issues and pull requests are welcome on <a class="reference external" href="https://github.com/i2mint/config2py/issues">GitHub</a>. About thirty packages depend on config2py, and a merge to <code class="docutils literal notranslate"><span class="pre">master</span></code> publishes a release to PyPI, so changes to defaults need a run of the dependents’ tests. Never edit the version number, because CI bumps it. The architecture notes and conventions a coding agent follows, in <a class="reference internal" href="#.claude/CLAUDE.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">.claude/CLAUDE.md</span></code></span></a> and the <a class="reference internal" href="#skills/config2py-dev/SKILL.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">config2py-dev</span></code></span></a> skill, are just as useful to humans.</p>
+<p><strong>Contributing.</strong> Issues and pull requests are welcome on <a class="reference external" href="https://github.com/i2mint/config2py/issues">GitHub</a>. About thirty packages depend on config2py, and a merge to <code class="docutils literal notranslate"><span class="pre">master</span></code> publishes a release to PyPI, so changes to defaults need a run of the dependents’ tests. Never edit the version number, because CI bumps it. The architecture notes and conventions a coding agent follows, in <a class="reference external" href="https://github.com/i2mint/config2py/blob/HEAD/.claude/CLAUDE.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">.claude/CLAUDE.md</span></code></span></a> and the <a class="reference external" href="https://github.com/i2mint/config2py/blob/HEAD/skills/config2py-dev/SKILL.md"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">config2py-dev</span></code></span></a> skill, are just as useful to humans.</p>
 <p><strong>Questions</strong> go to <a class="reference external" href="https://github.com/i2mint/config2py/issues">GitHub issues</a>.</p>
 <p class="epythet-aggregates">This documentation as a single file: <a href="config2py.md">config2py.md</a> (Markdown, for agents).</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>
 
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-23 02:33 UTC from <a href="https://github.com/i2mint/config2py/commit/d712da337f9947b2cab3733a105d21566eea7860">d712da3</a> (master) · config2py 0.1.79 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-23 09:32 UTC from <a href="https://github.com/i2mint/config2py/commit/d1fda78a9e14b33b58960568e787cb9734ae8db5">d1fda78</a> (master) · config2py 0.1.80 · <a href="about-this-build.html">about this build</a></p>
 
                 </article>
               
