@@ -274,3 +274,50 @@ def test_root_exemption_without_being_root(tmp_path, monkeypatch):
     assert util._ancestor_problem(parent / "store") is None
     monkeypatch.setattr(util.os, "geteuid", lambda: 1000)
     assert "owned by another user" in util._ancestor_problem(parent / "store")
+
+
+@posix_only
+def test_a_search_only_root_works_when_not_following(private_dir):
+    """The store's own folder may be search-only too, not just a subfolder (#86)."""
+    store = SecureTextFiles(str(private_dir), follow_symlinks=False)
+    (private_dir / "sub").mkdir()
+    private_dir.chmod(0o300)  # search + write, no read
+    try:
+        if os.access(private_dir, os.R_OK):  # e.g. running as root: can't test this
+            pytest.skip("permissions are not enforced for this user")
+        store["KEY"] = "v"
+        store["sub/KEY"] = "w"
+    finally:
+        private_dir.chmod(0o700)
+    assert (private_dir / "KEY").read_text() == "v"
+    assert (private_dir / "sub" / "KEY").read_text() == "w"
+
+
+@pytest.mark.skipif(
+    not (hasattr(os, "O_PATH") or hasattr(os, "O_SEARCH")),
+    reason="needs O_PATH (Linux) or O_SEARCH (macOS) to walk without read permission",
+)
+def test_search_only_folders_are_walked_by_fd_not_by_path(private_dir, monkeypatch):
+    """With O_PATH or O_SEARCH, a search-only folder keeps the race-free fd walk: no
+    fallback to the path-based symlink check (#86)."""
+    sub = private_dir / "sub"
+    sub.mkdir()
+    store = SecureTextFiles(str(private_dir), follow_symlinks=False)
+    sub.chmod(0o300)
+    try:
+        if os.access(sub, os.R_OK):
+            pytest.skip("permissions are not enforced for this user")
+
+        checked = []
+        real_islink = os.path.islink
+
+        def recording_islink(path):
+            checked.append(os.fspath(path))
+            return real_islink(path)
+
+        monkeypatch.setattr(os.path, "islink", recording_islink)
+        store["sub/KEY"] = "w"
+    finally:
+        sub.chmod(0o700)
+    assert (sub / "KEY").read_text() == "w"
+    assert os.path.abspath(sub) not in checked  # the folder was not path-checked
