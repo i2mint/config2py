@@ -2,7 +2,6 @@
 Base for getting configs from various sources and formats
 """
 
-import warnings
 from collections import ChainMap
 from typing import (
     Type,
@@ -24,9 +23,10 @@ from config2py.errors import ConfigNotFound
 
 Exceptions = tuple[type[Exception], ...]
 
-#: The exceptions that mean "this source has no value for the key". It will become the
-#: default ``config_not_found_exceptions`` in a future release (issue #25); pass it
-#: explicitly now to get that behaviour (and no deprecation warning).
+#: The exceptions that mean "this source has no value for the key": the default
+#: ``config_not_found_exceptions``. Any other error raised by a callable source (a
+#: network blip, a bug, a missing import, rejected credentials) propagates instead of
+#: silently falling through to the next, possibly less trusted, source (issue #25).
 DFLT_CONFIG_NOT_FOUND_EXCEPTIONS: Exceptions = (
     KeyError,
     LookupError,
@@ -34,40 +34,18 @@ DFLT_CONFIG_NOT_FOUND_EXCEPTIONS: Exceptions = (
     ConfigNotFound,
 )
 
+#: What the user-prompt source (``user_gettable``) treats as "not found": the lookup
+#: errors, plus ``EOFError``, which ``input()`` raises when there is no one to ask
+#: (stdin closed or at end of file: cron, CI, a subprocess). So a prompt that cannot
+#: be answered falls through to ``get_config``'s ``default`` instead of crashing.
+DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS: Exceptions = DFLT_CONFIG_NOT_FOUND_EXCEPTIONS + (
+    EOFError,
+)
 
-class _LegacyDefault(tuple):
-    """The current default, ``(Exception,)``, told apart from an explicit
-    ``(Exception,)`` by identity, so only callers relying on the default are warned."""
-
-
-#: Still the effective default: any exception from a callable source means "not
-#: found". Swallowing one that is not in ``DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`` under
-#: this default emits a ``DeprecationWarning`` (issue #25).
-LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS: Exceptions = _LegacyDefault((Exception,))
-
-
-def _warn_if_swallowed_under_legacy_default(
-    config_not_found_exceptions: Exceptions, error: BaseException, key
-) -> None:
-    """Warn when the legacy default turned a real error into "not found".
-
-    The message names the exception type only, never its text: getters often wrap
-    credential checks, and SDKs echo rejected secrets in their messages.
-    """
-    if config_not_found_exceptions is LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS and not (
-        isinstance(error, DFLT_CONFIG_NOT_FOUND_EXCEPTIONS)
-    ):
-        warnings.warn(
-            f"A config source raised {type(error).__name__} for key {key!r}, which "
-            "was treated as 'not found' and the next source was tried. A future "
-            "config2py will let such errors propagate (the default will become "
-            "config2py.base.DFLT_CONFIG_NOT_FOUND_EXCEPTIONS). Pass "
-            "config_not_found_exceptions explicitly: (Exception,) to keep falling "
-            "through, or DFLT_CONFIG_NOT_FOUND_EXCEPTIONS to adopt the new behaviour "
-            "(https://github.com/i2mint/config2py/issues/25).",
-            DeprecationWarning,
-            stacklevel=4,
-        )
+#: The default before config2py 0.1.80: *any* exception from a callable source means
+#: "not found". Pass it as ``config_not_found_exceptions`` to keep falling through on
+#: every error.
+LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS: Exceptions = (Exception,)
 
 
 @runtime_checkable
@@ -152,7 +130,7 @@ def get_config(
     default: VT = no_default,
     egress: GetConfigEgress | None = None,
     val_is_valid: Callable[[VT], bool] | None = always_true,
-    config_not_found_exceptions: Exceptions = LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS,
+    config_not_found_exceptions: Exceptions = DFLT_CONFIG_NOT_FOUND_EXCEPTIONS,
 ):
     """Get a config value from a list of sources
 
@@ -204,21 +182,28 @@ def get_config(
     returned. This is useful if you want to do some post-processing on the value,
     or if you want to make sure that the value is of a certain type:
 
-    This "search the next source if the previous one fails" behavior may not be what
-    you want in some situations, since you'd be hiding some errors that you might
-    want to be aware of. This is why allow you to specify what exceptions should
-    actually be considered as "config not found" exceptions, through the
-    ``config_not_found_exceptions`` argument, which defaults to ``(Exception,)``.
+    This "search the next source if the previous one fails" behavior only applies to
+    errors that mean "not found": the ``config_not_found_exceptions`` argument, which
+    defaults to ``DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`` (``KeyError``, ``LookupError``,
+    ``FileNotFoundError``, ``ConfigNotFound``). Any other error raised by a callable
+    source (a network blip, a bug, a missing import, rejected credentials) propagates,
+    rather than being hidden by a silent move to the next, possibly less trusted,
+    source:
 
-    Beware that this broad default treats *any* error raised by a callable source
-    (a network blip, a bug, a missing import, rejected credentials) as "not found",
-    and silently moves on to the next, possibly less trusted, source. It is
-    deprecated: when it swallows an error that is not a lookup error, a
-    ``DeprecationWarning`` says so, and a future release will make
-    ``DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`` (``KeyError``, ``LookupError``,
-    ``FileNotFoundError``, ``ConfigNotFound``) the default. Pass
-    ``config_not_found_exceptions`` explicitly to choose either behaviour now
-    (see https://github.com/i2mint/config2py/issues/25).
+    >>> def flaky(k):
+    ...     raise RuntimeError("network blip")
+    >>> get_config('foo', [flaky, dict_])
+    Traceback (most recent call last):
+    ...
+    RuntimeError: network blip
+
+    Pass ``config_not_found_exceptions=LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS`` (that is,
+    ``(Exception,)``, the default before config2py 0.1.80) to fall through on any
+    error (see https://github.com/i2mint/config2py/issues/25):
+
+    >>> get_config('foo', [flaky, dict_],
+    ...            config_not_found_exceptions=LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS)
+    'bar'
 
     Further, your sources may return a value, but not one that you consider valid:
     For example, a sentinel like ``None``. In this case you may want the search to
@@ -293,14 +278,14 @@ class FuncBasedGettableContainer:
     ...     elif k == 'green':
     ...         return 'eggs'
     ...     else:
-    ...         raise RuntimeError(f"I don't handle that: {k}")
+    ...         raise LookupError(f"I don't handle that: {k}")
     >>> gc = FuncBasedGettableContainer(getter)
     >>> gc['foo']
     'quux'
     >>> gc['green']
     'eggs'
 
-    Observe below that though the ``getter`` function raises a ``RuntimeError``, the
+    Observe below that though the ``getter`` function raises a ``LookupError``, the
     ``FuncBasedGettableContainer`` raises a ``KeyError``, to conform to the
     ``Mapping`` protocol.
 
@@ -318,10 +303,13 @@ class FuncBasedGettableContainer:
     ...     gc['no_a_key']
     ... except KeyError as e:
     ...     print(type(e.__cause__).__name__, e.__cause__, sep=': ')
-    RuntimeError: I don't handle that: no_a_key
+    LookupError: I don't handle that: no_a_key
 
-    Note that by default, ``FuncBasedGettableContainer`` will catch all ``Exception``
-    exceptions, but you can specify a different set of exceptions to catch.
+    Note that by default, ``FuncBasedGettableContainer`` only turns the "not found"
+    exceptions of ``DFLT_CONFIG_NOT_FOUND_EXCEPTIONS`` into a ``KeyError``; any other
+    error the getter raises propagates. Pass ``config_not_found_exceptions`` to choose
+    a different set (``LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS``, i.e. ``(Exception,)``,
+    catches everything).
 
     Note as well that you can specify a ``val_is_valid`` function that will be used to
     check the value returned by the ``getter`` function. If the value is not valid, a
@@ -349,7 +337,7 @@ class FuncBasedGettableContainer:
 
     getter: Callable[[KT], VT]
     val_is_valid: Callable[[VT], bool] = always_true
-    config_not_found_exceptions: Exceptions = LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS
+    config_not_found_exceptions: Exceptions = DFLT_CONFIG_NOT_FOUND_EXCEPTIONS
     cache_getter = False
 
     def __post_init__(self) -> None:
@@ -367,15 +355,15 @@ class FuncBasedGettableContainer:
         try:
             v = self.getter(k)
         except self.config_not_found_exceptions as e:
-            _warn_if_swallowed_under_legacy_default(
-                self.config_not_found_exceptions, e, k
-            )
             # Note: The upstream exception text is deliberately NOT interpolated into
             # the message. Getters here often wrap credential validation, and SDKs
             # routinely echo the rejected secret back in their exception text
             # ("authentication failed for token sk-..."). These KeyErrors are caught
             # and logged by callers, so anything in the message ends up in logs.
             # The upstream exception remains reachable via ``__cause__``.
+            # Errors *not* in ``config_not_found_exceptions`` are not caught, so they
+            # propagate with their original text: a getter that may echo a secret
+            # in a non-lookup error should catch and re-raise it itself.
             raise KeyError(k) from e
         if not self.val_is_valid(v):
             # Same reasoning: ``v`` is the *rejected* value, which is precisely the
@@ -407,7 +395,7 @@ class FuncBasedGettableContainer:
 def gettable_containers(
     sources: Sources,
     val_is_valid: Callable[[VT], bool] = always_true,
-    config_not_found_exceptions: Exceptions = LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS,
+    config_not_found_exceptions: Exceptions = DFLT_CONFIG_NOT_FOUND_EXCEPTIONS,
 ) -> Iterable[GettableContainer]:
     """Convert an iterable of sources into ``GettableContainers``"""
     for src in sources:
@@ -428,7 +416,7 @@ def gettable_containers(
 def sources_chainmap(
     sources: Sources,
     val_is_valid: Callable[[VT], bool] = always_true,
-    config_not_found_exceptions: Exceptions = LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS,
+    config_not_found_exceptions: Exceptions = DFLT_CONFIG_NOT_FOUND_EXCEPTIONS,
 ) -> ChainMap:
     """Create a ``ChainMap`` from a list of sources"""
     sources = gettable_containers(sources, val_is_valid, config_not_found_exceptions)
@@ -590,7 +578,7 @@ def user_gettable(
     egress: Callable | None = None,
     user_asker: Callable[[str], str] = ask_user_for_input,
     val_is_valid: Callable[[VT], bool] = is_not_empty,
-    config_not_found_exceptions: Exceptions = LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS,
+    config_not_found_exceptions: Exceptions = DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS,
 ):
     """
     Create a ``GettableContainer`` that asks the user for a value, optionally saving it.
@@ -607,9 +595,12 @@ def user_gettable(
             prompt string and return the user's response.
         val_is_valid: A function that takes a value and returns a boolean. If it
             returns ``False``, the user will be asked for a new value.
-        config_not_found_exceptions: An iterable of exceptions that should be
-            considered as "config not found" exceptions. If the user's response
-            raises one of these exceptions, the user will be asked for a new value.
+        config_not_found_exceptions: The exceptions that mean "the user gave no
+            value": the key is then treated as not found, and ``get_config`` moves
+            on (or returns its ``default``). Defaults to
+            ``DFLT_USER_PROMPT_NOT_FOUND_EXCEPTIONS``: the lookup errors plus
+            ``EOFError``, raised when stdin is closed (nobody to ask). Any other
+            error (from ``egress`` validation, say) propagates, with its own text.
 
     Returns:
         A ``GettableContainer`` that asks the user for a value, optionally saving it.

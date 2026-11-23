@@ -3,6 +3,7 @@
 import pytest
 
 from config2py.base import (
+    LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS,
     FuncBasedGettableContainer,
     ask_user_for_key,
     user_gettable,
@@ -121,7 +122,9 @@ def test_getter_exception_keyerror_does_not_leak_secret():
     def getter(k):
         raise RuntimeError(f"authentication failed for token {SECRET}")
 
-    gc = FuncBasedGettableContainer(getter)
+    gc = FuncBasedGettableContainer(
+        getter, config_not_found_exceptions=LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS
+    )
     with pytest.raises(KeyError) as excinfo:
         gc["API_KEY"]
     assert SECRET not in str(excinfo.value)
@@ -135,7 +138,9 @@ def test_getter_exception_keyerror_keeps_cause():
     def getter(k):
         raise RuntimeError(f"authentication failed for token {SECRET}")
 
-    gc = FuncBasedGettableContainer(getter)
+    gc = FuncBasedGettableContainer(
+        getter, config_not_found_exceptions=LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS
+    )
     with pytest.raises(KeyError) as excinfo:
         gc["API_KEY"]
     cause = excinfo.value.__cause__
@@ -162,7 +167,7 @@ def test_contains_still_works_with_leak_free_errors():
 
 
 # --------------------------------------------------------------------------------------
-# config_not_found_exceptions: deprecating the broad default (issue #25)
+# config_not_found_exceptions: only lookup errors fall through by default (issue #25)
 
 
 def _flaky_source(k):
@@ -173,16 +178,16 @@ def _lookup_source(k):
     raise KeyError(k)
 
 
-def test_legacy_default_falls_through_but_warns_on_real_errors():
+def test_default_lets_real_errors_propagate():
     import pytest
 
     from config2py.base import get_config
 
-    with pytest.warns(DeprecationWarning, match="RuntimeError"):
-        assert get_config("k", [_flaky_source, {"k": "v"}]) == "v"
+    with pytest.raises(RuntimeError, match="network blip"):
+        get_config("k", [_flaky_source, {"k": "v"}])
 
 
-def test_legacy_default_does_not_warn_on_lookup_errors():
+def test_default_falls_through_on_lookup_errors_silently():
     import warnings
 
     from config2py.base import get_config
@@ -192,48 +197,59 @@ def test_legacy_default_does_not_warn_on_lookup_errors():
         assert get_config("k", [_lookup_source, {"k": "v"}]) == "v"
 
 
-def test_explicit_broad_exceptions_fall_through_silently():
-    import warnings
-
+def test_default_still_returns_default_when_nothing_found():
     from config2py.base import get_config
 
+    assert get_config("k", [_lookup_source], default="d") == "d"
+
+
+def test_legacy_exceptions_fall_through_silently():
+    import warnings
+
+    from config2py.base import LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS, get_config
+
+    assert LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS == (Exception,)
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         got = get_config(
-            "k", [_flaky_source, {"k": "v"}], config_not_found_exceptions=(Exception,)
+            "k",
+            [_flaky_source, {"k": "v"}],
+            config_not_found_exceptions=LEGACY_CONFIG_NOT_FOUND_EXCEPTIONS,
         )
     assert got == "v"
 
 
-def test_the_future_default_lets_real_errors_propagate():
+def test_func_based_container_hides_the_cause_text():
     import pytest
 
-    from config2py.base import DFLT_CONFIG_NOT_FOUND_EXCEPTIONS, get_config
-
-    with pytest.raises(RuntimeError, match="network blip"):
-        get_config(
-            "k",
-            [_flaky_source, {"k": "v"}],
-            config_not_found_exceptions=DFLT_CONFIG_NOT_FOUND_EXCEPTIONS,
-        )
-    assert (
-        get_config(
-            "k",
-            [_lookup_source, {"k": "v"}],
-            config_not_found_exceptions=DFLT_CONFIG_NOT_FOUND_EXCEPTIONS,
-        )
-        == "v"
-    )
-
-
-def test_the_warning_never_carries_the_exception_text():
-    import pytest
-
-    from config2py.base import get_config
+    from config2py.base import FuncBasedGettableContainer
 
     def leaky(k):
-        raise RuntimeError("token sk-SECRET rejected")
+        raise KeyError("token sk-SECRET rejected")
 
-    with pytest.warns(DeprecationWarning) as record:
-        get_config("k", [leaky, {"k": "v"}])
-    assert all("sk-SECRET" not in str(w.message) for w in record)
+    gc = FuncBasedGettableContainer(leaky)
+    with pytest.raises(KeyError) as info:
+        gc["k"]
+    assert "sk-SECRET" not in str(info.value)
+
+
+def test_user_prompt_with_nobody_to_ask_falls_back_to_default():
+    """A closed stdin (EOFError) is "not found", so ``default=`` still applies."""
+    from config2py.base import get_config
+
+    def no_stdin(prompt):
+        raise EOFError
+
+    src = user_gettable(user_asker=no_stdin)
+    assert get_config("k", [{}, src], default="d") == "d"
+
+
+def test_user_prompt_validation_errors_propagate():
+    from config2py.base import get_config
+
+    def egress(k, v):
+        raise ValueError("bad value")
+
+    src = user_gettable(user_asker=_constant_asker("x"), egress=egress)
+    with pytest.raises(ValueError, match="bad value"):
+        get_config("k", [{}, src], default="d")
