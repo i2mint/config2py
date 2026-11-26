@@ -152,5 +152,6 @@ def test_service_bus_connection_string_is_flagged():
         "Endpoint=sb://ns.servicebus.windows.net/;"
         "SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=" + "A" * 43 + "="
     )
-    assert has_secret(conn)
-    assert not has_secret(conn.split(";SharedAccessKey=")[0])  # the name alone is not a secret
+    only_rules = dict(rules=SECRET_RULES, patterns=())  # the generic key=value pattern also catches it
+    assert has_secret(conn, **only_rules)
+    assert not has_secret(conn.split(";SharedAccessKey=")[0], **only_rules)  # the name alone is not a secret
