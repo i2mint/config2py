@@ -90,6 +90,7 @@ SECRET_SAMPLES = {
     "1password-service-account-token": ("ops_" + "eyJ" + "a" * 250, "ops_" + "eyJ" + "a" * 249),
     "azure-sas": ("https://x.blob.core.windows.net/c/b?sv=2024-01-01&sig=" + "a" * 40, "https://x.blob.core.windows.net/c/b?sv=2024-01-01&sig=" + "a" * 39),
     "azure-storage-account-key": ("AccountKey=" + "a" * 80, "AccountKey=" + "a" * 79),
+    "azure-shared-access-key": ("SharedAccessKey=" + "a" * 40, "SharedAccessKey=" + "a" * 39),
     "azure-connection-sas": ("SharedAccessSignature=" + "a" * 20, "SharedAccessSignature=" + "a" * 19),
     "jwt": ("ey" + "a" * 17 + ".ey" + "a" * 17 + ".", "ey" + "a" * 16 + ".ey" + "a" * 17 + "."),
 }
@@ -133,12 +134,23 @@ def test_a_case_insensitive_rule_matches_any_case_and_its_literal_prefilter_fold
 @pytest.mark.parametrize("text", [
     "page via ?sig=abc", "see &sig=12345678 (a short checksum)", "design sig=", "a signature = of the file",
     "AccountKey=", "AccountKey=short", "SharedAccessSignature=",
+    "SharedAccessKey=", "SharedAccessKey=short",
+    "Endpoint=sb://ns.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey",
 ])
 def test_azure_rules_leave_short_or_empty_values_alone(text):
     azure = [r for r in SECRET_RULES if r.rule.startswith("azure-")]
-    assert len(azure) == 3 and not any(r.search(text) for r in azure)
+    assert len(azure) == 4 and not any(r.search(text) for r in azure)
 
 
 def test_azure_connection_string_is_flagged():
     conn = "DefaultEndpointsProtocol=https;AccountName=acct;AccountKey=" + "A" * 86 + "==;EndpointSuffix=core.windows.net"
     assert has_secret(conn)
+
+
+def test_service_bus_connection_string_is_flagged():
+    conn = (
+        "Endpoint=sb://ns.servicebus.windows.net/;"
+        "SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=" + "A" * 43 + "="
+    )
+    assert has_secret(conn)
+    assert not has_secret(conn.split(";SharedAccessKey=")[0])  # the name alone is not a secret
