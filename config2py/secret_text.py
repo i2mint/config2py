@@ -280,6 +280,14 @@ SECRET_RULES: tuple[SecretRule, ...] = (
         ("AccountKey=",),
         word_start=False,
     ),
+    # Service Bus / Event Hubs / IoT Hub connection strings: a 32-byte key, base64 = 44 chars.
+    # `SharedAccessKeyName=` is not a match (`SharedAccessKey=` is not a substring of it).
+    SecretRule(
+        "azure-shared-access-key",
+        r"SharedAccessKey=[A-Za-z0-9+/=]{40,50}",
+        ("SharedAccessKey=",),
+        word_start=False,
+    ),
     # a connection string that carries a SAS
     SecretRule(
         "azure-connection-sas",
